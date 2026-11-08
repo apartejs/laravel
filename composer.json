@@ -4,6 +4,11 @@
     "type": "library",
     "license": "MIT",
     "keywords": ["laravel", "ai", "chat", "livewire", "filament", "ag-ui", "web-components"],
+    "homepage": "https://apartejs.dev/frameworks/laravel/",
+    "support": {
+        "issues": "https://github.com/apartejs/laravel/issues",
+        "source": "https://github.com/apartejs/laravel"
+    },
     "require": {
         "php": "^8.3",
         "illuminate/http": "^12.0|^13.0",
@@ -39,8 +44,8 @@
         }
     },
     "require-dev": {
-        "orchestra/testbench": "^11.3",
-        "pestphp/pest": "^5.3",
+        "orchestra/testbench": "^10.0|^11.3",
+        "pestphp/pest": "^4.0|^5.3",
         "filament/filament": "^5.0"
     }
 }
