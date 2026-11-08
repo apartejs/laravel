@@ -9,6 +9,7 @@ use Laravel\Ai\Approvals\Decision;
 use Laravel\Ai\Approvals\Decisions;
 use Laravel\Ai\Models\Conversation;
 use Laravel\Ai\Responses\StreamableAgentResponse;
+use LogicException;
 
 class ChatController
 {
@@ -34,7 +35,13 @@ class ChatController
             403,
         );
 
-        return app($agent)
+        $instance = app($agent);
+
+        if (! method_exists($instance, 'continue')) {
+            throw new LogicException($agent.' must use the RemembersConversations trait: the chat resumes a conversation on every turn.');
+        }
+
+        return $instance
             ->continue($threadId, as: $user)
             ->stream($this->decisions($request) ?? $chat)
             ->usingProtocol(new AparteProtocol($threadId, $chat->runId() ?: null));

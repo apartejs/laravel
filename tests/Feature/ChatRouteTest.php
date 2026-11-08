@@ -50,6 +50,13 @@ it('adopts the thread id as the conversation', function () {
     expect(Conversation::find('thread-1'))->not->toBeNull();
 });
 
+it('says what an agent without memory is missing', function () {
+    $this->withoutExceptionHandling();
+    Illuminate\Support\Facades\Route::aparte('/stateless', Aparte\Laravel\Tests\Fixtures\StatelessAgent::class);
+
+    $this->postJson('/stateless', runInput());
+})->throws(LogicException::class, 'must use the RemembersConversations trait');
+
 it('requires a usable thread id', function (array $input) {
     $this->postJson('/chat', runInput($input))->assertStatus(422);
 })->with([

@@ -22,3 +22,32 @@ it('loads the bundle once for two chats', function () {
 
     expect(substr_count($html, 'aparte-assets/aparte.js'))->toBe(1);
 });
+
+it('leaves the composition to the chat when no slot is used', function () {
+    expect(Blade::render('<x-aparte::chat endpoint="/chat" />'))->not->toContain('<aparte-composer');
+});
+
+it('places the three slots', function () {
+    $html = Blade::render(<<<'BLADE'
+        <x-aparte::chat endpoint="/chat">
+            <x-slot:empty-state>WELCOME</x-slot:empty-state>
+            <x-slot:above-composer>ABOVE</x-slot:above-composer>
+            <x-slot:toolbar>TOOLS</x-slot:toolbar>
+        </x-aparte::chat>
+        BLADE);
+
+    expect($html)
+        ->toMatch('/data-aparte-empty-state>WELCOME/')
+        ->toMatch('/ABOVE\s*<aparte-composer/')
+        ->toMatch('/<aparte-composer-toolbar>TOOLS/')
+        ->toContain('<aparte-elicitation');
+});
+
+it('makes the chat a direct child of the launcher, which sizes it', function () {
+    $html = Blade::render('<x-aparte::launcher endpoint="/chat" label="Help" />');
+
+    expect($html)
+        ->toContain('label="Help"')
+        ->toMatch('/<aparte-launcher[^>]*>\s*<aparte-chat/')
+        ->not->toMatch('/<aparte-launcher[^>]*>\s*<(script|link)/');
+});

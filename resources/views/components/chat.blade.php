@@ -1,16 +1,8 @@
-@props(['endpoint', 'thread' => null])
+@props(['endpoint', 'thread' => null, 'followDarkClass' => false])
 
-@once
-    <link rel="stylesheet" href="{{ route('aparte.asset', ['file' => 'aparte.css', 'v' => \Aparte\Laravel\AparteServiceProvider::assetVersion('aparte.css')]) }}">
-    <script type="module" src="{{ route('aparte.asset', ['file' => 'aparte.js', 'v' => \Aparte\Laravel\AparteServiceProvider::assetVersion('aparte.js')]) }}"></script>
-@endonce
+@include('aparte::partials.assets')
 
 {{-- wire:ignore: Livewire must not morph what the chat draws. --}}
 <div wire:ignore {{ $attributes }}>
-    <aparte-chat
-        data-aparte-endpoint="{{ url($endpoint) }}"
-        data-aparte-csrf="{{ csrf_token() }}"
-        data-aparte-scope="{{ auth()->id() }}"
-        @if ($thread) data-aparte-thread="{{ $thread }}" @endif
-    >{{ $slot }}</aparte-chat>
+    @include('aparte::partials.element', ['fill' => true])
 </div>

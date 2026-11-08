@@ -1,15 +1,14 @@
 import '@aparte/core/styles.css';
 import {
     AparteClient,
+    AparteConfig,
     AparteConversationController,
     AparteConversationManager,
-    aparteGlobalConfig,
+    attachConfig,
     uuid,
 } from '@aparte/core';
 import { createAgUiRunner } from '@aparte/runner-ag-ui';
 import { setupMarkedStreamingProvider } from '@aparte/plugin-marked/streaming';
-
-setupMarkedStreamingProvider();
 
 /**
  * What is on screen, for this tab only: a reload brings the conversation and a pending
@@ -65,15 +64,48 @@ function withInstructions(init, outcomes) {
     return { ...init, body: JSON.stringify(body) };
 }
 
+/** A welcome shows only while nothing has been said. */
+function watchEmptyState(chat, viewport) {
+    const welcome = chat.querySelector('[data-aparte-empty-state]');
+    if (!welcome) return;
+    const observer = new MutationObserver(() => hideIfSpoken());
+    function hideIfSpoken() {
+        if (viewport.getMessages().length === 0) return;
+        welcome.hidden = true;
+        observer.disconnect();
+    }
+    observer.observe(viewport, { childList: true, subtree: true });
+    hideIfSpoken();
+}
+
+/** Tailwind's `dark` class, the switch Filament and most Laravel apps use, drives the chat's theme. */
+function followDarkClass() {
+    const root = document.documentElement;
+    const apply = () => {
+        root.dataset.aparteTheme = root.classList.contains('dark') ? 'dark' : 'light';
+    };
+    new MutationObserver(apply).observe(root, { attributes: true, attributeFilter: ['class'] });
+    apply();
+}
+
+let mounted = 0;
+
 async function mount(chat) {
+    chat.dataset.aparteMounted = '';
+    mounted += 1;
+    chat.id ||= `aparte-laravel-chat-${mounted}`;
+
     const { aparteEndpoint: endpoint, aparteCsrf: csrf, aparteThread: givenThread, aparteScope: scope } = chat.dataset;
 
-    const manager = new AparteConversationManager(new TabStorage(`aparte-laravel:${endpoint}:${scope ?? ''}`));
+    const config = new AparteConfig();
+    attachConfig(chat, config);
+    setupMarkedStreamingProvider(undefined, config);
+
+    const manager = new AparteConversationManager(new TabStorage(`aparte-laravel:${endpoint}:${scope ?? ''}:${chat.id}`));
     await manager.init();
-    aparteGlobalConfig.setConversationManager(manager);
+    config.setConversationManager(manager);
 
     const viewport = chat.viewport;
-    chat.id ||= 'aparte-laravel-chat';
     const controller = new AparteConversationController({
         hostId: chat.id,
         host: chat,
@@ -97,6 +129,8 @@ async function mount(chat) {
     });
 
     new AparteClient({
+        config,
+        scopeToTargetId: chat.id,
         streamRunner: (options) => {
             outcomes = options.deferral?.outcomes ?? {};
             return runner(options);
@@ -105,10 +139,16 @@ async function mount(chat) {
 
     // After the client: a saved conversation may hold a question it has to ask again.
     await controller.setConversationId(manager.activeConversations[0]?.id ?? null);
+    watchEmptyState(chat, viewport);
 }
 
-const chat = document.querySelector('aparte-chat[data-aparte-endpoint]');
-
-if (chat) {
-    customElements.whenDefined('aparte-chat').then(() => mount(chat));
+function mountAll() {
+    const chats = document.querySelectorAll('aparte-chat[data-aparte-endpoint]:not([data-aparte-mounted])');
+    if (chats.length === 0) return;
+    if ([...chats].some((chat) => 'aparteFollowDark' in chat.dataset)) followDarkClass();
+    customElements.whenDefined('aparte-chat').then(() => chats.forEach(mount));
 }
+
+mountAll();
+// Livewire's `wire:navigate`, which Filament's SPA mode uses, swaps the page without reloading this file.
+document.addEventListener('livewire:navigated', mountAll);
