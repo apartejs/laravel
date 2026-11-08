@@ -18,15 +18,16 @@ class AparteServiceProvider extends ServiceProvider
         });
 
         // Served by a route, as Livewire serves its script: nothing to publish, and an
-        // update of the package cannot leave an old copy behind in public/.
-        Route::get('aparte-assets/{file}', AssetController::class)
-            ->where('file', 'aparte\.(js|css)')
+        // update of the package cannot leave an old copy behind in public/. No file extension
+        // in the URL: a web server's static-file rule for *.js would answer it with a 404.
+        Route::get('aparte-assets/{type}', AssetController::class)
+            ->where('type', 'js|css')
             ->name('aparte.asset');
     }
 
     /** A cache-busting value that changes when the built file does. */
-    public static function assetVersion(string $file): string
+    public static function assetVersion(string $type): string
     {
-        return (string) filemtime(__DIR__.'/../dist/'.$file);
+        return (string) filemtime(__DIR__.'/../dist/aparte.'.$type);
     }
 }

@@ -20,7 +20,7 @@ it('passes a thread the page chose', function () {
 it('loads the bundle once for two chats', function () {
     $html = Blade::render('<x-aparte::chat endpoint="/a" /><x-aparte::chat endpoint="/b" />');
 
-    expect(substr_count($html, 'aparte-assets/aparte.js'))->toBe(1);
+    expect(substr_count($html, 'aparte-assets/js'))->toBe(1);
 });
 
 it('numbers the chats of a page by position', function () {
