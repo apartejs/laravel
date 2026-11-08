@@ -4,6 +4,8 @@ An AI chat for Blade, Livewire and Filament pages, wired to the [Laravel AI SDK]
 No React and no build step: replies stream with Markdown, tool calls show as they run, and a person can
 approve or refuse them.
 
+![The chat in a Filament panel, asking before a tool runs](https://raw.githubusercontent.com/apartejs/laravel/main/art/filament.jpg)
+
 It is built on [aparté](https://apartejs.dev), a chat UI made of web components, and needs PHP 8.3+, Laravel 12 or 13
 and `laravel/ai` 1.3+.
 
