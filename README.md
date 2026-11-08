@@ -108,8 +108,8 @@ question comes back after a reload.
   from there. What is on screen is kept for the tab: closing it starts a new conversation.
 - **A conversation** is identified by an id the browser creates, or by `thread="..."` on the component.
 - **Guests** can chat if your route allows them. Their conversations belong to nobody, so the id is all that protects one.
-- **Behind nginx and PHP-FPM,** a reply can arrive in one block if the server buffers it. Turn buffering off for this route
-  (`fastcgi_buffering off`).
+- **In production,** replies stream through nginx and PHP-FPM with no configuration: the SDK tells nginx not to buffer them.
+  Each reply in progress holds a PHP worker until it ends, so count them in `pm.max_children`.
 - **The SDK's AG-UI stream,** which this package reads, is not in its documentation yet, so a new `laravel/ai` version could
   change it.
 
