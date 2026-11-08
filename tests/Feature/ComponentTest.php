@@ -23,6 +23,12 @@ it('loads the bundle once for two chats', function () {
     expect(substr_count($html, 'aparte-assets/aparte.js'))->toBe(1);
 });
 
+it('numbers the chats of a page by position', function () {
+    $html = Blade::render('<x-aparte::chat endpoint="/a" /><x-aparte::chat endpoint="/b" />');
+
+    expect($html)->toContain('id="aparte-chat-1"')->toContain('id="aparte-chat-2"');
+});
+
 it('leaves the composition to the chat when no slot is used', function () {
     expect(Blade::render('<x-aparte::chat endpoint="/chat" />'))->not->toContain('<aparte-composer');
 });

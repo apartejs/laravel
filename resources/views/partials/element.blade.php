@@ -1,6 +1,13 @@
-@php($composed = isset($emptyState) || isset($aboveComposer) || isset($toolbar))
+@php
+    $composed = isset($emptyState) || isset($aboveComposer) || isset($toolbar);
+
+    // By position on the page, per request: the same chat keeps its id, and its conversation, from one load to the next.
+    $position = request()->attributes->get('aparte.chats', 0) + 1;
+    request()->attributes->set('aparte.chats', $position);
+@endphp
 
 <aparte-chat
+    id="aparte-chat-{{ $position }}"
     data-aparte-endpoint="{{ url($endpoint) }}"
     data-aparte-csrf="{{ csrf_token() }}"
     data-aparte-scope="{{ auth()->id() }}"

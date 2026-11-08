@@ -88,12 +88,10 @@ function followDarkClass() {
     apply();
 }
 
-let mounted = 0;
+const running = [];
 
 async function mount(chat) {
     chat.dataset.aparteMounted = '';
-    mounted += 1;
-    chat.id ||= `aparte-laravel-chat-${mounted}`;
 
     const { aparteEndpoint: endpoint, aparteCsrf: csrf, aparteThread: givenThread, aparteScope: scope } = chat.dataset;
 
@@ -128,14 +126,16 @@ async function mount(chat) {
         fetch: (url, init) => fetch(url, withInstructions(init, outcomes)),
     });
 
-    new AparteClient({
+    const client = new AparteClient({
         config,
         scopeToTargetId: chat.id,
         streamRunner: (options) => {
             outcomes = options.deferral?.outcomes ?? {};
             return runner(options);
         },
-    }).start();
+    });
+    client.start();
+    running.push({ client, controller });
 
     // After the client: a saved conversation may hold a question it has to ask again.
     await controller.setConversationId(manager.activeConversations[0]?.id ?? null);
@@ -149,6 +149,15 @@ function mountAll() {
     customElements.whenDefined('aparte-chat').then(() => chats.forEach(mount));
 }
 
+/** The chats on the page being left: their clients would answer the next page's chats too. */
+function stopAll() {
+    for (const { client, controller } of running.splice(0)) {
+        controller.unbind();
+        client.stop();
+    }
+}
+
 mountAll();
 // Livewire's `wire:navigate`, which Filament's SPA mode uses, swaps the page without reloading this file.
+document.addEventListener('livewire:navigating', stopAll);
 document.addEventListener('livewire:navigated', mountAll);
