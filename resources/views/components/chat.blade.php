@@ -10,6 +10,7 @@
     <aparte-chat
         data-aparte-endpoint="{{ url($endpoint) }}"
         data-aparte-csrf="{{ csrf_token() }}"
+        data-aparte-scope="{{ auth()->id() }}"
         @if ($thread) data-aparte-thread="{{ $thread }}" @endif
     >{{ $slot }}</aparte-chat>
 </div>
