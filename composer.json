@@ -17,6 +17,11 @@
             "Aparte\\Laravel\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Aparte\\Laravel\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
@@ -24,5 +29,14 @@
             ]
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.3",
+        "pestphp/pest": "^5.3"
+    }
 }
