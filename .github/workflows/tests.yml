@@ -47,6 +47,21 @@ jobs:
       - run: npx vite build
       - run: node check.mjs
 
+  # The built chat that ships (dist/) in Chromium, as a Blade page loads it: it mounts, sends, draws the reply.
+  smoke:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests/browser
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: node smoke.mjs
+
   # dist/ is committed, because a Laravel app installs this package without a build step.
   bundle:
     runs-on: ubuntu-latest
