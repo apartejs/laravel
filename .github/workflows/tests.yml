@@ -16,7 +16,8 @@ jobs:
       matrix:
         php: ['8.3', '8.4', '8.5']
         laravel: ['12', '13']
-    name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
+        filament: ['4', '5']
+    name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}, Filament ${{ matrix.filament }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
       - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
@@ -25,6 +26,7 @@ jobs:
           extensions: intl
           coverage: none
       - run: composer require --no-update --no-interaction "illuminate/support:^${{ matrix.laravel }}.0"
+      - run: composer require --dev --no-update --no-interaction "filament/filament:^${{ matrix.filament }}.0"
       - run: composer update --with-all-dependencies --no-interaction --prefer-dist --no-progress
       - run: vendor/bin/pest
 
