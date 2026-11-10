@@ -103,6 +103,63 @@ question comes back after a reload.
 </x-aparte::chat>
 ```
 
+## Plugins
+
+The package serves a built chat: Markdown, tool calls and approvals. To add aparté's
+[plugins](https://apartejs.dev/plugins/) (cards, maths, diagrams, charts, code highlighting) or cards of your own, build
+the chat with your app's Vite instead, so that the plugins and the chat share one copy of aparté.
+
+Tell the package to stop serving its own copy, in `.env`:
+
+```env
+APARTE_ASSETS=vite
+```
+
+Install the chat and the plugins you want:
+
+```bash
+npm install @aparte/core@^1 @aparte/runner-ag-ui@^1 @aparte/plugin-marked@^1 marked
+npm install @aparte/plugin-katex@^1 katex
+```
+
+Give the chat an entry of its own, which imports the package's script and adds each plugin to every chat with
+`onAparteSetup`:
+
+```js
+// resources/js/chat.js
+import { onAparteSetup } from '../../vendor/apartejs/laravel/resources/js/aparte.js';
+import 'katex/dist/katex.min.css';
+import { setupKatex } from '@aparte/plugin-katex';
+
+onAparteSetup((config) => setupKatex({}, config));
+```
+
+Add it to the inputs in `vite.config.js`, so that the production build has it:
+
+```js
+laravel({ input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/chat.js'] }),
+```
+
+Load it on the pages that show a chat, with `@vite('resources/js/chat.js')`. In a Filament panel:
+
+```php
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
+
+$panel->renderHook(PanelsRenderHook::HEAD_END, fn (): string => Blade::render("@vite('resources/js/chat.js')"));
+```
+
+A separate entry keeps your `app.js` out of the panel: a second Alpine, or your app's styles, would break Filament's.
+
+- `onAparteSetup` receives each chat's config, and the chat element as its second argument. What it returns, if a
+  function, runs when the chat stops. Call it at the top level of that entry and keep it synchronous: a chat starts
+  once the entry has run.
+- The import reads from `vendor/`, so run `composer install` before `npm run build`, in CI and Docker builds too.
+- If you install the package from a local path (a Composer path repository), Vite follows the link to the package's
+  own folder: add `resolve: { dedupe: ['@aparte/core', '@aparte/runner-ag-ui', '@aparte/plugin-marked', 'marked'] }`
+  to `vite.config.js` so that every import resolves from your app.
+- After changing `APARTE_ASSETS` in production, run `php artisan config:cache` again.
+
 ## Good to know
 
 - **The look** is set with aparté's [CSS variables](https://apartejs.dev/guides/theming/). It follows the system's light or dark

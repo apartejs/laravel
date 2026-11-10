@@ -23,6 +23,20 @@ it('loads the bundle once for two chats', function () {
     expect(substr_count($html, 'aparte-assets/js'))->toBe(1);
 });
 
+it('serves its own bundle by default', function () {
+    expect(config('aparte.assets'))->toBe('bundle');
+});
+
+it('leaves the scripts and styles to the app in Vite mode', function () {
+    config(['aparte.assets' => 'vite']);
+
+    foreach (['<x-aparte::chat endpoint="/chat" />', '<x-aparte::launcher endpoint="/chat" />'] as $component) {
+        expect(Blade::render($component))
+            ->toContain('<aparte-chat')
+            ->not->toContain('aparte-assets/');
+    }
+});
+
 it('numbers the chats of a page by position', function () {
     $html = Blade::render('<x-aparte::chat endpoint="/a" /><x-aparte::chat endpoint="/b" />');
 

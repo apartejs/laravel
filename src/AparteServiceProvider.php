@@ -9,6 +9,11 @@ use Illuminate\Support\ServiceProvider;
 
 class AparteServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/aparte.php', 'aparte');
+    }
+
     public function boot(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'aparte');

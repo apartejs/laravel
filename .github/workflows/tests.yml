@@ -30,6 +30,23 @@ jobs:
       - run: composer update --with-all-dependencies --no-interaction --prefer-dist --no-progress
       - run: vendor/bin/pest
 
+  # Vite mode as an app meets it: the package as Composer installs it (export-ignore applied), the README's entry,
+  # the app's own Vite. The build must hold one copy of aparté, or the app's plugins go unseen.
+  vite-mode:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests/vite
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+      - run: mkdir -p vendor/apartejs/laravel && git -C ../.. archive HEAD | tar -x -C vendor/apartejs/laravel
+      - run: npm install --no-audit --no-fund
+      - run: npx vite build
+      - run: node check.mjs
+
   # dist/ is committed, because a Laravel app installs this package without a build step.
   bundle:
     runs-on: ubuntu-latest

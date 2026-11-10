@@ -1,0 +1,16 @@
+{
+    "private": true,
+    "type": "module",
+    "description": "A Laravel app's Vite side in Vite mode, as the README writes it. CI builds it against what Composer installs.",
+    "devDependencies": {
+        "vite": "6.4.1"
+    },
+    "dependencies": {
+        "@aparte/core": "^1",
+        "@aparte/runner-ag-ui": "^1",
+        "@aparte/plugin-marked": "^1",
+        "marked": "^18",
+        "@aparte/plugin-katex": "^1",
+        "katex": "^0.19"
+    }
+}
