@@ -78,8 +78,13 @@ function watchEmptyState(chat, viewport) {
     hideIfSpoken();
 }
 
+let followingDark = false;
+
 /** Tailwind's `dark` class, the switch Filament and most Laravel apps use, drives the chat's theme. */
 function followDarkClass() {
+    // Once per page load: every wire:navigate asks again, and each answer would add an observer.
+    if (followingDark) return;
+    followingDark = true;
     const root = document.documentElement;
     const apply = () => {
         root.dataset.aparteTheme = root.classList.contains('dark') ? 'dark' : 'light';
@@ -89,6 +94,30 @@ function followDarkClass() {
 }
 
 const running = [];
+const setups = [];
+
+/**
+ * Adds aparté's plugins, or cards of your own, to every chat on the page:
+ * `onAparteSetup((config) => setupKatex({}, config))`. Called with each chat's config before
+ * it starts, and with the chats already running. What it returns, if a function, runs when
+ * the chat stops. Works when your app builds this file with its own Vite (`APARTE_ASSETS=vite`),
+ * so that the plugins and the chat share one copy of aparté. Call it at the top level of the
+ * entry that imports this file, and keep it synchronous: a chat starts once that entry has run.
+ */
+export function onAparteSetup(setup) {
+    setups.push(setup);
+    for (const entry of running) entry.stops.push(runSetup(setup, entry.config, entry.chat));
+}
+
+/** A plugin that fails is reported, and the chat goes on without it. */
+function runSetup(setup, config, chat) {
+    try {
+        return setup(config, chat);
+    } catch (error) {
+        console.error('aparté: a function given to onAparteSetup failed.', error);
+        return undefined;
+    }
+}
 
 async function mount(chat) {
     chat.dataset.aparteMounted = '';
@@ -98,6 +127,8 @@ async function mount(chat) {
     const config = new AparteConfig();
     attachConfig(chat, config);
     setupMarkedStreamingProvider(undefined, config);
+    // The app's own, last: aparté's plugins and its own cards, before anything is drawn.
+    const stops = setups.map((setup) => runSetup(setup, config, chat));
 
     const manager = new AparteConversationManager(new TabStorage(`aparte-laravel:${endpoint}:${scope ?? ''}:${chat.id}`));
     await manager.init();
@@ -135,7 +166,7 @@ async function mount(chat) {
         },
     });
     client.start();
-    running.push({ client, controller });
+    running.push({ client, controller, config, chat, stops });
 
     // After the client: a saved conversation may hold a question it has to ask again.
     await controller.setConversationId(manager.activeConversations[0]?.id ?? null);
@@ -149,15 +180,34 @@ function mountAll() {
     customElements.whenDefined('aparte-chat').then(() => chats.forEach(mount));
 }
 
-/** The chats on the page being left: their clients would answer the next page's chats too. */
+/**
+ * The chats on the page being left: their clients would answer the next page's chats too.
+ * Their mark goes too: Livewire keeps the page's HTML for the Back button, and a chat brought
+ * back with it must start again.
+ */
 function stopAll() {
-    for (const { client, controller } of running.splice(0)) {
-        controller.unbind();
-        client.stop();
+    for (const { client, controller, stops, chat } of running.splice(0)) {
+        delete chat.dataset.aparteMounted;
+        try {
+            for (const stop of stops) if (typeof stop === 'function') stop();
+            controller.unbind();
+            client.stop();
+        } catch (error) {
+            console.error('aparté: a chat did not stop cleanly.', error);
+        }
     }
 }
 
-mountAll();
-// Livewire's `wire:navigate`, which Filament's SPA mode uses, swaps the page without reloading this file.
-document.addEventListener('livewire:navigating', stopAll);
-document.addEventListener('livewire:navigated', mountAll);
+// One copy per page. The package's own file and an app's build both on a page would mount each
+// chat twice, and only one of them would have the app's plugins.
+if (globalThis.__aparteLaravel) {
+    console.warn('aparté for Laravel is loaded twice on this page; the second copy does nothing. If your app imports it, set APARTE_ASSETS=vite so that the package stops serving its own.');
+} else {
+    globalThis.__aparteLaravel = true;
+    // After the page's own scripts, so that an app's `onAparteSetup` comes before the first chat.
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountAll, { once: true });
+    else setTimeout(mountAll);
+    // Livewire's `wire:navigate`, which Filament's SPA mode uses, swaps the page without reloading this file.
+    document.addEventListener('livewire:navigating', stopAll);
+    document.addEventListener('livewire:navigated', mountAll);
+}
