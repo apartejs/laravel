@@ -172,6 +172,9 @@ A separate entry keeps your `app.js` out of the panel: a second Alpine, or your 
   Each reply in progress holds a PHP worker until it ends, so count them in `pm.max_children`.
 - **The SDK's AG-UI stream,** which this package reads, is not in its documentation yet, so a new `laravel/ai` version could
   change it.
+- **The built chat follows aparté:** within a day of a new aparté 1.x, a patch release of this package carries it, once the
+  rebuilt chat has passed its browser test. `composer update apartejs/laravel` brings it. In Vite mode, your own
+  `npm update` does.
 
 ## Develop
 
@@ -179,6 +182,7 @@ A separate entry keeps your `app.js` out of the panel: a second Alpine, or your 
 composer install
 vendor/bin/pest
 npm install && npm run build   # rebuilds dist/, which is committed
+cd tests/browser && npm install && node smoke.mjs   # the built chat in Chromium
 ```
 
 MIT license.

@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "type": "module",
+    "description": "The built chat (dist/) in a real browser, as a Blade page loads it. CI runs it on every change and before each automatic release.",
+    "devDependencies": {
+        "playwright": "1.61.1"
+    }
+}

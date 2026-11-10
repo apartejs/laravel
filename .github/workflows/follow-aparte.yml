@@ -1,0 +1,88 @@
+name: follow aparté
+
+# The built chat (dist/) carries its own copy of aparté. Once a day, or by hand, this job looks for a newer aparté
+# 1.x on npm. When there is one, it rebuilds the chat on it, proves it (the build, the chat in a browser, Vite mode),
+# commits it to main and releases a patch version, which Packagist offers within a minute. A new major waits for a
+# person: it may need changes here. A push fails, and nothing is released, when main moved during the run; the next
+# run starts again from the new main.
+on:
+  schedule:
+    - cron: '23 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: follow-aparte
+  cancel-in-progress: false
+
+jobs:
+  follow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      - id: versions
+        name: Compare the built chat's aparté with npm's latest
+        run: |
+          current=$(node -p "require('./package.json').devDependencies['@aparte/core']")
+          latest=$(npm view @aparte/core version)
+          echo "built on $current, latest is $latest"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          node -e '
+            const [current, latest] = process.argv.slice(1).map((v) => v.split(".").map(Number));
+            const newer = latest[0] !== current[0] ? latest[0] > current[0]
+              : latest[1] !== current[1] ? latest[1] > current[1] : latest[2] > current[2];
+            if (!newer) { console.log("up to date"); process.exit(0); }
+            if (latest[0] !== current[0]) { console.log(`::warning::aparté ${process.argv[2]} is a new major: a person upgrades the package.`); process.exit(0); }
+            require("fs").appendFileSync(process.env.GITHUB_OUTPUT, "follow=true\n");
+          ' "$current" "$latest"
+
+      - if: steps.versions.outputs.follow == 'true'
+        name: Rebuild the chat on the new aparté
+        env:
+          VERSION: ${{ steps.versions.outputs.latest }}
+        run: |
+          npm ci
+          npm install --save-dev --save-exact "@aparte/core@$VERSION" "@aparte/plugin-marked@$VERSION" "@aparte/runner-ag-ui@$VERSION"
+          npm run build
+
+      - if: steps.versions.outputs.follow == 'true'
+        name: The rebuilt chat in a browser
+        working-directory: tests/browser
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          node smoke.mjs
+
+      - if: steps.versions.outputs.follow == 'true'
+        name: Vite mode, on the package as Composer installs it
+        run: |
+          mkdir -p tests/vite/vendor/apartejs/laravel
+          git archive HEAD | tar -x -C tests/vite/vendor/apartejs/laravel
+          cd tests/vite
+          npm install --no-audit --no-fund
+          npx vite build
+          node check.mjs
+
+      - if: steps.versions.outputs.follow == 'true'
+        name: Commit to main and release a patch version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.versions.outputs.latest }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package.json package-lock.json dist
+          git commit -m "chore: the built chat follows aparté $VERSION"
+          last=$(git tag --list 'v*' --sort=-v:refname | head -1)
+          next=$(node -p "const [a, b, c] = process.argv[1].replace(/^v/, '').split('.').map(Number); 'v' + [a, b, c + 1].join('.')" "$last")
+          git push origin HEAD:main
+          gh release create "$next" --target "$(git rev-parse HEAD)" --title "$next" \
+            --notes "The built chat now runs aparté $VERSION ([what changed](https://github.com/apartejs/aparte/releases/tag/v$VERSION)). Nothing to change in your app."
