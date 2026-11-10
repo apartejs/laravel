@@ -75,7 +75,8 @@ use Aparte\Laravel\Filament\ApartePlugin;
 $panel->plugin(ApartePlugin::make()->agent(App\Ai\Agents\Assistant::class)->label('Assistant'));
 ```
 
-Every page of the panel gets the button, for whoever is signed in to it. The route is added for you, behind the
+Works with Filament 4 and 5. Every page of the panel gets the button, for whoever is signed in to it. The route is
+added for you, behind the
 panel's authentication, and the chat follows the panel's light or dark mode.
 
 ## Approving tool calls

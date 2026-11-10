@@ -18,7 +18,7 @@
         "laravel/ai": "^1.3"
     },
     "suggest": {
-        "filament/filament": "To put the chat in a panel, with ApartePlugin (^5.0)."
+        "filament/filament": "To put the chat in a panel, with ApartePlugin (^4.0 or ^5.0)."
     },
     "autoload": {
         "psr-4": {
