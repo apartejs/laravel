@@ -96,7 +96,8 @@ Works with Filament 4 and 5. Every page of the panel gets the button, for whoeve
 added for you, behind the
 panel's authentication, and the chat follows the panel's light or dark mode.
 
-The header and the maximize button are options of the plugin, off unless you call them:
+The chat opens under a header titled with the `label`. A different title, a line under it and a maximize button are
+options of the plugin; there is no maximize button unless you call `maximizable()`:
 
 ```php
 $panel->plugin(
