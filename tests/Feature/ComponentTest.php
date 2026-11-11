@@ -71,3 +71,12 @@ it('makes the chat a direct child of the launcher, which sizes it', function () 
         ->toMatch('/<aparte-launcher[^>]*>\s*<aparte-chat/')
         ->not->toMatch('/<aparte-launcher[^>]*>\s*<(script|link)/');
 });
+
+it('hands the header and maximize attributes to the launcher', function () {
+    $html = Blade::render('<x-aparte::launcher endpoint="/chat" label="Help" heading="Support" subheading="Replies in a minute" maximizable="panel" />');
+
+    expect($html)
+        ->toContain('heading="Support"')
+        ->toContain('subheading="Replies in a minute"')
+        ->toContain('maximizable="panel"');
+});
