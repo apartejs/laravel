@@ -7,7 +7,7 @@ it('renders the chat, shielded from Livewire', function () {
 
     expect($html)
         ->toContain('<aparte-chat')
-        ->toContain('data-aparte-endpoint="http://localhost/chat"')
+        ->toContain('data-aparte-endpoint="'.url('/chat').'"')
         ->toContain('wire:ignore')
         ->toContain('class="h-96"');
 });

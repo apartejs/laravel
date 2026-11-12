@@ -28,7 +28,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Aparte\\Laravel\\Tests\\": "tests/"
+            "Aparte\\Laravel\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
         }
     },
     "extra": {

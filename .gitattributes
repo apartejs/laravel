@@ -11,3 +11,5 @@
 /package.json export-ignore
 /package-lock.json export-ignore
 /vite.config.js export-ignore
+/workbench export-ignore
+/testbench.yaml export-ignore

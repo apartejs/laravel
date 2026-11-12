@@ -1,0 +1,26 @@
+# A real Laravel app around the package, for `tests/browser/app.mjs`: the chat in a browser against
+# the package's own routes, a session, the CSRF check and a database. Served with
+# `vendor/bin/testbench serve`, after `vendor/bin/testbench workbench:build`.
+laravel: '@testbench'
+
+# Not `testing`: Laravel skips its CSRF check while tests run, and the browser test is there to meet it.
+env:
+  - APP_ENV=local
+
+providers:
+  - Laravel\Ai\AiServiceProvider
+  - Aparte\Laravel\AparteServiceProvider
+  - Workbench\App\Providers\WorkbenchServiceProvider
+
+migrations:
+  - vendor/laravel/ai/database/migrations
+  - database/migrations
+
+workbench:
+  start: '/'
+  discovers:
+    web: true
+    views: true
+  build:
+    - create-sqlite-db
+    - migrate:fresh

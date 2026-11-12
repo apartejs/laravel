@@ -30,6 +30,88 @@ jobs:
       - run: composer update --with-all-dependencies --no-interaction --prefer-dist --no-progress
       - run: vendor/bin/pest
 
+  # The package's own table and queries on the databases Laravel apps run on, not only the tests' SQLite.
+  databases:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - database: mysql
+            port: 3306
+            user: root
+          - database: pgsql
+            port: 5432
+            user: postgres
+    name: On ${{ matrix.database }}
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: testing
+          MYSQL_DATABASE: testing
+        ports: ['3306:3306']
+        options: --health-cmd="mysqladmin ping -ptesting" --health-interval=5s --health-timeout=5s --health-retries=20
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: testing
+          POSTGRES_DB: testing
+        ports: ['5432:5432']
+        options: --health-cmd="pg_isready" --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      DB_CONNECTION: ${{ matrix.database }}
+      DB_HOST: 127.0.0.1
+      DB_PORT: ${{ matrix.port }}
+      DB_DATABASE: testing
+      DB_USERNAME: ${{ matrix.user }}
+      DB_PASSWORD: testing
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          extensions: intl, pdo_mysql, pdo_pgsql
+          coverage: none
+      - run: composer update --with-all-dependencies --no-interaction --prefer-dist --no-progress
+      - run: vendor/bin/pest
+
+  # The chat in Chromium against a real Laravel app (testbench.yaml and workbench/): the package's routes and views,
+  # a session, Laravel's check against forged requests, the SDK's tables and the package's in one database.
+  app:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        laravel: ['12', '13']
+    name: In a Laravel ${{ matrix.laravel }} app
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          extensions: intl
+          coverage: none
+      - run: composer require --no-update --no-interaction "illuminate/support:^${{ matrix.laravel }}.0"
+      - run: composer update --with-all-dependencies --no-interaction --prefer-dist --no-progress
+      - run: vendor/bin/testbench workbench:build
+      - run: vendor/bin/testbench serve --port=8000 > app.log 2>&1 &
+        env:
+          PHP_CLI_SERVER_WORKERS: 4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+        working-directory: tests/browser
+      - run: npx playwright install --with-deps chromium
+        working-directory: tests/browser
+      - run: node app.mjs
+        working-directory: tests/browser
+        env:
+          APP_URL: http://127.0.0.1:8000
+      - if: failure()
+        run: cat app.log; cat vendor/orchestra/testbench-core/laravel/storage/logs/laravel.log || true
+
   # Vite mode as an app meets it: the package as Composer installs it (export-ignore applied), the README's entry,
   # the app's own Vite. The build must hold one copy of aparté, or the app's plugins go unseen.
   vite-mode:
