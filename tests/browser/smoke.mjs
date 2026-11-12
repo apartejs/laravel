@@ -36,6 +36,31 @@ const shell = (id, chatId, height = 290, more = '') => `<div id="${id}" class="a
     <div class="aparte-app-shell__main"><div wire:ignore style="height: 100%">${chat(chatId, `${ORIGIN}/turns`, more)}</div></div>
 </div>`;
 
+/** The floating chat with its conversations kept, as the launcher's Blade component writes it. */
+const control = 'aparte-btn aparte-btn--icon aparte-btn--ghost';
+const floating = (chatId, more) => `<aparte-launcher label="Chat" maximizable>
+    <div class="aparte-app-shell">
+        <aparte-sidebar breakpoint="100000rem">
+            <div class="aparte-sidebar__header">
+                <span class="aparte-sidebar__brand">Conversations</span>
+                <button type="button" class="${control}" aria-label="New chat" data-aparte-new-chat><aparte-icon name="edit"></aparte-icon></button>
+            </div>
+            <div class="aparte-sidebar__search"><input type="search" class="aparte-field aparte-field--sm" aria-label="Search chats" data-aparte-sidebar-search></div>
+            <div class="aparte-sidebar__body"><aparte-conversation-list manage></aparte-conversation-list></div>
+        </aparte-sidebar>
+        <header class="aparte-app-header">
+            <button type="button" class="${control} aparte-app-header__toggle" aria-label="Conversations" data-aparte-sidebar-toggle><aparte-icon name="menu"></aparte-icon></button>
+            <span class="aparte-app-header__title" data-aparte-title>Chat</span>
+            <div class="aparte-app-header__actions">
+                <button type="button" class="${control}" aria-label="New chat" data-aparte-new-chat><aparte-icon name="edit"></aparte-icon></button>
+                <button type="button" class="${control}" aria-label="Maximize" data-aparte-launcher-maximize><aparte-icon name="maximize"></aparte-icon></button>
+                <button type="button" class="${control}" aria-label="Close" data-aparte-launcher-close><aparte-icon name="close"></aparte-icon></button>
+            </div>
+        </header>
+        <div class="aparte-app-shell__main">${chat(chatId, `${ORIGIN}/turns`, more)}</div>
+    </div>
+</aparte-launcher>`;
+
 /** Where the five routes a view names with `conversations="…"` are, on this server. */
 const API = '/kept/conversations';
 /** What a server keeps for the person signed in, behind those routes. */
@@ -51,6 +76,8 @@ const pages = {
     '/kept': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-conversations="${ORIGIN}/kept/conversations"`)}</body></html>`,
     // A server that does not answer for them.
     '/kept-broken': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-conversations="${ORIGIN}/broken"`)}</body></html>`,
+    // The floating chat, in the corner of a page of the app, its conversations kept by the server.
+    '/floating': `${head}<main style="padding: 40px"><h1>Orders</h1></main>${floating('aparte-chat-1', `data-aparte-conversations="${ORIGIN}/kept/conversations"`)}</body></html>`,
     '/two-chats': `${head}${shell('shell-a', 'aparte-chat-1')}${shell('shell-b', 'aparte-chat-2')}</body></html>`,
     // No endpoint: nothing of the package's answers this chat. The app's entry brings a storage and a runner.
     '/own': `${head}
@@ -341,6 +368,48 @@ try {
         await page.locator('[data-menu-action="confirm-delete"]').click();
         check(await until(async () => kept.size === 1 && [...kept.values()][0].title === 'First question'), 'kept: a delete reaches the server');
         check(problems.length === 0, `kept: no console error or warning on the second page${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    // ── The floating chat, with its list ───────────────────────────────────────────────────
+    await scenario('floating', async () => {
+        kept.clear();
+        const { page, problems } = await open('/floating');
+        const sidebar = () => page.evaluate(() => {
+            const card = document.querySelector('aparte-launcher > .aparte-app-shell').getBoundingClientRect();
+            const element = document.querySelector('aparte-sidebar');
+            const list = element.getBoundingClientRect();
+            return {
+                drawer: element.hasAttribute('data-drawer'),
+                closed: element.hasAttribute('collapsed'),
+                wide: list.width > 100,
+                inCard: list.left >= card.left - 1 && list.right <= card.right + 1 && list.top >= card.top - 1 && list.bottom <= card.bottom + 1,
+            };
+        });
+        await page.locator('aparte-launcher .aparte-launcher__button').click();
+        const c = chatOf(page, 'aparte-launcher');
+        check(await c.say('First question'), 'floating: the chat answers in its card');
+        check((await page.locator('aparte-launcher > .aparte-launcher__header').count()) === 0, 'floating: the card has one header, its own');
+        check(await until(async () => (await c.title.textContent()) === 'First question'), 'floating: which names the conversation');
+
+        await page.locator('.aparte-app-header [data-aparte-new-chat]').click();
+        check(await until(async () => !(await c.transcript()).includes('First question')), 'floating: its new-chat control opens an empty conversation');
+        await c.say('Second question');
+        check(await until(async () => kept.size === 2), 'floating: both conversations are kept by the server');
+
+        await page.locator('[data-aparte-sidebar-toggle]').click();
+        check(await until(async () => { const s = await sidebar(); return s.drawer && !s.closed && s.wide && s.inCard; }), 'floating: the list opens inside the card, not over the page');
+        check((await c.rows.count()) === 2, 'floating: with both conversations');
+
+        await c.rows.filter({ hasText: 'First question' }).locator('.aparte-conv-item__select').click();
+        check(await until(async () => (await sidebar()).closed), 'floating: choosing a conversation closes the list');
+        check(await until(async () => (await c.transcript()).includes('First question')), 'floating: and opens it');
+
+        await page.locator('[data-aparte-launcher-maximize]').click();
+        check(await until(async () => { const s = await sidebar(); return !s.drawer && !s.closed && s.wide; }), 'floating: maximized, the list is a column beside the chat');
+        await page.locator('[data-aparte-launcher-maximize]').click();
+        check(await until(async () => { const s = await sidebar(); return s.drawer && s.closed; }), 'floating: and a drawer again once the card is back');
+        check(problems.length === 0, `floating: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
     });
 

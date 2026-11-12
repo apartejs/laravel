@@ -110,6 +110,27 @@ $panel->plugin(
 );
 ```
 
+To keep each person's conversations and give the chat its list, publish the table once and call `conversations()`:
+
+```bash
+php artisan vendor:publish --tag=aparte-migrations
+php artisan migrate
+```
+
+```php
+$panel->plugin(
+    ApartePlugin::make()
+        ->agent(App\Ai\Agents\Assistant::class)
+        ->maximizable()
+        ->conversations(),
+);
+```
+
+The chat's header then names the open conversation and starts a new one, and a menu button opens the list: a drawer
+inside the chat's card, and a column beside the chat once it is maximized. The routes are added for you, behind the
+panel's authentication. [Conversations in your database](#conversations-in-your-database) says what is kept, and how
+to change it.
+
 ## Approving tool calls
 
 A tool that needs a person uses the SDK's approvals:
@@ -202,6 +223,16 @@ And name them on the chat:
 ```
 
 [The list](#a-list-of-conversations) then shows them, and a conversation opens as it was left, tool calls included.
+
+The floating chat takes the same option, and draws the list itself: a menu button in its header opens it as a drawer
+inside the chat's card, and it is a column beside the chat once the chat is maximized.
+
+```blade
+<x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" label="Help" maximizable />
+```
+
+Its words (`Conversations`, `New chat`, `Search chats`, `Maximize`, `Close`) go through Laravel's translator: give
+them in your `lang/*.json` files. In a Filament panel, [`->conversations()`](#filament) does all of this.
 
 - **What is kept** is what the chat shows, as the browser sends it after each reply, in the `aparte_conversations`
   table. Each person reads and writes their own only; a guest's conversations stay in the tab.
@@ -326,5 +357,16 @@ vendor/bin/pest
 npm install && npm run build   # rebuilds dist/, which is committed
 cd tests/browser && npm install && node smoke.mjs   # the built chat in Chromium
 ```
+
+The chat against a real Laravel app (`testbench.yaml` and `workbench/`), with its routes, a session and a database:
+
+```bash
+vendor/bin/testbench workbench:build
+vendor/bin/testbench serve --port=8000 &
+cd tests/browser && APP_URL=http://127.0.0.1:8000 node app.mjs
+```
+
+`vendor/bin/testbench workbench:purge-skeleton` puts the test app back as it was: served once, it would otherwise
+give `vendor/bin/pest` another base address.
 
 MIT license.

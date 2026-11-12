@@ -248,7 +248,7 @@ it('points the chat of someone signed in at the routes that keep its conversatio
     $this->actingAs(person(1));
 
     expect(Blade::render('<x-aparte::chat endpoint="/chat" conversations="/chat/conversations" />'))
-        ->toContain('data-aparte-conversations="http://localhost/chat/conversations"');
+        ->toContain('data-aparte-conversations="'.url('/chat/conversations').'"');
 });
 
 it('leaves a guest, and a chat that did not ask, on the tab', function () {
@@ -261,4 +261,45 @@ it('leaves a guest, and a chat that did not ask, on the tab', function () {
 
 it('offers its migration to publish, and creates nothing unasked', function () {
     expect(ServiceProvider::pathsToPublish(AparteServiceProvider::class, 'aparte-migrations'))->not->toBeEmpty();
+});
+
+it('gives the floating chat a list, a new-chat control and a header of its own', function () {
+    $this->actingAs(person(1));
+
+    $html = Blade::render('<x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" label="Help" maximizable />');
+
+    expect($html)
+        // The card is the launcher's one child, and the chat is inside it.
+        ->toMatch('/<aparte-launcher[^>]*>\s*<div class="aparte-app-shell/')
+        ->toContain('<aparte-conversation-list manage')
+        ->toContain('data-aparte-sidebar-toggle')
+        ->toContain('data-aparte-sidebar-search')
+        ->toContain('data-aparte-new-chat')
+        ->toContain('data-aparte-launcher-maximize')
+        ->toContain('data-aparte-launcher-close')
+        ->toMatch('/data-aparte-title[^>]*>\s*Help\s*</')
+        ->toContain('data-aparte-conversations="'.url('/chat/conversations').'"');
+});
+
+it('names the floating chat after its heading when it has one', function () {
+    $this->actingAs(person(1));
+
+    expect(Blade::render('<x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" label="Help" heading="Support" />'))
+        ->toMatch('/data-aparte-title[^>]*>\s*Support\s*</')
+        // No maximize control the launcher was not given.
+        ->not->toContain('data-aparte-launcher-maximize');
+});
+
+it('leaves the floating chat as it was for a guest, and without conversations', function () {
+    $guest = Blade::render('<x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" label="Help" />');
+
+    $this->actingAs(person(1));
+    $plain = Blade::render('<x-aparte::launcher endpoint="/chat" label="Help" />');
+
+    foreach ([$guest, $plain] as $html) {
+        expect($html)
+            ->toMatch('/<aparte-launcher[^>]*>\s*<aparte-chat/')
+            ->not->toContain('aparte-conversation-list')
+            ->not->toContain('data-aparte-conversations');
+    }
 });

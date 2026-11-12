@@ -1,4 +1,5 @@
 import '@aparte/core/styles.css';
+import '../css/aparte.css';
 import {
     AparteClient,
     AparteConfig,
@@ -277,6 +278,31 @@ function bindConversationUi(chat, config, manager, controller) {
     };
 }
 
+/** A width no window has: a sidebar whose breakpoint it is stays a drawer. */
+const ALWAYS_A_DRAWER = '100000rem';
+
+/**
+ * A list inside the floating chat follows the chat's size, not the window's: a drawer in the
+ * chat's card, which is narrow in the widest window, and aparté's own behaviour (a column, a
+ * drawer on a narrow screen) once the chat fills the window. Returns the function that stops.
+ */
+function followLauncher(chat) {
+    const launcher = chat.closest('aparte-launcher');
+    const sidebar = launcher?.querySelector('aparte-sidebar');
+    if (!sidebar) return () => {};
+
+    const apply = () => {
+        // `maximizable="panel"` runs the window's height along its edge: still a narrow chat.
+        const fills = launcher.hasAttribute('maximized') && launcher.getAttribute('maximizable') !== 'panel';
+        if (fills) sidebar.removeAttribute('breakpoint');
+        else sidebar.setAttribute('breakpoint', ALWAYS_A_DRAWER);
+    };
+    const observer = new MutationObserver(apply);
+    observer.observe(launcher, { attributes: true, attributeFilter: ['maximized', 'maximizable'] });
+    apply();
+    return () => observer.disconnect();
+}
+
 async function mount(chat) {
     chat.dataset.aparteMounted = '';
 
@@ -348,7 +374,8 @@ async function mount(chat) {
     const client = new AparteClient({ ...options.client, config, scopeToTargetId: chat.id });
     client.start();
     const unbindUi = bindConversationUi(chat, config, manager, controller);
-    running.push({ client, controller, config, chat, stops, options, unbindUi });
+    const unfollow = followLauncher(chat);
+    running.push({ client, controller, config, chat, stops, options, unbindUi, unfollow });
 
     // After the client: a saved conversation may hold a question it has to ask again.
     await controller.setConversationId(manager.activeConversations[0]?.id ?? null);
@@ -368,11 +395,12 @@ function mountAll() {
  * back with it must start again.
  */
 function stopAll() {
-    for (const { client, controller, stops, chat, unbindUi } of running.splice(0)) {
+    for (const { client, controller, stops, chat, unbindUi, unfollow } of running.splice(0)) {
         delete chat.dataset.aparteMounted;
         try {
             for (const stop of stops) if (typeof stop === 'function') stop();
             unbindUi();
+            unfollow();
             controller.unbind();
             client.stop();
         } catch (error) {
