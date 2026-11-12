@@ -1,4 +1,4 @@
-@props(['endpoint', 'thread' => null, 'label' => 'Chat', 'followDarkClass' => false])
+@props(['endpoint' => null, 'thread' => null, 'label' => 'Chat', 'followDarkClass' => false])
 
 @include('aparte::partials.assets')
 

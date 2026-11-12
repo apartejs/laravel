@@ -8,7 +8,7 @@
 
 <aparte-chat
     id="aparte-chat-{{ $position }}"
-    data-aparte-endpoint="{{ url($endpoint) }}"
+    data-aparte-endpoint="{{ ($endpoint ?? null) ? url($endpoint) : '' }}"
     data-aparte-csrf="{{ csrf_token() }}"
     data-aparte-scope="{{ auth()->id() }}"
     @if ($thread ?? null) data-aparte-thread="{{ $thread }}" @endif

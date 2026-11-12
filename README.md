@@ -134,6 +134,47 @@ question comes back after a reload.
 </x-aparte::chat>
 ```
 
+## A list of conversations
+
+aparté's own elements go in the view around the chat, and follow it with no script of yours:
+
+```blade
+<div class="aparte-app-shell" style="height: 40rem" wire:ignore>
+    <aparte-sidebar>
+        <div class="aparte-sidebar__header">
+            <button type="button" class="aparte-btn aparte-btn--surface" data-aparte-new-chat>New chat</button>
+        </div>
+        <div class="aparte-sidebar__search">
+            <input type="search" class="aparte-field" placeholder="Search chats" aria-label="Search chats" data-aparte-sidebar-search>
+        </div>
+        <div class="aparte-sidebar__body">
+            <aparte-conversation-list manage></aparte-conversation-list>
+        </div>
+    </aparte-sidebar>
+    <header class="aparte-app-header">
+        <button type="button" class="aparte-btn aparte-app-header__toggle" data-aparte-sidebar-toggle>Chats</button>
+        <span class="aparte-app-header__title" data-aparte-title>New chat</span>
+    </header>
+    <div class="aparte-app-shell__main">
+        <x-aparte::chat endpoint="/chat" style="height: 100%" />
+    </div>
+</div>
+```
+
+- `<aparte-conversation-list>` shows the chat's conversations, grouped by date. A click opens one, and with `manage` a
+  row's menu renames or deletes it ([its page](https://apartejs.dev/components/conversation-list/)).
+- `data-aparte-new-chat` on a button opens an empty conversation.
+- `data-aparte-title` on an element names the open conversation; its own words stand while there is no name.
+- `<aparte-sidebar>`, its search field and its toggle are aparté's ([its page](https://apartejs.dev/components/sidebar/)):
+  on a narrow screen the sidebar becomes a drawer.
+
+An element belongs to the chat in the same block as it. On a page with several chats, give each its own block, or name
+the chat: `for="aparte-chat-2"` (the chats of a page are numbered in order). `wire:ignore` keeps Livewire from redrawing
+what the elements draw.
+
+The list shows what the chat keeps: by default, the conversations of this tab.
+[A storage of your own](#your-own-storage-your-own-runner) keeps them longer.
+
 ## Plugins
 
 The package serves a built chat: Markdown, tool calls and approvals. To add aparté's
@@ -182,8 +223,8 @@ $panel->renderHook(PanelsRenderHook::HEAD_END, fn (): string => Blade::render("@
 
 A separate entry keeps your `app.js` out of the panel: a second Alpine, or your app's styles, would break Filament's.
 
-- `onAparteSetup` receives each chat's config, and the chat element as its second argument. What it returns, if a
-  function, runs when the chat stops. Call it at the top level of that entry and keep it synchronous: a chat starts
+- `onAparteSetup` receives each chat's config, the chat element as its second argument, and its options as the third
+  ([below](#your-own-storage-your-own-runner)). What it returns, if a function, runs when the chat stops. Call it at the top level of that entry and keep it synchronous: a chat starts
   once the entry has run.
 - The import reads from `vendor/`, so run `composer install` before `npm run build`, in CI and Docker builds too.
 - If you install the package from a local path (a Composer path repository), Vite follows the link to the package's
@@ -191,12 +232,41 @@ A separate entry keeps your `app.js` out of the panel: a second Alpine, or your 
   to `vite.config.js` so that every import resolves from your app.
 - After changing `APARTE_ASSETS` in production, run `php artisan config:cache` again.
 
+## Your own storage, your own runner
+
+The chat keeps its conversations for the tab, and your Laravel agent answers it. Both are defaults: in
+[Vite mode](#plugins), `onAparteSetup` hands you the chat's options before it starts.
+
+```js
+// resources/js/chat.js
+import { onAparteSetup } from '../../vendor/apartejs/laravel/resources/js/aparte.js';
+import { createIdbStorage } from '@aparte/plugin-storage-idb';
+import { createN8nRunner } from '@aparte/runner-n8n';
+
+onAparteSetup((config, chat, options) => {
+    // Where the conversations are kept: here in the browser, one database per user.
+    options.storage = createIdbStorage({ name: `chat-${chat.dataset.aparteScope}` });
+
+    // What answers the chat: here an n8n workflow, in place of the package's endpoint.
+    options.client.streamRunner = createN8nRunner({ webhookUrl: 'https://your-n8n.example.com/webhook/<id>/chat' });
+});
+```
+
+- `options.storage` is any aparté [storage adapter](https://apartejs.dev/guides/conversation-persistence/): a few
+  functions that load, save and delete a conversation. One that calls routes of yours keeps them in your database.
+- `options.client` is what the chat's client is built with. Its `streamRunner` is the package's when the chat has an
+  `endpoint`: replace it with a [runner](https://apartejs.dev/providers/) of yours, or delete it and register a provider
+  on `config`, and aparté's own loop calls the model.
+- A chat the package does not answer needs no endpoint: `<x-aparte::chat style="height: 32rem" />`.
+- Both are read once, when the chat starts.
+
 ## Good to know
 
 - **The look** is set with aparté's [CSS variables](https://apartejs.dev/guides/theming/). It follows the system's light or dark
   mode; `follow-dark-class` makes it follow Tailwind's `dark` class instead.
 - **What is kept:** the SDK keeps the conversation in your database, tied to the signed-in user, and the model's memory comes
-  from there. What is on screen is kept for the tab: closing it starts a new conversation.
+  from there. What is on screen is kept for the tab: closing it starts a new conversation, unless you give the chat
+  [a storage of your own](#your-own-storage-your-own-runner).
 - **A conversation** is identified by an id the browser creates, or by `thread="..."` on the component.
 - **Guests** can chat if your route allows them. Their conversations belong to nobody, so the id is all that protects one.
 - **In production,** replies stream through nginx and PHP-FPM with no configuration: the SDK tells nginx not to buffer them.

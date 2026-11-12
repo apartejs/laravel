@@ -12,6 +12,16 @@ it('renders the chat, shielded from Livewire', function () {
         ->toContain('class="h-96"');
 });
 
+it('lets a chat have no endpoint, for an app that brings its own runner', function () {
+    expect(Blade::render('<x-aparte::chat />'))
+        ->toContain('<aparte-chat')
+        ->toContain('data-aparte-endpoint=""');
+
+    expect(Blade::render('<x-aparte::launcher label="Help" />'))
+        ->toMatch('/<aparte-launcher[^>]*>\s*<aparte-chat/')
+        ->toContain('data-aparte-endpoint=""');
+});
+
 it('passes a thread the page chose', function () {
     expect(Blade::render('<x-aparte::chat endpoint="/chat" thread="abc" />'))
         ->toContain('data-aparte-thread="abc"');
