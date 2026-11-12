@@ -172,8 +172,49 @@ An element belongs to the chat in the same block as it. On a page with several c
 the chat: `for="aparte-chat-2"` (the chats of a page are numbered in order). `wire:ignore` keeps Livewire from redrawing
 what the elements draw.
 
-The list shows what the chat keeps: by default, the conversations of this tab.
-[A storage of your own](#your-own-storage-your-own-runner) keeps them longer.
+The list shows what the chat keeps: by default, the conversations of this tab. Keep them
+[in your database](#conversations-in-your-database), or in [a storage of your own](#your-own-storage-your-own-runner).
+
+## Conversations in your database
+
+A chat keeps its conversations for the tab. To keep them for the person signed in, on every device, publish the
+table:
+
+```bash
+php artisan vendor:publish --tag=aparte-migrations
+php artisan migrate
+```
+
+Add the routes beside the chat's, behind the middleware that signs people in:
+
+```php
+// routes/web.php
+Route::middleware(['auth'])->group(function () {
+    Route::aparte('/chat', App\Ai\Agents\Assistant::class);
+    Route::aparteConversations('/chat/conversations');
+});
+```
+
+And name them on the chat:
+
+```blade
+<x-aparte::chat endpoint="/chat" conversations="/chat/conversations" style="height: 32rem" />
+```
+
+[The list](#a-list-of-conversations) then shows them, and a conversation opens as it was left, tool calls included.
+
+- **What is kept** is what the chat shows, as the browser sends it after each reply, in the `aparte_conversations`
+  table. Each person reads and writes their own only; a guest's conversations stay in the tab.
+- **The model's memory** stays with the Laravel AI SDK, under the same id. Deleting a conversation from the list
+  deletes both.
+- **Whatever answers the chat:** with [a runner of your own](#your-own-storage-your-own-runner), the conversations
+  are kept the same way.
+- **Limits** are in `config/aparte.php` (`php artisan vendor:publish --tag=aparte-config`): `conversations.max_bytes`,
+  what one conversation may weigh (2 MB); `conversations.list`, how many the list gives (200); `conversations.table`.
+- **Somewhere else than that table:** bind your own `Aparte\Laravel\Conversations\ConversationRepository` in a service
+  provider. It has four methods: list, find, save, delete.
+- A reply still being written when its tab was closed is not in what is kept; the model remembers it.
+- If the routes do not answer, the chat goes on and keeps its conversations for the tab.
 
 ## Plugins
 
@@ -265,8 +306,8 @@ onAparteSetup((config, chat, options) => {
 - **The look** is set with aparté's [CSS variables](https://apartejs.dev/guides/theming/). It follows the system's light or dark
   mode; `follow-dark-class` makes it follow Tailwind's `dark` class instead.
 - **What is kept:** the SDK keeps the conversation in your database, tied to the signed-in user, and the model's memory comes
-  from there. What is on screen is kept for the tab: closing it starts a new conversation, unless you give the chat
-  [a storage of your own](#your-own-storage-your-own-runner).
+  from there. What is on screen is kept for the tab: closing it starts a new conversation, unless you keep it
+  [in your database](#conversations-in-your-database) or in [a storage of your own](#your-own-storage-your-own-runner).
 - **A conversation** is identified by an id the browser creates, or by `thread="..."` on the component.
 - **Guests** can chat if your route allows them. Their conversations belong to nobody, so the id is all that protects one.
 - **In production,** replies stream through nginx and PHP-FPM with no configuration: the SDK tells nginx not to buffer them.

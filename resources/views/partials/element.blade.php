@@ -12,6 +12,8 @@
     data-aparte-csrf="{{ csrf_token() }}"
     data-aparte-scope="{{ auth()->id() }}"
     @if ($thread ?? null) data-aparte-thread="{{ $thread }}" @endif
+    {{-- Kept on the server for someone signed in; a guest's conversations stay in the tab. --}}
+    @if (($conversations ?? null) && auth()->check()) data-aparte-conversations="{{ url($conversations) }}" @endif
     @if ($followDarkClass ?? false) data-aparte-follow-dark @endif
     @if ($fill ?? false) style="height: 100%" @endif
 >

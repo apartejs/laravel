@@ -21,9 +21,9 @@ const head = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>
 <body style="height: 600px; margin: 0">
 <link rel="stylesheet" href="/aparte.css">
 <script type="module" src="/aparte.js"></script>`;
-const chat = (id, endpoint) => `<aparte-chat id="${id}" data-aparte-endpoint="${endpoint}" data-aparte-csrf="test-token" data-aparte-scope="" style="height: 100%"></aparte-chat>`;
+const chat = (id, endpoint, more = '') => `<aparte-chat id="${id}" data-aparte-endpoint="${endpoint}" data-aparte-csrf="test-token" data-aparte-scope="" ${more} style="height: 100%"></aparte-chat>`;
 /** A chat with its list, as a view writes them: aparté's own elements, two attributes of the package. */
-const shell = (id, chatId, height = 290) => `<div id="${id}" class="aparte-app-shell" style="height: ${height}px">
+const shell = (id, chatId, height = 290, more = '') => `<div id="${id}" class="aparte-app-shell" style="height: ${height}px">
     <aparte-sidebar>
         <div class="aparte-sidebar__header"><button type="button" class="aparte-btn aparte-btn--surface" data-aparte-new-chat>New chat</button></div>
         <div class="aparte-sidebar__search"><input class="aparte-field" type="search" aria-label="Search chats" data-aparte-sidebar-search></div>
@@ -33,13 +33,24 @@ const shell = (id, chatId, height = 290) => `<div id="${id}" class="aparte-app-s
         <button type="button" class="aparte-btn aparte-app-header__toggle" data-aparte-sidebar-toggle>Chats</button>
         <span class="aparte-app-header__title" data-aparte-title>New chat</span>
     </header>
-    <div class="aparte-app-shell__main"><div wire:ignore style="height: 100%">${chat(chatId, `${ORIGIN}/turns`)}</div></div>
+    <div class="aparte-app-shell__main"><div wire:ignore style="height: 100%">${chat(chatId, `${ORIGIN}/turns`, more)}</div></div>
 </div>`;
+
+/** Where the five routes a view names with `conversations="…"` are, on this server. */
+const API = '/kept/conversations';
+/** What a server keeps for the person signed in, behind those routes. */
+const kept = new Map();
+/** Every request those routes received: the method, the id, the CSRF header. */
+const calls = [];
 
 const pages = {
     '/': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`)}</body></html>`,
     // Tall enough for a row's menu to open inside the sidebar.
     '/conversations': `${head}${shell('shell-a', 'aparte-chat-1', 580)}</body></html>`,
+    // The same view, its conversations kept by the server.
+    '/kept': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-conversations="${ORIGIN}/kept/conversations"`)}</body></html>`,
+    // A server that does not answer for them.
+    '/kept-broken': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-conversations="${ORIGIN}/broken"`)}</body></html>`,
     '/two-chats': `${head}${shell('shell-a', 'aparte-chat-1')}${shell('shell-b', 'aparte-chat-2')}</body></html>`,
     // No endpoint: nothing of the package's answers this chat. The app's entry brings a storage and a runner.
     '/own': `${head}
@@ -85,6 +96,46 @@ const server = createServer((req, res) => {
                 + event({ type: 'TEXT_MESSAGE_END', messageId: 'm1' })
                 + event({ type: 'RUN_FINISHED', threadId: input.threadId, runId: input.runId }),
             );
+        });
+        return;
+    }
+    if (req.url.startsWith('/broken')) {
+        res.writeHead(500);
+        return res.end();
+    }
+    // The five routes, as the package's controller answers them.
+    if (req.url === API || req.url.startsWith(`${API}/`)) {
+        const id = decodeURIComponent(req.url.slice(API.length + 1));
+        let body = '';
+        req.on('data', (chunk) => (body += chunk));
+        req.on('end', () => {
+            calls.push({ method: req.method, id, csrf: req.headers['x-csrf-token'] });
+            const json = (status, data) => {
+                res.writeHead(status, { 'Content-Type': 'application/json' });
+                res.end(data === undefined ? '' : JSON.stringify(data));
+            };
+            if (req.url === API) {
+                const list = [...kept.values()].sort((a, b) => b.updatedAt - a.updatedAt)
+                    .map(({ messages, tree, autoTitle, ...meta }) => meta);
+                return json(200, { conversations: list });
+            }
+            if (req.method === 'PUT') {
+                kept.set(id, JSON.parse(body));
+                return json(204);
+            }
+            if (!kept.has(id)) return json(404, { message: 'Not found' });
+            if (req.method === 'GET') return json(200, kept.get(id));
+            if (req.method === 'DELETE') {
+                kept.delete(id);
+                return json(204);
+            }
+            // PATCH: a title, a pin or an archive date; null takes one back.
+            const conversation = kept.get(id);
+            for (const [field, value] of Object.entries(JSON.parse(body))) {
+                if (value === null) delete conversation[field];
+                else conversation[field] = value;
+            }
+            return json(204);
         });
         return;
     }
@@ -251,6 +302,55 @@ try {
         check(await until(async () => (await page.evaluate(() => window.saved.length)) > 0), 'own: the conversation is saved in the storage the app gave');
         check((await page.evaluate(() => Object.keys(sessionStorage).filter((key) => key.startsWith('aparte-laravel:')).length)) === 0, "own: and not in the tab's");
         check(problems.length === 0, `own: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    // ── Conversations kept by the server, for the person signed in ─────────────────────────
+    await scenario('kept', async () => {
+        const first = await open('/kept');
+        const a = chatOf(first.page, '#shell-a');
+        check(await a.say('First question'), 'kept: the chat answers');
+        check(await until(async () => kept.size === 1), 'kept: the conversation is sent to the server');
+        const saved = [...kept.values()][0];
+        check(saved?.title === 'First question' && saved?.messages?.length === 2, 'kept: with its title and what is on screen');
+        check(calls.some((call) => call.method === 'PUT') && calls.every((call) => call.csrf === 'test-token'), 'kept: every request carries the CSRF header');
+        check((await first.page.evaluate(() => Object.keys(sessionStorage).filter((key) => key.startsWith('aparte-laravel:')).length)) === 0, 'kept: and nothing is written in the tab');
+        check(first.problems.length === 0, `kept: no console error or warning${first.problems.length ? `: ${first.problems.join(' | ')}` : ''}`);
+        await first.page.close();
+
+        // Another tab, another device: it has nothing of the first page's but what the server kept.
+        const { page, problems } = await open('/kept');
+        const b = chatOf(page, '#shell-a');
+        check(await until(async () => (await b.rows.count()) === 1), 'kept: another page lists it, from the server');
+        check(await until(async () => (await b.transcript()).includes('First question')), 'kept: and opens it with its messages');
+        await b.newChat.click();
+        await until(async () => !(await b.transcript()).includes('First question'));
+        await b.say('Second question');
+        check(await until(async () => kept.size === 2), 'kept: a second conversation is kept too');
+
+        await b.rows.filter({ hasText: 'Second question' }).locator('.aparte-conv-item__more').click();
+        await page.locator('[role="menu"] [data-menu-action="rename"]').click();
+        const input = page.locator('.aparte-conv-item__input');
+        await input.fill('Leave');
+        await input.press('Enter');
+        check(await until(async () => [...kept.values()].some((conversation) => conversation.title === 'Leave')), 'kept: a rename reaches the server');
+        check(calls.some((call) => call.method === 'PATCH'), 'kept: without its messages travelling');
+
+        await b.rows.filter({ hasText: 'Leave' }).locator('.aparte-conv-item__more').click();
+        await page.locator('[role="menu"] [data-menu-action="delete"]').click();
+        await page.locator('[data-menu-action="confirm-delete"]').click();
+        check(await until(async () => kept.size === 1 && [...kept.values()][0].title === 'First question'), 'kept: a delete reaches the server');
+        check(problems.length === 0, `kept: no console error or warning on the second page${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    // ── A server that does not answer for the conversations ────────────────────────────────
+    await scenario('broken', async () => {
+        const { page, problems } = await open('/kept-broken');
+        const a = chatOf(page, '#shell-a');
+        check(await a.say('Still here?'), 'broken: the chat still answers');
+        check(problems.some((problem) => problem.includes('keeps them for the tab')), 'broken: the console says the conversations stay in the tab');
+        check(await until(async () => (await page.evaluate(() => Object.keys(sessionStorage).filter((key) => key.startsWith('aparte-laravel:')).length)) === 1), 'broken: and that is where they are');
         await page.close();
     });
 } finally {

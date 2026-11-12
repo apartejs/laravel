@@ -52,6 +52,78 @@ class TabStorage {
     }
 }
 
+/**
+ * What is on screen, kept by a server for the person signed in: five routes on one address.
+ * The list at `url` (no messages in it), and one conversation at `url/{id}`: GET reads it, PUT
+ * saves it, PATCH changes its title, pin or archive date, DELETE forgets it. Nothing here is
+ * Laravel's: any server that answers those routes will do.
+ */
+class ServerStorage {
+    constructor(url, headers = {}) {
+        this.url = url.replace(/\/+$/, '');
+        this.headers = headers;
+    }
+
+    async request(method, id, body) {
+        const response = await fetch(id === undefined ? this.url : `${this.url}/${encodeURIComponent(id)}`, {
+            method,
+            credentials: 'same-origin',
+            headers: { Accept: 'application/json', ...(body ? { 'Content-Type': 'application/json' } : {}), ...this.headers },
+            ...(body ? { body: JSON.stringify(body) } : {}),
+        });
+        // 404 is an answer (no such conversation), not a failure. Anything else that is not a
+        // success is thrown: the chat keeps the conversation in memory and saves it again later.
+        if (!response.ok && response.status !== 404) {
+            throw new Error(`aparté: the server answered ${response.status} to ${method} ${this.url}.`);
+        }
+        return response;
+    }
+
+    async loadMeta() {
+        const response = await this.request('GET');
+        if (!response.ok) throw new Error(`aparté: no list of conversations at ${this.url}.`);
+        return (await response.json()).conversations ?? [];
+    }
+
+    async loadFull(id) {
+        const response = await this.request('GET', id);
+        return response.ok ? response.json() : null;
+    }
+
+    async loadAll() {
+        const list = await this.loadMeta();
+        return (await Promise.all(list.map(({ id }) => this.loadFull(id)))).filter(Boolean);
+    }
+
+    async save(conversation) {
+        await this.request('PUT', conversation.id, conversation);
+    }
+
+    async delete(id) {
+        await this.request('DELETE', id);
+    }
+
+    async rename(id, title) {
+        await this.request('PATCH', id, { title });
+    }
+
+    async pin(id) {
+        await this.request('PATCH', id, { pinnedAt: Date.now() });
+    }
+
+    async unpin(id) {
+        await this.request('PATCH', id, { pinnedAt: null });
+    }
+
+    async archive(id) {
+        await this.request('PATCH', id, { archivedAt: Date.now() });
+    }
+
+    async unarchive(id) {
+        await this.request('PATCH', id, { archivedAt: null });
+    }
+}
+
 /** The runner sends a refusal's yes or no; the words a person typed with it go along here. */
 function withInstructions(init, outcomes) {
     if (typeof init?.body !== 'string') return init;
@@ -208,18 +280,27 @@ function bindConversationUi(chat, config, manager, controller) {
 async function mount(chat) {
     chat.dataset.aparteMounted = '';
 
-    const { aparteEndpoint: endpoint, aparteCsrf: csrf, aparteThread: givenThread, aparteScope: scope } = chat.dataset;
+    const {
+        aparteEndpoint: endpoint,
+        aparteCsrf: csrf,
+        aparteThread: givenThread,
+        aparteScope: scope,
+        aparteConversations: conversations,
+    } = chat.dataset;
 
     const config = new AparteConfig();
     attachConfig(chat, config);
     setupMarkedStreamingProvider(undefined, config);
 
     // What the chat runs on: the package's own first, for the app's setup to keep or replace.
+    // Its conversations go to the server when the view names the routes that keep them
+    // (`conversations="…"`, for someone signed in), else they stay in the tab.
     let manager;
     const fallbackThread = uuid();
     let outcomes = {};
+    const tab = () => new TabStorage(`aparte-laravel:${endpoint}:${scope ?? ''}:${chat.id}`);
     const options = {
-        storage: new TabStorage(`aparte-laravel:${endpoint}:${scope ?? ''}:${chat.id}`),
+        storage: conversations ? new ServerStorage(conversations, { 'X-CSRF-TOKEN': csrf ?? '' }) : tab(),
         client: {},
     };
     if (endpoint) {
@@ -238,7 +319,14 @@ async function mount(chat) {
     const stops = setups.map((setup) => runSetup(setup, config, chat, options));
 
     manager = new AparteConversationManager(options.storage);
-    await manager.init();
+    try {
+        await manager.init();
+    } catch (error) {
+        // A storage that does not answer must not cost the page its chat: it works, on the tab.
+        console.warn('aparté: the conversations could not be loaded, so this chat keeps them for the tab.', error);
+        manager = new AparteConversationManager(tab());
+        await manager.init();
+    }
     config.setConversationManager(manager);
 
     const viewport = chat.viewport;

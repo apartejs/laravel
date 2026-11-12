@@ -17,10 +17,12 @@ class TestCase extends BaseTestCase
     protected function defineDatabaseMigrations(): void
     {
         $this->loadMigrationsFrom(dirname(__DIR__).'/vendor/laravel/ai/database/migrations');
+        $this->loadMigrationsFrom(dirname(__DIR__).'/database/migrations');
     }
 
     protected function defineRoutes($router): void
     {
         $router->aparte('/chat', TestAgent::class);
+        $router->aparteConversations('/chat/conversations');
     }
 }
