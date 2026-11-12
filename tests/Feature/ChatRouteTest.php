@@ -117,3 +117,16 @@ it('caps what a refusal can carry', function () {
 
     TestAgent::assertPrompted(fn (AgentPrompt $prompt) => mb_strlen($prompt->approvalDecisions->get('call-1')->result) < 2100);
 });
+
+it('ends a run with only what AG-UI describes', function () {
+    TestAgent::fake(['Hi']);
+
+    $content = $this->actingAs(makeUser(1))->postJson('/chat', runInput())->assertOk()->streamedContent();
+    $finished = collect(explode("\n", $content))->first(fn (string $line) => str_contains($line, '"RUN_FINISHED"'));
+
+    // The SDK adds the ids of the messages it stored. AG-UI 1.0 has no such field there, and the
+    // chat's runner drops each with a warning in the browser's console: two per reply, for nothing.
+    expect($finished)->not->toBeNull()
+        ->not->toContain('"messageId"')
+        ->not->toContain('"userMessageId"');
+});
