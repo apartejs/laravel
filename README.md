@@ -128,8 +128,9 @@ $panel->plugin(
 
 The chat's header then names the open conversation and starts a new one, and a menu button opens the list: a drawer
 inside the chat's card, and a column beside the chat once it is maximized. The routes are added for you, behind the
-panel's authentication. [Conversations in your database](#conversations-in-your-database) says what is kept, and how
-to change it.
+panel's authentication, and each panel keeps a list of its own: its conversations are not those of another panel, or
+of a chat on a page of your app. [Conversations in your database](#conversations-in-your-database) says what is kept,
+and how to change it.
 
 ## Approving tool calls
 
@@ -190,8 +191,15 @@ aparté's own elements go in the view around the chat, and follow it with no scr
   on a narrow screen the sidebar becomes a drawer.
 
 An element belongs to the chat in the same block as it. On a page with several chats, give each its own block, or name
-the chat: `for="aparte-chat-2"` (the chats of a page are numbered in order). `wire:ignore` keeps Livewire from redrawing
-what the elements draw.
+the chat: give it an id, `<x-aparte::chat id="support" endpoint="/chat" />`, and write `for="support"` on the element.
+`wire:ignore` keeps Livewire from redrawing what the elements draw.
+
+The floating chat draws all of this itself when asked, in its card: a menu button in its header opens the list as a
+drawer, and it is a column beside the chat once the chat is maximized.
+
+```blade
+<x-aparte::launcher endpoint="/chat" label="Help" maximizable list />
+```
 
 The list shows what the chat keeps: by default, the conversations of this tab. Keep them
 [in your database](#conversations-in-your-database), or in [a storage of your own](#your-own-storage-your-own-runner).
@@ -216,7 +224,7 @@ Route::middleware(['auth'])->group(function () {
 });
 ```
 
-And name them on the chat:
+And name them on the chat, on a page behind the same sign-in as the routes:
 
 ```blade
 <x-aparte::chat endpoint="/chat" conversations="/chat/conversations" style="height: 32rem" />
@@ -224,11 +232,17 @@ And name them on the chat:
 
 [The list](#a-list-of-conversations) then shows them, and a conversation opens as it was left, tool calls included.
 
-The floating chat takes the same option, and draws the list itself: a menu button in its header opens it as a drawer
-inside the chat's card, and it is a column beside the chat once the chat is maximized.
+The floating chat takes the same option, and then draws its list for whoever is signed in:
 
 ```blade
 <x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" label="Help" maximizable />
+```
+
+Two chats that answer with two agents keep two lists. The routes of the second one name its own, and chats whose
+routes share a name share their conversations:
+
+```php
+Route::aparteConversations('/help/conversations', 'help');
 ```
 
 Its words (`Conversations`, `New chat`, `Search chats`, `Maximize`, `Close`) go through Laravel's translator: give
@@ -237,15 +251,32 @@ them in your `lang/*.json` files. In a Filament panel, [`->conversations()`](#fi
 - **What is kept** is what the chat shows, as the browser sends it after each reply, in the `aparte_conversations`
   table. Each person reads and writes their own only; a guest's conversations stay in the tab.
 - **The model's memory** stays with the Laravel AI SDK, under the same id. Deleting a conversation from the list
-  deletes both.
+  deletes both. Each conversation of a list is its own thread: `thread="..."` is for a chat that has one conversation
+  and no list, and is not used on a chat that has one.
 - **Whatever answers the chat:** with [a runner of your own](#your-own-storage-your-own-runner), the conversations
   are kept the same way.
 - **Limits** are in `config/aparte.php` (`php artisan vendor:publish --tag=aparte-config`): `conversations.max_bytes`,
   what one conversation may weigh (2 MB); `conversations.list`, how many the list gives (200); `conversations.table`.
+  Your web server must let a request of that weight through: nginx stops at 1 MB unless `client_max_body_size` says
+  otherwise. The routes take your own middleware, a rate limit among them:
+  `Route::aparteConversations('/chat/conversations')->middleware('throttle:120,1')`.
 - **Somewhere else than that table:** bind your own `Aparte\Laravel\Conversations\ConversationRepository` in a service
-  provider. It has four methods: list, find, save, delete.
+  provider. It has five methods: list, find, save, change, delete.
 - A reply still being written when its tab was closed is not in what is kept; the model remembers it.
-- If the routes do not answer, the chat goes on and keeps its conversations for the tab.
+- The same conversation open in two tabs is kept as the last of the two to save left it.
+- **If the server does not answer,** the chat goes on. What is said is sent once it answers again: at the next
+  message, when the network or the page comes back, and at longer and longer intervals in between.
+- **A conversation the server refuses** is not kept: one heavier than `max_bytes`, or anything once nobody is signed
+  in any more. The chat says so with an event, on the page, for you to tell the person:
+
+```js
+document.addEventListener('aparte-conversations-problem', (event) => {
+    // event.detail.reason: 'too-large', 'signed-out', 'unreachable', 'refused' or 'gone' (deleted somewhere else).
+    if (event.detail.reason === 'too-large') {
+        alert('This conversation is too long to be kept. A new chat starts a fresh one.');
+    }
+});
+```
 
 ## Plugins
 
@@ -317,7 +348,7 @@ import { createN8nRunner } from '@aparte/runner-n8n';
 
 onAparteSetup((config, chat, options) => {
     // Where the conversations are kept: here in the browser, one database per user.
-    options.storage = createIdbStorage({ name: `chat-${chat.dataset.aparteScope}` });
+    options.storage = createIdbStorage({ name: `chat-${chat.dataset.aparteScope}-${chat.id}` });
 
     // What answers the chat: here an n8n workflow, in place of the package's endpoint.
     options.client.streamRunner = createN8nRunner({ webhookUrl: 'https://your-n8n.example.com/webhook/<id>/chat' });
@@ -327,8 +358,9 @@ onAparteSetup((config, chat, options) => {
 - `options.storage` is any aparté [storage adapter](https://apartejs.dev/guides/conversation-persistence/): a few
   functions that load, save and delete a conversation. One that calls routes of yours keeps them in your database.
 - `options.client` is what the chat's client is built with. Its `streamRunner` is the package's when the chat has an
-  `endpoint`: replace it with a [runner](https://apartejs.dev/providers/) of yours, or delete it and register a provider
-  on `config`, and aparté's own loop calls the model.
+  `endpoint`: replace it with a [runner](https://apartejs.dev/providers/) of yours. Or delete it, register a provider
+  on `config` and select its model, and aparté's own loop calls the model from the browser: with a key the page can
+  read, so for a model on the person's machine, or a key made to be public.
 - A chat the package does not answer needs no endpoint: `<x-aparte::chat style="height: 32rem" />`.
 - Both are read once, when the chat starts.
 
@@ -339,7 +371,8 @@ onAparteSetup((config, chat, options) => {
 - **What is kept:** the SDK keeps the conversation in your database, tied to the signed-in user, and the model's memory comes
   from there. What is on screen is kept for the tab: closing it starts a new conversation, unless you keep it
   [in your database](#conversations-in-your-database) or in [a storage of your own](#your-own-storage-your-own-runner).
-- **A conversation** is identified by an id the browser creates, or by `thread="..."` on the component.
+- **A conversation** is identified by an id the browser creates, or by `thread="..."` on a chat that has one
+  conversation and no list.
 - **Guests** can chat if your route allows them. Their conversations belong to nobody, so the id is all that protects one.
 - **In production,** replies stream through nginx and PHP-FPM with no configuration: the SDK tells nginx not to buffer them.
   Each reply in progress holds a PHP worker until it ends, so count them in `pm.max_children`.
