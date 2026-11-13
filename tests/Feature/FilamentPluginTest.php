@@ -89,6 +89,33 @@ it('adds the routes that keep conversations, beside the chat', function () {
     ]);
 });
 
+it('adds them whatever the order providers boot in', function () {
+    // A panel registers its routes while Filament boots: nothing says this package booted first.
+    Illuminate\Routing\Router::flushMacros();
+
+    try {
+        expect(panelRoutes(ApartePlugin::make()->agent(TestAgent::class)->conversations()))->toHaveCount(6);
+    } finally {
+        (new Aparte\Laravel\AparteServiceProvider(app()))->register();
+    }
+});
+
+it('keeps a list of its own for each panel', function () {
+    $panel = Panel::make()->id('staff')->path('staff');
+    ApartePlugin::make()->agent(TestAgent::class)->conversations()->register($panel);
+    $before = count(app('router')->getRoutes()->getRoutes());
+    foreach ($panel->getAuthenticatedRoutes() as $routes) {
+        $routes($panel);
+    }
+
+    $kept = array_slice(app('router')->getRoutes()->getRoutes(), $before + 1);
+
+    expect($kept)->toHaveCount(5);
+    foreach ($kept as $route) {
+        expect($route->defaults['scope'])->toBe('filament:staff');
+    }
+});
+
 it('gives the chat its list when conversations are kept', function () {
     $this->actingAs((new Illuminate\Foundation\Auth\User)->forceFill(['id' => 1]));
 

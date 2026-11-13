@@ -2,6 +2,7 @@
 
 namespace Aparte\Laravel\Filament;
 
+use Aparte\Laravel\Conversations\ConversationRoutes;
 use Aparte\Laravel\Http\ChatController;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
@@ -87,7 +88,8 @@ class ApartePlugin implements Plugin
     /**
      * Keeps each person's conversations in your database and gives the chat its list: a drawer
      * in the chat's card, a column once the chat fills the window. Publish the table first
-     * (`php artisan vendor:publish --tag=aparte-migrations`, then `migrate`). Off unless called.
+     * (`php artisan vendor:publish --tag=aparte-migrations`, then `migrate`). Each panel keeps
+     * a list of its own. Off unless called.
      */
     public function conversations(bool $conversations = true): static
     {
@@ -103,13 +105,15 @@ class ApartePlugin implements Plugin
         }
 
         $panel
-            ->authenticatedRoutes(function (): void {
+            ->authenticatedRoutes(function () use ($panel): void {
                 Route::post('aparte-chat', ChatController::class)
                     ->defaults('agent', $this->agent)
                     ->name('aparte-chat');
 
                 if ($this->conversations) {
-                    Route::aparteConversations('aparte-chat/conversations');
+                    // A list of the panel's own: another panel, or a chat on a page of the
+                    // app, answers with another agent and keeps other conversations.
+                    ConversationRoutes::register('aparte-chat/conversations', 'filament:'.$panel->getId());
                 }
             })
             ->renderHook(PanelsRenderHook::BODY_END, fn (): string => $this->launcher($panel));

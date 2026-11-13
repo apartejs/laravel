@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('conversation_id', 64);
             $table->string('owner_type');
             $table->string('owner_id');
+            // The list it is in: a chat of the app, or the chats that share one (`Route::aparteConversations()`).
+            $table->string('scope', 64)->default('default');
             $table->string('title')->default('');
             // The chat's own dates, in milliseconds: a rename or a pin must not move them.
             $table->unsignedBigInteger('created_ms')->default(0);
@@ -24,8 +26,8 @@ return new class extends Migration
             // The conversation as the chat sent it, untouched.
             $table->longText('payload');
 
-            $table->unique(['owner_type', 'owner_id', 'conversation_id'], 'aparte_conversations_owner_unique');
-            $table->index(['owner_type', 'owner_id', 'updated_ms'], 'aparte_conversations_owner_recent');
+            $table->unique(['owner_type', 'owner_id', 'scope', 'conversation_id'], 'aparte_conversations_owner_unique');
+            $table->index(['owner_type', 'owner_id', 'scope', 'updated_ms'], 'aparte_conversations_owner_recent');
         });
     }
 
