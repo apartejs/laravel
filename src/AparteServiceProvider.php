@@ -51,6 +51,19 @@ class AparteServiceProvider extends ServiceProvider
             ->name('aparte.asset');
     }
 
+    /**
+     * The id of the next chat a view draws: the one the view gives it (`id="support"`), else its
+     * position on the page, per request, so that the same chat keeps its id, and its
+     * conversation, from one load to the next.
+     */
+    public static function chatId(?string $given = null): string
+    {
+        $position = request()->attributes->get('aparte.chats', 0) + 1;
+        request()->attributes->set('aparte.chats', $position);
+
+        return $given !== null && $given !== '' ? $given : 'aparte-chat-'.$position;
+    }
+
     /** A cache-busting value that changes when the built file does. */
     public static function assetVersion(string $type): string
     {

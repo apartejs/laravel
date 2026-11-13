@@ -39,18 +39,18 @@ const shell = (id, chatId, height = 290, more = '') => `<div id="${id}" class="a
 /** The floating chat with its conversations kept, as the launcher's Blade component writes it. */
 const control = 'aparte-btn aparte-btn--icon aparte-btn--ghost';
 const floating = (chatId, more) => `<aparte-launcher label="Chat" maximizable>
-    <div class="aparte-app-shell">
-        <aparte-sidebar breakpoint="100000rem">
+    <section class="aparte-app-shell">
+        <aparte-sidebar>
             <div class="aparte-sidebar__header">
                 <span class="aparte-sidebar__brand">Conversations</span>
                 <button type="button" class="${control}" aria-label="New chat" data-aparte-new-chat><aparte-icon name="edit"></aparte-icon></button>
             </div>
             <div class="aparte-sidebar__search"><input type="search" class="aparte-field aparte-field--sm" aria-label="Search chats" data-aparte-sidebar-search></div>
-            <div class="aparte-sidebar__body"><aparte-conversation-list manage></aparte-conversation-list></div>
+            <div class="aparte-sidebar__body"><aparte-conversation-list target="${chatId}" manage></aparte-conversation-list></div>
         </aparte-sidebar>
         <header class="aparte-app-header">
             <button type="button" class="${control} aparte-app-header__toggle" aria-label="Conversations" data-aparte-sidebar-toggle><aparte-icon name="menu"></aparte-icon></button>
-            <span class="aparte-app-header__title" data-aparte-title>Chat</span>
+            <div class="aparte-launcher__heading"><span class="aparte-app-header__title" data-aparte-title="Chat">Chat</span></div>
             <div class="aparte-app-header__actions">
                 <button type="button" class="${control}" aria-label="New chat" data-aparte-new-chat><aparte-icon name="edit"></aparte-icon></button>
                 <button type="button" class="${control}" aria-label="Maximize" data-aparte-launcher-maximize><aparte-icon name="maximize"></aparte-icon></button>
@@ -58,15 +58,17 @@ const floating = (chatId, more) => `<aparte-launcher label="Chat" maximizable>
             </div>
         </header>
         <div class="aparte-app-shell__main">${chat(chatId, `${ORIGIN}/turns`, more)}</div>
-    </div>
+    </section>
 </aparte-launcher>`;
 
 /** Where the five routes a view names with `conversations="…"` are, on this server. */
 const API = '/kept/conversations';
 /** What a server keeps for the person signed in, behind those routes. */
 const kept = new Map();
-/** Every request those routes received: the method, the id, the CSRF header. */
+/** Every request those routes received: the method, the id, the token against forged requests. */
 const calls = [];
+/** What the tests make of that server: down (every route answers 500), slow to list, strict on weight. */
+const server_ = { down: false, listDelay: 0, maxBytes: Infinity };
 
 const pages = {
     '/': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`)}</body></html>`,
@@ -74,11 +76,13 @@ const pages = {
     '/conversations': `${head}${shell('shell-a', 'aparte-chat-1', 580)}</body></html>`,
     // The same view, its conversations kept by the server.
     '/kept': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-conversations="${ORIGIN}/kept/conversations"`)}</body></html>`,
-    // A server that does not answer for them.
-    '/kept-broken': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-conversations="${ORIGIN}/broken"`)}</body></html>`,
     // The floating chat, in the corner of a page of the app, its conversations kept by the server.
     '/floating': `${head}<main style="padding: 40px"><h1>Orders</h1></main>${floating('aparte-chat-1', `data-aparte-conversations="${ORIGIN}/kept/conversations"`)}</body></html>`,
-    '/two-chats': `${head}${shell('shell-a', 'aparte-chat-1')}${shell('shell-b', 'aparte-chat-2')}</body></html>`,
+    // A list outside both blocks names its chat.
+    '/two-chats': `${head}${shell('shell-a', 'aparte-chat-1')}${shell('shell-b', 'aparte-chat-2')}<aparte-conversation-list id="loose" for="aparte-chat-2"></aparte-conversation-list></body></html>`,
+    // A chat that is one conversation, named by the view; and the same name on a chat that has a list.
+    '/thread': `${head}${chat('aparte-chat-1', `${ORIGIN}/turns`, 'data-aparte-thread="order-42"')}</body></html>`,
+    '/thread-list': `${head}${shell('shell-a', 'aparte-chat-1', 580, 'data-aparte-thread="order-42"')}</body></html>`,
     // No endpoint: nothing of the package's answers this chat. The app's entry brings a storage and a runner.
     '/own': `${head}
 <script type="module">
@@ -126,27 +130,25 @@ const server = createServer((req, res) => {
         });
         return;
     }
-    if (req.url.startsWith('/broken')) {
-        res.writeHead(500);
-        return res.end();
-    }
     // The five routes, as the package's controller answers them.
     if (req.url === API || req.url.startsWith(`${API}/`)) {
         const id = decodeURIComponent(req.url.slice(API.length + 1));
         let body = '';
         req.on('data', (chunk) => (body += chunk));
         req.on('end', () => {
-            calls.push({ method: req.method, id, csrf: req.headers['x-csrf-token'] });
+            calls.push({ method: req.method, id, csrf: req.headers['x-csrf-token'], xsrf: req.headers['x-xsrf-token'] });
             const json = (status, data) => {
                 res.writeHead(status, { 'Content-Type': 'application/json' });
                 res.end(data === undefined ? '' : JSON.stringify(data));
             };
+            if (server_.down) return json(500, { message: 'Server Error' });
             if (req.url === API) {
                 const list = [...kept.values()].sort((a, b) => b.updatedAt - a.updatedAt)
                     .map(({ messages, tree, autoTitle, ...meta }) => meta);
-                return json(200, { conversations: list });
+                return setTimeout(() => json(200, { conversations: list }), server_.listDelay);
             }
             if (req.method === 'PUT') {
+                if (body.length > server_.maxBytes) return json(413, { message: 'This conversation is too large to keep.' });
                 kept.set(id, JSON.parse(body));
                 return json(204);
             }
@@ -202,9 +204,15 @@ const scenario = async (name, run) => {
 
 const browser = await chromium.launch();
 /** A page of the server, with what its console complained about. */
-const open = async (path) => {
+const open = async (path, prepare = async () => {}) => {
     const page = await browser.newPage();
     const problems = [];
+    // What the chat tells the page of conversations that are not kept.
+    await page.addInitScript(() => {
+        window.notKept = [];
+        document.addEventListener('aparte-conversations-problem', (event) => window.notKept.push(event.detail));
+    });
+    await prepare(page);
     page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') problems.push(`${m.type()}: ${m.text()}`); });
     page.on('pageerror', (e) => problems.push(`pageerror: ${e.message}`));
     await page.goto(`${ORIGIN}${path}`);
@@ -310,6 +318,8 @@ try {
         await a.rows.filter({ hasText: 'Alpha' }).locator('.aparte-conv-item__select').click();
         check(await until(async () => (await a.transcript()).includes('Alpha')), 'two chats: a click on a row opens it in its own chat');
         check((await b.transcript()).includes('Beta'), 'two chats: and leaves the other chat on its conversation');
+        const loose = page.locator('#loose [data-conv-id]');
+        check(await until(async () => (await loose.count()) === 1) && ((await loose.first().textContent()) ?? '').includes('Beta'), 'two chats: a list outside both blocks shows the chat it names');
         check(problems.length === 0, `two chats: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
     });
@@ -355,13 +365,17 @@ try {
         await b.say('Second question');
         check(await until(async () => kept.size === 2), 'kept: a second conversation is kept too');
 
+        // Once the reply is kept: what follows must be the rename's doing alone.
+        await until(async () => [...kept.values()].some((conversation) => conversation.title === 'Second question' && conversation.messages.length === 2));
+        const beforeRename = calls.length;
         await b.rows.filter({ hasText: 'Second question' }).locator('.aparte-conv-item__more').click();
         await page.locator('[role="menu"] [data-menu-action="rename"]').click();
         const input = page.locator('.aparte-conv-item__input');
         await input.fill('Leave');
         await input.press('Enter');
         check(await until(async () => [...kept.values()].some((conversation) => conversation.title === 'Leave')), 'kept: a rename reaches the server');
-        check(calls.some((call) => call.method === 'PATCH'), 'kept: without its messages travelling');
+        const sinceRename = calls.slice(beforeRename).map((call) => call.method);
+        check(sinceRename.includes('PATCH') && !sinceRename.includes('PUT'), `kept: without its messages travelling (${sinceRename.join(', ')})`);
 
         await b.rows.filter({ hasText: 'Leave' }).locator('.aparte-conv-item__more').click();
         await page.locator('[role="menu"] [data-menu-action="delete"]').click();
@@ -401,6 +415,24 @@ try {
         check(await until(async () => { const s = await sidebar(); return s.drawer && !s.closed && s.wide && s.inCard; }), 'floating: the list opens inside the card, not over the page');
         check((await c.rows.count()) === 2, 'floating: with both conversations');
 
+        // A row's menu is placed against the window: it must stand at its row, inside the card.
+        const first = c.rows.filter({ hasText: 'First question' });
+        await first.hover();
+        await first.locator('.aparte-conv-item__more').click();
+        const menu = page.locator('[role="menu"]');
+        await menu.waitFor({ state: 'visible' });
+        const more = await first.locator('.aparte-conv-item__more').boundingBox();
+        const drawn = await menu.boundingBox();
+        check(Math.abs(drawn.y - (more.y + more.height)) < 16 || Math.abs(drawn.y + drawn.height - more.y) < 16, "floating: a row's menu opens at its row");
+        await page.keyboard.press('Escape');
+        check(await until(async () => (await menu.count()) === 0 || !(await menu.isVisible())), 'floating: Escape closes that menu');
+        check(!(await sidebar()).closed, 'floating: and leaves the list open');
+        await page.keyboard.press('Escape');
+        check(await until(async () => (await sidebar()).closed), 'floating: Escape again closes the list');
+        check(await page.locator('aparte-launcher').evaluate((el) => el.hasAttribute('open')), 'floating: and leaves the chat open');
+        await page.locator('[data-aparte-sidebar-toggle]').click();
+        await until(async () => !(await sidebar()).closed);
+
         await c.rows.filter({ hasText: 'First question' }).locator('.aparte-conv-item__select').click();
         check(await until(async () => (await sidebar()).closed), 'floating: choosing a conversation closes the list');
         check(await until(async () => (await c.transcript()).includes('First question')), 'floating: and opens it');
@@ -413,13 +445,112 @@ try {
         await page.close();
     });
 
-    // ── A server that does not answer for the conversations ────────────────────────────────
-    await scenario('broken', async () => {
-        const { page, problems } = await open('/kept-broken');
+    // ── A server that does not answer for the conversations, then does ─────────────────────
+    await scenario('down', async () => {
+        kept.clear();
+        kept.set('before', { id: 'before', title: 'Kept before', createdAt: 1, updatedAt: 1, messages: [] });
+        server_.down = true;
+        const { page, problems } = await open('/kept');
         const a = chatOf(page, '#shell-a');
-        check(await a.say('Still here?'), 'broken: the chat still answers');
-        check(problems.some((problem) => problem.includes('keeps them for the tab')), 'broken: the console says the conversations stay in the tab');
-        check(await until(async () => (await page.evaluate(() => Object.keys(sessionStorage).filter((key) => key.startsWith('aparte-laravel:')).length)) === 1), 'broken: and that is where they are');
+        check(await a.say('While it is down'), 'down: the chat still answers');
+        // Asked three times before it gives up for now: the chat did not wait for that to answer.
+        check(await until(async () => problems.some((problem) => problem.includes('will be when the server answers'))), 'down: the console says the conversations will be loaded later');
+        check(await until(async () => (await page.evaluate(() => window.notKept.some((problem) => problem.reason === 'unreachable')))), 'down: the page is told that what is said is not kept yet');
+        check(kept.size === 1, 'down: the server has nothing of it');
+        check((await page.evaluate(() => Object.keys(sessionStorage).filter((key) => key.startsWith('aparte-laravel:')).length)) === 0, "down: and it is not left in the tab, where the server never looks");
+
+        server_.down = false;
+        await page.evaluate(() => window.dispatchEvent(new Event('online')));
+        check(await until(async () => [...kept.values()].some((conversation) => conversation.title === 'While it is down' && conversation.messages?.length === 2)), 'down: once the server answers, what was said is kept');
+        check(await until(async () => (await a.rows.count()) === 2), 'down: and the list is read, with what was kept before');
+        check((await a.transcript()).includes('While it is down'), 'down: the conversation on screen is still the one being held');
+        await page.close();
+    });
+
+    // ── A conversation the server refuses for what it is ───────────────────────────────────
+    await scenario('refused', async () => {
+        kept.clear();
+        server_.maxBytes = 300;
+        const { page } = await open('/kept');
+        const a = chatOf(page, '#shell-a');
+        check(await a.say('A question long enough to weigh more than this server takes for one conversation'), 'refused: the chat answers');
+        check(await until(async () => (await page.evaluate(() => window.notKept.some((problem) => problem.reason === 'too-large' && typeof problem.conversationId === 'string')))), 'refused: the page is told which conversation is too large to keep');
+        const puts = () => calls.filter((call) => call.method === 'PUT').length;
+        const sent = puts();
+        await new Promise((resolve) => setTimeout(resolve, 2500));
+        check(puts() === sent, 'refused: and the same bytes are not sent again and again');
+        server_.maxBytes = Infinity;
+        await page.close();
+    });
+
+    // ── A conversation deleted somewhere else ──────────────────────────────────────────────
+    await scenario('gone', async () => {
+        kept.clear();
+        kept.set('gone-1', { id: 'gone-1', title: 'Deleted elsewhere', createdAt: 1, updatedAt: 2, messages: [{ id: 'm1', role: 'user', content: 'Deleted elsewhere' }] });
+        kept.set('here-1', { id: 'here-1', title: 'Still here', createdAt: 1, updatedAt: 3, messages: [{ id: 'm2', role: 'user', content: 'Still here' }] });
+        const { page } = await open('/kept');
+        const a = chatOf(page, '#shell-a');
+        check(await until(async () => (await a.rows.count()) === 2), 'gone: both conversations are listed');
+        kept.delete('gone-1');
+        await a.rows.filter({ hasText: 'Deleted elsewhere' }).locator('.aparte-conv-item__select').click();
+        check(await until(async () => (await a.rows.count()) === 1), 'gone: a click on one deleted from another tab takes its row away');
+        await page.close();
+    });
+
+    // ── A page left while its conversations were loading (wire:navigate) ───────────────────
+    await scenario('navigation', async () => {
+        kept.clear();
+        server_.listDelay = 700;
+        const before = turns.length;
+        const { page } = await open('/kept');
+        await page.waitForFunction(() => document.querySelector('aparte-chat')?.hasAttribute('data-aparte-mounted'));
+        // Livewire swaps the page's body, and says so before and after.
+        await page.evaluate(() => {
+            document.dispatchEvent(new Event('livewire:navigating'));
+            const body = document.body.innerHTML;
+            document.body.innerHTML = body;
+            document.dispatchEvent(new Event('livewire:navigated'));
+        });
+        server_.listDelay = 0;
+        const a = chatOf(page, '#shell-a');
+        check(await a.say('After the navigation'), 'navigation: the chat of the new page answers');
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+        check(turns.length === before + 1, `navigation: one request for one message, not one more from the page that was left (got ${turns.length - before})`);
+        check((await page.locator('#shell-a aparte-chat aparte-chat-bubble[data-role="assistant"]').count()) === 1, 'navigation: and one reply');
+        await page.close();
+    });
+
+    // ── `thread`, the name of a chat's one conversation ────────────────────────────────────
+    await scenario('thread', async () => {
+        const one = await open('/thread');
+        const before = turns.length;
+        await chatOf(one.page, 'body').say('About the order');
+        check(turns[before]?.threadId === 'order-42', 'thread: a chat with one conversation sends it under the name the view gave');
+        check(one.problems.length === 0, `thread: no console error or warning${one.problems.length ? `: ${one.problems.join(' | ')}` : ''}`);
+        await one.page.close();
+
+        const many = await open('/thread-list');
+        const a = chatOf(many.page, '#shell-a');
+        const start = turns.length;
+        await a.say('First');
+        await a.newChat.click();
+        await until(async () => !(await a.transcript()).includes('First'));
+        await a.say('Second');
+        const threads = turns.slice(start).map((turn) => turn.threadId);
+        check(threads.length === 2 && threads[0] !== threads[1] && !threads.includes('order-42'), 'thread: with a list, each conversation is its own thread, whatever name the view gave');
+        check(many.problems.some((problem) => problem.includes('each is its own thread')), 'thread: and the console says the name is not used');
+        await many.page.close();
+    });
+
+    // ── Laravel's token, as it stands when the request leaves ──────────────────────────────
+    await scenario('token', async () => {
+        kept.clear();
+        const { page } = await open('/kept', (page) => page.context().addCookies([{ name: 'XSRF-TOKEN', value: 'fresh%3Dtoken', url: ORIGIN }]));
+        const from = calls.length;
+        await chatOf(page, '#shell-a').say('With a cookie');
+        await until(async () => calls.slice(from).some((call) => call.method === 'PUT'));
+        const put = calls.slice(from).find((call) => call.method === 'PUT');
+        check(put?.xsrf === 'fresh=token' && put?.csrf === undefined, "token: the cookie Laravel refreshes is sent, in place of the token the page was drawn with");
         await page.close();
     });
 } finally {

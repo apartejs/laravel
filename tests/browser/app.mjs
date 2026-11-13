@@ -78,6 +78,12 @@ const chatOf = (page) => {
         },
     };
 };
+/** The list has what the server gave it: a count read before that says nothing. */
+const listed = (page) => until(async () => page.evaluate(() => {
+    const chat = document.querySelector('aparte-chat');
+    const list = document.querySelector('aparte-conversation-list');
+    return chat?.hasAttribute('data-aparte-mounted') && list && !list.hasAttribute('loading');
+}));
 const noProblem = (name, problems) => check(problems.length === 0, `${name}: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
 
 try {
@@ -134,7 +140,7 @@ try {
         const { page, problems } = await visit(2);
         const chat = chatOf(page);
         await page.locator('aparte-chat .aparte-ci-editor').waitFor({ state: 'visible', timeout: 30_000 });
-        check((await chat.rows.count()) === 0, 'theirs: someone else sees none of it');
+        check((await listed(page)) && (await chat.rows.count()) === 0, 'theirs: someone else sees none of it');
         check((await page.evaluate(async (id) => (await fetch(`/chat/conversations/${id}`, { headers: { Accept: 'application/json' } })).status, firstId)) === 404, 'theirs: and cannot read it by its id');
         noProblem('theirs', problems.filter((problem) => !problem.includes('404')));
         await page.context().close();
@@ -164,6 +170,25 @@ try {
         await page.locator('[data-aparte-sidebar-toggle]').click();
         check(await until(async () => { const s = await sidebar(); return s.drawer && !s.closed && s.wide && s.inCard; }), 'floating: the list opens inside the card');
         check((await chat.rows.count()) === 2, 'floating: with both conversations');
+
+        // A row's menu is placed against the window: it must stand at its row.
+        const row = chat.rows.filter({ hasText: 'Leave' });
+        await row.hover();
+        await row.locator('.aparte-conv-item__more').click();
+        const menu = page.locator('[role="menu"]');
+        await menu.waitFor({ state: 'visible' });
+        const more = await row.locator('.aparte-conv-item__more').boundingBox();
+        const drawn = await menu.boundingBox();
+        check(Math.abs(drawn.y - (more.y + more.height)) < 16 || Math.abs(drawn.y + drawn.height - more.y) < 16, "floating: a row's menu opens at its row");
+        await page.keyboard.press('Escape');
+        await until(async () => !(await menu.isVisible().catch(() => false)));
+        check(!(await sidebar()).closed, 'floating: Escape closes that menu and leaves the list open');
+        await page.keyboard.press('Escape');
+        check(await until(async () => (await sidebar()).closed), 'floating: Escape again closes the list');
+        check(await page.locator('aparte-launcher').evaluate((el) => el.hasAttribute('open')), 'floating: and leaves the chat open');
+        await page.locator('[data-aparte-sidebar-toggle]').click();
+        await until(async () => !(await sidebar()).closed);
+
         await chat.rows.filter({ hasText: 'Leave' }).locator('.aparte-conv-item__select').click();
         check(await until(async () => (await sidebar()).closed && (await chat.transcript()).includes('First question')), 'floating: choosing one closes the list and opens it');
 

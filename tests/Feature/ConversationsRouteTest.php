@@ -512,9 +512,14 @@ it('gives the floating chat a list, a new-chat control and a header of its own',
     $html = Blade::render('<x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" label="Help" maximizable />');
 
     expect($html)
-        // The card is the launcher's one child, and the chat is inside it.
-        ->toMatch('/<aparte-launcher[^>]*>\s*<div class="aparte-app-shell/')
-        ->toContain('<aparte-conversation-list manage')
+        // The card is the launcher's one child, and the chat is inside it. A section: its
+        // header is the card's, not a second banner for the page.
+        ->toMatch('/<aparte-launcher[^>]*>\s*<section class="aparte-app-shell/')
+        // The list names the chat it drives, which is the chat of this card.
+        ->toContain('<aparte-conversation-list target="aparte-chat-1" manage')
+        ->toMatch('/<aparte-chat\s+id="aparte-chat-1"/')
+        // No breakpoint of the package's: in a card, aparté's sidebar is a drawer by itself.
+        ->not->toContain('breakpoint=')
         ->toContain('data-aparte-sidebar-toggle')
         ->toContain('data-aparte-sidebar-search')
         ->toContain('data-aparte-new-chat')
@@ -531,6 +536,42 @@ it('names the floating chat after its heading when it has one', function () {
         ->toMatch('/data-aparte-title[^>]*>\s*Support\s*</')
         // No maximize control the launcher was not given.
         ->not->toContain('data-aparte-launcher-maximize');
+});
+
+it('draws the line under the title in the card, since the launcher draws no header over it', function () {
+    $this->actingAs(person(1));
+
+    expect(Blade::render('<x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" label="Help" heading="Support" subheading="Replies in a minute" />'))
+        ->toMatch('/data-aparte-title="Support"[^>]*>\s*Support\s*</')
+        ->toMatch('/class="aparte-launcher__subheading">\s*Replies in a minute\s*</');
+});
+
+it('names the conversation with the words the view gave, kept where a page brought back can read them', function () {
+    $this->actingAs(person(1));
+
+    expect(Blade::render('<x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" label="Help" />'))
+        ->toContain('data-aparte-title="Help"');
+});
+
+it('gives the floating chat its list when the view asks, whoever keeps the conversations', function () {
+    // A guest, or an app with a storage of its own: the list shows what the chat keeps.
+    $html = Blade::render('<x-aparte::launcher endpoint="/chat" label="Help" list />');
+
+    expect($html)
+        ->toMatch('/<aparte-launcher[^>]*>\s*<section class="aparte-app-shell/')
+        ->toContain('<aparte-conversation-list target="aparte-chat-1" manage')
+        ->not->toContain('data-aparte-conversations')
+        // `list` is the component's own word: it is not written on the element.
+        ->not->toMatch('/<aparte-launcher[^>]*\slist/');
+});
+
+it('names the chat of the floating card as the view names it', function () {
+    $this->actingAs(person(1));
+
+    expect(Blade::render('<x-aparte::launcher endpoint="/chat" conversations="/chat/conversations" id="help" />'))
+        ->toContain('<aparte-conversation-list target="help" manage')
+        ->toContain('id="help"')
+        ->not->toMatch('/<aparte-launcher[^>]*\sid=/');
 });
 
 it('leaves the floating chat as it was for a guest, and without conversations', function () {

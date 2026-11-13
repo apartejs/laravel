@@ -1,14 +1,8 @@
 /* What the package adds to aparté's own stylesheet. */
 
-/* A list inside the floating chat. Its drawer and the scrim behind it are `position: fixed`,
-   which means the window unless an ancestor contains them: here the chat's card does, so the
-   list opens over the card and not over the page the chat floats on. */
-aparte-launcher > .aparte-app-shell {
-    contain: layout;
-}
-
-/* As a column, the list has its own new-chat control beside the title: the header's would be a
-   second one next to it. In the card the list is closed, and the header's is the one in reach. */
-aparte-launcher > .aparte-app-shell:not(:has(> aparte-sidebar[data-drawer])) > .aparte-app-header [data-aparte-new-chat] {
+/* Beside the chat, as a column, the list has its own new-chat control next to its title: the
+   header's would be a second one. Wherever that column is not showing (in the card, where the
+   list is a closed drawer, or folded away), the header's is the one in reach. */
+aparte-launcher > .aparte-app-shell:has(> aparte-sidebar:not([data-drawer], [collapsed])) > .aparte-app-header [data-aparte-new-chat] {
     display: none;
 }
