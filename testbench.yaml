@@ -11,6 +11,7 @@ providers:
   - Laravel\Ai\AiServiceProvider
   - Aparte\Laravel\AparteServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider
+  - Workbench\App\Providers\AdminPanelProvider
 
 migrations:
   - vendor/laravel/ai/database/migrations
@@ -24,3 +25,5 @@ workbench:
   build:
     - create-sqlite-db
     - migrate:fresh
+    # The panel's own stylesheets and scripts, where it looks for them.
+    - filament:assets

@@ -1,6 +1,7 @@
 // The chat in Chromium against a real Laravel app (`testbench.yaml` and `workbench/`): the package's own routes and
-// views, a session, the CSRF check, the Laravel AI SDK's tables and the package's, in one database. What
-// `smoke.mjs` shows with a server that imitates the controller, this shows with the controller.
+// views, a session, the CSRF check, the Laravel AI SDK's tables and the package's, in one database, and a Filament
+// panel with the package's plugin. What `smoke.mjs` shows with a server that imitates the controller, this shows
+// with the controller.
 //
 //   vendor/bin/testbench workbench:build && vendor/bin/testbench serve --port=8000
 //   APP_URL=http://127.0.0.1:8000 node app.mjs
@@ -209,6 +210,59 @@ try {
         await reload(page);
         check(await until(async () => (await chatOf(page).rows.count()) === 1), 'deleted: and it is gone after a reload');
         noProblem('deleted', problems);
+        await page.context().close();
+    });
+    // What `ApartePlugin::make()->conversations()` gives someone signed in to a Filament panel, in SPA mode.
+    await scenario('panel', async () => {
+        const { page, problems } = await visit(1, '/admin');
+        const sends = [];
+        page.on('request', (request) => { if (request.method() === 'POST' && request.url().endsWith('/admin/aparte-chat')) sends.push(request.url()); });
+        const button = page.locator('aparte-launcher .aparte-launcher__button');
+        const opened = async () => { if ((await page.locator('aparte-launcher').getAttribute('open')) === null) await button.click(); };
+        const titles = (url) => page.evaluate(async (address) => (await (await fetch(address, { headers: { Accept: 'application/json' } })).json()).conversations.map((c) => c.title), url);
+        check(page.url().endsWith('/admin'), `panel: someone signed in reaches the panel (${page.url()})`);
+        check(await until(async () => (await button.count()) === 1 && (await button.isVisible())), 'panel: the chat floats on its page, one button');
+
+        await opened();
+        const chat = chatOf(page);
+        check(await chat.say('From the panel'), 'panel: the agent answers');
+        check(sends.length === 1, `panel: one request for one message (${sends.length})`);
+        check(await until(async () => (await titles('/admin/aparte-chat/conversations')).includes('From the panel')), "panel: the conversation is kept behind the panel's own routes");
+        check(!(await titles('/chat/conversations')).includes('From the panel'), "panel: in a list of the panel's own, not the list of the app's other chat");
+
+        await page.locator('aparte-launcher [data-aparte-sidebar-toggle]').click();
+        check(await until(async () => (await chat.rows.count()) === 1), 'panel: the list opens in the card, with the conversation');
+        await page.keyboard.press('Escape');
+        check(await until(async () => page.evaluate(() => document.querySelector('aparte-launcher aparte-sidebar').hasAttribute('collapsed'))), 'panel: Escape closes the list');
+        check(await page.locator('aparte-launcher').evaluate((el) => el.hasAttribute('open')), 'panel: and leaves the chat open');
+
+        // Another page of the panel, swapped in by wire:navigate: the chat's script is not loaded again.
+        await page.waitForLoadState('networkidle');
+        await page.locator('a[href$="/admin/notes"]').first().click();
+        check(await until(async () => page.url().endsWith('/admin/notes') && (await page.locator('#notes-body').count()) === 1), 'panel: another page of the panel opens');
+        check(await until(async () => (await button.count()) === 1 && (await button.isVisible())), 'panel: with the chat on it, one button');
+        await opened();
+        check(await until(async () => (await chat.transcript()).includes('From the panel')), 'panel: which opens on the conversation that was kept');
+        const before = sends.length;
+        check(await chat.say('From another page'), 'panel: and answers there');
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        check(sends.length === before + 1, `panel: once, not once more for the page that was left (${sends.length - before})`);
+
+        await page.goBack();
+        check(await until(async () => page.url().endsWith('/admin') && (await button.count()) === 1), 'panel: Back brings the first page, with one chat');
+        await opened();
+        const again = sends.length;
+        check(await chat.say('Back on the first page'), 'panel: which still answers');
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        check(sends.length === again + 1, `panel: once (${sends.length - again})`);
+        noProblem('panel', problems);
+        await page.context().close();
+    });
+
+    await scenario('panel, signed out', async () => {
+        const { page } = await visit(null, '/admin');
+        check(page.url().includes('/admin/login'), 'panel: someone not signed in is sent to its sign-in page');
+        check((await page.locator('aparte-launcher').count()) === 0, 'panel: where there is no chat');
         await page.context().close();
     });
 } finally {
