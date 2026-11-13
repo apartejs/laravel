@@ -8,4 +8,14 @@ return [
     // with onAparteSetup (see the README, "Plugins").
     'assets' => env('APARTE_ASSETS', 'bundle'),
 
+    // The conversations a chat keeps in your database, behind the routes of
+    // Route::aparteConversations() (see the README, "Conversations in your database").
+    'conversations' => [
+        'table' => 'aparte_conversations',
+        // What one conversation may weigh, in bytes, as the browser sends it.
+        'max_bytes' => 2 * 1024 * 1024,
+        // How many the list gives, the most recent first.
+        'list' => 200,
+    ],
+
 ];

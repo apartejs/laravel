@@ -18,4 +18,17 @@ class AparteProtocol extends AgentUserInteractionProtocol
             parent::interrupts($event),
         );
     }
+
+    /**
+     * The SDK ends a run with the ids of the messages it stored. AG-UI 1.0 describes no such
+     * field on RUN_FINISHED, and aparté's runner drops each with a warning in the browser's
+     * console: two per reply, about something the chat does not read.
+     */
+    protected function runFinishedPart(array $attributes = []): array
+    {
+        $part = parent::runFinishedPart($attributes);
+        unset($part['messageId'], $part['userMessageId']);
+
+        return $part;
+    }
 }

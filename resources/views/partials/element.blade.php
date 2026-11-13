@@ -1,17 +1,18 @@
 @php
     $composed = isset($emptyState) || isset($aboveComposer) || isset($toolbar);
 
-    // By position on the page, per request: the same chat keeps its id, and its conversation, from one load to the next.
-    $position = request()->attributes->get('aparte.chats', 0) + 1;
-    request()->attributes->set('aparte.chats', $position);
+    // The id the view gave, else its position on the page (a view that drew the list first already has it).
+    $chatId ??= \Aparte\Laravel\AparteServiceProvider::chatId($id ?? null);
 @endphp
 
 <aparte-chat
-    id="aparte-chat-{{ $position }}"
-    data-aparte-endpoint="{{ url($endpoint) }}"
+    id="{{ $chatId }}"
+    data-aparte-endpoint="{{ ($endpoint ?? null) ? url($endpoint) : '' }}"
     data-aparte-csrf="{{ csrf_token() }}"
     data-aparte-scope="{{ auth()->id() }}"
     @if ($thread ?? null) data-aparte-thread="{{ $thread }}" @endif
+    {{-- Kept on the server for someone signed in; a guest's conversations stay in the tab. --}}
+    @if (($conversations ?? null) && auth()->check()) data-aparte-conversations="{{ url($conversations) }}" @endif
     @if ($followDarkClass ?? false) data-aparte-follow-dark @endif
     @if ($fill ?? false) style="height: 100%" @endif
 >

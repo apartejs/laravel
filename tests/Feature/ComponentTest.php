@@ -7,9 +7,19 @@ it('renders the chat, shielded from Livewire', function () {
 
     expect($html)
         ->toContain('<aparte-chat')
-        ->toContain('data-aparte-endpoint="http://localhost/chat"')
+        ->toContain('data-aparte-endpoint="'.url('/chat').'"')
         ->toContain('wire:ignore')
         ->toContain('class="h-96"');
+});
+
+it('lets a chat have no endpoint, for an app that brings its own runner', function () {
+    expect(Blade::render('<x-aparte::chat />'))
+        ->toContain('<aparte-chat')
+        ->toContain('data-aparte-endpoint=""');
+
+    expect(Blade::render('<x-aparte::launcher label="Help" />'))
+        ->toMatch('/<aparte-launcher[^>]*>\s*<aparte-chat/')
+        ->toContain('data-aparte-endpoint=""');
 });
 
 it('passes a thread the page chose', function () {
@@ -41,6 +51,17 @@ it('numbers the chats of a page by position', function () {
     $html = Blade::render('<x-aparte::chat endpoint="/a" /><x-aparte::chat endpoint="/b" />');
 
     expect($html)->toContain('id="aparte-chat-1"')->toContain('id="aparte-chat-2"');
+});
+
+it('gives a chat the id its view names, on the chat itself', function () {
+    // What `for="support"` on a list or a button looks for is the chat, not the block around it.
+    $html = Blade::render('<x-aparte::chat endpoint="/a" id="support" /><x-aparte::chat endpoint="/b" />');
+
+    expect($html)
+        ->toMatch('/<aparte-chat\s+id="support"/')
+        ->not->toMatch('/<div[^>]*id="support"/')
+        // The others keep the number of their place on the page.
+        ->toContain('id="aparte-chat-2"');
 });
 
 it('leaves the composition to the chat when no slot is used', function () {

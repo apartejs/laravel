@@ -117,3 +117,22 @@ it('caps what a refusal can carry', function () {
 
     TestAgent::assertPrompted(fn (AgentPrompt $prompt) => mb_strlen($prompt->approvalDecisions->get('call-1')->result) < 2100);
 });
+
+it('ends a run with only what AG-UI describes', function () {
+    TestAgent::fake(['Hi']);
+
+    $content = $this->actingAs(makeUser(1))->postJson('/chat', runInput())->assertOk()->streamedContent();
+    $finished = collect(explode("\n", $content))->first(fn (string $line) => str_contains($line, '"RUN_FINISHED"'));
+
+    // The SDK adds the ids of the messages it stored. AG-UI 1.0 has no such field on RUN_FINISHED,
+    // and the chat's runner drops each with a warning in the browser's console: two per reply, for
+    // nothing. `metadata` is AG-UI's own place for what it does not describe: they may stay there
+    // (the SDK puts them there too since 1.4).
+    expect($finished)->not->toBeNull();
+    $event = json_decode(substr($finished, strlen('data: ')), true);
+
+    expect($event)->toBeArray()
+        ->and($event['type'])->toBe('RUN_FINISHED')
+        ->and($event)->not->toHaveKey('messageId')
+        ->and($event)->not->toHaveKey('userMessageId');
+});
