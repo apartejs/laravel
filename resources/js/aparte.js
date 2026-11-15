@@ -510,6 +510,9 @@ async function mount(chat) {
 
     const config = new AparteConfig();
     attachConfig(chat, config);
+    // A link to this site follows in the page, like the rest of the Laravel app; a link to another
+    // site opens in a new tab. aparté's own default opens every link in a new tab.
+    config.setLinkTarget('external-only');
     setupMarkedStreamingProvider(undefined, config);
 
     // What the chat runs on: the package's own first, for the app's setup to keep or replace.

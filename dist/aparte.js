@@ -21191,7 +21191,7 @@ async function ky(n) {
     aparteScope: r,
     aparteConversations: i
   } = n.dataset, a = new xr();
-  Al(n, a), hy(void 0, a);
+  Al(n, a), a.setLinkTarget("external-only"), hy(void 0, a);
   let o;
   const l = dt();
   let c = {};
