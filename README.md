@@ -364,6 +364,21 @@ onAparteSetup((config, chat, options) => {
 - A chat the package does not answer needs no endpoint: `<x-aparte::chat style="height: 32rem" />`.
 - Both are read once, when the chat starts.
 
+## When the assistant can't answer
+
+The chat tells the person, in their language, that the assistant couldn't answer. What went wrong is in two places:
+
+- **Your log.** An exception while the agent runs (a missing API key, a model the provider does not know, a rate limit, an
+  error in your agent's code) is reported like any other exception of your app: in `storage/logs/laravel.log` by default,
+  with its stack trace, or wherever your app reports them.
+- **The browser's console,** as `[aparte] A turn failed (PROVIDER_ERROR): …`. With `APP_DEBUG=true`, the line names the
+  exception and its message. Without it, the line only says that the run failed: an exception's message can name a
+  table, a path or a key, and production pages do not show it.
+
+An error the provider sends in its stream, such as a model that is overloaded, reaches the console as the provider wrote
+it, debug mode or not, and the SDK does not write it to the log. To change what the card says, see aparté's
+[error card](https://apartejs.dev/components/error/).
+
 ## Good to know
 
 - **The look** is set with aparté's [CSS variables](https://apartejs.dev/guides/theming/). It follows the system's light or dark

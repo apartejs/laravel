@@ -2,6 +2,7 @@
 
 use Aparte\Laravel\Tests\Fixtures\TestAgent;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Exceptions;
 use Laravel\Ai\Models\Conversation;
 use Laravel\Ai\Prompts\AgentPrompt;
 
@@ -135,4 +136,38 @@ it('ends a run with only what AG-UI describes', function () {
         ->and($event['type'])->toBe('RUN_FINISHED')
         ->and($event)->not->toHaveKey('messageId')
         ->and($event)->not->toHaveKey('userMessageId');
+});
+
+function runError(string $content): array
+{
+    $line = collect(explode("\n", $content))->first(fn (string $line) => str_contains($line, '"RUN_ERROR"'));
+    expect($line)->not->toBeNull();
+
+    return json_decode(substr($line, strlen('data: ')), true);
+}
+
+it('says what failed while the app is in debug mode', function () {
+    // Laravel's own rule: with APP_DEBUG on, a request that fails shows its exception.
+    config(['app.debug' => true]);
+    Exceptions::fake();
+    TestAgent::fake(fn () => throw new RuntimeException('No API key for [openai].'));
+
+    $content = $this->postJson('/chat', runInput())->assertOk()->streamedContent();
+
+    expect(runError($content)['message'])->toBe('RuntimeException: No API key for [openai].');
+    Exceptions::assertReported(fn (RuntimeException $e) => $e->getMessage() === 'No API key for [openai].');
+});
+
+it('keeps what failed to the log outside debug mode', function () {
+    // An exception's message can name a table, a path or a key: in production the browser reads
+    // only that the run failed, and the log has the rest.
+    config(['app.debug' => false]);
+    Exceptions::fake();
+    TestAgent::fake(fn () => throw new RuntimeException('No API key for [openai].'));
+
+    $content = $this->postJson('/chat', runInput())->assertOk()->streamedContent();
+
+    expect(runError($content)['message'])->toBe('An error occurred.')
+        ->and($content)->not->toContain('No API key');
+    Exceptions::assertReported(fn (RuntimeException $e) => $e->getMessage() === 'No API key for [openai].');
 });
