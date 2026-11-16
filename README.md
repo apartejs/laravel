@@ -366,17 +366,97 @@ onAparteSetup((config, chat, options) => {
 
 ## When the assistant can't answer
 
-The chat tells the person, in their language, that the assistant couldn't answer. What went wrong is in two places:
+The chat tells the person, in their language, why the assistant couldn't answer, when the exception says it:
+
+| The run ended on | The card says |
+| --- | --- |
+| a provider's rate limit (`RateLimitedException`), Laravel's throttle, `abort(429)` | Too many requests right now. Try again in a moment. |
+| a refusal: `AuthorizationException`, `AuthenticationException`, `abort(401)`, `abort(403)` | The assistant isn't allowed to answer right now. |
+| a provider with no credits left (`InsufficientCreditsException`) | The assistant couldn't answer this request. |
+| a provider out of reach (`ProviderConnectionException`) | The assistant can't be reached right now. Try again in a moment. |
+| an overloaded provider (`ProviderOverloadedException`), `abort(503)`, any other exception | The assistant couldn't answer. Try again in a moment. |
+
+The browser gets one of aparté's [error codes](https://apartejs.dev/components/error/#what-the-card-says) (`USAGE_RATE_LIMIT`,
+`CONFIG_INVALID_KEY`…) and the card says its sentence. What went wrong is in two places:
 
 - **Your log.** An exception while the agent runs (a missing API key, a model the provider does not know, a rate limit, an
   error in your agent's code) is reported like any other exception of your app: in `storage/logs/laravel.log` by default,
   with its stack trace, or wherever your app reports them.
-- **The browser's console,** as `[aparte] A turn failed (PROVIDER_ERROR): …`. With `APP_DEBUG=true`, the line names the
+- **The browser's console,** as `[aparte] A turn failed (USAGE_RATE_LIMIT): …`. With `APP_DEBUG=true`, the line names the
   exception and its message. Without it, the line only says that the run failed: an exception's message can name a
   table, a path or a key, and production pages do not show it.
 
 An error the provider sends in its stream, such as a model that is overloaded, reaches the console as the provider wrote
-it, debug mode or not, and the SDK does not write it to the log. To change what the card says, see aparté's
+it, debug mode or not, and the SDK does not write it to the log.
+
+### Deciding what the browser learns
+
+`AparteProtocol::describeErrorsUsing()` decides it, in a service provider's `boot()`. It receives the exception, the
+request, and what the package would send (`message`, and `code` when the exception names one), and returns the keys it
+changes, or `null` to keep them:
+
+```php
+use Aparte\Laravel\Streaming\AparteProtocol;
+use Filament\Facades\Filament;
+use Illuminate\Http\Request;
+
+AparteProtocol::describeErrorsUsing(function (Throwable $e, Request $request, array $default) {
+    // People who can open the admin panel see the exception in their console, in production too.
+    if ($request->user()?->canAccessPanel(Filament::getPanel('admin'))) {
+        return ['message' => get_class($e).': '.$e->getMessage()];
+    }
+
+    // An exception of your app, read as one of aparté's codes: the card says "Too many requests right now…".
+    if ($e instanceof App\Exceptions\DailyQuotaReached) {
+        return ['code' => 'USAGE_RATE_LIMIT'];
+    }
+
+    return null;
+});
+```
+
+- What you return reaches the browser and is **stored with the conversation**: keep secrets out of it.
+- A `code` set to `null` is not sent. `USAGE_CONTEXT_EXCEEDED` makes a chat that has a compactor shorten the
+  conversation and send it again.
+- A function that throws is reported, and the package sends its own.
+
+### Changing what the card says
+
+Each chat sends `aparte:setup` before it starts, with its config, so a plain script of the page can change it, with no
+build (`onAparteSetup` and [Vite mode](#plugins) are only needed to add aparté's plugins). The sentence of a code:
+
+```html
+<script>
+document.addEventListener('aparte:setup', ({ detail: { config } }) => {
+    config.extendLocale({ errorRateLimited: "You've reached today's limit. It resets at midnight." });
+});
+</script>
+```
+
+Or the whole card, here with the message under the sentence for the people `describeErrorsUsing` gives it to:
+
+```html
+<script>
+document.addEventListener('aparte:setup', ({ detail: { config } }) => {
+    config.setErrorRenderer(({ sentence, message }) => {
+        const card = document.createElement('div');
+        card.className = 'aparte-alert aparte-alert--danger';
+        card.append(sentence ?? message);
+        if (message !== 'An error occurred.') {
+            const detail = document.createElement('pre');
+            detail.textContent = message;
+            card.append(detail);
+        }
+        return card;
+    });
+});
+</script>
+```
+
+Put the script anywhere in the page's HTML, in your layout or a `@push`; one added after the page has loaded comes too
+late. In a Filament panel, a render hook puts it there:
+`$panel->renderHook(PanelsRenderHook::BODY_END, fn (): string => view('chat-setup')->render())`. Build the card with
+`textContent`, as here, never with the message in HTML. The rest of the card is aparté's
 [error card](https://apartejs.dev/components/error/).
 
 ## Good to know
