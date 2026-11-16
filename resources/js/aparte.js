@@ -380,6 +380,9 @@ const setups = [];
  * stops. Works when your app builds this file with its own Vite (`APARTE_ASSETS=vite`), so that
  * what you add and the chat share one copy of aparté. Call it at the top level of the entry
  * that imports this file, and keep it synchronous: a chat starts once that entry has run.
+ * To change the config only (the error card, a sentence, a tool's label), no build is needed:
+ * each chat also sends `aparte:setup` before it starts, with `{ config, chat, options }` as its
+ * `detail`, which a script of the page can listen for on `document`.
  */
 export function onAparteSetup(setup) {
     setups.push(setup);
@@ -559,6 +562,10 @@ async function mount(chat) {
     const entry = { chat, config, options, stops: [], stopped: false, storage: null };
     // The app's own, last: aparté's plugins and its own cards, before anything is drawn.
     entry.stops = setups.map((setup) => runSetup(setup, config, chat, options));
+    // The same door for a page that builds nothing, the package's own file included: any script
+    // of the page listens for it, as for Livewire's `livewire:init`. A listener that throws is
+    // reported by the browser, and the chat goes on.
+    chat.dispatchEvent(new CustomEvent('aparte:setup', { bubbles: true, detail: { config, chat, options } }));
     entry.storage = options.storage;
     running.push(entry);
 

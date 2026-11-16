@@ -108,10 +108,31 @@ const pages = {
     });
 </script>
 ${chat('aparte-chat-1', '')}</body></html>`,
+    // A run the server ends with one of aparté's codes: the card says its sentence.
+    '/failing': `${head}${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
+    // The same, on a page that builds nothing: a plain script listens for `aparte:setup` and
+    // draws the card with the message under the sentence.
+    '/failing-shown': `${head}
+<script>
+    window.setups = [];
+    document.addEventListener('aparte:setup', ({ detail: { config, chat } }) => {
+        window.setups.push(chat.id);
+        config.setErrorRenderer(({ sentence, message }) => {
+            const card = document.createElement('div');
+            card.className = 'shown-error';
+            card.append(sentence ?? message);
+            const detail = document.createElement('pre');
+            detail.textContent = message;
+            card.append(detail);
+            return card;
+        });
+    });
+</script>
+${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
 };
 
 const server = createServer((req, res) => {
-    if (req.method === 'POST' && (req.url === '/chat' || req.url === '/turns')) {
+    if (req.method === 'POST' && (req.url === '/chat' || req.url === '/turns' || req.url === '/fails')) {
         let body = '';
         req.on('data', (chunk) => (body += chunk));
         req.on('end', () => {
@@ -120,6 +141,13 @@ const server = createServer((req, res) => {
             const deltas = req.url === '/chat' ? ['**Hello** from ', 'the built chat'] : [`Reply ${turns.length + 1}`];
             (req.url === '/chat' ? posts : turns).push({ csrf: req.headers['x-csrf-token'], threadId: input.threadId });
             res.writeHead(200, { 'Content-Type': 'text/event-stream' });
+            if (req.url === '/fails') {
+                // What AparteProtocol sends for a rate limit, the app's description having named the exception.
+                return res.end(
+                    event({ type: 'RUN_STARTED', threadId: input.threadId, runId: input.runId })
+                    + event({ type: 'RUN_ERROR', message: 'RuntimeException: Quota of user 42.', code: 'USAGE_RATE_LIMIT' }),
+                );
+            }
             res.end(
                 event({ type: 'RUN_STARTED', threadId: input.threadId, runId: input.runId })
                 + event({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' })
@@ -552,6 +580,33 @@ try {
         const put = calls.slice(from).find((call) => call.method === 'PUT');
         check(put?.xsrf === 'fresh=token' && put?.csrf === undefined, "token: the cookie Laravel refreshes is sent, in place of the token the page was drawn with");
         await page.close();
+    });
+
+    // ── A run that fails with one of aparté's codes, and a page that draws the card itself ──
+    await scenario('errors', async () => {
+        const fail = async (path) => {
+            const opened = await open(path);
+            const editor = opened.page.locator('aparte-chat .aparte-ci-editor');
+            await editor.waitFor({ state: 'visible', timeout: 20_000 });
+            await editor.click();
+            await opened.page.keyboard.type('How many left?');
+            await opened.page.keyboard.press('Enter');
+            return opened;
+        };
+
+        const plain = await fail('/failing');
+        const card = plain.page.locator('aparte-chat .aparte-segment-error');
+        check(await until(async () => ((await card.textContent()) ?? '').includes('Too many requests right now')), "errors: the card says the code's sentence, a rate limit as one");
+        check(!((await card.textContent()) ?? '').includes('Quota of user 42'), 'errors: and not the message, which goes to the console');
+        check(plain.problems.some((problem) => problem.includes('A turn failed (USAGE_RATE_LIMIT)') && problem.includes('Quota of user 42')), 'errors: the console names the code and the message');
+        await plain.page.close();
+
+        const shown = await fail('/failing-shown');
+        check((await shown.page.evaluate(() => window.setups)).join() === 'aparte-chat-1', 'errors: aparte:setup reaches a plain script of the page, once per chat, with its config');
+        const custom = shown.page.locator('aparte-chat .shown-error');
+        check(await until(async () => ((await custom.textContent()) ?? '').includes('Too many requests right now')), "errors: the page's own card draws the sentence");
+        check(((await custom.locator('pre').textContent()) ?? '') === 'RuntimeException: Quota of user 42.', 'errors: and the message under it');
+        await shown.page.close();
     });
 } finally {
     await browser.close();
