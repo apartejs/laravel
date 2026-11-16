@@ -1,10 +1,14 @@
 <?php
 
+use Aparte\Laravel\Streaming\AparteProtocol;
 use Aparte\Laravel\Tests\Fixtures\TestAgent;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Exceptions;
+use Laravel\Ai\Exceptions\RateLimitedException;
 use Laravel\Ai\Models\Conversation;
 use Laravel\Ai\Prompts\AgentPrompt;
+
+afterEach(fn () => AparteProtocol::describeErrorsUsing(null));
 
 function runInput(array $overrides = []): array
 {
@@ -170,4 +174,30 @@ it('keeps what failed to the log outside debug mode', function () {
     expect(runError($content)['message'])->toBe('An error occurred.')
         ->and($content)->not->toContain('No API key');
     Exceptions::assertReported(fn (RuntimeException $e) => $e->getMessage() === 'No API key for [openai].');
+});
+
+it("tells the browser a provider's rate limit by aparté's code, the message still masked", function () {
+    config(['app.debug' => false]);
+    Exceptions::fake();
+    TestAgent::fake(fn () => throw RateLimitedException::forProvider('openai'));
+
+    $content = $this->postJson('/chat', runInput())->assertOk()->streamedContent();
+
+    expect(runError($content))->toMatchArray(['message' => 'An error occurred.', 'code' => 'USAGE_RATE_LIMIT']);
+});
+
+it('hands the request to the description, so the app can tell one person from another', function () {
+    config(['app.debug' => false]);
+    Exceptions::fake();
+    AparteProtocol::describeErrorsUsing(fn (Throwable $e, Illuminate\Http\Request $request) => $request->user()?->getKey() === 1
+        ? ['message' => get_class($e).': '.$e->getMessage()]
+        : null);
+    TestAgent::fake(fn () => throw new RuntimeException('No API key for [openai].'));
+
+    $trusted = $this->actingAs(makeUser(1))->postJson('/chat', runInput())->assertOk()->streamedContent();
+    $other = $this->actingAs(makeUser(2))->postJson('/chat', runInput(['threadId' => 'thread-2']))->assertOk()->streamedContent();
+
+    expect(runError($trusted)['message'])->toBe('RuntimeException: No API key for [openai].')
+        ->and(runError($other)['message'])->toBe('An error occurred.')
+        ->and($other)->not->toContain('No API key');
 });

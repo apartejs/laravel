@@ -44,7 +44,7 @@ class ChatController
         return $instance
             ->continue($threadId, as: $user)
             ->stream($this->decisions($request) ?? $chat)
-            ->usingProtocol(new AparteProtocol($threadId, $chat->runId() ?: null));
+            ->usingProtocol(new AparteProtocol($threadId, $chat->runId() ?: null, $request));
     }
 
     /**
