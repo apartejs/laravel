@@ -39,7 +39,7 @@ class ChatController
 
         // Someone of the team holds the conversation: no assistant answers. The message is kept
         // for them (the browser was told a moment too late to send it to the people route).
-        if (People::holder($threadId) !== null) {
+        if (People::holder($threadId) !== null || People::wanted($threadId) !== null) {
             $this->heard($request, $threadId, $chat->message()?->content);
             People::announce($threadId, ['type' => 'auto-reply', 'on' => false]);
 
@@ -51,6 +51,8 @@ class ChatController
         if (! method_exists($instance, 'continue')) {
             throw new LogicException($agent.' must use the RemembersConversations trait: the chat resumes a conversation on every turn.');
         }
+
+        People::answering($threadId);
 
         return $instance
             ->continue($threadId, as: $user)
