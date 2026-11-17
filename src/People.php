@@ -7,9 +7,11 @@ use Aparte\Laravel\Conversations\DatabaseConversationRepository;
 use Aparte\Laravel\Conversations\StoredConversation;
 use Aparte\Laravel\Events\ConversationChanged;
 use Aparte\Laravel\Events\PersonWrote;
+use Aparte\Laravel\Events\SomeoneWanted;
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -29,6 +31,9 @@ final class People
 {
     /** @var (Closure(string): (array<string, mixed>|null))|null */
     private static ?Closure $heldBy = null;
+
+    /** The conversation the chat route is answering right now, for a tool to know where it runs. */
+    private static ?string $answering = null;
 
     /**
      * Tell the package who holds a conversation: the callback receives its id and returns the
@@ -95,6 +100,7 @@ final class People
     public static function takeOver(string $conversationId, array $author, ?string $notice = null): void
     {
         $author = self::author($author);
+        Cache::forget(self::wantedKey($conversationId));
 
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);
         self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? "{$author['name']} joined the conversation"]));
@@ -118,8 +124,48 @@ final class People
      */
     public static function handBack(string $conversationId, ?string $notice = null): void
     {
+        Cache::forget(self::wantedKey($conversationId));
         self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? 'The assistant is back']));
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => true]);
+    }
+
+    /**
+     * The assistant hands the conversation to your team: it stops answering, the chat draws a
+     * notice, and SomeoneWanted tells your desk why. It waits until someone takes it over
+     * (takeOver) or hands it back (handBack). The AskForSomeone tool calls this.
+     *
+     * @param  string|null  $notice  the line the chat draws; "Someone of the team will answer you here" by default
+     */
+    public static function want(string $conversationId, string $reason, ?string $notice = null): void
+    {
+        Cache::forever(self::wantedKey($conversationId), $reason);
+
+        self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);
+        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? 'Someone of the team will answer you here']));
+        Event::dispatch(new SomeoneWanted($conversationId, $reason));
+    }
+
+    /** Why the conversation waits for someone of your team, or null when it does not. */
+    public static function wanted(string $conversationId): ?string
+    {
+        $reason = Cache::get(self::wantedKey($conversationId));
+
+        return is_string($reason) ? $reason : null;
+    }
+
+    /** The chat route says which conversation it answers, for the duration of the answer. */
+    public static function answering(?string $conversationId = null): ?string
+    {
+        if (func_num_args() > 0) {
+            self::$answering = $conversationId;
+        }
+
+        return self::$answering;
+    }
+
+    private static function wantedKey(string $conversationId): string
+    {
+        return 'aparte.people.wanted.'.$conversationId;
     }
 
     /**

@@ -361,6 +361,27 @@ conversation, sent a moment before the page heard of the takeover, is kept for y
   `onAparteSetup((config, chat, options) => { options.people.subscribe = (id, onChange, channel) => { /* … */ return stop; }; })`,
   where `channel` is `{ name, private }` and `onChange` takes what `ConversationChanged` broadcasts.
 
+### When the assistant hands over
+
+Give your agent the `AskForSomeone` tool and the assistant can call your team itself: when the visitor asks for a
+person, or when it cannot help. The chat says someone will answer, the assistant goes quiet, and your desk hears why:
+
+```php
+use Aparte\Laravel\Tools\AskForSomeone;
+
+public function tools(): iterable
+{
+    return [new AskForSomeone(when: 'Use it for refunds, or when the user asks for a person.')];
+}
+
+// AppServiceProvider::boot()
+Event::listen(SomeoneWanted::class, fn (SomeoneWanted $e) => /* notify your team: $e->conversationId, $e->reason */);
+```
+
+`People::wanted($id)` gives the reason while the conversation waits (your desk's "to take" list). It stops waiting
+when someone takes it over or hands it back. `People::want($id, $reason)` does the same from your own code.
+
+
 ## Plugins
 
 The package serves a built chat: Markdown, tool calls and approvals. To add aparté's
