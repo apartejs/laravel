@@ -3,6 +3,7 @@
 namespace Aparte\Laravel\Http;
 
 use Aparte\Laravel\Conversations\ConversationRepository;
+use Aparte\Laravel\Conversations\StoredConversation;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -25,8 +26,6 @@ class ConversationsController
     private const CHANGE_BYTES = 8 * 1024;
 
     /** What the list shows of a title, and what a rename keeps of one. */
-    private const TITLE_LENGTH = 255;
-
     /** The largest whole number the chat can write: JavaScript's, which every column here holds. */
     private const LATEST_DATE = 9_007_199_254_740_991;
 
@@ -55,7 +54,7 @@ class ConversationsController
         $data = json_decode($json);
         abort_unless($this->isConversation($data, $conversation), 422, 'This is not a conversation of the chat.');
 
-        $this->conversations()->save($owner, $this->scope($request), $conversation, $json, $this->metaOf($data));
+        $this->conversations()->save($owner, $this->scope($request), $conversation, $json, StoredConversation::meta($data));
 
         return response()->noContent();
     }
@@ -77,7 +76,7 @@ class ConversationsController
                 if ($value === null) {
                     unset($data->{$field});
                 } else {
-                    $data->{$field} = is_string($value) ? mb_substr($value, 0, self::TITLE_LENGTH) : (int) $value;
+                    $data->{$field} = is_string($value) ? mb_substr($value, 0, StoredConversation::TITLE_LENGTH) : (int) $value;
                 }
             }
             // A title someone typed is theirs: the chat no longer re-titles it from the first message.
@@ -85,7 +84,7 @@ class ConversationsController
                 $data->autoTitle = false;
             }
 
-            return [$this->encode($data), $this->metaOf($data)];
+            return [StoredConversation::encode($data), StoredConversation::meta($data)];
         });
         abort_unless($changed, 404);
 
@@ -184,41 +183,6 @@ class ConversationsController
     private function isVersionOrAbsent(mixed $value): bool
     {
         return $value === null || (is_int($value) && $value >= 0 && $value <= 32_767);
-    }
-
-    /**
-     * What the list shows of a conversation.
-     *
-     * @return array{title: string, createdAt: int, updatedAt: int, pinnedAt: int|null, archivedAt: int|null, schemaVersion: int|null}
-     */
-    private function metaOf(stdClass $data): array
-    {
-        $number = fn (string $field): ?int => isset($data->{$field}) ? (int) $data->{$field} : null;
-        // A title is one line of text: what a database refuses in one (a NUL byte, on Postgres)
-        // is a space in the list, and what is kept of the conversation keeps it as it was sent.
-        $title = trim((string) preg_replace('/[\x00-\x1F\x7F]+/u', ' ', (string) ($data->title ?? '')));
-
-        return [
-            'title' => mb_substr($title, 0, self::TITLE_LENGTH),
-            'createdAt' => (int) $data->createdAt,
-            'updatedAt' => (int) $data->updatedAt,
-            'pinnedAt' => $number('pinnedAt'),
-            'archivedAt' => $number('archivedAt'),
-            'schemaVersion' => $number('schemaVersion'),
-        ];
-    }
-
-    /** The conversation as JSON again, numbers written as PHP read them whatever the host's precision. */
-    private function encode(stdClass $data): string
-    {
-        $precision = ini_set('serialize_precision', '-1');
-        try {
-            return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION | JSON_THROW_ON_ERROR);
-        } finally {
-            if ($precision !== false) {
-                ini_set('serialize_precision', $precision);
-            }
-        }
     }
 
     /** The model's memory of that conversation, when the Laravel AI SDK keeps one for this person. */

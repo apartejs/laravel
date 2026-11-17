@@ -2,6 +2,10 @@
 
 namespace Aparte\Laravel;
 
+use Aparte\Laravel\Conversations\ConversationRepository;
+use Aparte\Laravel\Conversations\DatabaseConversationRepository;
+use Aparte\Laravel\Conversations\StoredConversation;
+use Aparte\Laravel\Events\ConversationChanged;
 use Aparte\Laravel\Events\PersonWrote;
 use Closure;
 use Illuminate\Support\Facades\Event;
@@ -70,11 +74,97 @@ final class People
     public static function post(string $conversationId, array $author, string $text): string
     {
         $author = self::author($author);
-        $id = (string) Str::uuid7();
+        $message = self::message(['author' => $author, 'content' => $text]);
 
         self::remember($conversationId, 'assistant', "{$author['name']}: {$text}", $author);
+        self::show($conversationId, $message);
 
-        return $id;
+        return $message['id'];
+    }
+
+    /**
+     * Someone of your team takes the conversation over: the chat stops the assistant from
+     * answering in it, and draws a notice. Who holds it stays yours to keep (heldBy): update it
+     * first, then call this.
+     *
+     * @param  array<string, mixed>  $author
+     * @param  string|null  $notice  the line the chat draws; "Marie joined the conversation" by default
+     */
+    public static function takeOver(string $conversationId, array $author, ?string $notice = null): void
+    {
+        $author = self::author($author);
+
+        self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);
+        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? "{$author['name']} joined the conversation"]));
+    }
+
+    /**
+     * A short line under a message of the conversation — "Read by Marie". The id is the one the
+     * chat gave the message (`messageId` of PersonWrote, `detail.messageId` in the browser).
+     */
+    public static function read(string $conversationId, string $messageId, string $note): void
+    {
+        self::store($conversationId, fn (string $json) => StoredConversation::withChange($json, $messageId, ['note' => $note]));
+        self::announce($conversationId, ['type' => 'note', 'messageId' => $messageId, 'note' => $note]);
+    }
+
+    /**
+     * The conversation goes back to the assistant: a notice, and the assistant answers the
+     * next message, having read what was written meanwhile.
+     *
+     * @param  string|null  $notice  the line the chat draws; "The assistant is back" by default
+     */
+    public static function handBack(string $conversationId, ?string $notice = null): void
+    {
+        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? 'The assistant is back']));
+        self::announce($conversationId, ['type' => 'auto-reply', 'on' => true]);
+    }
+
+    /**
+     * Tell the chat now, on the conversation's private channel.
+     *
+     * @param  array<string, mixed>  $change
+     */
+    public static function announce(string $conversationId, array $change): void
+    {
+        Event::dispatch(new ConversationChanged($conversationId, $change));
+    }
+
+    /**
+     * An aparté message on the assistant's side.
+     *
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
+     */
+    private static function message(array $fields): array
+    {
+        return ['id' => (string) Str::uuid7(), 'role' => 'assistant', ...$fields, 'timestamp' => (int) floor(microtime(true) * 1000)];
+    }
+
+    /**
+     * A message in the conversation the chat reopens, then on screen now.
+     *
+     * @param  array<string, mixed>  $message
+     */
+    private static function show(string $conversationId, array $message): void
+    {
+        self::store($conversationId, fn (string $json) => StoredConversation::withMessage($json, $message));
+        self::announce($conversationId, ['type' => 'message', 'message' => $message]);
+    }
+
+    /**
+     * Change the conversation as the package's repository keeps it, for its participant. A
+     * repository of your own is not written to: keep it from PersonWrote and ConversationChanged.
+     */
+    private static function store(string $conversationId, Closure $change): void
+    {
+        $repository = app(ConversationRepository::class);
+        $conversation = Conversation::find($conversationId);
+
+        // A guest's conversations stay in their browser: there is nothing kept to write to.
+        if ($repository instanceof DatabaseConversationRepository && $conversation?->participant_type !== null) {
+            $repository->changeInEveryScope($conversation->participant_type, (string) $conversation->participant_id, $conversationId, $change);
+        }
     }
 
     /**

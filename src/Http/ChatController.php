@@ -41,6 +41,7 @@ class ChatController
         // for them (the browser was told a moment too late to send it to the people route).
         if (People::holder($threadId) !== null) {
             $this->heard($request, $threadId, $chat->message()?->content);
+            People::announce($threadId, ['type' => 'auto-reply', 'on' => false]);
 
             return (new AparteProtocol($threadId, $chat->runId() ?: null, $request))->nothingToSay();
         }

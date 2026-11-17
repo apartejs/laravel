@@ -1,0 +1,47 @@
+{
+  "id": "thread-1",
+  "title": "Where is my order?",
+  "createdAt": 1794880555302,
+  "updatedAt": 1794880555307,
+  "messages": [
+    {
+      "id": "u1",
+      "role": "user",
+      "content": "Where is my order?",
+      "timestamp": 1763340000000
+    },
+    {
+      "id": "a1",
+      "role": "assistant",
+      "content": "Let me check that for you.",
+      "status": "completed",
+      "timestamp": 1763340001000
+    }
+  ],
+  "schemaVersion": 2,
+  "autoTitle": true,
+  "tree": {
+    "headId": "a1",
+    "messages": [
+      {
+        "message": {
+          "id": "u1",
+          "role": "user",
+          "content": "Where is my order?",
+          "timestamp": 1763340000000
+        },
+        "parentId": null
+      },
+      {
+        "message": {
+          "id": "a1",
+          "role": "assistant",
+          "content": "Let me check that for you.",
+          "status": "completed",
+          "timestamp": 1763340001000
+        },
+        "parentId": "u1"
+      }
+    ]
+  }
+}
