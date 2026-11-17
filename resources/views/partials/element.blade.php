@@ -13,6 +13,8 @@
     @if ($thread ?? null) data-aparte-thread="{{ $thread }}" @endif
     {{-- Kept on the server for someone signed in; a guest's conversations stay in the tab. --}}
     @if (($conversations ?? null) && auth()->check()) data-aparte-conversations="{{ url($conversations) }}" @endif
+    {{-- Someone of the team can take the conversation over (People): who holds it, and what the person writes meanwhile. --}}
+    @if ($people ?? null) data-aparte-people="{{ url($people) }}" @endif
     @if ($followDarkClass ?? false) data-aparte-follow-dark @endif
     @if ($fill ?? false) style="height: 100%" @endif
 >

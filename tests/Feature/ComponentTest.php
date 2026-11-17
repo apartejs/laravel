@@ -101,3 +101,11 @@ it('hands the header and maximize attributes to the launcher', function () {
         ->toContain('subheading="Replies in a minute"')
         ->toContain('maximizable="panel"');
 });
+
+it('names the people routes, for a chat someone of the team can take over', function () {
+    expect(Blade::render('<x-aparte::chat endpoint="/chat" people="/chat/people" />'))
+        ->toContain('data-aparte-people="'.url('/chat/people').'"');
+    expect(Blade::render('<x-aparte::launcher endpoint="/chat" people="/chat/people" />'))
+        ->toContain('data-aparte-people="'.url('/chat/people').'"');
+    expect(Blade::render('<x-aparte::chat endpoint="/chat" />'))->not->toContain('data-aparte-people');
+});
