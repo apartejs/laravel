@@ -176,7 +176,7 @@ const server = createServer((req, res) => {
                 return res.end();
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ heldBy: held.get(id) ?? null }));
+            res.end(JSON.stringify({ heldBy: held.get(id) ?? null, channel: { name: `aparte.conversations.${id}.secret`, private: false } }));
         });
         return;
     }
@@ -636,15 +636,18 @@ try {
         // Echo as an app sets it up: the chat listens on the conversation's private channel.
         const echo = async (page) => page.addInitScript(() => {
             const listeners = new Map();
+            const subscription = (name) => ({
+                listen(event, fn) { listeners.set(`${name}${event}`, fn); return this; },
+                stopListening(event) { listeners.delete(`${name}${event}`); return this; },
+            });
             window.Echo = {
-                private: (name) => ({
-                    listen(event, fn) { listeners.set(`${name}${event}`, fn); return this; },
-                    stopListening(event) { listeners.delete(`${name}${event}`); return this; },
-                }),
+                private: (name) => subscription(`private:${name}`),
+                channel: (name) => subscription(name),
                 leave: (name) => { for (const key of [...listeners.keys()]) if (key.startsWith(name)) listeners.delete(key); },
             };
-            window.desk = (id, change) => listeners.get(`aparte.conversations.${id}.aparte.changed`)?.(change);
-            window.listening = (id) => listeners.has(`aparte.conversations.${id}.aparte.changed`);
+            // A guest's conversation: the public channel under the name the route gave.
+            window.desk = (id, change) => listeners.get(`aparte.conversations.${id}.secret.aparte.changed`)?.(change);
+            window.listening = (id) => listeners.has(`aparte.conversations.${id}.secret.aparte.changed`);
         });
         const { page, problems } = await open('/people', echo);
         const a = chatOf(page, '#shell-a');

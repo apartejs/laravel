@@ -18,14 +18,15 @@ class PeopleController
     {
         $found = Conversation::find($conversation);
 
-        // A conversation that is not there yet has had no one take it over.
+        // A conversation that is not there yet has had no one take it over, and will be the
+        // participant's who asks: the channel is theirs already.
         if ($found === null) {
-            return response()->json(['heldBy' => null]);
+            return response()->json(['heldBy' => null, 'channel' => People::channel($conversation, $request->user()?->getKey())]);
         }
 
         $this->authorize($request, $found);
 
-        return response()->json(['heldBy' => People::holder($conversation)]);
+        return response()->json(['heldBy' => People::holder($conversation), 'channel' => People::channel($conversation, $found->participant_id)]);
     }
 
     public function store(Request $request, string $conversation): Response

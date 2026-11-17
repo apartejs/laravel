@@ -8,6 +8,8 @@ use Aparte\Laravel\Conversations\StoredConversation;
 use Aparte\Laravel\Events\ConversationChanged;
 use Aparte\Laravel\Events\PersonWrote;
 use Closure;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -127,7 +129,42 @@ final class People
      */
     public static function announce(string $conversationId, array $change): void
     {
-        Event::dispatch(new ConversationChanged($conversationId, $change));
+        $participantId = Conversation::find($conversationId)?->participant_id;
+
+        Event::dispatch(new ConversationChanged($conversationId, $change, self::channel($conversationId, $participantId)));
+    }
+
+    /**
+     * The channel the chat listens on for a conversation, which the people route gives it. A
+     * signed-in person's conversation is private, `aparte.conversations.{id}` (authorize it with
+     * owns()). A guest has no one to authorize, so theirs is public, under a name made from the
+     * conversation's id and your app key, which nobody can work out without the key.
+     *
+     * @return array{name: string, private: bool}
+     */
+    public static function channel(string $conversationId, string|int|null $participantId): array
+    {
+        $name = 'aparte.conversations.'.$conversationId;
+
+        if ($participantId !== null) {
+            return ['name' => $name, 'private' => true];
+        }
+
+        return ['name' => $name.'.'.substr(hash_hmac('sha256', $name, (string) config('app.key')), 0, 40), 'private' => false];
+    }
+
+    /**
+     * Whether a conversation is this person's: what a private channel's authorization asks.
+     *
+     * `Broadcast::channel('aparte.conversations.{id}', fn ($user, string $id) => People::owns($user, $id));`
+     */
+    public static function owns(Authenticatable $user, string $conversationId): bool
+    {
+        $conversation = Conversation::find($conversationId);
+
+        return $conversation !== null
+            && $conversation->participant_type === ($user instanceof Model ? $user->getMorphClass() : null)
+            && (string) $conversation->participant_id === (string) $user->getAuthIdentifier();
     }
 
     /**

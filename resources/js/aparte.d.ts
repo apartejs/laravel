@@ -21,11 +21,12 @@ export interface AparteChatOptions {
      */
     people: {
         /**
-         * Listen to the conversation's changes (what `ConversationChanged` broadcasts: a message,
-         * a note, the assistant turned off or on) and call `onChange` with each; return the
-         * function that stops listening.
+         * Listen on `channel` (as the server named it: private for a signed-in person, public
+         * under a secret name for a guest) to the conversation's changes, what
+         * `ConversationChanged` broadcasts as `aparte.changed`: call `onChange` with each, and
+         * return the function that stops listening.
          */
-        subscribe?: (conversationId: string, onChange: (change: ApartePeopleChange) => void) => (() => void) | void;
+        subscribe?: (conversationId: string, onChange: (change: ApartePeopleChange) => void, channel: { name: string; private: boolean }) => (() => void) | void;
     };
 }
 

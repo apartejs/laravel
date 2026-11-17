@@ -29,7 +29,7 @@ it('says nobody holds a conversation by default', function () {
     $user = routeUser(1);
     ownedBy($user);
 
-    $this->actingAs($user)->getJson('/chat/people/thread-1')->assertOk()->assertExactJson(['heldBy' => null]);
+    $this->actingAs($user)->getJson('/chat/people/thread-1')->assertOk()->assertJsonPath('heldBy', null);
 });
 
 it('says who holds a conversation, as the chat shows them', function () {
@@ -39,7 +39,7 @@ it('says who holds a conversation, as the chat shows them', function () {
 
     $this->actingAs($user)->getJson('/chat/people/thread-1')
         ->assertOk()
-        ->assertExactJson(['heldBy' => ['name' => 'Marie', 'type' => 'human', 'avatar' => 'https://example.test/marie.png']]);
+        ->assertJsonPath('heldBy', ['name' => 'Marie', 'type' => 'human', 'avatar' => 'https://example.test/marie.png']);
 });
 
 it('answers a guest for a guest conversation, and nobody for one that is not there yet', function () {
@@ -47,7 +47,7 @@ it('answers a guest for a guest conversation, and nobody for one that is not the
     People::heldBy(fn () => ['name' => 'Marie']);
 
     $this->getJson('/chat/people/thread-1')->assertOk()->assertJsonPath('heldBy.name', 'Marie');
-    $this->getJson('/chat/people/thread-2')->assertOk()->assertExactJson(['heldBy' => null]);
+    $this->getJson('/chat/people/thread-2')->assertOk()->assertJsonPath('heldBy', null);
 });
 
 it("does not tell who holds someone else's conversation", function () {
