@@ -217,3 +217,38 @@ it('tells the chat to stay quiet when a message reaches the assistant while a pe
 
     expect(sentToChat())->toBe([['type' => 'auto-reply', 'on' => false]]);
 });
+
+it('takes over, posts, marks read and hands back for a signed-in visitor when the app keeps no conversations', function () {
+    // The package's table is publish-only: an app that does not keep conversations never has it.
+    Illuminate\Support\Facades\Schema::drop('aparte_conversations');
+    Event::fake([ConversationChanged::class]);
+    $user = peopleUser(1);
+    heldConversation($user);
+
+    People::takeOver('thread-1', ['name' => 'Marie']);
+    People::post('thread-1', ['name' => 'Marie'], 'It ships today.');
+    People::read('thread-1', 'u1', 'Read by Marie');
+    People::handBack('thread-1');
+
+    expect(agentReads($user))->toBe([['assistant', 'Marie: It ships today.']])
+        ->and(collect(sentToChat())->pluck('type')->all())->toBe(['auto-reply', 'message', 'message', 'note', 'message', 'auto-reply']);
+});
+
+it('does not hear a message that reaches a held conversation without an id', function () {
+    Event::fake([PersonWrote::class, ConversationChanged::class]);
+    TestAgent::fake(['unused']);
+    $user = peopleUser(1);
+    heldConversation($user);
+    People::heldBy(fn () => ['name' => 'Marie']);
+
+    $this->actingAs($user)->postJson('/chat', [
+        'threadId' => 'thread-1', 'runId' => 'run-1',
+        'messages' => [['role' => 'user', 'content' => 'No id here']],
+    ])->assertOk()->streamedContent();
+
+    // Held all the same: the assistant does not run. But PersonWrote always carries the
+    // browser's id, which "Read by" needs: a message without one is not heard.
+    TestAgent::assertNeverPrompted();
+    Event::assertNotDispatched(PersonWrote::class);
+    expect(agentReads($user))->toBe([]);
+});
