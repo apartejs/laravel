@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /** The conversations in a table of the app's database (`aparte.conversations.table`). */
 class DatabaseConversationRepository implements ConversationRepository
@@ -65,6 +66,12 @@ class DatabaseConversationRepository implements ConversationRepository
      */
     public function changeInEveryScope(string $ownerType, string $ownerId, string $id, Closure $change): int
     {
+        // The table is publish-only: an app that keeps no conversations never has it, and then
+        // there is nothing kept to change.
+        if (! Schema::hasTable($this->tableName())) {
+            return 0;
+        }
+
         $owner = ['owner_type' => $ownerType, 'owner_id' => $ownerId];
         $scopes = $this->table()->where($owner)->where('conversation_id', $id)->pluck('scope');
 
@@ -95,7 +102,12 @@ class DatabaseConversationRepository implements ConversationRepository
 
     private function table(): Builder
     {
-        return DB::table(config('aparte.conversations.table') ?: 'aparte_conversations');
+        return DB::table($this->tableName());
+    }
+
+    private function tableName(): string
+    {
+        return config('aparte.conversations.table') ?: 'aparte_conversations';
     }
 
     private function of(Authenticatable $owner, string $scope): Builder

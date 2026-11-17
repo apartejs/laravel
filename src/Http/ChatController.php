@@ -64,7 +64,9 @@ class ChatController
         $last = collect($request->input('messages', []))->last(fn ($m) => is_array($m) && ($m['role'] ?? null) === 'user');
         $id = is_array($last) && is_string($last['id'] ?? null) ? $last['id'] : '';
 
-        if (is_string($text) && trim($text) !== '') {
+        // PersonWrote always carries the browser's id, which "Read by" needs. AG-UI gives every
+        // message one, and the chat always does: a message without one is not heard.
+        if ($id !== '' && is_string($text) && trim($text) !== '') {
             People::heard($threadId, $id, $text);
         }
     }
