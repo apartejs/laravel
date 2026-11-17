@@ -67,6 +67,10 @@ const API = '/kept/conversations';
 const kept = new Map();
 /** Every request those routes received: the method, the id, the token against forged requests. */
 const calls = [];
+/** The people routes a view names with `people="…"`: who holds each conversation, and what the person wrote meanwhile. */
+const PEOPLE = '/people';
+const held = new Map();
+const heard = [];
 /** What the tests make of that server: down (every route answers 500), slow to list, strict on weight. */
 const server_ = { down: false, listDelay: 0, maxBytes: Infinity };
 
@@ -108,6 +112,8 @@ const pages = {
     });
 </script>
 ${chat('aparte-chat-1', '')}</body></html>`,
+    // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
+    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
     '/failing': `${head}${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
     // The same, on a page that builds nothing: a plain script listens for `aparte:setup` and
@@ -155,6 +161,22 @@ const server = createServer((req, res) => {
                 + event({ type: 'TEXT_MESSAGE_END', messageId: 'm1' })
                 + event({ type: 'RUN_FINISHED', threadId: input.threadId, runId: input.runId }),
             );
+        });
+        return;
+    }
+    // The two people routes, as PeopleController answers them.
+    if (req.url.startsWith(`${PEOPLE}/`)) {
+        const [id, rest] = decodeURIComponent(req.url.slice(PEOPLE.length + 1)).split('/');
+        let body = '';
+        req.on('data', (chunk) => (body += chunk));
+        req.on('end', () => {
+            if (req.method === 'POST' && rest === 'messages') {
+                heard.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
+                res.writeHead(204);
+                return res.end();
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ heldBy: held.get(id) ?? null }));
         });
         return;
     }
@@ -607,6 +629,70 @@ try {
         check(await until(async () => ((await custom.textContent()) ?? '').includes('Too many requests right now')), "errors: the page's own card draws the sentence");
         check(((await custom.locator('pre').textContent()) ?? '') === 'RuntimeException: Quota of user 42.', 'errors: and the message under it');
         await shown.page.close();
+    });
+
+    // ── Someone of the team takes the conversation over (People) ───────────────────────────
+    await scenario('people', async () => {
+        // Echo as an app sets it up: the chat listens on the conversation's private channel.
+        const echo = async (page) => page.addInitScript(() => {
+            const listeners = new Map();
+            window.Echo = {
+                private: (name) => ({
+                    listen(event, fn) { listeners.set(`${name}${event}`, fn); return this; },
+                    stopListening(event) { listeners.delete(`${name}${event}`); return this; },
+                }),
+                leave: (name) => { for (const key of [...listeners.keys()]) if (key.startsWith(name)) listeners.delete(key); },
+            };
+            window.desk = (id, change) => listeners.get(`aparte.conversations.${id}.aparte.changed`)?.(change);
+            window.listening = (id) => listeners.has(`aparte.conversations.${id}.aparte.changed`);
+        });
+        const { page, problems } = await open('/people', echo);
+        const a = chatOf(page, '#shell-a');
+        const send = async (text) => {
+            const editor = page.locator('#shell-a aparte-chat .aparte-ci-editor');
+            await editor.click();
+            await page.keyboard.type(text);
+            await page.keyboard.press('Enter');
+        };
+        const desk = (id, change) => page.evaluate(([i, c]) => window.desk(i, c), [id, change]);
+
+        check(await a.say('Where is my order?'), 'people: the assistant answers first');
+        const id = turns.at(-1).threadId;
+        check(await until(() => page.evaluate((i) => window.listening(i), id)), "people: the chat listens on the conversation's channel");
+
+        await desk(id, { type: 'auto-reply', on: false });
+        await desk(id, { type: 'message', message: { id: 'n1', role: 'assistant', kind: 'notice', content: 'Marie joined the conversation', timestamp: Date.now() } });
+        await desk(id, { type: 'message', message: { id: 'h1', role: 'assistant', author: { name: 'Marie', type: 'human' }, content: 'Hi, I am Marie.', timestamp: Date.now() } });
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 1), 'people: the notice is drawn');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-author-type="human"]').getAttribute('name')) === 'Marie'), "people: Marie's message is drawn as hers");
+
+        const turnsBefore = turns.length;
+        await send('Is it shipped?');
+        check(await until(async () => heard.some((h) => h.content === 'Is it shipped?')), 'people: what the person writes goes to the people route');
+        const mine = heard.find((h) => h.content === 'Is it shipped?');
+        const bubbleId = await page.locator('aparte-chat-bubble[data-role="user"]').last().getAttribute('message-id');
+        check(mine?.id === bubbleId && mine?.csrf === 'test-token', 'people: with the id of the message on screen and the CSRF header');
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        check(turns.length === turnsBefore, 'people: and the assistant is not asked');
+
+        await desk(id, { type: 'note', messageId: bubbleId, note: 'Read by Marie' });
+        check(await until(async () => ((await page.locator('aparte-chat-bubble[data-role="user"] .aparte-message-note').last().textContent()) ?? '') === 'Read by Marie'), 'people: the note is drawn under it');
+
+        await desk(id, { type: 'auto-reply', on: true });
+        check(await a.say('Thanks!'), 'people: handed back, the assistant answers again');
+
+        // A reload in the middle of a takeover: the chat asks who holds the conversation.
+        held.set(id, { name: 'Marie', type: 'human' });
+        await page.reload();
+        const b = chatOf(page, '#shell-a');
+        check(await until(async () => (await b.transcript()).includes('Thanks!')), 'people: reloaded, the conversation opens');
+        const turnsAfter = turns.length;
+        await send('Still there?');
+        check(await until(async () => heard.some((h) => h.content === 'Still there?')), 'people: still held, the message goes to the people route');
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        check(turns.length === turnsAfter, 'people: and the assistant is not asked');
+        check(problems.length === 0, `people: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
     });
 } finally {
     await browser.close();
