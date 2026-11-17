@@ -16,7 +16,8 @@
         "illuminate/routing": "^12.0|^13.0",
         "illuminate/support": "^12.0|^13.0",
         "illuminate/view": "^12.0|^13.0",
-        "laravel/ai": "^1.3"
+        "laravel/ai": "^1.3",
+        "illuminate/broadcasting": "^12.0|^13.0"
     },
     "suggest": {
         "filament/filament": "To put the chat in a panel, with ApartePlugin (^4.0 or ^5.0)."

@@ -278,6 +278,89 @@ document.addEventListener('aparte-conversations-problem', (event) => {
 });
 ```
 
+## A person takes over
+
+Someone of your team can answer in the chat instead of the assistant: they take the conversation over, write under their
+own name, mark what they read, and hand it back. The visitor sees a line, "Marie joined the conversation", Marie's
+messages under her name and picture, "Read by Marie" under their own, and the assistant answering again once she hands
+it back, having read what she wrote. The package carries all of it between your server and the page. The desk, where
+your team sees and answers conversations, is yours: a Filament page, for one.
+
+**1. Who holds a conversation.** Yours to keep, a ticket or a column; the package asks:
+
+```php
+// app/Providers/AppServiceProvider.php, in boot()
+use Aparte\Laravel\People;
+
+People::heldBy(fn (string $conversationId) => Ticket::openFor($conversationId)?->agent?->only(['name', 'avatar']));
+```
+
+**2. The routes, and the chat.** Register the people routes beside the chat route, in `routes/web.php`, so the session
+recognises the same person on both:
+
+```php
+// routes/web.php
+Route::aparte('/chat', App\Ai\Agents\Support::class)->middleware('throttle:20,1');
+Route::apartePeople('/chat/people');
+```
+
+```blade
+<x-aparte::chat endpoint="/chat" people="/chat/people" style="height: 32rem" />
+```
+
+**3. Broadcasting.** What your team does reaches the page through Laravel's broadcasting (Reverb, Pusher…) and
+Laravel Echo on the page (`php artisan install:broadcasting`); the chat uses `window.Echo` when it is there. A signed-in
+person's conversation is sent on a private channel. Authorize it:
+
+```php
+// routes/channels.php
+use Aparte\Laravel\People;
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('aparte.conversations.{id}', fn ($user, string $id) => People::owns($user, $id));
+```
+
+A guest has no one to authorize: their conversation is sent on a public channel under a name made from its id and your
+app key, which only their browser is given.
+
+**4. Your desk.**
+
+```php
+use Aparte\Laravel\People;
+
+$marie = ['name' => 'Marie', 'avatar' => 'https://example.com/marie.png'];
+
+// Marie accepts the conversation: update what heldBy reads, then
+People::takeOver($conversationId, $marie);  // "Marie joined the conversation"; the assistant stops answering
+People::post($conversationId, $marie, 'I have checked: your order ships today.');
+People::read($conversationId, $messageId, 'Read by Marie');
+People::handBack($conversationId);          // "The assistant is back"; it answers the next message
+```
+
+What the visitor writes meanwhile comes to your desk as an event:
+
+```php
+use Aparte\Laravel\Events\PersonWrote;
+use Illuminate\Support\Facades\Event;
+
+Event::listen(function (PersonWrote $event) {
+    // $event->conversationId, $event->messageId (for People::read), $event->text
+});
+```
+
+What the assistant reads: everything written during the takeover goes into its memory, Marie's messages as
+`Marie: …`, so it answers knowing what she said. A message that reaches the chat route while someone holds the
+conversation, sent a moment before the page heard of the takeover, is kept for your desk and not answered.
+
+- **Your own words.** `takeOver` and `handBack` take the notice as their last argument:
+  `People::takeOver($id, $marie, 'Marie a rejoint la conversation')`.
+- **The conversation the visitor reopens.** When its conversations are kept by the package (`conversations="…"`), what
+  your team does is written there too, and is still there when the visitor comes back. With a repository of your own,
+  keep it from `PersonWrote` and `ConversationChanged`.
+- **Not Echo.** Give the chat your own way to listen:
+  `onAparteSetup((config, chat, options) => { options.people.subscribe = (id, onChange, channel) => { /* … */ return stop; }; })`,
+  where `channel` is `{ name, private }` and `onChange` takes what `ConversationChanged` broadcasts.
+
 ## Plugins
 
 The package serves a built chat: Markdown, tool calls and approvals. To add aparté's

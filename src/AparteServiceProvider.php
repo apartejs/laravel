@@ -5,6 +5,7 @@ namespace Aparte\Laravel;
 use Aparte\Laravel\Conversations\ConversationRepository;
 use Aparte\Laravel\Conversations\ConversationRoutes;
 use Aparte\Laravel\Conversations\DatabaseConversationRepository;
+use Aparte\Laravel\Conversations\PeopleRoutes;
 use Aparte\Laravel\Http\AssetController;
 use Aparte\Laravel\Http\ChatController;
 use Illuminate\Routing\Router;
@@ -32,6 +33,13 @@ class AparteServiceProvider extends ServiceProvider
         // two chats that must not share their conversations are given two.
         Router::macro('aparteConversations', function (string $uri, string $scope = 'default') {
             return ConversationRoutes::register($uri, $scope);
+        });
+
+        // For a chat someone of your team can take over (People): who holds a conversation at
+        // `$uri/{id}`, and what the person writes meanwhile at `$uri/{id}/messages`. Give them the
+        // middleware the chat route has, so the same person is recognised.
+        Router::macro('apartePeople', function (string $uri) {
+            return PeopleRoutes::register($uri);
         });
     }
 

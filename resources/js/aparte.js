@@ -375,6 +375,11 @@ const setups = [];
  *   package's, an AG-UI runner to the chat's endpoint, when the chat has one: replace it with
  *   a runner of yours, or delete it and aparté's own loop calls the provider you registered
  *   on the config.
+ * - `options.people.subscribe(conversationId, onChange, channel)`: for a chat someone of your
+ *   team can take over (`people="…"`), how what they do reaches this page when it is not Laravel
+ *   Echo (`window.Echo`, used by default): listen on `channel` (`{ name, private }`, as the server
+ *   named it), call `onChange` with each change it broadcasts (`ConversationChanged`), and
+ *   return the function that stops listening.
  * The storage and the client are read once, when the chat starts: for a chat already running,
  * a change to them does nothing. What the function returns, if a function, runs when the chat
  * stops. Works when your app builds this file with its own Vite (`APARTE_ASSETS=vite`), so that
@@ -500,6 +505,135 @@ function bindConversationUi(chat, config, manager, controller, ui) {
     };
 }
 
+/**
+ * How a change of the conversation reaches the page: the app's own `subscribe`, else Laravel
+ * Echo, on the channel the server named (private for a signed-in person, public under a secret
+ * name for a guest). Read when a conversation opens, not when the chat starts: an app's bootstrap
+ * may set up Echo after this file has run.
+ */
+function peopleChannel(options) {
+    if (typeof options.people?.subscribe === 'function') return options.people.subscribe;
+    const echo = globalThis.Echo;
+    if (!echo || typeof echo.private !== 'function') return null;
+    return (conversationId, onChange, channel) => {
+        (channel.private ? echo.private(channel.name) : echo.channel(channel.name)).listen('.aparte.changed', onChange);
+        return () => echo.leave(channel.name);
+    };
+}
+
+/**
+ * A chat someone of your team can take over (`people="…"`, `People` on the server). When a
+ * conversation opens, the assistant stays quiet until the server says who holds it; what the
+ * team does arrives on the conversation's channel (a message, a note, the assistant turned off
+ * or on); and what the person writes while someone holds it goes to the people route, since no
+ * request to the assistant carries it. Returns the function that lets go.
+ */
+function bindPeople(chat, config, manager, client, options, { url, csrf }) {
+    let open = null;
+    let heard = null;
+    let stopListening = null;
+    let warned = false;
+    const route = (id) => `${url.replace(/\/+$/, '')}/${encodeURIComponent(id)}`;
+
+    const apply = (id, change) => {
+        if (id !== open || !change || typeof change !== 'object') return;
+        const viewport = chat.viewport;
+        if (change.type === 'message' && typeof change.message?.id === 'string') {
+            if (!viewport.getMessages().some((message) => message.id === change.message.id)) viewport.appendMessage(change.message);
+        } else if (change.type === 'note' && typeof change.messageId === 'string') {
+            viewport.updateMessage(change.messageId, { note: typeof change.note === 'string' ? change.note : undefined });
+        } else if (change.type === 'auto-reply') {
+            const on = change.on !== false;
+            config.setAutoReply(on, id);
+            // Back to the assistant: a reply that paused on a question goes on.
+            if (on) void client.resumeDeferred(chat);
+        }
+    };
+
+    const subscribe = (id, channel) => {
+        if (heard === id || !channel?.name) return;
+        const listen = peopleChannel(options);
+        if (!listen) {
+            if (!warned) {
+                warned = true;
+                console.warn('aparté: this chat names the people routes (people="…"), and nothing brings what your team does to the page: set up Laravel Echo (window.Echo), or give options.people.subscribe in onAparteSetup.');
+            }
+            return;
+        }
+        heard = id;
+        const stop = listen(id, (change) => apply(id, change), channel);
+        stopListening = typeof stop === 'function' ? stop : null;
+    };
+
+    // Who holds the conversation, and the channel to hear the team on. Unreachable, it is the
+    // assistant's, and nothing is heard.
+    const ask = (id, resume) => {
+        fetch(route(id), { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
+            .then((response) => (response.ok ? response.json() : {}))
+            .catch(() => ({}))
+            .then(({ heldBy = null, channel = null } = {}) => {
+                config.setAutoReply(!heldBy, id);
+                if (open !== id) return;
+                subscribe(id, channel);
+                if (resume && !heldBy) void client.resumeDeferred(chat);
+            });
+    };
+
+    const follow = (id) => {
+        if (id === open) return;
+        stopListening?.();
+        stopListening = null;
+        heard = null;
+        open = id;
+        if (id) ask(id, false);
+    };
+
+    // A conversation opens: quiet, before the client's own listener can resume a paused reply,
+    // until the server says whether someone holds it.
+    const onLoaded = (event) => {
+        const id = event.detail?.conversationId;
+        if (event.detail?.targetId !== chat.id || typeof id !== 'string') return;
+        config.setAutoReply(false, id);
+        if (id !== open) {
+            stopListening?.();
+            stopListening = null;
+            heard = null;
+            open = id;
+        }
+        ask(id, true);
+    };
+
+    // What the person writes while someone holds the conversation. Read once the send has been
+    // handled: the message is shown, and its id written, by a listener that may run after this one.
+    const onSend = (event) => {
+        const id = open ?? manager.activeId;
+        if (!id || config.getAutoReply(id)) return;
+        const detail = event.detail ?? {};
+        queueMicrotask(() => {
+            fetch(`${route(id)}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
+                credentials: 'same-origin',
+                body: JSON.stringify({ id: detail.messageId, content: detail.content }),
+            }).then((response) => {
+                if (!response.ok) console.warn(`aparté: a message for the person holding this conversation was refused (${response.status}).`);
+            }, (error) => console.warn('aparté: a message for the person holding this conversation was not sent.', error));
+        });
+    };
+
+    chat.addEventListener('aparte-conversation-loaded', onLoaded);
+    chat.addEventListener('aparte-send', onSend);
+    // A conversation the chat starts: nobody holds it yet; its channel is asked for and heard.
+    const unsubscribe = manager.subscribe(() => follow(manager.activeId ?? null));
+
+    return () => {
+        chat.removeEventListener('aparte-conversation-loaded', onLoaded);
+        chat.removeEventListener('aparte-send', onSend);
+        unsubscribe();
+        follow(null);
+    };
+}
+
 async function mount(chat) {
     chat.dataset.aparteMounted = '';
 
@@ -509,6 +643,7 @@ async function mount(chat) {
         aparteThread: givenThread,
         aparteScope: scope,
         aparteConversations: conversations,
+        apartePeople: people,
     } = chat.dataset;
 
     const config = new AparteConfig();
@@ -535,7 +670,7 @@ async function mount(chat) {
             },
         })
         : null;
-    const options = { storage: kept ?? new TabStorage(`aparte-laravel:${endpoint}:${scope ?? ''}:${chat.id}`), client: {} };
+    const options = { storage: kept ?? new TabStorage(`aparte-laravel:${endpoint}:${scope ?? ''}:${chat.id}`), client: {}, people: {} };
 
     // `thread` names the one conversation of a chat that has one. A chat with a list, or a way
     // to start another, has many: each is its own thread, or the model would remember them all
@@ -592,7 +727,12 @@ async function mount(chat) {
     // another chat's sends, or read another config, would be the app's bug to find here.
     const client = new AparteClient({ ...options.client, config, scopeToTargetId: chat.id });
     client.start();
-    Object.assign(entry, { client, controller, unbindUi: bindConversationUi(chat, config, manager, controller, ui) });
+    Object.assign(entry, {
+        client,
+        controller,
+        unbindUi: bindConversationUi(chat, config, manager, controller, ui),
+        unbindPeople: people ? bindPeople(chat, config, manager, client, options, { url: people, csrf: csrf ?? '' }) : null,
+    });
     watchEmptyState(chat, viewport);
 
     const lists = ui.lists();
@@ -641,6 +781,7 @@ function stopAll() {
             for (const stop of entry.stops) if (typeof stop === 'function') stop();
             entry.storage?.stop?.();
             entry.unbindUi?.();
+            entry.unbindPeople?.();
             entry.controller?.unbind();
             entry.client?.stop();
         } catch (error) {

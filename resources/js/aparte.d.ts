@@ -1,4 +1,4 @@
-import type { AparteClientOptions, AparteConfig, AparteStorageAdapter } from '@aparte/core';
+import type { AparteClientOptions, AparteConfig, AparteMessage, AparteStorageAdapter } from '@aparte/core';
 
 /** What a chat runs on. Change it in `onAparteSetup`: it is read once, when the chat starts. */
 export interface AparteChatOptions {
@@ -15,7 +15,26 @@ export interface AparteChatOptions {
      * you registered on the config.
      */
     client: Omit<AparteClientOptions, 'config' | 'scopeToTargetId'>;
+    /**
+     * For a chat someone of your team can take over (`people="…"`): how what they do reaches the
+     * page, when it is not Laravel Echo (`window.Echo`, used by default).
+     */
+    people: {
+        /**
+         * Listen on `channel` (as the server named it: private for a signed-in person, public
+         * under a secret name for a guest) to the conversation's changes, what
+         * `ConversationChanged` broadcasts as `aparte.changed`: call `onChange` with each, and
+         * return the function that stops listening.
+         */
+        subscribe?: (conversationId: string, onChange: (change: ApartePeopleChange) => void, channel: { name: string; private: boolean }) => (() => void) | void;
+    };
 }
+
+/** What someone of your team did to a conversation, as `ConversationChanged` broadcasts it. */
+export type ApartePeopleChange =
+    | { type: 'message'; message: AparteMessage }
+    | { type: 'note'; messageId: string; note: string | null }
+    | { type: 'auto-reply'; on: boolean };
 
 /**
  * Adds aparté's plugins, or cards of your own, to every chat on the page, and chooses what it

@@ -2,6 +2,7 @@
 
 namespace Aparte\Laravel\Http;
 
+use Aparte\Laravel\People;
 use Aparte\Laravel\Streaming\AparteProtocol;
 use Illuminate\Http\Request;
 use Laravel\Ai\AgentUserInteraction\AgentUserInteraction;
@@ -10,10 +11,11 @@ use Laravel\Ai\Approvals\Decisions;
 use Laravel\Ai\Models\Conversation;
 use Laravel\Ai\Responses\StreamableAgentResponse;
 use LogicException;
+use Symfony\Component\HttpFoundation\Response;
 
 class ChatController
 {
-    public function __invoke(Request $request, string $agent): StreamableAgentResponse
+    public function __invoke(Request $request, string $agent): StreamableAgentResponse|Response
     {
         $chat = AgentUserInteraction::chat($request);
         $threadId = $chat->threadId();
@@ -35,6 +37,15 @@ class ChatController
             403,
         );
 
+        // Someone of the team holds the conversation: no assistant answers. The message is kept
+        // for them (the browser was told a moment too late to send it to the people route).
+        if (People::holder($threadId) !== null) {
+            $this->heard($request, $threadId, $chat->message()?->content);
+            People::announce($threadId, ['type' => 'auto-reply', 'on' => false]);
+
+            return (new AparteProtocol($threadId, $chat->runId() ?: null, $request))->nothingToSay();
+        }
+
         $instance = app($agent);
 
         if (! method_exists($instance, 'continue')) {
@@ -45,6 +56,17 @@ class ChatController
             ->continue($threadId, as: $user)
             ->stream($this->decisions($request) ?? $chat)
             ->usingProtocol(new AparteProtocol($threadId, $chat->runId() ?: null, $request));
+    }
+
+    /** The person's message in a held conversation: the id the browser gave it, and its text. */
+    private function heard(Request $request, string $threadId, ?string $text): void
+    {
+        $last = collect($request->input('messages', []))->last(fn ($m) => is_array($m) && ($m['role'] ?? null) === 'user');
+        $id = is_array($last) && is_string($last['id'] ?? null) ? $last['id'] : '';
+
+        if (is_string($text) && trim($text) !== '') {
+            People::heard($threadId, $id, $text);
+        }
     }
 
     /**

@@ -52,15 +52,37 @@ class DatabaseConversationRepository implements ConversationRepository
 
     public function change(Authenticatable $owner, string $scope, string $id, Closure $change): bool
     {
-        return DB::transaction(function () use ($owner, $scope, $id, $change): bool {
+        return $this->changeWhere($this->key($owner, $scope), $id, $change);
+    }
+
+    /**
+     * Change a conversation in every list of its owner that keeps it, as `change()` changes it in
+     * one. For what someone of your team writes (People), which no route of the owner carries: the
+     * owner is the model the Laravel AI SDK's conversation names (its morph class and key), and
+     * the scope is not known. Returns how many were changed.
+     *
+     * @param  Closure(string): array{0: string, 1: array{title: string, createdAt: int, updatedAt: int, pinnedAt: int|null, archivedAt: int|null, schemaVersion: int|null}}  $change
+     */
+    public function changeInEveryScope(string $ownerType, string $ownerId, string $id, Closure $change): int
+    {
+        $owner = ['owner_type' => $ownerType, 'owner_id' => $ownerId];
+        $scopes = $this->table()->where($owner)->where('conversation_id', $id)->pluck('scope');
+
+        return $scopes->filter(fn (string $scope) => $this->changeWhere($owner + ['scope' => $scope], $id, $change))->count();
+    }
+
+    /** @param  array{owner_type: string, owner_id: string, scope: string}  $key */
+    private function changeWhere(array $key, string $id, Closure $change): bool
+    {
+        return DB::transaction(function () use ($key, $id, $change): bool {
             // The row is held from the read to the write: a save arriving in between waits its turn.
-            $json = $this->of($owner, $scope)->where('conversation_id', $id)->lockForUpdate()->value('payload');
+            $json = $this->table()->where($key)->where('conversation_id', $id)->lockForUpdate()->value('payload');
             if ($json === null) {
                 return false;
             }
 
             [$json, $meta] = $change($json);
-            $this->of($owner, $scope)->where('conversation_id', $id)->update($this->columns($json, $meta));
+            $this->table()->where($key)->where('conversation_id', $id)->update($this->columns($json, $meta));
 
             return true;
         });
