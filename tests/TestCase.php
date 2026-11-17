@@ -33,6 +33,7 @@ class TestCase extends BaseTestCase
     {
         $router->aparte('/chat', TestAgent::class);
         $router->aparteConversations('/chat/conversations');
+        $router->apartePeople('/chat/people');
         // A second chat of the same app, with a list of its own.
         $router->aparteConversations('/help/conversations', 'help');
     }
