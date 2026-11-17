@@ -7,6 +7,7 @@ use Generator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Laravel\Ai\Exceptions\ApprovalMismatchException;
 use Laravel\Ai\Exceptions\InsufficientCreditsException;
 use Laravel\Ai\Exceptions\ProviderConnectionException;
@@ -14,6 +15,7 @@ use Laravel\Ai\Exceptions\ProviderOverloadedException;
 use Laravel\Ai\Exceptions\RateLimitedException;
 use Laravel\Ai\Streaming\Events\ToolApprovalRequest;
 use Laravel\Ai\Streaming\Protocols\AgentUserInteractionProtocol;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
@@ -29,6 +31,20 @@ class AparteProtocol extends AgentUserInteractionProtocol
     public function __construct(?string $threadId = null, ?string $runId = null, protected ?Request $request = null)
     {
         parent::__construct($threadId, $runId);
+    }
+
+    /**
+     * A run with nothing in it, for a conversation a person holds (People::heldBy): it opens and
+     * finishes, so the chat ends the turn and draws no reply.
+     */
+    public function nothingToSay(): Response
+    {
+        $this->runId ??= (string) Str::ulid();
+
+        return response()->stream(function (): void {
+            echo $this->encode(['type' => 'RUN_STARTED', 'threadId' => $this->threadId, 'runId' => $this->runId]);
+            echo $this->encode(['type' => 'RUN_FINISHED', 'threadId' => $this->threadId, 'runId' => $this->runId]);
+        }, headers: $this->headers());
     }
 
     /**
