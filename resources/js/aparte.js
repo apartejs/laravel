@@ -616,6 +616,9 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     // answered once, then a thank-you in the conversation.
     const ratingWords = chat.dataset.apartePeopleRating ?? '';
     const ratingAsked = new Set();
+    // The conversations where the person waits for the team's first word: handed over (the button,
+    // the assistant, the server's state), until someone of the team writes or the assistant is back.
+    const owed = new Set();
     let ratingBox = null;
     const rate = (value) => {
         const id = open;
@@ -666,7 +669,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         if (button) button.style.display = open && config.getAutoReply(open) ? '' : 'none';
         // "Get the answer by e-mail" while an answer from the team is owed, and never beside the
         // rating question: once the team has answered, or closed it, there is nothing to wait for.
-        if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open) && !ratingAsked.has(open) && awaiting());
+        if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open) && !ratingAsked.has(open) && (owed.has(open) || awaiting()));
         if (ratingBox) ratingBox.hidden = !(open && ratingAsked.has(open));
         // The paperclip while someone of the team is in the conversation (`:people-files`), and from
         // the start in a chat with the team only; a page that set `attachments` itself keeps it.
@@ -724,6 +727,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         const viewport = chat.viewport;
         if (change.type === 'message' && typeof change.message?.id === 'string') {
             if (!viewport.getMessages().some((message) => message.id === change.message.id)) viewport.appendMessage(change.message);
+            if (change.message.author?.type === 'human') owed.delete(id);
             showButton();
             if (change.message.author?.type === 'human') {
                 hideTyping();
@@ -740,6 +744,9 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         } else if (change.type === 'auto-reply') {
             const on = answers(change.on !== false);
             config.setAutoReply(on, id);
+            // Off: the conversation went to the team, which owes the person an answer. On: the assistant is back.
+            if (on) owed.delete(id);
+            else owed.add(id);
             showButton();
             // Back to the assistant: a reply that paused on a question goes on.
             if (on) void client.resumeDeferred(chat);
@@ -771,6 +778,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
                 answered();
                 if (left) emailLeft.add(id);
                 if (rating === 'asked') ratingAsked.add(id);
+                if (wanted && !heldBy) owed.add(id);
                 config.setAutoReply(answers(!heldBy && !wanted), id);
                 if (open !== id) return;
                 showButton();
@@ -874,6 +882,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
             .then((response) => (response.ok ? response.json() : Promise.reject(new Error(`status ${response.status}`))))
             .then(({ notice = null } = {}) => {
                 config.setAutoReply(false, id);
+                owed.add(id);
                 if (notice) apply(id, { type: 'message', message: notice });
                 showButton();
             })
