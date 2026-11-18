@@ -75,7 +75,7 @@ const wants = [];
 const typings = [];
 const seens = [];
 /** What the tests make of that server: down (every route answers 500), slow to list, strict on weight. */
-const server_ = { down: false, listDelay: 0, maxBytes: Infinity };
+const server_ = { down: false, listDelay: 0, maxBytes: Infinity, peopleOnly: false };
 
 const pages = {
     '/': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`)}</body></html>`,
@@ -115,6 +115,8 @@ const pages = {
     });
 </script>
 ${chat('aparte-chat-1', '')}</body></html>`,
+    // A chat with the team only: no endpoint, the people routes.
+    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
     // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
     '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
@@ -192,6 +194,12 @@ const server = createServer((req, res) => {
             }
             if (req.method === 'POST' && rest === 'messages') {
                 heard.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
+                // A chat without an assistant: the first message puts the conversation in the queue.
+                if (server_.peopleOnly && !wants.includes(id) && !held.has(id)) {
+                    wants.push(id);
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ notice: { id: `wanted-${id}`, role: 'assistant', kind: 'notice', content: 'Someone of the team will answer you here', timestamp: Date.now() } }));
+                }
                 res.writeHead(204);
                 return res.end();
             }
@@ -734,6 +742,40 @@ try {
         await new Promise((resolve) => setTimeout(resolve, 500));
         check(turns.length === turnsAfter, 'people: and the assistant is not asked');
         check(problems.length === 0, `people: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    await scenario('people only', async () => {
+        server_.peopleOnly = true;
+        const echo = async (page) => page.addInitScript(() => {
+            const subscription = { listen() { return this; }, stopListening() { return this; } };
+            window.Echo = { private: () => subscription, channel: () => subscription, leave: () => {} };
+        });
+        const { page, problems } = await open('/people-only', echo);
+        const send = async (text) => {
+            const editor = page.locator('#shell-a aparte-chat .aparte-ci-editor');
+            await editor.click();
+            await page.keyboard.type(text);
+            await page.keyboard.press('Enter');
+        };
+        const turnsBefore = turns.length;
+        check(await until(() => page.locator('#shell-a aparte-composer').isVisible()), 'people only: the chat is drawn');
+        check((await page.locator('#shell-a .aparte-laravel-people').count()) === 0, 'people only: no button to ask for a person, everyone is one');
+
+        await send('Do you deliver to Belgium?');
+        check(await until(async () => heard.some((h) => h.content === 'Do you deliver to Belgium?')), 'people only: the first message goes to the team');
+        const first = heard.find((h) => h.content === 'Do you deliver to Belgium?');
+        const bubbleId = await page.locator('aparte-chat-bubble[data-role="user"]').last().getAttribute('message-id');
+        check(first?.id === bubbleId, 'people only: with the id of the message on screen');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 1), 'people only: the visitor reads that someone will answer');
+
+        await send('Or France?');
+        check(await until(async () => heard.some((h) => h.content === 'Or France?' && h.id !== first?.id)), 'people only: the next one too');
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        check(turns.length === turnsBefore, 'people only: and no assistant is ever asked');
+        check((await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 1, 'people only: the notice is said once');
+        check(problems.length === 0, `people only: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        server_.peopleOnly = false;
         await page.close();
     });
 } finally {

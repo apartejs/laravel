@@ -532,16 +532,20 @@ const PERSON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
 
 const escapeHtml = (text) => text.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-function bindPeople(chat, config, manager, client, options, { url, csrf }) {
+function bindPeople(chat, config, manager, client, options, { url, csrf, assistant }) {
     let open = null;
     let heard = null;
     let stopListening = null;
     let warned = false;
     const route = (id) => `${url.replace(/\/+$/, '')}/${encodeURIComponent(id)}`;
+    // A chat without an assistant (no `endpoint`): every message goes to the team, the first one
+    // putting the conversation in their queue. Nothing turns the assistant on.
+    const answers = (on) => assistant && on;
+    if (!assistant) config.setAutoReply(false);
 
     // The visitor's own way to ask for someone of the team: a button beside send, while the
     // assistant answers an open conversation. It hands the conversation over without the model.
-    const label = chat.dataset.apartePeopleButton ?? '';
+    const label = assistant ? chat.dataset.apartePeopleButton ?? '' : '';
     let button = null;
     const row = label ? chat.querySelector('aparte-composer .aparte-composer-row') : null;
     if (row) {
@@ -613,7 +617,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
         } else if (change.type === 'note' && typeof change.messageId === 'string') {
             viewport.updateMessage(change.messageId, { note: typeof change.note === 'string' ? change.note : undefined });
         } else if (change.type === 'auto-reply') {
-            const on = change.on !== false;
+            const on = answers(change.on !== false);
             config.setAutoReply(on, id);
             showButton();
             // Back to the assistant: a reply that paused on a question goes on.
@@ -643,11 +647,11 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
             .then((response) => (response.ok ? response.json() : {}))
             .catch(() => ({}))
             .then(({ heldBy = null, wanted = false, channel = null } = {}) => {
-                config.setAutoReply(!heldBy && !wanted, id);
+                config.setAutoReply(answers(!heldBy && !wanted), id);
                 if (open !== id) return;
                 showButton();
                 subscribe(id, channel);
-                if (resume && !heldBy) void client.resumeDeferred(chat);
+                if (resume && assistant && !heldBy) void client.resumeDeferred(chat);
             });
     };
 
@@ -676,21 +680,34 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
         ask(id, true);
     };
 
-    // What the person writes while someone holds the conversation. Read once the send has been
-    // handled: the message is shown, and its id written, by a listener that may run after this one.
+    // What the person writes while someone holds the conversation, or in a chat without an
+    // assistant. Read once the send has been handled: the message is shown, and its id written,
+    // by a listener that may run after this one; a first message also opens the conversation.
     const onSend = (event) => {
-        const id = open ?? manager.activeId;
-        if (!id || config.getAutoReply(id)) return;
+        const sentIn = open ?? manager.activeId;
+        if (sentIn && config.getAutoReply(sentIn)) return;
         const detail = event.detail ?? {};
         queueMicrotask(() => {
+            const id = sentIn ?? open ?? manager.activeId;
+            if (!id || config.getAutoReply(id)) return;
             fetch(`${route(id)}/messages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
                 credentials: 'same-origin',
                 body: JSON.stringify({ id: detail.messageId, content: detail.content }),
             }).then((response) => {
-                if (!response.ok) console.warn(`aparté: a message for the person holding this conversation was refused (${response.status}).`);
-            }, (error) => console.warn('aparté: a message for the person holding this conversation was not sent.', error));
+                if (!response.ok) {
+                    console.warn(`aparté: a message for your team was refused (${response.status}).`);
+                    return null;
+                }
+                return response.status === 204 ? null : response.json().catch(() => null);
+            }, (error) => {
+                console.warn('aparté: a message for your team was not sent.', error);
+                return null;
+            }).then((answer) => {
+                // The conversation went to the team with this message: what the visitor reads.
+                if (answer?.notice) apply(id, { type: 'message', message: answer.notice });
+            });
         });
     };
 
@@ -803,6 +820,10 @@ async function mount(chat) {
     // of the page listens for it, as for Livewire's `livewire:init`. A listener that throws is
     // reported by the browser, and the chat goes on.
     chat.dispatchEvent(new CustomEvent('aparte:setup', { bubbles: true, detail: { config, chat, options } }));
+    // Nothing answers: no assistant (endpoint), no team (people), and no runner of the app's.
+    if (!options.client.streamRunner && !people) {
+        console.warn('aparté: this chat has no endpoint, no people routes and no runner: nothing answers what is written in it.');
+    }
     entry.storage = options.storage;
     running.push(entry);
 
@@ -833,7 +854,7 @@ async function mount(chat) {
         client,
         controller,
         unbindUi: bindConversationUi(chat, config, manager, controller, ui),
-        unbindPeople: people ? bindPeople(chat, config, manager, client, options, { url: people, csrf: csrf ?? '' }) : null,
+        unbindPeople: people ? bindPeople(chat, config, manager, client, options, { url: people, csrf: csrf ?? '', assistant: Boolean(endpoint) }) : null,
     });
     watchEmptyState(chat, viewport);
 
