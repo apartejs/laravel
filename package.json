@@ -7,6 +7,7 @@
     },
     "devDependencies": {
         "@aparte/core": "1.13.1",
+        "@aparte/locales": "1.13.1",
         "@aparte/plugin-marked": "1.13.1",
         "@aparte/runner-ag-ui": "1.13.1",
         "marked": "18.1.3",

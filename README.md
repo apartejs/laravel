@@ -245,8 +245,8 @@ routes share a name share their conversations:
 Route::aparteConversations('/help/conversations', 'help');
 ```
 
-Its words (`Conversations`, `New chat`, `Search chats`, `Maximize`, `Close`) go through Laravel's translator: give
-them in your `lang/*.json` files. In a Filament panel, [`->conversations()`](#filament) does all of this.
+Its words (`Conversations`, `New chat`, `Search chats`, `Maximize`, `Close`) go through Laravel's translator, in
+[ten languages](#good-to-know) already; your `lang/*.json` files win. In a Filament panel, [`->conversations()`](#filament) does all of this.
 
 - **What is kept** is what the chat shows, as the browser sends it after each reply, in the `aparte_conversations`
   table. Each person reads and writes their own only; a guest's conversations stay in the tab.
@@ -667,6 +667,10 @@ late. In a Filament panel, a render hook puts it there:
 
 ## Good to know
 
+- **The language** is your page's: `app()->getLocale()`. The chat's own words (the composer, its buttons) and this
+  package's lines (the person button, the e-mail field, the notices) come in English, French, German, Spanish,
+  Italian, Portuguese (Brazil), Russian, Japanese, Korean and Chinese (Simplified); `fr_CA` is French, a language
+  outside the list stays English. To change a line, or add a language, give it in your `lang/*.json`: yours win.
 - **The look** is set with aparté's [CSS variables](https://apartejs.dev/guides/theming/). It follows the system's light or dark
   mode; `follow-dark-class` makes it follow Tailwind's `dark` class instead.
 - **What is kept:** the SDK keeps the conversation in your database, tied to the signed-in user, and the model's memory comes

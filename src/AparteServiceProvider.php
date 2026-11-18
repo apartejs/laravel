@@ -46,6 +46,8 @@ class AparteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'aparte');
+        // What the chat says, in the languages aparté speaks; the app's own lang/*.json wins.
+        $this->loadJsonTranslationsFrom(__DIR__.'/../lang');
 
         // Asked for, never run unasked: the table is only for an app that keeps conversations.
         $this->publishesMigrations([__DIR__.'/../database/migrations' => database_path('migrations')], 'aparte-migrations');

@@ -10,6 +10,8 @@
     data-aparte-endpoint="{{ ($endpoint ?? null) ? url($endpoint) : '' }}"
     data-aparte-csrf="{{ csrf_token() }}"
     data-aparte-scope="{{ auth()->id() }}"
+    {{-- The page's language, for the chat's own words (@aparte/locales); its other lines go through Laravel's translator. --}}
+    data-aparte-locale="{{ app()->getLocale() }}"
     @if ($thread ?? null) data-aparte-thread="{{ $thread }}" @endif
     {{-- Kept on the server for someone signed in; a guest's conversations stay in the tab. --}}
     @if (($conversations ?? null) && auth()->check()) data-aparte-conversations="{{ url($conversations) }}" @endif

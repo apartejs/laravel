@@ -269,7 +269,7 @@ final class People
         Cache::forget(self::wantedKey($conversationId));
 
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);
-        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? "{$author['name']} joined the conversation"]));
+        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? __(':name joined the conversation', ['name' => $author['name']])]));
     }
 
     /**
@@ -291,7 +291,7 @@ final class People
     public static function handBack(string $conversationId, ?string $notice = null): void
     {
         Cache::forget(self::wantedKey($conversationId));
-        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? 'The assistant is back']));
+        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? __('The assistant is back')]));
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => true]);
     }
 
@@ -308,7 +308,7 @@ final class People
     {
         Cache::forever(self::wantedKey($conversationId), $reason);
 
-        $notice ??= self::$wantedNotice ? (self::$wantedNotice)($conversationId) : 'Someone of the team will answer you here';
+        $notice ??= self::$wantedNotice ? (self::$wantedNotice)($conversationId) : __('Someone of the team will answer you here');
         $message = self::message(['kind' => 'notice', 'content' => $notice]);
 
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);

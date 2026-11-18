@@ -9,6 +9,7 @@ import {
     uuid,
 } from '@aparte/core';
 import { createAgUiRunner } from '@aparte/runner-ag-ui';
+import { de, es, fr, it, ja, ko, ptBR, ru, zhCN } from '@aparte/locales';
 import { setupMarkedStreamingProvider } from '@aparte/plugin-marked/streaming';
 
 /**
@@ -893,6 +894,15 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     };
 }
 
+// The chat's own words (the composer, its buttons) in the page's language: Laravel's locale, which
+// the Blade component gives. "fr", "fr_CA" and "fr-CA" are French; a language aparté has no words
+// for stays in English, core's own.
+const LOCALES = { de, es, fr, it, ja, ko, 'pt-br': ptBR, pt: ptBR, ru, 'zh-cn': zhCN, zh: zhCN };
+const localeOf = (tag) => {
+    const key = String(tag ?? '').toLowerCase().replace('_', '-');
+    return LOCALES[key] ?? LOCALES[key.split('-')[0]] ?? null;
+};
+
 async function mount(chat) {
     chat.dataset.aparteMounted = '';
 
@@ -907,6 +917,8 @@ async function mount(chat) {
 
     const config = new AparteConfig();
     attachConfig(chat, config);
+    const locale = localeOf(chat.dataset.aparteLocale);
+    if (locale) config.setLocale(locale);
     // A link to this site follows in the page, like the rest of the Laravel app; a link to another
     // site opens in a new tab. aparté's own default opens every link in a new tab.
     config.setLinkTarget('external-only');

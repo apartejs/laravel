@@ -81,6 +81,9 @@ const server_ = { down: false, listDelay: 0, maxBytes: Infinity, peopleOnly: fal
 
 const pages = {
     '/': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`)}</body></html>`,
+    // The page's language, as the Blade component gives it from app()->getLocale().
+    '/french': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`, 'data-aparte-locale="fr"')}</body></html>`,
+    '/klingon': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`, 'data-aparte-locale="tlh"')}</body></html>`,
     // Tall enough for a row's menu to open inside the sidebar.
     '/conversations': `${head}${shell('shell-a', 'aparte-chat-1', 580)}</body></html>`,
     // The same view, its conversations kept by the server.
@@ -360,6 +363,25 @@ try {
         check(typeof posts[0]?.threadId === 'string' && posts[0].threadId.length > 0, 'the request names its thread');
         check(problems.length === 0, `no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
+    });
+
+    // ── The chat's own words in the page's language ────────────────────────────────────────
+    await scenario('language', async () => {
+        const label = async (path) => {
+            const { page, problems } = await open(path);
+            const editor = page.locator('aparte-chat .aparte-ci-editor');
+            await editor.waitFor({ state: 'visible', timeout: 20_000 });
+            await page.waitForFunction(() => document.querySelector('aparte-chat')?.hasAttribute('data-aparte-mounted'), null, { timeout: 10_000 }).catch(() => {});
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            const text = await editor.getAttribute('aria-label');
+            await page.close();
+            return { text, problems };
+        };
+        const french = await label('/french');
+        check(french.text === 'Écrivez un message...', `language: a French page writes the composer in French (got ${french.text})`);
+        check(french.problems.length === 0, `language: no console error or warning${french.problems.length ? `: ${french.problems.join(' | ')}` : ''}`);
+        const unknown = await label('/klingon');
+        check(unknown.text === 'Type a message...', `language: a language aparté does not speak stays English (got ${unknown.text})`);
     });
 
     // ── A list of conversations written in the view ────────────────────────────────────────
