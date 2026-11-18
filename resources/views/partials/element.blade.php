@@ -12,7 +12,8 @@
     data-aparte-scope="{{ auth()->id() }}"
     {{-- The page's language, for the chat's own words (@aparte/locales); its other lines go through Laravel's translator. --}}
     data-aparte-locale="{{ app()->getLocale() }}"
-    @if ($thread ?? null) data-aparte-thread="{{ $thread }}" @endif
+    {{-- One named conversation, for someone signed in: guests would all share it, and the model's memory with it. --}}
+    @if (($thread ?? null) && auth()->check()) data-aparte-thread="{{ $thread }}" @endif
     {{-- Kept on the server for someone signed in; a guest's conversations stay in the tab. --}}
     @if (($conversations ?? null) && auth()->check()) data-aparte-conversations="{{ url($conversations) }}" @endif
     {{-- Someone of the team can take the conversation over (People): who holds it, and what the person writes meanwhile. --}}
@@ -24,7 +25,7 @@
          it on (a desk writes to that address), and only for a guest, whose address nobody knows. --}}
     @if (($people ?? null) && ($peopleEmail ?? false) && ! auth()->check()) data-aparte-people-email="{{ __('Get the answer by e-mail too') }}" data-aparte-people-email-placeholder="{{ __('Your e-mail') }}" data-aparte-people-email-send="{{ __('Send') }}" @endif
     {{-- The paperclip while someone of the team is in the conversation: files kept on your disk (aparte.people.files). --}}
-    @if (($people ?? null) && ($peopleFiles ?? false)) data-aparte-people-files="{{ collect(config('aparte.people.files.types', []))->map(fn ($type) => '.'.$type)->implode(',') }}" @endif
+    @if (($people ?? null) && ($peopleFiles ?? false) && \Aparte\Laravel\People::filesEnabled()) data-aparte-people-files="{{ collect(config('aparte.people.files.types', []))->map(fn ($type) => '.'.$type)->implode(',') }}" @endif
     {{-- How the conversation went, asked when your team closes it: only when the app turns it on (a desk keeps it). --}}
     @if (($people ?? null) && ($peopleRating ?? false)) data-aparte-people-rating="{{ __('How was this conversation?') }}" data-aparte-people-rating-up="{{ __('Good') }}" data-aparte-people-rating-down="{{ __('Not good') }}" @endif
     @if ($followDarkClass ?? false) data-aparte-follow-dark @endif

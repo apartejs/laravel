@@ -99,6 +99,8 @@ class ConversationsController
         // else the app has the model remember for this person is not the chat's to forget.
         if ($this->conversations()->delete($owner, $this->scope($request), $conversation)) {
             $this->forgetMemory($owner, $conversation);
+            // What the package kept for it outside the database: the e-mail address, the files.
+            \Aparte\Laravel\People::forget($conversation);
         }
 
         return response()->noContent();

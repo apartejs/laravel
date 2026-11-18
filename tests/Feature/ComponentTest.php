@@ -22,7 +22,9 @@ it('lets a chat have no endpoint, for an app that brings its own runner', functi
         ->toContain('data-aparte-endpoint=""');
 });
 
-it('passes a thread the page chose', function () {
+it('passes a thread the page chose, for someone signed in', function () {
+    $this->actingAs((new \Illuminate\Foundation\Auth\User)->forceFill(['id' => 1]));
+
     expect(Blade::render('<x-aparte::chat endpoint="/chat" thread="abc" />'))
         ->toContain('data-aparte-thread="abc"');
 });

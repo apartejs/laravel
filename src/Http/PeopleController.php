@@ -6,6 +6,7 @@ use Aparte\Laravel\People;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Ai\Models\Conversation;
@@ -38,9 +39,11 @@ class PeopleController
     }
 
     /**
-     * What the person writes to your team. In a chat without an assistant (no `endpoint`), the
-     * first message starts the conversation and puts it in your team's queue, the message as the
-     * reason; the visitor reads the notice the hand-off gives.
+     * What the person writes to your team. In a chat without an assistant (no `endpoint`, the chat
+     * sends `team: true`), the first message starts the conversation and puts it in your team's
+     * queue, the message as the reason; the visitor reads the notice the hand-off gives. In a chat
+     * with an assistant, a conversation nobody holds and that waits for nobody is the
+     * assistant's: refused (409), and nothing is created, kept or handed over.
      */
     public function store(Request $request, string $conversation): Response|JsonResponse
     {
@@ -48,25 +51,40 @@ class PeopleController
         $data = $request->validate([
             'id' => ['required', 'string', 'max:64'],
             'content' => ['nullable', 'string', 'max:20000', 'required_without:files'],
-            'files' => ['nullable', 'array', 'max:'.(int) ($files['max'] ?? 5)],
+            'team' => ['sometimes', 'boolean'],
+            // Files only when your app turned them on: the paperclip is the page's, not the server's.
+            'files' => People::filesEnabled() ? ['nullable', 'array', 'max:'.(int) ($files['max'] ?? 5)] : ['prohibited'],
             'files.*' => ['file', 'max:'.(int) ($files['max_kb'] ?? 10240), 'mimes:'.implode(',', $files['types'] ?? [])],
         ]);
         $text = (string) ($data['content'] ?? '');
+        $teamOnly = $request->boolean('team');
 
-        // The browser mints the thread id, as for the chat route.
-        $user = $request->user();
-        $found = Conversation::firstOrCreate(['id' => $conversation], [
-            'participant_type' => $user?->getMorphClass(),
-            'participant_id' => $user?->getKey(),
-            'title' => $text !== '' ? Str::limit($text, 60) : 'aparté chat',
-        ]);
-        $this->authorize($request, $found);
+        $found = Conversation::find($conversation);
+        if ($found !== null) {
+            $this->authorize($request, $found);
+        }
+        $waiting = $found !== null && (People::holder($conversation) !== null || People::wanted($conversation) !== null);
+
+        // The assistant's conversation: the chat sends here only while someone holds it or it
+        // waits for someone. Anything else is not a message for the team.
+        abort_unless($waiting || $teamOnly, 409, 'The assistant answers this conversation.');
+
+        // The browser mints the thread id, as for the chat route: a chat with the team only starts here.
+        if ($found === null) {
+            $user = $request->user();
+            $found = Conversation::create([
+                'id' => $conversation,
+                'participant_type' => $user?->getMorphClass(),
+                'participant_id' => $user?->getKey(),
+                'title' => $text !== '' ? Str::limit($text, 60) : 'aparté chat',
+            ]);
+        }
 
         $attachments = array_map(fn ($file) => People::attach($conversation, $file), $request->file('files', []));
         People::heard($conversation, $data['id'], $text, $attachments);
 
-        // Nobody holds it and it waits for nobody: writing to the team is asking for it.
-        if (People::holder($conversation) === null && People::wanted($conversation) === null) {
+        // A chat with the team only, nobody holding it and nobody asked yet: writing is asking.
+        if (! $waiting) {
             $reason = $text !== '' ? Str::limit($text, 200) : implode(', ', array_column($attachments, 'name'));
 
             return response()->json(['notice' => People::want($conversation, $reason, source: 'message'), 'attachments' => $attachments]);
@@ -112,6 +130,12 @@ class PeopleController
         abort_if($found === null, 404);
         $this->authorize($request, $found);
 
+        // A guest's, once, while an answer from your team is owed: someone signed in has an
+        // address already, and a second one would let anyone have your desk write to a stranger.
+        abort_if($request->user() !== null, 403, 'Someone signed in is not asked for an address.');
+        abort_if(People::email($conversation) !== null, 409, 'An address was left already.');
+        abort_if(People::holder($conversation) === null && People::wanted($conversation) === null, 409, 'Nobody of the team is awaited.');
+
         $data = $request->validate(['email' => ['required', 'string', 'email', 'max:254']]);
 
         return response()->json(['notice' => People::leftEmail($conversation, $data['email'])]);
@@ -123,11 +147,15 @@ class PeopleController
         $found = Conversation::find($conversation);
         abort_if($found === null, 404);
         $this->authorize($request, $found);
-        abort_unless(People::rating($conversation) === 'asked', 409, 'Nobody asked for a rating, or it was given.');
-
         $data = $request->validate(['value' => ['required', 'string', 'in:up,down']]);
 
-        return response()->json(['notice' => People::rate($conversation, $data['value'])]);
+        // Once, even for two answers sent at the same moment.
+        $notice = Cache::lock('aparte.people.rating-lock.'.$conversation, 5)->get(
+            fn () => People::rating($conversation) === 'asked' ? People::rate($conversation, $data['value']) : null,
+        );
+        abort_if($notice === null || $notice === false, 409, 'Nobody asked for a rating, or it was given.');
+
+        return response()->json(['notice' => $notice]);
     }
 
     /** A file sent in the conversation, for whoever may read it: never run by the browser. */

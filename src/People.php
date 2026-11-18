@@ -16,6 +16,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -42,10 +43,8 @@ final class People
 
     private static ?Closure $teamFirst = null;
 
-    private static ?string $filesUri = null;
-
-    /** The conversation the chat route is answering right now, for a tool to know where it runs. */
-    private static ?string $answering = null;
+    /** Where Route::apartePeople() serves a file: a name a route cache keeps, unlike a static set while the routes load. */
+    public const FILE_ROUTE = 'aparte.people.file';
 
     /**
      * Tell the package who holds a conversation: the callback receives its id and returns the
@@ -93,7 +92,7 @@ final class People
     public static function attach(string $conversationId, UploadedFile $file): array
     {
         $id = (string) Str::uuid();
-        $name = Str::limit(str_replace(['/', '\\', "\0"], '-', $file->getClientOriginalName()), 120, '') ?: 'file';
+        $name = self::fileName($file);
         Storage::disk(config('aparte.people.files.disk', 'local'))->putFileAs(self::fileDirectory($conversationId, $id), $file, $name);
 
         return [
@@ -101,8 +100,60 @@ final class People
             'name' => $name,
             'type' => $file->getMimeType() ?: 'application/octet-stream',
             'size' => (int) $file->getSize(),
-            'url' => self::$filesUri === null ? null : url(self::$filesUri.'/'.rawurlencode($conversationId).'/files/'.$id),
+            'url' => Route::has(self::FILE_ROUTE) ? route(self::FILE_ROUTE, ['conversation' => $conversationId, 'file' => $id]) : null,
         ];
+    }
+
+    /**
+     * The name a file is kept under: the person's, without a path, never only dots, and with an
+     * extension of the kinds taken. `invoice.html` whose content is text is kept as `invoice.txt`,
+     * so that nothing a browser would run is served under a name that tells it to.
+     */
+    private static function fileName(UploadedFile $file): string
+    {
+        $name = Str::limit(str_replace(['/', '\\', "\0"], '-', $file->getClientOriginalName()), 120, '');
+        if (trim($name, '. ') === '') {
+            $name = 'file';
+        }
+
+        $types = array_map('strtolower', (array) config('aparte.people.files.types', []));
+        $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+        if ($extension === '' || ! in_array($extension, $types, true)) {
+            $stem = pathinfo($name, PATHINFO_FILENAME);
+            $name = (trim($stem, '. ') === '' ? 'file' : $stem).'.'.($file->guessExtension() ?: 'bin');
+        }
+
+        return $name;
+    }
+
+    /**
+     * Whether the person may send files: your app turns it on (`APARTE_PEOPLE_FILES=true`, or
+     * `aparte.people.files.enabled`), and `:people-files` shows the paperclip. A request the chat
+     * did not make cannot turn it on.
+     */
+    public static function filesEnabled(): bool
+    {
+        return (bool) config('aparte.people.files.enabled', false);
+    }
+
+    /**
+     * Forget what the package keeps for a conversation outside the SDK's tables: the hand-off's
+     * reason, the person's e-mail address and rating, and the files sent in it. Deleting a
+     * conversation from the chat's list does it; call it when your app deletes one another way.
+     */
+    public static function forget(string $conversationId): void
+    {
+        foreach ([self::wantedKey($conversationId), self::emailKey($conversationId), self::ratingKey($conversationId), self::typingKey($conversationId)] as $key) {
+            Cache::forget($key);
+        }
+
+        Storage::disk(config('aparte.people.files.disk', 'local'))->deleteDirectory('aparte/people/'.$conversationId);
+    }
+
+    /** How long the package keeps a conversation's state: `aparte.people.keep_days`, 90 by default. */
+    private static function kept(): \DateTimeInterface
+    {
+        return now()->addDays(max(1, (int) config('aparte.people.keep_days', 90)));
     }
 
     /** Where a file of the conversation is on the disk, or null when there is none by that id. */
@@ -115,11 +166,6 @@ final class People
         return Storage::disk(config('aparte.people.files.disk', 'local'))->files(self::fileDirectory($conversationId, $fileId))[0] ?? null;
     }
 
-    /** @internal Route::apartePeople() says where its routes are: a file's address is under them. */
-    public static function filesUnder(string $uri): void
-    {
-        self::$filesUri ??= rtrim($uri, '/');
-    }
 
     private static function fileDirectory(string $conversationId, string $fileId): string
     {
@@ -157,7 +203,7 @@ final class People
      */
     public static function leftEmail(string $conversationId, string $email): array
     {
-        Cache::forever(self::emailKey($conversationId), $email);
+        Cache::put(self::emailKey($conversationId), $email, self::kept());
 
         $message = self::message(['kind' => 'notice', 'content' => __('We will also answer you at :email', ['email' => $email])]);
         self::show($conversationId, $message);
@@ -172,7 +218,7 @@ final class People
      */
     public static function askRating(string $conversationId): void
     {
-        Cache::forever(self::ratingKey($conversationId), 'asked');
+        Cache::put(self::ratingKey($conversationId), 'asked', self::kept());
         self::announce($conversationId, ['type' => 'rating']);
     }
 
@@ -183,7 +229,7 @@ final class People
      */
     public static function rate(string $conversationId, string $value): array
     {
-        Cache::forever(self::ratingKey($conversationId), $value);
+        Cache::put(self::ratingKey($conversationId), $value, self::kept());
 
         $message = self::message(['kind' => 'notice', 'content' => __('Thank you for your answer')]);
         self::show($conversationId, $message);
@@ -302,11 +348,15 @@ final class People
      *
      * @param  string|null  $notice  the line the chat draws; wantedNotice()'s, else "Someone of the team will answer you here"
      * @param  string  $source  how it came, for your desk (SomeoneWanted::$source): tool, button, message
-     * @return array<string, mixed> the notice, as the chat draws it
+     * @return array<string, mixed>|null the notice, as the chat draws it; null when it was waiting already
      */
-    public static function want(string $conversationId, string $reason, ?string $notice = null, string $source = 'tool'): array
+    public static function want(string $conversationId, string $reason, ?string $notice = null, string $source = 'tool'): ?array
     {
-        Cache::forever(self::wantedKey($conversationId), $reason);
+        // Once: two requests at the same moment (two clicks, a click and the assistant) hand it
+        // over once, with one notice and one SomeoneWanted.
+        if (! Cache::add(self::wantedKey($conversationId), $reason, self::kept())) {
+            return null;
+        }
 
         $notice ??= self::$wantedNotice ? (self::$wantedNotice)($conversationId) : __('Someone of the team will answer you here');
         $message = self::message(['kind' => 'notice', 'content' => $notice]);
@@ -362,11 +412,13 @@ final class People
     /** The chat route says which conversation it answers, for the duration of the answer. */
     public static function answering(?string $conversationId = null): ?string
     {
+        // Kept in the request's container, not in a static: under Octane a worker serves request
+        // after request, and a static would hand the next one's tool the last visitor's conversation.
         if (func_num_args() > 0) {
-            self::$answering = $conversationId;
+            app()->instance('aparte.people.answering', $conversationId);
         }
 
-        return self::$answering;
+        return app()->bound('aparte.people.answering') ? app('aparte.people.answering') : null;
     }
 
     private static function wantedKey(string $conversationId): string
