@@ -379,7 +379,27 @@ Event::listen(SomeoneWanted::class, fn (SomeoneWanted $e) => /* notify your team
 ```
 
 `People::wanted($id)` gives the reason while the conversation waits (your desk's "to take" list). It stops waiting
-when someone takes it over or hands it back. `People::want($id, $reason)` does the same from your own code.
+when someone takes it over or hands it back. `People::want($id, $reason)` does the same from your own code. The
+visitor never sees the tool's call itself, only what the assistant and your team say.
+
+### When the visitor asks
+
+The visitor can ask too, with a **Talk to a person** button beside send, while the assistant answers. A click hands
+the conversation to your team at once, without the model: the same notice, the same `SomeoneWanted`, with the reason
+"The visitor asked for a person". It is off until you turn it on, because something has to hear `SomeoneWanted` (your
+desk, a notification), or the visitor would wait for nobody:
+
+```blade
+<x-aparte::chat endpoint="/chat" people="/chat/people" :people-button="true" />
+<x-aparte::chat endpoint="/chat" people="/chat/people" :people-button="__('Talk to a person')" />
+```
+
+What the visitor reads when the conversation goes to your team, whoever asked, is yours to say once, in a service
+provider's `boot()` (a desk can say when the team is back):
+
+```php
+People::wantedNotice(fn (string $conversationId) => 'Someone of the team will answer you here.');
+```
 
 
 ## Plugins

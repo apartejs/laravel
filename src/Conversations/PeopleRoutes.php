@@ -24,6 +24,7 @@ class PeopleRoutes
         return new self([
             Route::get($one, [PeopleController::class, 'show'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
             Route::post($one.'/messages', [PeopleController::class, 'store'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
+            Route::post($one.'/want', [PeopleController::class, 'want'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
         ]);
     }
 

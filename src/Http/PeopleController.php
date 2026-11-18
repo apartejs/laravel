@@ -21,12 +21,16 @@ class PeopleController
         // A conversation that is not there yet has had no one take it over, and will be the
         // participant's who asks: the channel is theirs already.
         if ($found === null) {
-            return response()->json(['heldBy' => null, 'channel' => People::channel($conversation, $request->user()?->getKey())]);
+            return response()->json(['heldBy' => null, 'wanted' => false, 'channel' => People::channel($conversation, $request->user()?->getKey())]);
         }
 
         $this->authorize($request, $found);
 
-        return response()->json(['heldBy' => People::holder($conversation), 'channel' => People::channel($conversation, $found->participant_id)]);
+        return response()->json([
+            'heldBy' => People::holder($conversation),
+            'wanted' => People::wanted($conversation) !== null,
+            'channel' => People::channel($conversation, $found->participant_id),
+        ]);
     }
 
     public function store(Request $request, string $conversation): Response
@@ -43,6 +47,31 @@ class PeopleController
         People::heard($conversation, $data['id'], $data['content']);
 
         return response()->noContent();
+    }
+
+    /**
+     * The visitor asks for someone of your team, with the chat's button: the conversation goes to
+     * your team as when the assistant hands it over, without asking the model. Someone holding it
+     * already, or it already waiting, changes nothing.
+     */
+    public function want(Request $request, string $conversation): JsonResponse
+    {
+        $user = $request->user();
+
+        // The browser mints the thread id, as for the chat route: a conversation not written yet
+        // is the visitor's, as their first message would have made it.
+        $found = Conversation::firstOrCreate(['id' => $conversation], [
+            'participant_type' => $user?->getMorphClass(),
+            'participant_id' => $user?->getKey(),
+            'title' => 'aparté chat',
+        ]);
+        $this->authorize($request, $found);
+
+        if (People::holder($conversation) !== null || People::wanted($conversation) !== null) {
+            return response()->json(['notice' => null]);
+        }
+
+        return response()->json(['notice' => People::want($conversation, __('The visitor asked for a person'))]);
     }
 
     /** The conversation's own participant, as the chat route checks it: a guest's is a guest's. */

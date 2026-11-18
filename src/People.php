@@ -32,6 +32,9 @@ final class People
     /** @var (Closure(string): (array<string, mixed>|null))|null */
     private static ?Closure $heldBy = null;
 
+    /** @var (Closure(string): string)|null */
+    private static ?Closure $wantedNotice = null;
+
     /** The conversation the chat route is answering right now, for a tool to know where it runs. */
     private static ?string $answering = null;
 
@@ -134,15 +137,33 @@ final class People
      * notice, and SomeoneWanted tells your desk why. It waits until someone takes it over
      * (takeOver) or hands it back (handBack). The AskForSomeone tool calls this.
      *
-     * @param  string|null  $notice  the line the chat draws; "Someone of the team will answer you here" by default
+     * @param  string|null  $notice  the line the chat draws; wantedNotice()'s, else "Someone of the team will answer you here"
+     * @return array<string, mixed> the notice, as the chat draws it
      */
-    public static function want(string $conversationId, string $reason, ?string $notice = null): void
+    public static function want(string $conversationId, string $reason, ?string $notice = null): array
     {
         Cache::forever(self::wantedKey($conversationId), $reason);
 
+        $notice ??= self::$wantedNotice ? (self::$wantedNotice)($conversationId) : 'Someone of the team will answer you here';
+        $message = self::message(['kind' => 'notice', 'content' => $notice]);
+
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);
-        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? 'Someone of the team will answer you here']));
+        self::show($conversationId, $message);
         Event::dispatch(new SomeoneWanted($conversationId, $reason));
+
+        return $message;
+    }
+
+    /**
+     * What the visitor reads when the conversation goes to your team, whoever asked: the
+     * assistant (AskForSomeone) or the visitor (the chat's button). Your desk can say when the
+     * team is back: `People::wantedNotice(fn (string $id) => ...)`.
+     *
+     * @param  (Closure(string): string)|null  $resolver
+     */
+    public static function wantedNotice(?Closure $resolver): void
+    {
+        self::$wantedNotice = $resolver;
     }
 
     /** Why the conversation waits for someone of your team, or null when it does not. */

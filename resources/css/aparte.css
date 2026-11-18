@@ -6,3 +6,17 @@
 aparte-launcher > .aparte-app-shell:has(> aparte-sidebar:not([data-drawer], [collapsed])) > .aparte-app-header [data-aparte-new-chat] {
     display: none;
 }
+
+/* The visitor's "Talk to a person" button, beside send: a word, not a lone icon, so it reads at once. */
+.aparte-laravel-people .aparte-action-button {
+    width: auto;
+    gap: .375rem;
+    padding-inline: .625rem;
+    white-space: nowrap;
+    font-size: .8125rem;
+}
+.aparte-laravel-people .aparte-action-button svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+}

@@ -64,3 +64,49 @@ it('stops waiting when someone takes it over or hands it back', function () {
     People::handBack('thread-1');
     expect(People::wanted('thread-1'))->toBeNull();
 });
+
+it("asks for someone of the team from the visitor's button, without the model", function () {
+    Event::fake([SomeoneWanted::class, ConversationChanged::class]);
+
+    // A guest's conversation the chat has not written yet: the button may come before any message.
+    $notice = $this->postJson('/chat/people/new-1/want')->assertOk()->json('notice');
+
+    expect($notice['kind'])->toBe('notice')
+        ->and($notice['content'])->toBe('Someone of the team will answer you here')
+        ->and(People::wanted('new-1'))->toBe('The visitor asked for a person');
+    Event::assertDispatched(SomeoneWanted::class, fn (SomeoneWanted $e) => $e->conversationId === 'new-1');
+    expect($this->getJson('/chat/people/new-1')->json('wanted'))->toBeTrue();
+});
+
+it('changes nothing when someone holds the conversation or it already waits', function () {
+    Event::fake([SomeoneWanted::class, ConversationChanged::class]);
+    heldConversation(peopleUser(1));
+    People::heldBy(fn () => ['name' => 'Marie']);
+
+    expect($this->actingAs(peopleUser(1))->postJson('/chat/people/thread-1/want')->assertOk()->json('notice'))->toBeNull();
+    People::heldBy(null);
+
+    People::want('thread-1', 'asked before');
+    expect($this->actingAs(peopleUser(1))->postJson('/chat/people/thread-1/want')->json('notice'))->toBeNull()
+        ->and(People::wanted('thread-1'))->toBe('asked before');
+});
+
+it("refuses to ask for someone in another person's conversation", function () {
+    heldConversation(peopleUser(1));
+
+    $this->actingAs(peopleUser(2))->postJson('/chat/people/thread-1/want')->assertForbidden();
+    expect(People::wanted('thread-1'))->toBeNull();
+});
+
+it('says what the app wants when the conversation goes to the team, for the tool and the button alike', function () {
+    Event::fake([SomeoneWanted::class, ConversationChanged::class]);
+    heldConversation(peopleUser(1));
+    People::wantedNotice(fn (string $id) => "Back on Monday ({$id})");
+    People::answering('thread-1');
+
+    (new AskForSomeone)->handle(new Request(['reason' => 'a refund']));
+
+    $said = Event::dispatched(ConversationChanged::class)->map(fn ($e) => $e[0]->change['message']['content'] ?? null)->filter()->values()->all();
+    expect($said)->toBe(['Back on Monday (thread-1)']);
+    People::wantedNotice(null);
+});
