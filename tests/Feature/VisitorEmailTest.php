@@ -13,7 +13,11 @@ beforeEach(fn () => Event::fake([VisitorLeftEmail::class, ConversationChanged::c
 /** A conversation of a guest, or of the user given. */
 function emailConversation(?User $user = null, string $id = 'thread-1'): Conversation
 {
-    return Conversation::create(['id' => $id, 'participant_type' => $user?->getMorphClass(), 'participant_id' => $user?->getKey(), 'title' => 'Order']);
+    $conversation = Conversation::create(['id' => $id, 'participant_type' => $user?->getMorphClass(), 'participant_id' => $user?->getKey(), 'title' => 'Order']);
+    // The field is for a person waiting for the team.
+    People::want($id, 'a refund');
+
+    return $conversation;
 }
 
 it('keeps the e-mail a guest leaves for the answer, and tells the desk', function () {
@@ -39,7 +43,8 @@ it('refuses what is not an e-mail, a conversation not there, or someone else\'s'
     emailConversation((new User)->forceFill(['id' => 1]));
 
     $this->postJson('/chat/people/thread-1/email', ['email' => 'lea@example.test'])->assertForbidden();
-    $this->actingAs((new User)->forceFill(['id' => 1]))->postJson('/chat/people/thread-1/email', ['email' => 'not an e-mail'])->assertUnprocessable();
+    emailConversation(null, 'thread-2');
+    $this->postJson('/chat/people/thread-2/email', ['email' => 'not an e-mail'])->assertUnprocessable();
     $this->postJson('/chat/people/thread-9/email', ['email' => 'lea@example.test'])->assertNotFound();
 
     Event::assertNotDispatched(VisitorLeftEmail::class);

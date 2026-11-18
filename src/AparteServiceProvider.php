@@ -49,6 +49,10 @@ class AparteServiceProvider extends ServiceProvider
         // What the chat says, in the languages aparté speaks; the app's own lang/*.json wins.
         $this->loadJsonTranslationsFrom(__DIR__.'/../lang');
 
+        // The people routes answer guests: each POST is counted by IP (config `aparte.people.throttle`).
+        \Illuminate\Support\Facades\RateLimiter::for('aparte-people', fn (\Illuminate\Http\Request $request) => self::peopleLimit($request, 1));
+        \Illuminate\Support\Facades\RateLimiter::for('aparte-people-presence', fn (\Illuminate\Http\Request $request) => self::peopleLimit($request, 5));
+
         // Asked for, never run unasked: the table is only for an app that keeps conversations.
         $this->publishesMigrations([__DIR__.'/../database/migrations' => database_path('migrations')], 'aparte-migrations');
         $this->publishes([__DIR__.'/../config/aparte.php' => config_path('aparte.php')], 'aparte-config');
@@ -59,6 +63,16 @@ class AparteServiceProvider extends ServiceProvider
         Route::get('aparte-assets/{type}', AssetController::class)
             ->where('type', 'js|css')
             ->name('aparte.asset');
+    }
+
+    /** What one IP may post a minute to the people routes; `$times` more for typing and "seen". */
+    private static function peopleLimit(\Illuminate\Http\Request $request, int $times): \Illuminate\Cache\RateLimiting\Limit
+    {
+        $perMinute = config('aparte.people.throttle', 20);
+
+        return $perMinute === null
+            ? \Illuminate\Cache\RateLimiting\Limit::none()
+            : \Illuminate\Cache\RateLimiting\Limit::perMinute(max(1, (int) $perMinute) * $times)->by((string) $request->ip());
     }
 
     /**

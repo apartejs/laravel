@@ -304,6 +304,11 @@ Route::aparte('/chat', App\Ai\Agents\Support::class)->middleware('throttle:20,1'
 Route::apartePeople('/chat/people');
 ```
 
+The people routes answer guests, so each POST is throttled already: 20 a minute per IP (`config/aparte.php`,
+`people.throttle`; typing and "seen" get five times as much). A conversation's hand-off, e-mail address and rating are
+kept in your cache for 90 days (`people.keep_days`): give it a store that lasts (database, Redis, files), not `array`.
+`People::forget($id)` drops them, with the conversation's files; deleting a conversation from the chat's list does it.
+
 ```blade
 <x-aparte::chat endpoint="/chat" people="/chat/people" style="height: 32rem" />
 ```
@@ -390,8 +395,9 @@ Event::listen(SomeoneWanted::class, fn (SomeoneWanted $e) => /* notify your team
 ```
 
 `People::wanted($id)` gives the reason while the conversation waits (your desk's "to take" list). It stops waiting
-when someone takes it over or hands it back. `People::want($id, $reason)` does the same from your own code. The
-visitor never sees the tool's call itself, only what the assistant and your team say.
+when someone takes it over or hands it back. `People::want($id, $reason)` does the same from your own code; it hands a
+conversation over once, and returns `null` when it waits already. The visitor never sees the tool's call itself, only
+what the assistant and your team say.
 
 ### When the visitor asks
 
@@ -438,19 +444,28 @@ write to that address (your desk):
 ```
 
 The address goes to `POST {people}/{id}/email`, `People::email($id)` returns it, and `VisitorLeftEmail` tells your desk;
-the visitor reads "We will also answer you at …". Someone signed in is not asked: their account has an address.
+the visitor reads "We will also answer you at …". The route takes one address a conversation, from a guest, while
+your team is awaited; someone signed in is not asked: their account has an address.
 
 ### Files
 
 While someone of your team is in the conversation (and from the start in a chat with the team only), the person can
-attach files; your team can send some back. It is off until you turn it on:
+attach files; your team can send some back. It is off until your app turns it on, in `.env`, and the chat shows the
+paperclip:
+
+```env
+APARTE_PEOPLE_FILES=true
+```
 
 ```blade
 <x-aparte::launcher endpoint="/chat" people="/chat/people" :people-files="true" />
 ```
 
+The server takes no file without the first: the attribute is the page's, which anyone can write.
+
 They are kept on a private disk of your app (`config/aparte.php`, `people.files`: the disk, 10 MB and 5 files a
-message by default, and the kinds taken, never one a browser would run), and opened at `{people}/{id}/files/{file}` by
+message by default, and the kinds taken, never one a browser would run: `invoice.html` whose content is text is kept
+as `invoice.txt`), and opened at `{people}/{id}/files/{file}` (the route `aparte.people.file`) by
 whoever may read the conversation. `PersonWrote::$attachments` tells your desk what came with a message. Your team's
 files go out with `People::post($id, $author, $text, [People::attach($id, $uploadedFile)])`, and the person's chat shows
 them as links.
@@ -480,8 +495,9 @@ People::teamFirst(fn (string $conversationId) => now()->isWeekday() && now()->ho
 It is asked at a conversation's first message. While it says yes, that message goes to your team (`SomeoneWanted`,
 source `team_first`) and the assistant stays quiet there until someone hands it back; a conversation the assistant
 began goes on with it. A desk can answer it for you, from its office hours and who has it open.
-`Route::apartePeople()` is the one route this chat needs, and the visitor's first message creates the conversation:
-throttle it as you would the chat route, `Route::apartePeople('/chat/people')->middleware('throttle:30,1')`.
+`Route::apartePeople()` is the one route this chat needs, and the visitor's first message creates the conversation
+(the chat says it is one with the team only; a chat with an assistant never creates one there). Its POSTs are throttled
+already ([above](#a-person-takes-over)); give a stricter limit if you want one.
 
 
 ## Plugins
@@ -673,15 +689,18 @@ late. In a Filament panel, a render hook puts it there:
 
 - **The language** is your page's: `app()->getLocale()`. The chat's own words (the composer, its buttons) and this
   package's lines (the person button, the e-mail field, the notices) come in English, French, German, Spanish,
-  Italian, Portuguese (Brazil), Russian, Japanese, Korean and Chinese (Simplified); `fr_CA` is French, a language
-  outside the list stays English. To change a line, or add a language, give it in your `lang/*.json`: yours win.
+  Italian, Portuguese (Brazil), Russian, Japanese, Korean and Chinese (Simplified). The chat's own words take `fr_CA`
+  as French; Laravel looks for this package's lines under the exact locale, so for `fr_CA` copy `lang/fr.json` to your
+  `lang/fr_CA.json`. Traditional Chinese and any language outside the list stay English. To change a line, or add a
+  language, give it in your `lang/*.json`: yours win.
 - **The look** is set with aparté's [CSS variables](https://apartejs.dev/guides/theming/). It follows the system's light or dark
   mode; `follow-dark-class` makes it follow Tailwind's `dark` class instead.
 - **What is kept:** the SDK keeps the conversation in your database, tied to the signed-in user, and the model's memory comes
   from there. What is on screen is kept for the tab: closing it starts a new conversation, unless you keep it
   [in your database](#conversations-in-your-database) or in [a storage of your own](#your-own-storage-your-own-runner).
 - **A conversation** is identified by an id the browser creates, or by `thread="..."` on a chat that has one
-  conversation and no list.
+  conversation and no list, for someone signed in: guests would all share it, and the model's memory with it, so a
+  guest's chat ignores it.
 - **Guests** can chat if your route allows them. Their conversations belong to nobody, so the id is all that protects one.
 - **In production,** replies stream through nginx and PHP-FPM with no configuration: the SDK tells nginx not to buffer them.
   Each reply in progress holds a PHP worker until it ends, so count them in `pm.max_children`.

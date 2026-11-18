@@ -14,6 +14,7 @@ use Laravel\Ai\Models\ConversationMessage;
 beforeEach(function () {
     Event::fake([PersonWrote::class, ConversationChanged::class]);
     Storage::fake('local');
+    config(['aparte.people.files.enabled' => true]);
 });
 
 afterEach(fn () => People::heldBy(null));

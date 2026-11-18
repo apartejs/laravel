@@ -80,7 +80,7 @@ it('hands a chat without an assistant to the team at its first message, the mess
     Event::fake([PersonWrote::class, Aparte\Laravel\Events\SomeoneWanted::class, Aparte\Laravel\Events\ConversationChanged::class]);
 
     // A guest's conversation the browser has just started: nothing on the server yet.
-    $notice = $this->postJson('/chat/people/new-1/messages', ['id' => 'm-1', 'content' => 'Do you deliver to Belgium?'])
+    $notice = $this->postJson('/chat/people/new-1/messages', ['id' => 'm-1', 'content' => 'Do you deliver to Belgium?', 'team' => true])
         ->assertOk()
         ->json('notice');
 

@@ -21,7 +21,17 @@ return [
     // Files a person sends to your team, and your team to them, while someone of it is in the
     // conversation (`:people-files="true"` on the chat; see the README, "Files").
     'people' => [
+        // What one visitor (one IP) may post a minute to the people routes: messages, hand-offs,
+        // e-mail, rating; typing and "seen" have five times as much. null: no limit from here.
+        'throttle' => 20,
+
+        // How many days a conversation's hand-off, e-mail address and rating are kept in the cache.
+        'keep_days' => 90,
+
         'files' => [
+            // Off until you turn it on: the person can then send files while your team is in the
+            // conversation (`:people-files="true"` on the chat shows the paperclip).
+            'enabled' => (bool) env('APARTE_PEOPLE_FILES', false),
             // Where they are kept: a private disk of your app's.
             'disk' => 'local',
             // What one file may weigh, in kilobytes, and how many go in one message.

@@ -18,20 +18,32 @@ class PeopleRoutes
     /** @param  list<RegisteredRoute>  $routes */
     private function __construct(private array $routes) {}
 
+    /**
+     * A conversation's id, as the chat route takes it: 36 characters at most (the SDK's column),
+     * and never only dots.
+     */
+    public const ID = '(?![.]+(?:/|$))[A-Za-z0-9._-]{1,36}';
+
     public static function register(string $uri): self
     {
         $one = rtrim($uri, '/').'/{conversation}';
-        People::filesUnder($uri);
+
+        // Every POST is throttled by default (`aparte.people.throttle`): these routes answer guests.
+        $file = Route::get($one.'/files/{file}', [PeopleController::class, 'file'])->where('conversation', self::ID);
+        // Named once, for People::attach() to build a file's address, a route cache included.
+        if (! Route::has(People::FILE_ROUTE)) {
+            $file->name(People::FILE_ROUTE);
+        }
 
         return new self([
-            Route::get($one, [PeopleController::class, 'show'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
-            Route::post($one.'/messages', [PeopleController::class, 'store'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
-            Route::post($one.'/want', [PeopleController::class, 'want'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
-            Route::post($one.'/typing', [PeopleController::class, 'typing'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
-            Route::post($one.'/seen', [PeopleController::class, 'seen'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
-            Route::post($one.'/email', [PeopleController::class, 'email'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
-            Route::post($one.'/rating', [PeopleController::class, 'rating'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
-            Route::get($one.'/files/{file}', [PeopleController::class, 'file'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
+            Route::get($one, [PeopleController::class, 'show'])->where('conversation', self::ID),
+            Route::post($one.'/messages', [PeopleController::class, 'store'])->where('conversation', self::ID)->middleware('throttle:aparte-people'),
+            Route::post($one.'/want', [PeopleController::class, 'want'])->where('conversation', self::ID)->middleware('throttle:aparte-people'),
+            Route::post($one.'/typing', [PeopleController::class, 'typing'])->where('conversation', self::ID)->middleware('throttle:aparte-people-presence'),
+            Route::post($one.'/seen', [PeopleController::class, 'seen'])->where('conversation', self::ID)->middleware('throttle:aparte-people-presence'),
+            Route::post($one.'/email', [PeopleController::class, 'email'])->where('conversation', self::ID)->middleware('throttle:aparte-people'),
+            Route::post($one.'/rating', [PeopleController::class, 'rating'])->where('conversation', self::ID)->middleware('throttle:aparte-people'),
+            $file,
         ]);
     }
 
