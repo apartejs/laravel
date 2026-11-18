@@ -20,3 +20,10 @@ aparte-launcher > .aparte-app-shell:has(> aparte-sidebar:not([data-drawer], [col
     height: 18px;
     flex: none;
 }
+
+/* "Marie is typing…", above the composer, while someone of the team writes. */
+.aparte-laravel-typing {
+    padding: 0 1rem .375rem;
+    font-size: .8125rem;
+    color: var(--aparte-text-muted, #6b7280);
+}

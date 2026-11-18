@@ -6,6 +6,7 @@ use Aparte\Laravel\Conversations\ConversationRepository;
 use Aparte\Laravel\Conversations\DatabaseConversationRepository;
 use Aparte\Laravel\Conversations\StoredConversation;
 use Aparte\Laravel\Events\ConversationChanged;
+use Aparte\Laravel\Events\PersonSaw;
 use Aparte\Laravel\Events\PersonWrote;
 use Aparte\Laravel\Events\SomeoneWanted;
 use Closure;
@@ -72,6 +73,40 @@ final class People
         self::remember($conversationId, 'user', $text);
 
         Event::dispatch(new PersonWrote($conversationId, $messageId, $text));
+    }
+
+    /**
+     * Someone is writing. Without an author, it is the person: your desk asks visitorTyping() for
+     * a few seconds. With one, it is someone of your team, and the chat shows "Marie is typing".
+     *
+     * @param  array<string, mixed>|null  $author
+     */
+    public static function typing(string $conversationId, ?array $author = null): void
+    {
+        if ($author === null) {
+            Cache::put(self::typingKey($conversationId), true, now()->addSeconds(8));
+
+            return;
+        }
+
+        self::announce($conversationId, ['type' => 'typing', 'author' => self::author($author)]);
+    }
+
+    /** Whether the person was writing in the conversation a moment ago. */
+    public static function visitorTyping(string $conversationId): bool
+    {
+        return Cache::get(self::typingKey($conversationId)) === true;
+    }
+
+    /** The person has seen what your team wrote: PersonSaw tells your desk. */
+    public static function saw(string $conversationId): void
+    {
+        Event::dispatch(new PersonSaw($conversationId));
+    }
+
+    private static function typingKey(string $conversationId): string
+    {
+        return 'aparte.people.typing.'.$conversationId;
     }
 
     /**
