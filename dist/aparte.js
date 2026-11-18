@@ -21745,7 +21745,7 @@ async function Oy(n) {
     aparteConversations: i,
     apartePeople: a
   } = n.dataset, o = new Lr();
-  Il(n, o), o.setLinkTarget("external-only"), yy(void 0, o);
+  Il(n, o), o.setLinkTarget("external-only"), yy(void 0, o), o.registerToolDisplay("AskForSomeone", { hidden: !0 });
   let l;
   const c = ut();
   let u = {};

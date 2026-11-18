@@ -154,8 +154,15 @@ const server = createServer((req, res) => {
                     + event({ type: 'RUN_ERROR', message: 'RuntimeException: Quota of user 42.', code: 'USAGE_RATE_LIMIT' }),
                 );
             }
+            // On /chat, the assistant first hands the conversation over, as AskForSomeone does: the
+            // visitor never sees that call, only the words around it.
+            const handOff = req.url !== '/chat' ? '' : event({ type: 'TOOL_CALL_START', toolCallId: 't1', toolCallName: 'AskForSomeone' })
+                + event({ type: 'TOOL_CALL_ARGS', toolCallId: 't1', delta: '{"reason":"asked for a person"}' })
+                + event({ type: 'TOOL_CALL_END', toolCallId: 't1' })
+                + event({ type: 'TOOL_CALL_RESULT', messageId: 'r1', toolCallId: 't1', role: 'tool', content: 'The team was told and will answer here.' });
             res.end(
                 event({ type: 'RUN_STARTED', threadId: input.threadId, runId: input.runId })
+                + handOff
                 + event({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' })
                 + deltas.map((delta) => event({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta })).join('')
                 + event({ type: 'TEXT_MESSAGE_END', messageId: 'm1' })
@@ -308,6 +315,7 @@ try {
             return strong?.textContent === 'Hello' && document.querySelector('aparte-chat')?.textContent.includes('the built chat');
         }, null, { timeout: 20_000 }).then(() => true, () => false);
         check(drawn, 'the streamed reply is drawn, with its Markdown');
+        check(!((await page.locator('aparte-chat aparte-chat-viewport').textContent()) ?? '').includes('AskForSomeone'), 'the hand-off to the team draws no tool row');
         check(posts.length === 1, `one request for one message (got ${posts.length})`);
         check(posts[0]?.csrf === 'test-token', 'the CSRF header is sent');
         check(typeof posts[0]?.threadId === 'string' && posts[0].threadId.length > 0, 'the request names its thread');

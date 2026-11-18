@@ -652,6 +652,9 @@ async function mount(chat) {
     // site opens in a new tab. aparté's own default opens every link in a new tab.
     config.setLinkTarget('external-only');
     setupMarkedStreamingProvider(undefined, config);
+    // Handing the conversation to the team (AskForSomeone) is the package's own tool: the visitor
+    // reads what the assistant and the team say, never the call itself. An app's setup can show it.
+    config.registerToolDisplay('AskForSomeone', { hidden: true });
 
     // What the chat runs on: the package's own first, for the app's setup to keep or replace.
     // Its conversations go to the server when the view names the routes that keep them
