@@ -8,6 +8,7 @@ use Aparte\Laravel\Conversations\StoredConversation;
 use Aparte\Laravel\Events\ConversationChanged;
 use Aparte\Laravel\Events\PersonSaw;
 use Aparte\Laravel\Events\VisitorLeftEmail;
+use Aparte\Laravel\Events\VisitorRated;
 use Aparte\Laravel\Events\PersonWrote;
 use Aparte\Laravel\Events\SomeoneWanted;
 use Closure;
@@ -165,6 +166,45 @@ final class People
         return $message;
     }
 
+    /**
+     * Asks the person how the conversation went (the chat's question, `:people-rating="true"`): your
+     * desk does it when your team closes the conversation. Asked once; answered with rate().
+     */
+    public static function askRating(string $conversationId): void
+    {
+        Cache::forever(self::ratingKey($conversationId), 'asked');
+        self::announce($conversationId, ['type' => 'rating']);
+    }
+
+    /**
+     * The person's answer, `up` or `down`: kept, VisitorRated tells your desk, and the chat thanks them.
+     *
+     * @return array<string, mixed> the notice, as the chat draws it
+     */
+    public static function rate(string $conversationId, string $value): array
+    {
+        Cache::forever(self::ratingKey($conversationId), $value);
+
+        $message = self::message(['kind' => 'notice', 'content' => __('Thank you for your answer')]);
+        self::show($conversationId, $message);
+        Event::dispatch(new VisitorRated($conversationId, $value));
+
+        return $message;
+    }
+
+    /** `asked` while the question waits, then the answer, `up` or `down`; null when nobody asked. */
+    public static function rating(string $conversationId): ?string
+    {
+        $rating = Cache::get(self::ratingKey($conversationId));
+
+        return is_string($rating) ? $rating : null;
+    }
+
+    private static function ratingKey(string $conversationId): string
+    {
+        return 'aparte.people.rating.'.$conversationId;
+    }
+
     /** The e-mail address the person left in the conversation, or null. */
     public static function email(string $conversationId): ?string
     {
@@ -229,7 +269,7 @@ final class People
         Cache::forget(self::wantedKey($conversationId));
 
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);
-        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? "{$author['name']} joined the conversation"]));
+        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? __(':name joined the conversation', ['name' => $author['name']])]));
     }
 
     /**
@@ -251,7 +291,7 @@ final class People
     public static function handBack(string $conversationId, ?string $notice = null): void
     {
         Cache::forget(self::wantedKey($conversationId));
-        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? 'The assistant is back']));
+        self::show($conversationId, self::message(['kind' => 'notice', 'content' => $notice ?? __('The assistant is back')]));
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => true]);
     }
 
@@ -268,7 +308,7 @@ final class People
     {
         Cache::forever(self::wantedKey($conversationId), $reason);
 
-        $notice ??= self::$wantedNotice ? (self::$wantedNotice)($conversationId) : 'Someone of the team will answer you here';
+        $notice ??= self::$wantedNotice ? (self::$wantedNotice)($conversationId) : __('Someone of the team will answer you here');
         $message = self::message(['kind' => 'notice', 'content' => $notice]);
 
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);

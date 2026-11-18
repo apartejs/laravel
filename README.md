@@ -245,8 +245,8 @@ routes share a name share their conversations:
 Route::aparteConversations('/help/conversations', 'help');
 ```
 
-Its words (`Conversations`, `New chat`, `Search chats`, `Maximize`, `Close`) go through Laravel's translator: give
-them in your `lang/*.json` files. In a Filament panel, [`->conversations()`](#filament) does all of this.
+Its words (`Conversations`, `New chat`, `Search chats`, `Maximize`, `Close`) go through Laravel's translator, in
+[ten languages](#good-to-know) already; your `lang/*.json` files win. In a Filament panel, [`->conversations()`](#filament) does all of this.
 
 - **What is kept** is what the chat shows, as the browser sends it after each reply, in the `aparte_conversations`
   table. Each person reads and writes their own only; a guest's conversations stay in the tab.
@@ -429,8 +429,9 @@ where there is none.
 
 ### The answer by e-mail too
 
-While a guest's conversation waits for your team, the chat can offer a field to get the answer by e-mail too. It is off
-until you turn it on, because something has to write to that address (your desk):
+While a guest waits for your team's answer, the chat can offer a field to get it by e-mail too: it goes once your team
+has answered, and comes back with the guest's next question. It is off until you turn it on, because something has to
+write to that address (your desk):
 
 ```blade
 <x-aparte::launcher endpoint="/chat" people="/chat/people" :people-email="true" />
@@ -453,6 +454,19 @@ message by default, and the kinds taken, never one a browser would run), and ope
 whoever may read the conversation. `PersonWrote::$attachments` tells your desk what came with a message. Your team's
 files go out with `People::post($id, $author, $text, [People::attach($id, $uploadedFile)])`, and the person's chat shows
 them as links.
+
+### How it went
+
+When your team is done with a conversation, it can ask the person how it went: "How was this conversation?" with 👍
+and 👎, above the composer, answered once. It is off until you turn it on, since something has to keep the answers (your
+desk):
+
+```blade
+<x-aparte::launcher endpoint="/chat" people="/chat/people" :people-rating="true" />
+```
+
+`People::askRating($id)` asks (your desk does it when it closes a conversation), `POST {people}/{id}/rating` takes `up`
+or `down`, `People::rating($id)` returns it, and `VisitorRated` tells your desk.
 
 ### Your team first, the assistant when it is away
 
@@ -518,6 +532,10 @@ $panel->renderHook(PanelsRenderHook::HEAD_END, fn (): string => Blade::render("@
 
 A separate entry keeps your `app.js` out of the panel: a second Alpine, or your app's styles, would break Filament's.
 
+- The chat speaks the page's language, as the built one does, once you give it aparté's words:
+  `npm install @aparte/locales@^1`, then in the same entry
+  `import * as locales from '@aparte/locales'; useLocales(locales);` (`useLocales` comes from the same import as
+  `onAparteSetup`). Without it, the chat's own words stay English; the package's lines are translated either way.
 - `onAparteSetup` receives each chat's config, the chat element as its second argument, and its options as the third
   ([below](#your-own-storage-your-own-runner)). What it returns, if a function, runs when the chat stops. Call it at the top level of that entry and keep it synchronous: a chat starts
   once the entry has run.
@@ -653,6 +671,10 @@ late. In a Filament panel, a render hook puts it there:
 
 ## Good to know
 
+- **The language** is your page's: `app()->getLocale()`. The chat's own words (the composer, its buttons) and this
+  package's lines (the person button, the e-mail field, the notices) come in English, French, German, Spanish,
+  Italian, Portuguese (Brazil), Russian, Japanese, Korean and Chinese (Simplified); `fr_CA` is French, a language
+  outside the list stays English. To change a line, or add a language, give it in your `lang/*.json`: yours win.
 - **The look** is set with aparté's [CSS variables](https://apartejs.dev/guides/theming/). It follows the system's light or dark
   mode; `follow-dark-class` makes it follow Tailwind's `dark` class instead.
 - **What is kept:** the SDK keeps the conversation in your database, tied to the signed-in user, and the model's memory comes

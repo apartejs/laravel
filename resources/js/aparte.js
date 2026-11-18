@@ -609,12 +609,62 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         });
     }
 
+    // How the conversation went, when your team closed it and asks (`:people-rating`): two buttons,
+    // answered once, then a thank-you in the conversation.
+    const ratingWords = chat.dataset.apartePeopleRating ?? '';
+    const ratingAsked = new Set();
+    let ratingBox = null;
+    const rate = (value) => {
+        const id = open;
+        if (!id) return;
+        fetch(`${route(id)}/rating`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
+            credentials: 'same-origin',
+            body: JSON.stringify({ value }),
+        })
+            .then((response) => (response.ok ? response.json() : Promise.reject(new Error(`status ${response.status}`))))
+            .then(({ notice = null } = {}) => {
+                ratingAsked.delete(id);
+                showButton();
+                if (notice) apply(id, { type: 'message', message: notice });
+            })
+            .catch((error) => console.warn('aparté: the rating was not kept.', error));
+    };
+    if (ratingWords) {
+        ratingBox = document.createElement('div');
+        ratingBox.className = 'aparte-laravel-rating';
+        ratingBox.setAttribute('role', 'group');
+        ratingBox.setAttribute('aria-label', ratingWords);
+        ratingBox.hidden = true;
+        const question = document.createElement('span');
+        question.textContent = ratingWords;
+        const answer = (value, label, glyph) => {
+            const choice = document.createElement('button');
+            choice.type = 'button';
+            choice.className = 'aparte-btn aparte-btn--sm aparte-btn--surface';
+            choice.dataset.rating = value;
+            choice.setAttribute('aria-label', label);
+            choice.title = label;
+            choice.textContent = glyph;
+            choice.addEventListener('click', () => rate(value));
+            return choice;
+        };
+        ratingBox.append(question, answer('up', chat.dataset.apartePeopleRatingUp || 'Good', '👍'), answer('down', chat.dataset.apartePeopleRatingDown || 'Not good', '👎'));
+    }
+
     const fileTypes = chat.dataset.apartePeopleFiles;
     const ownPaperclip = chat.hasAttribute('attachments');
 
+    // An answer is owed: the last message, notices aside, is the person's.
+    const awaiting = () => chat.viewport?.getMessages().filter((message) => message.kind !== 'notice').at(-1)?.role === 'user';
+
     const showButton = () => {
         if (button) button.style.display = open && config.getAutoReply(open) ? '' : 'none';
-        if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open));
+        // "Get the answer by e-mail" while an answer from the team is owed, and never beside the
+        // rating question: once the team has answered, or closed it, there is nothing to wait for.
+        if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open) && !ratingAsked.has(open) && awaiting());
+        if (ratingBox) ratingBox.hidden = !(open && ratingAsked.has(open));
         // The paperclip while someone of the team is in the conversation (`:people-files`), and from
         // the start in a chat with the team only; a page that set `attachments` itself keeps it.
         if (fileTypes !== undefined && !ownPaperclip) {
@@ -632,6 +682,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     typingLine.hidden = true;
     chat.querySelector('aparte-composer')?.before(typingLine);
     if (emailBox) typingLine.before(emailBox);
+    if (ratingBox) typingLine.before(ratingBox);
     let typingTimer = null;
     const showTyping = (name) => {
         typingLine.textContent = typingWords.replace(':name', name);
@@ -670,6 +721,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         const viewport = chat.viewport;
         if (change.type === 'message' && typeof change.message?.id === 'string') {
             if (!viewport.getMessages().some((message) => message.id === change.message.id)) viewport.appendMessage(change.message);
+            showButton();
             if (change.message.author?.type === 'human') {
                 hideTyping();
                 unseen = true;
@@ -679,6 +731,9 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
             showTyping(change.author.name);
         } else if (change.type === 'note' && typeof change.messageId === 'string') {
             viewport.updateMessage(change.messageId, { note: typeof change.note === 'string' ? change.note : undefined });
+        } else if (change.type === 'rating') {
+            ratingAsked.add(id);
+            showButton();
         } else if (change.type === 'auto-reply') {
             const on = answers(change.on !== false);
             config.setAutoReply(on, id);
@@ -709,8 +764,9 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         fetch(route(id), { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
             .then((response) => (response.ok ? response.json() : {}))
             .catch(() => ({}))
-            .then(({ heldBy = null, wanted = false, emailLeft: left = false, channel = null } = {}) => {
+            .then(({ heldBy = null, wanted = false, emailLeft: left = false, rating = null, channel = null } = {}) => {
                 if (left) emailLeft.add(id);
+                if (rating === 'asked') ratingAsked.add(id);
                 config.setAutoReply(answers(!heldBy && !wanted), id);
                 if (open !== id) return;
                 showButton();
@@ -754,6 +810,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         queueMicrotask(() => {
             const id = sentIn ?? open ?? manager.activeId;
             if (!id || config.getAutoReply(id)) return;
+            showButton();
             // With files, a form: they are kept on the server, which says where to open them.
             const files = Array.isArray(detail.files) ? detail.files : [];
             const headers = { Accept: 'application/json', 'X-CSRF-TOKEN': csrf };
@@ -828,11 +885,32 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         clearTimeout(typingTimer);
         typingLine.remove();
         emailBox?.remove();
+        ratingBox?.remove();
         if (fileTypes !== undefined && !ownPaperclip) chat.removeAttribute('attachments');
         button?.remove();
         unsubscribe();
         follow(null);
     };
+}
+
+// The chat's own words (the composer, its buttons) in the page's language: Laravel's locale, which
+// the Blade component gives. "fr", "fr_CA" and "fr-CA" are French; a language without words here
+// stays in English, core's own.
+let LOCALES = {};
+const localeOf = (tag) => {
+    const key = String(tag ?? '').toLowerCase().replace('_', '-');
+    return LOCALES[key] ?? LOCALES[key.split('-')[0]] ?? null;
+};
+
+/**
+ * The chat's own words in the page's language, from `@aparte/locales`: the built chat this package
+ * serves has them already. With your app's Vite (`APARTE_ASSETS=vite`), install `@aparte/locales`
+ * and pass it here, at the top level of the entry that imports this file:
+ * `import * as locales from '@aparte/locales'; useLocales(locales);`. Without it, the chat speaks
+ * English, as before.
+ */
+export function useLocales({ de, es, fr, it, ja, ko, ptBR, ru, zhCN } = {}) {
+    LOCALES = Object.fromEntries(Object.entries({ de, es, fr, it, ja, ko, 'pt-br': ptBR, pt: ptBR, ru, 'zh-cn': zhCN, zh: zhCN }).filter(([, words]) => words));
 }
 
 async function mount(chat) {
@@ -849,6 +927,8 @@ async function mount(chat) {
 
     const config = new AparteConfig();
     attachConfig(chat, config);
+    const locale = localeOf(chat.dataset.aparteLocale);
+    if (locale) config.setLocale(locale);
     // A link to this site follows in the page, like the rest of the Laravel app; a link to another
     // site opens in a new tab. aparté's own default opens every link in a new tab.
     config.setLinkTarget('external-only');

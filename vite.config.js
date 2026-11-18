@@ -8,7 +8,7 @@ export default defineConfig({
         target: 'es2022',
         cssCodeSplit: false,
         lib: {
-            entry: 'resources/js/aparte.js',
+            entry: 'resources/js/bundle.js',
             formats: ['es'],
             fileName: () => 'aparte.js',
             cssFileName: 'aparte',

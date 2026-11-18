@@ -73,6 +73,7 @@ const held = new Map();
 const heard = [];
 const wants = [];
 const emails = [];
+const ratings = [];
 const typings = [];
 const seens = [];
 /** What the tests make of that server: down (every route answers 500), slow to list, strict on weight. */
@@ -80,6 +81,9 @@ const server_ = { down: false, listDelay: 0, maxBytes: Infinity, peopleOnly: fal
 
 const pages = {
     '/': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`)}</body></html>`,
+    // The page's language, as the Blade component gives it from app()->getLocale().
+    '/french': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`, 'data-aparte-locale="fr"')}</body></html>`,
+    '/klingon': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`, 'data-aparte-locale="tlh"')}</body></html>`,
     // Tall enough for a row's menu to open inside the sidebar.
     '/conversations': `${head}${shell('shell-a', 'aparte-chat-1', 580)}</body></html>`,
     // The same view, its conversations kept by the server.
@@ -117,9 +121,9 @@ const pages = {
 </script>
 ${chat('aparte-chat-1', '')}</body></html>`,
     // A chat with the team only: no endpoint, the people routes.
-    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send" data-aparte-people-files=".png,.txt,.pdf"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
+    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send" data-aparte-people-files=".png,.txt,.pdf" data-aparte-people-rating="How was this conversation?" data-aparte-people-rating-up="Good" data-aparte-people-rating-down="Not good"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
     // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
-    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person"`)}</body></html>`,
+    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-rating="How was this conversation?" data-aparte-people-rating-up="Good" data-aparte-people-rating-down="Not good"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
     '/failing': `${head}${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
     // The same, on a page that builds nothing: a plain script listens for `aparte:setup` and
@@ -187,6 +191,11 @@ const server = createServer((req, res) => {
                 (rest === 'typing' ? typings : seens).push(id);
                 res.writeHead(204);
                 return res.end();
+            }
+            if (req.method === 'POST' && rest === 'rating') {
+                ratings.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ notice: { id: `rated-${id}`, role: 'assistant', kind: 'notice', content: 'Thank you for your answer', timestamp: Date.now() } }));
             }
             if (req.method === 'POST' && rest === 'email') {
                 emails.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
@@ -354,6 +363,25 @@ try {
         check(typeof posts[0]?.threadId === 'string' && posts[0].threadId.length > 0, 'the request names its thread');
         check(problems.length === 0, `no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
+    });
+
+    // ── The chat's own words in the page's language ────────────────────────────────────────
+    await scenario('language', async () => {
+        const label = async (path) => {
+            const { page, problems } = await open(path);
+            const editor = page.locator('aparte-chat .aparte-ci-editor');
+            await editor.waitFor({ state: 'visible', timeout: 20_000 });
+            await page.waitForFunction(() => document.querySelector('aparte-chat')?.hasAttribute('data-aparte-mounted'), null, { timeout: 10_000 }).catch(() => {});
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            const text = await editor.getAttribute('aria-label');
+            await page.close();
+            return { text, problems };
+        };
+        const french = await label('/french');
+        check(french.text === 'Écrivez un message...', `language: a French page writes the composer in French (got ${french.text})`);
+        check(french.problems.length === 0, `language: no console error or warning${french.problems.length ? `: ${french.problems.join(' | ')}` : ''}`);
+        const unknown = await label('/klingon');
+        check(unknown.text === 'Type a message...', `language: a language aparté does not speak stays English (got ${unknown.text})`);
     });
 
     // ── A list of conversations written in the view ────────────────────────────────────────
@@ -724,6 +752,17 @@ try {
         await new Promise((resolve) => setTimeout(resolve, 500));
         check(turns.length === turnsBefore, 'people: and the assistant is not asked');
 
+        // The team closes it and asks how it went: two buttons, answered once.
+        const rating = page.locator('#shell-a .aparte-laravel-rating');
+        check(!(await rating.isVisible()), 'people: no rating question before the team asks');
+        await desk(id, { type: 'rating' });
+        check(await until(() => rating.isVisible()), 'people: the visitor is asked how it went');
+        const noticesBefore = await page.locator('aparte-chat-bubble[data-kind="notice"]').count();
+        await rating.locator('button[data-rating="up"]').click();
+        check(await until(async () => ratings.some((r) => r.id === id && r.value === 'up' && r.csrf === 'test-token')), 'people: the answer goes to the people route');
+        check(await until(async () => !(await rating.isVisible())), 'people: the question goes once answered');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === noticesBefore + 1), 'people: the visitor is thanked');
+
         await desk(id, { type: 'note', messageId: bubbleId, note: 'Read by Marie' });
         check(await until(async () => ((await page.locator('aparte-chat-bubble[data-role="user"] .aparte-message-note').last().textContent()) ?? '') === 'Read by Marie'), 'people: the note is drawn under it');
 
@@ -760,9 +799,15 @@ try {
     await scenario('people only', async () => {
         server_.peopleOnly = true;
         const echo = async (page) => page.addInitScript(() => {
-            const subscription = { listen() { return this; }, stopListening() { return this; } };
-            window.Echo = { private: () => subscription, channel: () => subscription, leave: () => {} };
+            const listeners = new Map();
+            const subscription = (name) => ({
+                listen(event, fn) { listeners.set(`${name}${event}`, fn); return this; },
+                stopListening(event) { listeners.delete(`${name}${event}`); return this; },
+            });
+            window.Echo = { private: (name) => subscription(`private:${name}`), channel: (name) => subscription(name), leave: () => {} };
+            window.desk = (id, change) => listeners.get(`aparte.conversations.${id}.secret.aparte.changed`)?.(change);
         });
+        const desk = (id, change) => page.evaluate(([i, c]) => window.desk(i, c), [id, change]);
         const { page, problems } = await open('/people-only', echo);
         const send = async (text) => {
             const editor = page.locator('#shell-a aparte-chat .aparte-ci-editor');
@@ -787,15 +832,26 @@ try {
         check(turns.length === turnsBefore, 'people only: and no assistant is ever asked');
         check((await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 1, 'people only: the notice is said once');
 
-        // The answer by e-mail too: a field while the team is awaited, sent once.
+        // The answer by e-mail too: a field while an answer from the team is owed, sent once.
         const emailBox = page.locator('#shell-a .aparte-laravel-email');
         check(await until(() => emailBox.isVisible()), 'people only: the visitor is offered to get the answer by e-mail');
+        const conversation = wants.at(-1);
+        await desk(conversation, { type: 'message', message: { id: 'h-only', role: 'assistant', author: { name: 'Marie', type: 'human' }, content: 'We do, yes.', timestamp: Date.now() } });
+        check(await until(async () => !(await emailBox.isVisible())), 'people only: the field goes once the team has answered');
+        await send('And to Spain?');
+        check(await until(() => emailBox.isVisible()), 'people only: and comes back with the next question');
+        await desk(conversation, { type: 'rating' });
+        check(await until(async () => !(await emailBox.isVisible())), 'people only: never beside the rating question');
+        await page.locator('#shell-a .aparte-laravel-rating button[data-rating="up"]').click();
+        check(await until(() => emailBox.isVisible()), 'people only: back once it is answered, the question still owed');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').last().textContent())?.includes('Thank you for your answer')), 'people only: the visitor is thanked');
+        const noticesBefore = await page.locator('aparte-chat-bubble[data-kind="notice"]').count();
         await emailBox.locator('input[type="email"]').fill('lea@example.test');
         await emailBox.locator('button[type="submit"]').click();
         check(await until(async () => emails.some((e) => e.email === 'lea@example.test')), 'people only: the e-mail goes to the people route');
         check(emails.at(-1)?.csrf === 'test-token', 'people only: with the CSRF header');
         check(await until(async () => !(await emailBox.isVisible())), 'people only: the field goes once the e-mail is left');
-        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 2), 'people only: a notice says where the answer goes');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === noticesBefore + 1), 'people only: a notice says where the answer goes');
 
         // A file for the team: the paperclip, a form to the people route, the server's address after.
         const clip = page.locator('#shell-a aparte-composer-add-attachment');
