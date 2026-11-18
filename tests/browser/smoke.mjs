@@ -72,6 +72,8 @@ const PEOPLE = '/people';
 const held = new Map();
 const heard = [];
 const wants = [];
+const typings = [];
+const seens = [];
 /** What the tests make of that server: down (every route answers 500), slow to list, strict on weight. */
 const server_ = { down: false, listDelay: 0, maxBytes: Infinity };
 
@@ -178,6 +180,11 @@ const server = createServer((req, res) => {
         let body = '';
         req.on('data', (chunk) => (body += chunk));
         req.on('end', () => {
+            if (req.method === 'POST' && (rest === 'typing' || rest === 'seen')) {
+                (rest === 'typing' ? typings : seens).push(id);
+                res.writeHead(204);
+                return res.end();
+            }
             if (req.method === 'POST' && rest === 'want') {
                 wants.push(id);
                 res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -682,10 +689,15 @@ try {
         await desk(id, { type: 'message', message: { id: 'h1', role: 'assistant', author: { name: 'Marie', type: 'human' }, content: 'Hi, I am Marie.', timestamp: Date.now() } });
         check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 1), 'people: the notice is drawn');
         check(await until(async () => (await page.locator('aparte-chat-bubble[data-author-type="human"]').getAttribute('name')) === 'Marie'), "people: Marie's message is drawn as hers");
+        check(await until(async () => seens.includes(id)), "people: the tab in front tells that the team's message was seen");
+        await desk(id, { type: 'typing', author: { name: 'Marie', type: 'human' } });
+        const typingLine = page.locator('#shell-a .aparte-laravel-typing');
+        check(await until(async () => (await typingLine.isVisible()) && (await typingLine.textContent()) === 'Marie is typing…'), 'people: the visitor sees Marie typing');
 
         const turnsBefore = turns.length;
         await send('Is it shipped?');
         check(await until(async () => heard.some((h) => h.content === 'Is it shipped?')), 'people: what the person writes goes to the people route');
+        check(typings.includes(id), 'people: and the team hears that they were typing');
         const mine = heard.find((h) => h.content === 'Is it shipped?');
         const bubbleId = await page.locator('aparte-chat-bubble[data-role="user"]').last().getAttribute('message-id');
         check(mine?.id === bubbleId && mine?.csrf === 'test-token', 'people: with the id of the message on screen and the CSRF header');

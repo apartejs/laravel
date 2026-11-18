@@ -361,6 +361,17 @@ conversation, sent a moment before the page heard of the takeover, is kept for y
   `onAparteSetup((config, chat, options) => { options.people.subscribe = (id, onChange, channel) => { /* … */ return stop; }; })`,
   where `channel` is `{ name, private }` and `onChange` takes what `ConversationChanged` broadcasts.
 
+### Typing and seen
+
+While someone of your team is in the conversation, the chat tells your desk two things: that the person is typing
+(`People::visitorTyping($id)` is true for a few seconds) and that they have seen your team's messages, the tab in
+front of them (`PersonSaw`). Your desk tells the chat that someone of the team is typing, and the person reads
+"Marie is typing…" above the composer:
+
+```php
+People::typing($conversationId, ['name' => 'Marie']);
+```
+
 ### When the assistant hands over
 
 Give your agent the `AskForSomeone` tool and the assistant can call your team itself: when the visitor asks for a

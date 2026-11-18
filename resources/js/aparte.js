@@ -557,11 +557,59 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
         if (button) button.style.display = open && config.getAutoReply(open) ? '' : 'none';
     };
 
+    // Someone of the team is writing: a line above the composer, gone after a few seconds or when
+    // their message arrives.
+    const typingWords = chat.dataset.apartePeopleTyping || ':name is typing…';
+    const typingLine = document.createElement('div');
+    typingLine.className = 'aparte-laravel-typing';
+    typingLine.setAttribute('aria-live', 'polite');
+    typingLine.hidden = true;
+    chat.querySelector('aparte-composer')?.before(typingLine);
+    let typingTimer = null;
+    const showTyping = (name) => {
+        typingLine.textContent = typingWords.replace(':name', name);
+        typingLine.hidden = false;
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => (typingLine.hidden = true), 6000);
+    };
+    const hideTyping = () => {
+        clearTimeout(typingTimer);
+        typingLine.hidden = true;
+    };
+
+    // What the person does while someone of the team is in the conversation: that they are writing
+    // (at most every few seconds), and that they have seen the team's messages (when the tab is in front).
+    const tell = (id, what) => fetch(`${route(id)}/${what}`, {
+        method: 'POST',
+        headers: { Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
+        credentials: 'same-origin',
+    }).catch(() => {});
+    let lastTyping = 0;
+    const onInput = () => {
+        const id = open;
+        if (!id || config.getAutoReply(id) || Date.now() - lastTyping < 3000) return;
+        lastTyping = Date.now();
+        void tell(id, 'typing');
+    };
+    let unseen = false;
+    const markSeen = () => {
+        if (!unseen || !open || document.visibilityState !== 'visible') return;
+        unseen = false;
+        void tell(open, 'seen');
+    };
+
     const apply = (id, change) => {
         if (id !== open || !change || typeof change !== 'object') return;
         const viewport = chat.viewport;
         if (change.type === 'message' && typeof change.message?.id === 'string') {
             if (!viewport.getMessages().some((message) => message.id === change.message.id)) viewport.appendMessage(change.message);
+            if (change.message.author?.type === 'human') {
+                hideTyping();
+                unseen = true;
+                markSeen();
+            }
+        } else if (change.type === 'typing' && typeof change.author?.name === 'string') {
+            showTyping(change.author.name);
         } else if (change.type === 'note' && typeof change.messageId === 'string') {
             viewport.updateMessage(change.messageId, { note: typeof change.note === 'string' ? change.note : undefined });
         } else if (change.type === 'auto-reply') {
@@ -666,6 +714,8 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
     chat.addEventListener('aparte-conversation-loaded', onLoaded);
     chat.addEventListener('aparte-send', onSend);
     chat.addEventListener('aparte-action-click', onAction);
+    chat.addEventListener('input', onInput);
+    document.addEventListener('visibilitychange', markSeen);
     // A conversation the chat starts: nobody holds it yet; its channel is asked for and heard.
     const unsubscribe = manager.subscribe(() => follow(manager.activeId ?? null));
 
@@ -673,6 +723,10 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
         chat.removeEventListener('aparte-conversation-loaded', onLoaded);
         chat.removeEventListener('aparte-send', onSend);
         chat.removeEventListener('aparte-action-click', onAction);
+        chat.removeEventListener('input', onInput);
+        document.removeEventListener('visibilitychange', markSeen);
+        clearTimeout(typingTimer);
+        typingLine.remove();
         button?.remove();
         unsubscribe();
         follow(null);

@@ -74,6 +74,30 @@ class PeopleController
         return response()->json(['notice' => People::want($conversation, __('The visitor asked for a person'))]);
     }
 
+    /** The person is writing, while someone of your team is in the conversation. */
+    public function typing(Request $request, string $conversation): Response
+    {
+        $found = Conversation::find($conversation);
+        abort_if($found === null, 404);
+        $this->authorize($request, $found);
+
+        People::typing($conversation);
+
+        return response()->noContent();
+    }
+
+    /** The person has seen what your team wrote. */
+    public function seen(Request $request, string $conversation): Response
+    {
+        $found = Conversation::find($conversation);
+        abort_if($found === null, 404);
+        $this->authorize($request, $found);
+
+        People::saw($conversation);
+
+        return response()->noContent();
+    }
+
     /** The conversation's own participant, as the chat route checks it: a guest's is a guest's. */
     private function authorize(Request $request, Conversation $conversation): void
     {
