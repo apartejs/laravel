@@ -34,6 +34,13 @@ it('describes itself to the model, with the reason it needs', function () {
         ->and(array_keys($tool->schema(new JsonSchemaTypeFactory)))->toBe(['reason']);
 });
 
+it('asks for a reason the person who takes over can act on: what the user wants, and what was already said', function () {
+    $reason = (new AskForSomeone)->schema(new JsonSchemaTypeFactory)['reason']->toArray()['description'];
+
+    expect($reason)->toContain('what the user wants')
+        ->toContain('what you already answered or tried');
+});
+
 it('does not run the agent while the conversation waits for someone, and keeps the message', function () {
     Event::fake([PersonWrote::class, SomeoneWanted::class, ConversationChanged::class]);
     TestAgent::fake(['The assistant would have said this.']);

@@ -46,7 +46,9 @@ class AskForSomeone implements Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'reason' => $schema->string()->description('Why a person is needed, in a few words, for the team.')->required(),
+            // What the person who takes over reads first, in the queue and atop the conversation: enough to
+            // act on without reading it all.
+            'reason' => $schema->string()->description('For the person of the team who takes over, in one or two short sentences: what the user wants, and what you already answered or tried.')->required(),
         ];
     }
 }
