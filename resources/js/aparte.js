@@ -9,7 +9,6 @@ import {
     uuid,
 } from '@aparte/core';
 import { createAgUiRunner } from '@aparte/runner-ag-ui';
-import { de, es, fr, it, ja, ko, ptBR, ru, zhCN } from '@aparte/locales';
 import { setupMarkedStreamingProvider } from '@aparte/plugin-marked/streaming';
 
 /**
@@ -895,13 +894,24 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
 }
 
 // The chat's own words (the composer, its buttons) in the page's language: Laravel's locale, which
-// the Blade component gives. "fr", "fr_CA" and "fr-CA" are French; a language aparté has no words
-// for stays in English, core's own.
-const LOCALES = { de, es, fr, it, ja, ko, 'pt-br': ptBR, pt: ptBR, ru, 'zh-cn': zhCN, zh: zhCN };
+// the Blade component gives. "fr", "fr_CA" and "fr-CA" are French; a language without words here
+// stays in English, core's own.
+let LOCALES = {};
 const localeOf = (tag) => {
     const key = String(tag ?? '').toLowerCase().replace('_', '-');
     return LOCALES[key] ?? LOCALES[key.split('-')[0]] ?? null;
 };
+
+/**
+ * The chat's own words in the page's language, from `@aparte/locales`: the built chat this package
+ * serves has them already. With your app's Vite (`APARTE_ASSETS=vite`), install `@aparte/locales`
+ * and pass it here, at the top level of the entry that imports this file:
+ * `import * as locales from '@aparte/locales'; useLocales(locales);`. Without it, the chat speaks
+ * English, as before.
+ */
+export function useLocales({ de, es, fr, it, ja, ko, ptBR, ru, zhCN } = {}) {
+    LOCALES = Object.fromEntries(Object.entries({ de, es, fr, it, ja, ko, 'pt-br': ptBR, pt: ptBR, ru, 'zh-cn': zhCN, zh: zhCN }).filter(([, words]) => words));
+}
 
 async function mount(chat) {
     chat.dataset.aparteMounted = '';

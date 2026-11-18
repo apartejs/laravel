@@ -46,6 +46,14 @@ export type ApartePeopleChange =
 export function onAparteSetup(setup: (config: AparteConfig, chat: HTMLElement, options: AparteChatOptions) => void | (() => void)): void;
 
 /**
+ * The chat's own words in the page's language (`app()->getLocale()`), from `@aparte/locales`. The
+ * built chat has them; with your app's Vite, install `@aparte/locales` and call
+ * `useLocales(locales)` with `import * as locales from '@aparte/locales'`, at the top level of the
+ * entry. Without it, the chat speaks English.
+ */
+export function useLocales(locales: Partial<Record<'de' | 'es' | 'fr' | 'it' | 'ja' | 'ko' | 'ptBR' | 'ru' | 'zhCN', object>>): void;
+
+/**
  * Why conversations kept on the server are not, told once for each thing that goes wrong:
  * - `unreachable`: the server is down or out of reach; what is said is sent when it answers;
  * - `signed-out`: nobody is signed in any more; it is sent once someone is;

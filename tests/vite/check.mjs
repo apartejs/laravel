@@ -16,5 +16,6 @@ const js = readdirSync('dist/assets').filter((file) => file.endsWith('.js'))
 const copies = (js.match(/define\("aparte-chat-viewport"/g) ?? []).length;
 check(copies === 1, `one copy of aparté in the build (found ${copies})`);
 check(/katex/i.test(js), 'the plugin is in the build');
+check(js.includes('Écrivez un message'), "the chat's own words are in the build, when the entry asks for them");
 
 process.exit(failed ? 1 : 0);

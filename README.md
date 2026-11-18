@@ -532,6 +532,10 @@ $panel->renderHook(PanelsRenderHook::HEAD_END, fn (): string => Blade::render("@
 
 A separate entry keeps your `app.js` out of the panel: a second Alpine, or your app's styles, would break Filament's.
 
+- The chat speaks the page's language, as the built one does, once you give it aparté's words:
+  `npm install @aparte/locales@^1`, then in the same entry
+  `import * as locales from '@aparte/locales'; useLocales(locales);` (`useLocales` comes from the same import as
+  `onAparteSetup`). Without it, the chat's own words stay English; the package's lines are translated either way.
 - `onAparteSetup` receives each chat's config, the chat element as its second argument, and its options as the third
   ([below](#your-own-storage-your-own-runner)). What it returns, if a function, runs when the chat stops. Call it at the top level of that entry and keep it synchronous: a chat starts
   once the entry has run.

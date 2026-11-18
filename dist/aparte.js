@@ -1,4 +1,1672 @@
-function zi() {
+const Ku = {
+  inputPlaceholder: "Écrivez un message...",
+  sendButton: "Envoyer",
+  copy: "Copier",
+  copied: "Copié !",
+  retry: "Réessayer",
+  thinking: "Réflexion",
+  elicitationOther: "Autre…",
+  elicitationOtherPlaceholder: "Écrivez votre réponse…",
+  elicitationOtherLabel: "Réponse libre",
+  submitButton: "Valider",
+  stopButton: "Arrêter",
+  queueLabel: "Envoyé à la fin de la réponse",
+  queueEdit: "Modifier",
+  queueRemove: "Retirer",
+  elicitationRecommended: "Recommandé",
+  elicitationSkip: "Passer",
+  elicitationHide: "Masquer pour l'instant",
+  elicitationWaiting: "En attente de votre réponse",
+  elicitationYes: "Oui",
+  elicitationNo: "Non",
+  elicitationAnswerLabel: "Votre réponse",
+  approvalInstructionPlaceholder: "Ou dites-lui quoi faire à la place…",
+  approvalOptionsLabel: "Votre décision",
+  approvalArgsLabel: "Arguments",
+  approvalAsk: "Autoriser {tool} ?",
+  approvalAskBy: "Autoriser {tool} pour {agent} ?",
+  approvalWaiting: "En attente",
+  scrollToBottom: "Aller en bas de la conversation",
+  suggestionsLabel: "Suggestions de messages",
+  contextLabel: "Fenêtre de contexte",
+  contextSystem: "Prompt système",
+  contextTools: "Outils",
+  contextSummary: "Résumé",
+  contextMessages: "Messages",
+  contextOther: "Autre",
+  contextFree: "Libre",
+  contextTotal: "Total",
+  contextReclaim: "Compacter maintenant libérerait ~{n} tokens",
+  contextCompactNow: "Compacter maintenant",
+  checkpointCount: "{n} messages résumés pour le modèle",
+  checkpointCountOne: "1 message résumé pour le modèle",
+  checkpointLegacy: "Les messages précédents ont été résumés",
+  checkpointGroup: "Résumé du contexte",
+  checkpointShow: "Afficher le résumé",
+  checkpointHide: "Masquer le résumé",
+  checkpointRestore: "Restaurer",
+  checkpointRestoreConfirm: "Renvoyer les messages d'origine au modèle ?",
+  checkpointPending: "Résumé du contexte en cours…",
+  checkpointFailed: "Impossible de résumer le contexte",
+  toolRunning: "En cours",
+  toolQueued: "Dans la file",
+  toolFailed: "Échec",
+  toolCompleted: "Terminé",
+  toolRejected: "Refusé",
+  toolStopped: "Arrêté",
+  toolInput: "Entrée",
+  toolOutput: "Sortie",
+  toolRejectedSaid: "Vous avez dit : « {instruction} »",
+  toolRefusedByPolicy: "Refusé par une règle",
+  toolNotRunAfterRefusal: "Non exécuté : un appel précédent a été refusé",
+  toolTimedOut: "Délai dépassé",
+  toolUnavailable: "Indisponible ici",
+  toolNoApprover: "Personne ne pouvait l'approuver",
+  toolTurnLimit: "Limite de tours atteinte",
+  maxTurnsReached: "Arrêté après {n} tours pour éviter une boucle sans fin.",
+  sourcesCount: "{n} sources",
+  sourcesOne: "1 source",
+  sourcesCard: "Sources",
+  sourcePrevious: "Source précédente",
+  sourceNext: "Source suivante",
+  sourcePosition: "Source {i} sur {n}",
+  opensInNewTab: "(s’ouvre dans un nouvel onglet)",
+  imageLoad: "Charger l’image depuis {host}",
+  imageLoadNamed: "Charger l’image « {alt} » depuis {host}",
+  questionDeclined: "Vous n'avez pas répondu.",
+  artifactNotCreated: "Non créé",
+  thoughtFor: "Réflexion : {duration}",
+  thought: "Réflexion terminée",
+  turnWorking: "En cours…",
+  turnWorked: "Terminé en {duration}",
+  turnUsed: "Utilisé : {tools}",
+  turnTools: "one:{n} outil|other:{n} outils",
+  feedbackReasonTitle: "Qu’est-ce qui n’a pas marché ?",
+  feedbackReasonDismiss: "Pas maintenant",
+  triggersLoading: "Chargement…",
+  triggersEmpty: "Aucun résultat",
+  triggersError: "Impossible de charger cette liste",
+  triggersRetry: "Réessayer",
+  triggersBack: "Retour",
+  triggersCommandNew: "Commencer une nouvelle conversation",
+  triggersCommandStop: "Arrêter la réponse",
+  triggersCommandRetry: "Répondre à nouveau",
+  triggersCommandCopy: "Copier la dernière réponse",
+  triggersCommandCompact: "Résumer les messages précédents",
+  triggersCompactNothing: "Il n’y a encore rien à compacter",
+  triggersCompactBusy: "Attendez la fin de la réponse",
+  triggersCompactNoWindow: "Ce modèle n’indique pas ce qu’il peut lire",
+  triggersCompactFailed: "Le résumé n’a pas pu être écrit",
+  triggersCommandModel: "Changer de modèle",
+  triggersCommandApproval: "Changer le mode d’approbation",
+  actionUpload: "Joindre un fichier",
+  removeAttachment: "Retirer {name}",
+  messageFrom: "Message de {name}",
+  selectSearchPlaceholder: "Rechercher…",
+  selectSearchLabel: "Rechercher parmi les options",
+  loading: "Chargement…",
+  download: "Télécharger",
+  openArtifact: "Ouvrir",
+  closeArtifact: "Fermer",
+  artifactVersion: "Version {n} sur {total}",
+  previousVersion: "Version précédente",
+  nextVersion: "Version suivante",
+  modelContextWindow: "{n} de contexte",
+  previewPending: "Appuyez sur Aperçu pour exécuter cet artefact.",
+  sandboxError: "Le bac à sable a échoué pendant la génération.",
+  sandboxErrorHint: "Cause fréquente : le modèle a produit du code invalide (variable non définie, mauvais type d'argument). Relancez la demande — le modèle peut produire un autre code.",
+  preview: "Aperçu",
+  code: "Code",
+  generating: "Génération…",
+  rebuildingPreview: "Reconstruction de l'aperçu…",
+  typing: "Écrit...",
+  responseCutOff: "Coupée à la limite de longueur du modèle.",
+  error: "Erreur",
+  errorUnreachable: "L'assistant est injoignable pour le moment. Réessayez dans un instant.",
+  errorTimeout: "La réponse a pris trop de temps. Réessayez dans un instant.",
+  errorRefused: "L'assistant n'est pas autorisé à répondre pour le moment.",
+  errorRateLimited: "Trop de requêtes en ce moment. Réessayez dans un instant.",
+  errorTooLong: "Cette conversation est trop longue pour le modèle. Commencez-en une nouvelle.",
+  errorFailed: "L'assistant n'a pas pu répondre. Réessayez dans un instant.",
+  errorNoAnswer: "L'assistant n'a pas pu répondre à cette demande.",
+  running: "Exécution...",
+  run: "Exécuter",
+  file: "Fichier",
+  modelSelectorPlaceholder: "Sélectionner un modèle...",
+  approvalModeLabel: "Mode d'approbation",
+  roleNameUser: "Vous",
+  roleNameAssistant: "Assistant",
+  yourMessage: "Votre message",
+  assistantResponse: "Réponse de l'assistant",
+  messageActions: "Actions du message",
+  edit: "Modifier le message",
+  editConfirm: "Envoyer",
+  editCancel: "Annuler",
+  feedbackPositive: "Bonne réponse",
+  feedbackNegative: "Mauvaise réponse",
+  previousResponse: "Réponse précédente",
+  nextResponse: "Réponse suivante",
+  approveTool: "Approuver",
+  rejectTool: "Rejeter",
+  messageInfo: "Détails",
+  newChat: "Nouvelle conversation",
+  loadingConversations: "Chargement des conversations",
+  conversationSearchEmpty: "Aucune conversation ne correspond",
+  conversationList: "Conversations",
+  loadingConversation: "Chargement de la conversation",
+  deleteConversation: "Supprimer",
+  archiveConversation: "Archiver",
+  unarchiveConversation: "Désarchiver",
+  conversationActions: "Actions de la conversation",
+  conversationRunning: "Réponse en cours",
+  conversationWaiting: "Attend votre réponse",
+  renameConversation: "Renommer",
+  conversationTitle: "Titre de la conversation",
+  pinConversation: "Épingler",
+  unpinConversation: "Désépingler",
+  deleteConversationConfirm: "Supprimer « {title} » ?",
+  cancel: "Annuler",
+  conversationGroupPinned: "Épinglées",
+  conversationGroupToday: "Aujourd'hui",
+  conversationGroupYesterday: "Hier",
+  conversationGroupWeek: "7 derniers jours",
+  conversationGroupMonth: "30 derniers jours",
+  scrollRailLabel: "Plan de la conversation",
+  sidebarLabel: "Conversations",
+  splitHandleLabel: "Redimensionner les panneaux",
+  launcherOpen: "Ouvrir la discussion",
+  launcherClose: "Fermer la discussion",
+  launcherHeading: "Discussion",
+  launcherMaximize: "Agrandir la discussion",
+  launcherRestore: "Réduire la discussion",
+  transcript: "Transcription",
+  tag: "fr-FR",
+  direction: "ltr"
+}, Vu = {
+  inputPlaceholder: "Escribe un mensaje…",
+  sendButton: "Enviar",
+  copy: "Copiar",
+  copied: "¡Copiado!",
+  retry: "Reintentar",
+  thinking: "Razonamiento",
+  elicitationOther: "Otra respuesta…",
+  elicitationOtherPlaceholder: "Escribe tu respuesta…",
+  elicitationOtherLabel: "Respuesta libre",
+  submitButton: "Confirmar",
+  stopButton: "Detener",
+  queueLabel: "Se enviará cuando termine la respuesta",
+  queueEdit: "Editar",
+  queueRemove: "Quitar",
+  elicitationRecommended: "Recomendado",
+  elicitationSkip: "Omitir",
+  elicitationHide: "Ocultar por ahora",
+  elicitationWaiting: "Esperando tu respuesta",
+  elicitationYes: "Sí",
+  elicitationNo: "No",
+  elicitationAnswerLabel: "Tu respuesta",
+  approvalInstructionPlaceholder: "O dile qué hacer en su lugar…",
+  approvalOptionsLabel: "Tu decisión",
+  approvalArgsLabel: "Argumentos",
+  approvalAsk: "¿Permitir {tool}?",
+  approvalAskBy: "¿Permitir {tool} para {agent}?",
+  approvalWaiting: "En espera",
+  scrollToBottom: "Ir al final",
+  suggestionsLabel: "Sugerencias de mensajes",
+  contextLabel: "Ventana de contexto",
+  contextSystem: "Prompt del sistema",
+  contextTools: "Herramientas",
+  contextSummary: "Resumen",
+  contextMessages: "Mensajes",
+  contextOther: "Otros",
+  contextFree: "Libre",
+  contextTotal: "Total",
+  contextReclaim: "Compactar ahora liberaría ~{n} tokens",
+  contextCompactNow: "Compactar ahora",
+  checkpointCount: "{n} mensajes resumidos para el modelo",
+  checkpointCountOne: "1 mensaje resumido para el modelo",
+  checkpointLegacy: "Los mensajes anteriores se resumieron",
+  checkpointGroup: "Resumen del contexto",
+  checkpointShow: "Mostrar resumen",
+  checkpointHide: "Ocultar resumen",
+  checkpointRestore: "Restaurar",
+  checkpointRestoreConfirm: "¿Enviar de nuevo los mensajes originales al modelo?",
+  checkpointPending: "Resumiendo el contexto…",
+  checkpointFailed: "No se pudo resumir el contexto",
+  toolRunning: "En curso",
+  toolQueued: "En cola",
+  toolFailed: "Falló",
+  toolCompleted: "Hecho",
+  toolRejected: "Rechazado",
+  toolStopped: "Detenido",
+  toolInput: "Entrada",
+  toolOutput: "Salida",
+  toolRejectedSaid: "Dijiste: «{instruction}»",
+  toolRefusedByPolicy: "Rechazado por una regla",
+  toolNotRunAfterRefusal: "No ejecutado: se rechazó una llamada anterior",
+  toolTimedOut: "Tiempo agotado",
+  toolUnavailable: "No disponible aquí",
+  toolNoApprover: "Nadie podía aprobarlo",
+  toolTurnLimit: "Límite de turnos alcanzado",
+  maxTurnsReached: "Detenido tras {n} turnos para evitar un bucle infinito.",
+  sourcesCount: "{n} fuentes",
+  sourcesOne: "1 fuente",
+  sourcesCard: "Fuentes",
+  sourcePrevious: "Fuente anterior",
+  sourceNext: "Fuente siguiente",
+  sourcePosition: "Fuente {i} de {n}",
+  opensInNewTab: "(se abre en una pestaña nueva)",
+  imageLoad: "Cargar la imagen de {host}",
+  imageLoadNamed: "Cargar la imagen «{alt}» de {host}",
+  questionDeclined: "Decidiste no responder.",
+  artifactNotCreated: "No creado",
+  thoughtFor: "Razonamiento: {duration}",
+  thought: "Razonamiento completado",
+  turnWorking: "Trabajando…",
+  turnWorked: "Trabajó {duration}",
+  turnUsed: "Usó {tools}",
+  turnTools: "one:{n} herramienta|other:{n} herramientas",
+  feedbackReasonTitle: "¿Qué ha fallado?",
+  feedbackReasonDismiss: "Ahora no",
+  triggersLoading: "Cargando…",
+  triggersEmpty: "Sin resultados",
+  triggersError: "No se pudo cargar esta lista",
+  triggersRetry: "Reintentar",
+  triggersBack: "Atrás",
+  triggersCommandNew: "Iniciar una conversación nueva",
+  triggersCommandStop: "Detener la respuesta",
+  triggersCommandRetry: "Responder de nuevo",
+  triggersCommandCopy: "Copiar la última respuesta",
+  triggersCommandCompact: "Resumir los mensajes anteriores",
+  triggersCompactNothing: "Aún no hay nada que compactar",
+  triggersCompactBusy: "Espera a que termine la respuesta",
+  triggersCompactNoWindow: "Este modelo no indica cuánto puede leer",
+  triggersCompactFailed: "No se pudo escribir el resumen",
+  triggersCommandModel: "Cambiar de modelo",
+  triggersCommandApproval: "Cambiar el modo de aprobación",
+  actionUpload: "Adjuntar archivo",
+  removeAttachment: "Quitar {name}",
+  messageFrom: "Mensaje de {name}",
+  selectSearchPlaceholder: "Buscar…",
+  selectSearchLabel: "Buscar en las opciones",
+  loading: "Cargando…",
+  download: "Descargar",
+  openArtifact: "Abrir",
+  closeArtifact: "Cerrar",
+  artifactVersion: "Versión {n} de {total}",
+  previousVersion: "Versión anterior",
+  nextVersion: "Versión siguiente",
+  modelContextWindow: "{n} de contexto",
+  previewPending: "Pulsa Vista previa para ejecutar este artefacto.",
+  sandboxError: "El entorno aislado falló durante la generación.",
+  sandboxErrorHint: "Causa frecuente: el modelo generó código no válido (variable no definida, tipo de argumento incorrecto). Vuelve a intentarlo: el modelo puede generar otro código.",
+  preview: "Vista previa",
+  code: "Código",
+  generating: "Generando…",
+  rebuildingPreview: "Reconstruyendo la vista previa…",
+  typing: "Escribiendo",
+  responseCutOff: "Cortada en el límite de longitud del modelo.",
+  error: "Error",
+  errorUnreachable: "Ahora mismo no se puede contactar con el asistente. Inténtalo de nuevo en un momento.",
+  errorTimeout: "La respuesta tardó demasiado. Inténtalo de nuevo en un momento.",
+  errorRefused: "El asistente no tiene permiso para responder ahora mismo.",
+  errorRateLimited: "Demasiadas solicitudes en este momento. Inténtalo de nuevo en un momento.",
+  errorTooLong: "Esta conversación es demasiado larga para el modelo. Empieza una nueva.",
+  errorFailed: "El asistente no pudo responder. Inténtalo de nuevo en un momento.",
+  errorNoAnswer: "El asistente no pudo responder a esta solicitud.",
+  running: "Ejecutando…",
+  run: "Ejecutar",
+  file: "Archivo",
+  modelSelectorPlaceholder: "Selecciona un modelo…",
+  approvalModeLabel: "Modo de aprobación",
+  roleNameUser: "Tú",
+  roleNameAssistant: "Asistente",
+  yourMessage: "Tu mensaje",
+  assistantResponse: "Respuesta del asistente",
+  messageActions: "Acciones del mensaje",
+  edit: "Editar mensaje",
+  editConfirm: "Enviar",
+  editCancel: "Cancelar",
+  feedbackPositive: "Buena respuesta",
+  feedbackNegative: "Mala respuesta",
+  previousResponse: "Respuesta anterior",
+  nextResponse: "Respuesta siguiente",
+  approveTool: "Aprobar",
+  rejectTool: "Rechazar",
+  messageInfo: "Detalles",
+  newChat: "Nueva conversación",
+  loadingConversations: "Cargando conversaciones",
+  conversationSearchEmpty: "Ninguna conversación coincide",
+  conversationList: "Conversaciones",
+  loadingConversation: "Cargando la conversación",
+  deleteConversation: "Eliminar",
+  archiveConversation: "Archivar",
+  unarchiveConversation: "Desarchivar",
+  conversationActions: "Acciones de la conversación",
+  conversationRunning: "Respondiendo",
+  conversationWaiting: "Espera tu respuesta",
+  renameConversation: "Cambiar nombre",
+  conversationTitle: "Título de la conversación",
+  pinConversation: "Fijar",
+  unpinConversation: "Dejar de fijar",
+  deleteConversationConfirm: "¿Eliminar «{title}»?",
+  cancel: "Cancelar",
+  conversationGroupPinned: "Fijadas",
+  conversationGroupToday: "Hoy",
+  conversationGroupYesterday: "Ayer",
+  conversationGroupWeek: "Últimos 7 días",
+  conversationGroupMonth: "Últimos 30 días",
+  scrollRailLabel: "Esquema de la conversación",
+  sidebarLabel: "Conversaciones",
+  splitHandleLabel: "Cambiar el tamaño de los paneles",
+  launcherOpen: "Abrir el chat",
+  launcherClose: "Cerrar el chat",
+  launcherHeading: "Chat",
+  launcherMaximize: "Ampliar el chat",
+  launcherRestore: "Reducir el chat",
+  transcript: "Transcripción",
+  tag: "es",
+  direction: "ltr"
+}, Xu = {
+  inputPlaceholder: "Digite uma mensagem…",
+  sendButton: "Enviar",
+  copy: "Copiar",
+  copied: "Copiado!",
+  retry: "Tentar novamente",
+  thinking: "Raciocínio",
+  elicitationOther: "Outra resposta…",
+  elicitationOtherPlaceholder: "Digite sua resposta…",
+  elicitationOtherLabel: "Resposta livre",
+  submitButton: "Confirmar",
+  stopButton: "Parar",
+  queueLabel: "Enviado quando a resposta terminar",
+  queueEdit: "Editar",
+  queueRemove: "Remover",
+  elicitationRecommended: "Recomendado",
+  elicitationSkip: "Pular",
+  elicitationHide: "Ocultar por enquanto",
+  elicitationWaiting: "Aguardando sua resposta",
+  elicitationYes: "Sim",
+  elicitationNo: "Não",
+  elicitationAnswerLabel: "Sua resposta",
+  approvalInstructionPlaceholder: "Ou diga o que fazer em vez disso…",
+  approvalOptionsLabel: "Sua decisão",
+  approvalArgsLabel: "Argumentos",
+  approvalAsk: "Permitir {tool}?",
+  approvalAskBy: "Permitir {tool} para {agent}?",
+  approvalWaiting: "Aguardando",
+  scrollToBottom: "Ir para o fim",
+  suggestionsLabel: "Sugestões de mensagens",
+  contextLabel: "Janela de contexto",
+  contextSystem: "Prompt do sistema",
+  contextTools: "Ferramentas",
+  contextSummary: "Resumo",
+  contextMessages: "Mensagens",
+  contextOther: "Outros",
+  contextFree: "Livre",
+  contextTotal: "Total",
+  contextReclaim: "Compactar agora liberaria ~{n} tokens",
+  contextCompactNow: "Compactar agora",
+  checkpointCount: "{n} mensagens resumidas para o modelo",
+  checkpointCountOne: "1 mensagem resumida para o modelo",
+  checkpointLegacy: "As mensagens anteriores foram resumidas",
+  checkpointGroup: "Resumo do contexto",
+  checkpointShow: "Mostrar resumo",
+  checkpointHide: "Ocultar resumo",
+  checkpointRestore: "Restaurar",
+  checkpointRestoreConfirm: "Enviar as mensagens originais ao modelo novamente?",
+  checkpointPending: "Resumindo o contexto…",
+  checkpointFailed: "Não foi possível resumir o contexto",
+  toolRunning: "Em execução",
+  toolQueued: "Na fila",
+  toolFailed: "Falhou",
+  toolCompleted: "Concluído",
+  toolRejected: "Recusado",
+  toolStopped: "Interrompido",
+  toolInput: "Entrada",
+  toolOutput: "Saída",
+  toolRejectedSaid: "Você disse: “{instruction}”",
+  toolRefusedByPolicy: "Recusado por uma regra",
+  toolNotRunAfterRefusal: "Não executado: uma chamada anterior foi recusada",
+  toolTimedOut: "Tempo esgotado",
+  toolUnavailable: "Indisponível aqui",
+  toolNoApprover: "Ninguém podia aprová-lo",
+  toolTurnLimit: "Limite de turnos atingido",
+  maxTurnsReached: "Interrompido após {n} turnos para evitar um loop infinito.",
+  sourcesCount: "{n} fontes",
+  sourcesOne: "1 fonte",
+  sourcesCard: "Fontes",
+  sourcePrevious: "Fonte anterior",
+  sourceNext: "Próxima fonte",
+  sourcePosition: "Fonte {i} de {n}",
+  opensInNewTab: "(abre em uma nova aba)",
+  imageLoad: "Carregar a imagem de {host}",
+  imageLoadNamed: "Carregar a imagem “{alt}” de {host}",
+  questionDeclined: "Você optou por não responder.",
+  artifactNotCreated: "Não criado",
+  thoughtFor: "Raciocínio: {duration}",
+  thought: "Raciocínio concluído",
+  turnWorking: "Trabalhando…",
+  turnWorked: "Trabalhou {duration}",
+  turnUsed: "Usou {tools}",
+  turnTools: "one:{n} ferramenta|other:{n} ferramentas",
+  feedbackReasonTitle: "O que deu errado?",
+  feedbackReasonDismiss: "Agora não",
+  triggersLoading: "Carregando…",
+  triggersEmpty: "Nenhum resultado",
+  triggersError: "Não foi possível carregar esta lista",
+  triggersRetry: "Tentar novamente",
+  triggersBack: "Voltar",
+  triggersCommandNew: "Iniciar uma nova conversa",
+  triggersCommandStop: "Parar a resposta",
+  triggersCommandRetry: "Responder novamente",
+  triggersCommandCopy: "Copiar a última resposta",
+  triggersCommandCompact: "Resumir as mensagens anteriores",
+  triggersCompactNothing: "Ainda não há nada para compactar",
+  triggersCompactBusy: "Aguarde o fim da resposta",
+  triggersCompactNoWindow: "Este modelo não informa quanto consegue ler",
+  triggersCompactFailed: "Não foi possível escrever o resumo",
+  triggersCommandModel: "Trocar de modelo",
+  triggersCommandApproval: "Alterar o modo de aprovação",
+  actionUpload: "Anexar arquivo",
+  removeAttachment: "Remover {name}",
+  messageFrom: "Mensagem de {name}",
+  selectSearchPlaceholder: "Pesquisar…",
+  selectSearchLabel: "Pesquisar nas opções",
+  loading: "Carregando…",
+  download: "Baixar",
+  openArtifact: "Abrir",
+  closeArtifact: "Fechar",
+  artifactVersion: "Versão {n} de {total}",
+  previousVersion: "Versão anterior",
+  nextVersion: "Próxima versão",
+  modelContextWindow: "{n} de contexto",
+  previewPending: "Pressione Visualizar para executar este artefato.",
+  sandboxError: "O sandbox falhou durante a geração.",
+  sandboxErrorHint: "Causa comum: o modelo gerou código inválido (variável não definida, tipo de argumento errado). Tente novamente — o modelo pode gerar outro código.",
+  preview: "Visualizar",
+  code: "Código",
+  generating: "Gerando…",
+  rebuildingPreview: "Reconstruindo a visualização…",
+  typing: "Digitando",
+  responseCutOff: "Interrompida no limite de tamanho do modelo.",
+  error: "Erro",
+  errorUnreachable: "Não foi possível falar com o assistente agora. Tente novamente em instantes.",
+  errorTimeout: "A resposta demorou demais. Tente novamente em instantes.",
+  errorRefused: "O assistente não tem permissão para responder agora.",
+  errorRateLimited: "Muitas solicitações agora. Tente novamente em instantes.",
+  errorTooLong: "Esta conversa é longa demais para o modelo. Comece uma nova.",
+  errorFailed: "O assistente não conseguiu responder. Tente novamente em instantes.",
+  errorNoAnswer: "O assistente não conseguiu responder a esta solicitação.",
+  running: "Executando…",
+  run: "Executar",
+  file: "Arquivo",
+  modelSelectorPlaceholder: "Selecione um modelo…",
+  approvalModeLabel: "Modo de aprovação",
+  roleNameUser: "Você",
+  roleNameAssistant: "Assistente",
+  yourMessage: "Sua mensagem",
+  assistantResponse: "Resposta do assistente",
+  messageActions: "Ações da mensagem",
+  edit: "Editar mensagem",
+  editConfirm: "Enviar",
+  editCancel: "Cancelar",
+  feedbackPositive: "Boa resposta",
+  feedbackNegative: "Resposta ruim",
+  previousResponse: "Resposta anterior",
+  nextResponse: "Próxima resposta",
+  approveTool: "Aprovar",
+  rejectTool: "Recusar",
+  messageInfo: "Detalhes",
+  newChat: "Nova conversa",
+  loadingConversations: "Carregando conversas",
+  conversationSearchEmpty: "Nenhuma conversa corresponde",
+  conversationList: "Conversas",
+  loadingConversation: "Carregando a conversa",
+  deleteConversation: "Excluir",
+  archiveConversation: "Arquivar",
+  unarchiveConversation: "Desarquivar",
+  conversationActions: "Ações da conversa",
+  conversationRunning: "Respondendo",
+  conversationWaiting: "Aguardando você",
+  renameConversation: "Renomear",
+  conversationTitle: "Título da conversa",
+  pinConversation: "Fixar",
+  unpinConversation: "Desafixar",
+  deleteConversationConfirm: "Excluir “{title}”?",
+  cancel: "Cancelar",
+  conversationGroupPinned: "Fixadas",
+  conversationGroupToday: "Hoje",
+  conversationGroupYesterday: "Ontem",
+  conversationGroupWeek: "Últimos 7 dias",
+  conversationGroupMonth: "Últimos 30 dias",
+  scrollRailLabel: "Estrutura da conversa",
+  sidebarLabel: "Conversas",
+  splitHandleLabel: "Redimensionar os painéis",
+  launcherOpen: "Abrir o chat",
+  launcherClose: "Fechar o chat",
+  launcherHeading: "Chat",
+  launcherMaximize: "Ampliar o chat",
+  launcherRestore: "Reduzir o chat",
+  transcript: "Transcrição",
+  tag: "pt-BR",
+  direction: "ltr"
+}, Qu = {
+  inputPlaceholder: "Nachricht eingeben…",
+  sendButton: "Senden",
+  copy: "Kopieren",
+  copied: "Kopiert!",
+  retry: "Erneut versuchen",
+  thinking: "Überlegung",
+  elicitationOther: "Andere Antwort…",
+  elicitationOtherPlaceholder: "Antwort eingeben…",
+  elicitationOtherLabel: "Freie Antwort",
+  submitButton: "Bestätigen",
+  stopButton: "Stoppen",
+  queueLabel: "Wird gesendet, wenn die Antwort fertig ist",
+  queueEdit: "Bearbeiten",
+  queueRemove: "Entfernen",
+  elicitationRecommended: "Empfohlen",
+  elicitationSkip: "Überspringen",
+  elicitationHide: "Vorerst ausblenden",
+  elicitationWaiting: "Wartet auf deine Antwort",
+  elicitationYes: "Ja",
+  elicitationNo: "Nein",
+  elicitationAnswerLabel: "Deine Antwort",
+  approvalInstructionPlaceholder: "Oder sag ihm, was es stattdessen tun soll…",
+  approvalOptionsLabel: "Deine Entscheidung",
+  approvalArgsLabel: "Argumente",
+  approvalAsk: "{tool} erlauben?",
+  approvalAskBy: "{tool} für {agent} erlauben?",
+  approvalWaiting: "Ausstehend",
+  scrollToBottom: "Nach unten scrollen",
+  suggestionsLabel: "Vorgeschlagene Prompts",
+  contextLabel: "Kontextfenster",
+  contextSystem: "Systemprompt",
+  contextTools: "Tools",
+  contextSummary: "Zusammenfassung",
+  contextMessages: "Nachrichten",
+  contextOther: "Sonstiges",
+  contextFree: "Frei",
+  contextTotal: "Gesamt",
+  contextReclaim: "Jetzt komprimieren würde ~{n} Tokens freigeben",
+  contextCompactNow: "Jetzt komprimieren",
+  checkpointCount: "{n} Nachrichten für das Modell zusammengefasst",
+  checkpointCountOne: "1 Nachricht für das Modell zusammengefasst",
+  checkpointLegacy: "Frühere Nachrichten wurden zusammengefasst",
+  checkpointGroup: "Kontextzusammenfassung",
+  checkpointShow: "Zusammenfassung anzeigen",
+  checkpointHide: "Zusammenfassung ausblenden",
+  checkpointRestore: "Wiederherstellen",
+  checkpointRestoreConfirm: "Die ursprünglichen Nachrichten erneut an das Modell senden?",
+  checkpointPending: "Kontext wird zusammengefasst…",
+  checkpointFailed: "Kontext konnte nicht zusammengefasst werden",
+  toolRunning: "Läuft",
+  toolQueued: "Wartet",
+  toolFailed: "Fehlgeschlagen",
+  toolCompleted: "Fertig",
+  toolRejected: "Abgelehnt",
+  toolStopped: "Gestoppt",
+  toolInput: "Eingabe",
+  toolOutput: "Ausgabe",
+  toolRejectedSaid: "Du hast gesagt: „{instruction}“",
+  toolRefusedByPolicy: "Durch eine Regel abgelehnt",
+  toolNotRunAfterRefusal: "Nicht ausgeführt: Ein früherer Aufruf wurde abgelehnt",
+  toolTimedOut: "Zeitüberschreitung",
+  toolUnavailable: "Hier nicht verfügbar",
+  toolNoApprover: "Niemand konnte es genehmigen",
+  toolTurnLimit: "Rundenlimit erreicht",
+  maxTurnsReached: "Nach {n} Runden gestoppt, um eine Endlosschleife zu vermeiden.",
+  sourcesCount: "{n} Quellen",
+  sourcesOne: "1 Quelle",
+  sourcesCard: "Quellen",
+  sourcePrevious: "Vorherige Quelle",
+  sourceNext: "Nächste Quelle",
+  sourcePosition: "Quelle {i} von {n}",
+  opensInNewTab: "(öffnet in einem neuen Tab)",
+  imageLoad: "Bild von {host} laden",
+  imageLoadNamed: "Bild „{alt}“ von {host} laden",
+  questionDeclined: "Du wolltest nicht antworten.",
+  artifactNotCreated: "Nicht erstellt",
+  thoughtFor: "Überlegung: {duration}",
+  thought: "Überlegung abgeschlossen",
+  turnWorking: "Arbeitet…",
+  turnWorked: "Gearbeitet: {duration}",
+  turnUsed: "Verwendet: {tools}",
+  turnTools: "one:{n} Tool|other:{n} Tools",
+  feedbackReasonTitle: "Was ist schiefgelaufen?",
+  feedbackReasonDismiss: "Nicht jetzt",
+  triggersLoading: "Wird geladen…",
+  triggersEmpty: "Keine Ergebnisse",
+  triggersError: "Diese Liste konnte nicht geladen werden",
+  triggersRetry: "Erneut versuchen",
+  triggersBack: "Zurück",
+  triggersCommandNew: "Neue Unterhaltung beginnen",
+  triggersCommandStop: "Antwort stoppen",
+  triggersCommandRetry: "Neu antworten",
+  triggersCommandCopy: "Letzte Antwort kopieren",
+  triggersCommandCompact: "Frühere Nachrichten zusammenfassen",
+  triggersCompactNothing: "Noch nichts zum Komprimieren",
+  triggersCompactBusy: "Warte, bis die Antwort fertig ist",
+  triggersCompactNoWindow: "Dieses Modell gibt nicht an, wie viel es lesen kann",
+  triggersCompactFailed: "Die Zusammenfassung konnte nicht erstellt werden",
+  triggersCommandModel: "Modell wechseln",
+  triggersCommandApproval: "Freigabemodus ändern",
+  actionUpload: "Datei anhängen",
+  removeAttachment: "{name} entfernen",
+  messageFrom: "Nachricht von {name}",
+  selectSearchPlaceholder: "Suchen…",
+  selectSearchLabel: "Optionen durchsuchen",
+  loading: "Wird geladen…",
+  download: "Herunterladen",
+  openArtifact: "Öffnen",
+  closeArtifact: "Schließen",
+  artifactVersion: "Version {n} von {total}",
+  previousVersion: "Vorherige Version",
+  nextVersion: "Nächste Version",
+  modelContextWindow: "{n} Kontext",
+  previewPending: "Drücke Vorschau, um dieses Artefakt auszuführen.",
+  sandboxError: "Die Sandbox ist bei der Generierung fehlgeschlagen.",
+  sandboxErrorHint: "Häufige Ursache: Das Modell hat ungültigen Code erzeugt (undefinierte Variable, falscher Argumenttyp). Versuche es erneut – das Modell kann anderen Code erzeugen.",
+  preview: "Vorschau",
+  code: "Code",
+  generating: "Wird generiert…",
+  rebuildingPreview: "Vorschau wird neu erstellt…",
+  typing: "Schreibt",
+  responseCutOff: "Am Längenlimit des Modells abgeschnitten.",
+  error: "Fehler",
+  errorUnreachable: "Der Assistent ist gerade nicht erreichbar. Versuch es gleich noch einmal.",
+  errorTimeout: "Die Antwort hat zu lange gedauert. Versuch es gleich noch einmal.",
+  errorRefused: "Der Assistent darf gerade nicht antworten.",
+  errorRateLimited: "Gerade gibt es zu viele Anfragen. Versuch es gleich noch einmal.",
+  errorTooLong: "Diese Unterhaltung ist zu lang für das Modell. Fang eine neue an.",
+  errorFailed: "Der Assistent konnte nicht antworten. Versuch es gleich noch einmal.",
+  errorNoAnswer: "Der Assistent konnte auf diese Anfrage nicht antworten.",
+  running: "Wird ausgeführt…",
+  run: "Ausführen",
+  file: "Datei",
+  modelSelectorPlaceholder: "Modell auswählen…",
+  approvalModeLabel: "Genehmigungsmodus",
+  roleNameUser: "Du",
+  roleNameAssistant: "Assistent",
+  yourMessage: "Deine Nachricht",
+  assistantResponse: "Antwort des Assistenten",
+  messageActions: "Nachrichtenaktionen",
+  edit: "Nachricht bearbeiten",
+  editConfirm: "Senden",
+  editCancel: "Abbrechen",
+  feedbackPositive: "Gute Antwort",
+  feedbackNegative: "Schlechte Antwort",
+  previousResponse: "Vorherige Antwort",
+  nextResponse: "Nächste Antwort",
+  approveTool: "Genehmigen",
+  rejectTool: "Ablehnen",
+  messageInfo: "Details",
+  newChat: "Neuer Chat",
+  loadingConversations: "Unterhaltungen werden geladen",
+  conversationSearchEmpty: "Keine Unterhaltung gefunden",
+  conversationList: "Unterhaltungen",
+  loadingConversation: "Unterhaltung wird geladen",
+  deleteConversation: "Löschen",
+  archiveConversation: "Archivieren",
+  unarchiveConversation: "Archivierung aufheben",
+  conversationActions: "Aktionen der Unterhaltung",
+  conversationRunning: "Antwortet",
+  conversationWaiting: "Wartet auf dich",
+  renameConversation: "Umbenennen",
+  conversationTitle: "Titel der Unterhaltung",
+  pinConversation: "Anheften",
+  unpinConversation: "Lösen",
+  deleteConversationConfirm: "„{title}“ löschen?",
+  cancel: "Abbrechen",
+  conversationGroupPinned: "Angeheftet",
+  conversationGroupToday: "Heute",
+  conversationGroupYesterday: "Gestern",
+  conversationGroupWeek: "Letzte 7 Tage",
+  conversationGroupMonth: "Letzte 30 Tage",
+  scrollRailLabel: "Gliederung der Unterhaltung",
+  sidebarLabel: "Unterhaltungen",
+  splitHandleLabel: "Größe der Bereiche ändern",
+  launcherOpen: "Chat öffnen",
+  launcherClose: "Chat schließen",
+  launcherHeading: "Chat",
+  launcherMaximize: "Chat vergrößern",
+  launcherRestore: "Chat verkleinern",
+  transcript: "Verlauf",
+  tag: "de",
+  direction: "ltr"
+}, Yu = {
+  inputPlaceholder: "Scrivi un messaggio…",
+  sendButton: "Invia",
+  copy: "Copia",
+  copied: "Copiato!",
+  retry: "Riprova",
+  thinking: "Ragionamento",
+  elicitationOther: "Altra risposta…",
+  elicitationOtherPlaceholder: "Scrivi la tua risposta…",
+  elicitationOtherLabel: "Risposta libera",
+  submitButton: "Conferma",
+  stopButton: "Interrompi",
+  queueLabel: "Inviato al termine della risposta",
+  queueEdit: "Modifica",
+  queueRemove: "Rimuovi",
+  elicitationRecommended: "Consigliato",
+  elicitationSkip: "Salta",
+  elicitationHide: "Nascondi per ora",
+  elicitationWaiting: "In attesa della tua risposta",
+  elicitationYes: "Sì",
+  elicitationNo: "No",
+  elicitationAnswerLabel: "La tua risposta",
+  approvalInstructionPlaceholder: "Oppure digli cosa fare invece…",
+  approvalOptionsLabel: "La tua decisione",
+  approvalArgsLabel: "Argomenti",
+  approvalAsk: "Consentire {tool}?",
+  approvalAskBy: "Consentire {tool} a {agent}?",
+  approvalWaiting: "In attesa",
+  scrollToBottom: "Vai in fondo",
+  suggestionsLabel: "Messaggi suggeriti",
+  contextLabel: "Finestra di contesto",
+  contextSystem: "Prompt di sistema",
+  contextTools: "Strumenti",
+  contextSummary: "Riepilogo",
+  contextMessages: "Messaggi",
+  contextOther: "Altro",
+  contextFree: "Libero",
+  contextTotal: "Totale",
+  contextReclaim: "Compattare ora libererebbe ~{n} token",
+  contextCompactNow: "Compatta ora",
+  checkpointCount: "{n} messaggi riassunti per il modello",
+  checkpointCountOne: "1 messaggio riassunto per il modello",
+  checkpointLegacy: "I messaggi precedenti sono stati riassunti",
+  checkpointGroup: "Riepilogo del contesto",
+  checkpointShow: "Mostra riepilogo",
+  checkpointHide: "Nascondi riepilogo",
+  checkpointRestore: "Ripristina",
+  checkpointRestoreConfirm: "Inviare di nuovo i messaggi originali al modello?",
+  checkpointPending: "Riepilogo del contesto in corso…",
+  checkpointFailed: "Impossibile riassumere il contesto",
+  toolRunning: "In esecuzione",
+  toolQueued: "In coda",
+  toolFailed: "Non riuscito",
+  toolCompleted: "Completato",
+  toolRejected: "Rifiutato",
+  toolStopped: "Interrotto",
+  toolInput: "Input",
+  toolOutput: "Output",
+  toolRejectedSaid: "Hai detto: “{instruction}”",
+  toolRefusedByPolicy: "Rifiutato da una regola",
+  toolNotRunAfterRefusal: "Non eseguito: una chiamata precedente è stata rifiutata",
+  toolTimedOut: "Tempo scaduto",
+  toolUnavailable: "Non disponibile qui",
+  toolNoApprover: "Nessuno poteva approvarlo",
+  toolTurnLimit: "Limite di turni raggiunto",
+  maxTurnsReached: "Interrotto dopo {n} turni per evitare un ciclo infinito.",
+  sourcesCount: "{n} fonti",
+  sourcesOne: "1 fonte",
+  sourcesCard: "Fonti",
+  sourcePrevious: "Fonte precedente",
+  sourceNext: "Fonte successiva",
+  sourcePosition: "Fonte {i} di {n}",
+  opensInNewTab: "(si apre in una nuova scheda)",
+  imageLoad: "Carica l’immagine da {host}",
+  imageLoadNamed: "Carica l’immagine “{alt}” da {host}",
+  questionDeclined: "Hai scelto di non rispondere.",
+  artifactNotCreated: "Non creato",
+  thoughtFor: "Ragionamento: {duration}",
+  thought: "Ragionamento completato",
+  turnWorking: "Al lavoro…",
+  turnWorked: "Ha lavorato {duration}",
+  turnUsed: "Ha usato {tools}",
+  turnTools: "one:{n} strumento|other:{n} strumenti",
+  feedbackReasonTitle: "Che cosa non ha funzionato?",
+  feedbackReasonDismiss: "Non ora",
+  triggersLoading: "Caricamento…",
+  triggersEmpty: "Nessun risultato",
+  triggersError: "Impossibile caricare questo elenco",
+  triggersRetry: "Riprova",
+  triggersBack: "Indietro",
+  triggersCommandNew: "Inizia una nuova conversazione",
+  triggersCommandStop: "Interrompi la risposta",
+  triggersCommandRetry: "Rispondi di nuovo",
+  triggersCommandCopy: "Copia l’ultima risposta",
+  triggersCommandCompact: "Riassumi i messaggi precedenti",
+  triggersCompactNothing: "Non c’è ancora nulla da compattare",
+  triggersCompactBusy: "Attendi la fine della risposta",
+  triggersCompactNoWindow: "Questo modello non indica quanto può leggere",
+  triggersCompactFailed: "Impossibile scrivere il riassunto",
+  triggersCommandModel: "Cambia modello",
+  triggersCommandApproval: "Cambia la modalità di approvazione",
+  actionUpload: "Allega file",
+  removeAttachment: "Rimuovi {name}",
+  messageFrom: "Messaggio da {name}",
+  selectSearchPlaceholder: "Cerca…",
+  selectSearchLabel: "Cerca tra le opzioni",
+  loading: "Caricamento…",
+  download: "Scarica",
+  openArtifact: "Apri",
+  closeArtifact: "Chiudi",
+  artifactVersion: "Versione {n} di {total}",
+  previousVersion: "Versione precedente",
+  nextVersion: "Versione successiva",
+  modelContextWindow: "{n} di contesto",
+  previewPending: "Premi Anteprima per eseguire questo artefatto.",
+  sandboxError: "La sandbox non è riuscita durante la generazione.",
+  sandboxErrorHint: "Causa frequente: il modello ha prodotto codice non valido (variabile non definita, tipo di argomento errato). Riprova: il modello può produrre codice diverso.",
+  preview: "Anteprima",
+  code: "Codice",
+  generating: "Generazione…",
+  rebuildingPreview: "Ricostruzione dell'anteprima…",
+  typing: "Sta scrivendo",
+  responseCutOff: "Interrotta al limite di lunghezza del modello.",
+  error: "Errore",
+  errorUnreachable: "Al momento l'assistente non è raggiungibile. Riprova tra poco.",
+  errorTimeout: "La risposta ha richiesto troppo tempo. Riprova tra poco.",
+  errorRefused: "Al momento l'assistente non è autorizzato a rispondere.",
+  errorRateLimited: "Troppe richieste in questo momento. Riprova tra poco.",
+  errorTooLong: "Questa conversazione è troppo lunga per il modello. Iniziane una nuova.",
+  errorFailed: "L'assistente non è riuscito a rispondere. Riprova tra poco.",
+  errorNoAnswer: "L'assistente non è riuscito a rispondere a questa richiesta.",
+  running: "In esecuzione…",
+  run: "Esegui",
+  file: "File",
+  modelSelectorPlaceholder: "Seleziona un modello…",
+  approvalModeLabel: "Modalità di approvazione",
+  roleNameUser: "Tu",
+  roleNameAssistant: "Assistente",
+  yourMessage: "Il tuo messaggio",
+  assistantResponse: "Risposta dell'assistente",
+  messageActions: "Azioni del messaggio",
+  edit: "Modifica messaggio",
+  editConfirm: "Invia",
+  editCancel: "Annulla",
+  feedbackPositive: "Buona risposta",
+  feedbackNegative: "Risposta scadente",
+  previousResponse: "Risposta precedente",
+  nextResponse: "Risposta successiva",
+  approveTool: "Approva",
+  rejectTool: "Rifiuta",
+  messageInfo: "Dettagli",
+  newChat: "Nuova chat",
+  loadingConversations: "Caricamento delle conversazioni",
+  conversationSearchEmpty: "Nessuna conversazione corrisponde",
+  conversationList: "Conversazioni",
+  loadingConversation: "Caricamento della conversazione",
+  deleteConversation: "Elimina",
+  archiveConversation: "Archivia",
+  unarchiveConversation: "Ripristina dall'archivio",
+  conversationActions: "Azioni della conversazione",
+  conversationRunning: "Sta rispondendo",
+  conversationWaiting: "Attende la tua risposta",
+  renameConversation: "Rinomina",
+  conversationTitle: "Titolo della conversazione",
+  pinConversation: "Fissa",
+  unpinConversation: "Non fissare più",
+  deleteConversationConfirm: "Eliminare “{title}”?",
+  cancel: "Annulla",
+  conversationGroupPinned: "Fissate",
+  conversationGroupToday: "Oggi",
+  conversationGroupYesterday: "Ieri",
+  conversationGroupWeek: "Ultimi 7 giorni",
+  conversationGroupMonth: "Ultimi 30 giorni",
+  scrollRailLabel: "Struttura della conversazione",
+  sidebarLabel: "Conversazioni",
+  splitHandleLabel: "Ridimensiona i pannelli",
+  launcherOpen: "Apri la chat",
+  launcherClose: "Chiudi la chat",
+  launcherHeading: "Chat",
+  launcherMaximize: "Ingrandisci la chat",
+  launcherRestore: "Riduci la chat",
+  transcript: "Trascrizione",
+  tag: "it",
+  direction: "ltr"
+}, Zu = {
+  inputPlaceholder: "Введите сообщение…",
+  sendButton: "Отправить",
+  copy: "Копировать",
+  copied: "Скопировано!",
+  retry: "Повторить",
+  thinking: "Размышление",
+  elicitationOther: "Другой ответ…",
+  elicitationOtherPlaceholder: "Введите свой ответ…",
+  elicitationOtherLabel: "Свой ответ",
+  submitButton: "Подтвердить",
+  stopButton: "Остановить",
+  queueLabel: "Будет отправлено после ответа",
+  queueEdit: "Изменить",
+  queueRemove: "Удалить",
+  elicitationRecommended: "Рекомендуется",
+  elicitationSkip: "Пропустить",
+  elicitationHide: "Скрыть пока",
+  elicitationWaiting: "Ожидание вашего ответа",
+  elicitationYes: "Да",
+  elicitationNo: "Нет",
+  elicitationAnswerLabel: "Ваш ответ",
+  approvalInstructionPlaceholder: "Или скажите, что сделать вместо этого…",
+  approvalOptionsLabel: "Ваше решение",
+  approvalArgsLabel: "Аргументы",
+  approvalAsk: "Разрешить {tool}?",
+  approvalAskBy: "Разрешить {tool} для {agent}?",
+  approvalWaiting: "Ожидание",
+  scrollToBottom: "Прокрутить вниз",
+  suggestionsLabel: "Предлагаемые запросы",
+  contextLabel: "Контекстное окно",
+  contextSystem: "Системный промпт",
+  contextTools: "Инструменты",
+  contextSummary: "Сводка",
+  contextMessages: "Сообщения",
+  contextOther: "Прочее",
+  contextFree: "Свободно",
+  contextTotal: "Всего",
+  contextReclaim: "Сжатие сейчас освободит ~{n} токенов",
+  contextCompactNow: "Сжать сейчас",
+  checkpointCount: "Сообщений сжато для модели: {n}",
+  checkpointCountOne: "1 сообщение сжато для модели",
+  checkpointLegacy: "Предыдущие сообщения сжаты",
+  checkpointGroup: "Сводка контекста",
+  checkpointShow: "Показать сводку",
+  checkpointHide: "Скрыть сводку",
+  checkpointRestore: "Восстановить",
+  checkpointRestoreConfirm: "Снова отправить исходные сообщения модели?",
+  checkpointPending: "Сжатие контекста…",
+  checkpointFailed: "Не удалось сжать контекст",
+  toolRunning: "Выполняется",
+  toolQueued: "В очереди",
+  toolFailed: "Не удалось",
+  toolCompleted: "Готово",
+  toolRejected: "Отклонено",
+  toolStopped: "Остановлено",
+  toolInput: "Входные данные",
+  toolOutput: "Результат",
+  toolRejectedSaid: "Вы сказали: «{instruction}»",
+  toolRefusedByPolicy: "Отклонено правилом",
+  toolNotRunAfterRefusal: "Не выполнено: предыдущий вызов был отклонён",
+  toolTimedOut: "Время истекло",
+  toolUnavailable: "Здесь недоступно",
+  toolNoApprover: "Никто не мог это одобрить",
+  toolTurnLimit: "Достигнут лимит ходов",
+  maxTurnsReached: "Остановлено: достигнут предел ходов ({n}), чтобы избежать бесконечного цикла.",
+  sourcesCount: "Источников: {n}",
+  sourcesOne: "1 источник",
+  sourcesCard: "Источники",
+  sourcePrevious: "Предыдущий источник",
+  sourceNext: "Следующий источник",
+  sourcePosition: "Источник {i} из {n}",
+  opensInNewTab: "(откроется в новой вкладке)",
+  imageLoad: "Загрузить изображение с {host}",
+  imageLoadNamed: "Загрузить изображение «{alt}» с {host}",
+  questionDeclined: "Вы решили не отвечать.",
+  artifactNotCreated: "Не создано",
+  thoughtFor: "Размышление: {duration}",
+  thought: "Размышление завершено",
+  turnWorking: "Работаю…",
+  turnWorked: "Работа заняла {duration}",
+  turnUsed: "Использовано: {tools}",
+  turnTools: "one:{n} инструмент|few:{n} инструмента|many:{n} инструментов|other:{n} инструмента",
+  feedbackReasonTitle: "Что пошло не так?",
+  feedbackReasonDismiss: "Не сейчас",
+  triggersLoading: "Загрузка…",
+  triggersEmpty: "Ничего не найдено",
+  triggersError: "Не удалось загрузить список",
+  triggersRetry: "Повторить",
+  triggersBack: "Назад",
+  triggersCommandNew: "Начать новый разговор",
+  triggersCommandStop: "Остановить ответ",
+  triggersCommandRetry: "Ответить ещё раз",
+  triggersCommandCopy: "Скопировать последний ответ",
+  triggersCommandCompact: "Обобщить предыдущие сообщения",
+  triggersCompactNothing: "Пока нечего сжимать",
+  triggersCompactBusy: "Дождитесь окончания ответа",
+  triggersCompactNoWindow: "Эта модель не сообщает, сколько может прочитать",
+  triggersCompactFailed: "Не удалось написать сводку",
+  triggersCommandModel: "Сменить модель",
+  triggersCommandApproval: "Изменить режим подтверждения",
+  actionUpload: "Прикрепить файл",
+  removeAttachment: "Удалить {name}",
+  messageFrom: "Сообщение от {name}",
+  selectSearchPlaceholder: "Поиск…",
+  selectSearchLabel: "Поиск по вариантам",
+  loading: "Загрузка…",
+  download: "Скачать",
+  openArtifact: "Открыть",
+  closeArtifact: "Закрыть",
+  artifactVersion: "Версия {n} из {total}",
+  previousVersion: "Предыдущая версия",
+  nextVersion: "Следующая версия",
+  modelContextWindow: "Контекст: {n}",
+  previewPending: "Нажмите «Предпросмотр», чтобы запустить этот артефакт.",
+  sandboxError: "Песочница дала сбой во время генерации.",
+  sandboxErrorHint: "Частая причина: модель создала некорректный код (неопределённая переменная, неверный тип аргумента). Повторите запрос — модель может создать другой код.",
+  preview: "Предпросмотр",
+  code: "Код",
+  generating: "Генерация…",
+  rebuildingPreview: "Пересборка предпросмотра…",
+  typing: "Печатает",
+  responseCutOff: "Обрезано на пределе длины модели.",
+  error: "Ошибка",
+  errorUnreachable: "Сейчас не удаётся связаться с ассистентом. Попробуйте ещё раз чуть позже.",
+  errorTimeout: "Ответ занял слишком много времени. Попробуйте ещё раз чуть позже.",
+  errorRefused: "Сейчас ассистенту не разрешено отвечать.",
+  errorRateLimited: "Сейчас слишком много запросов. Попробуйте ещё раз чуть позже.",
+  errorTooLong: "Эта беседа слишком длинная для модели. Начните новую.",
+  errorFailed: "Ассистент не смог ответить. Попробуйте ещё раз чуть позже.",
+  errorNoAnswer: "Ассистент не смог ответить на этот запрос.",
+  running: "Выполнение…",
+  run: "Запустить",
+  file: "Файл",
+  modelSelectorPlaceholder: "Выберите модель…",
+  approvalModeLabel: "Режим одобрения",
+  roleNameUser: "Вы",
+  roleNameAssistant: "Ассистент",
+  yourMessage: "Ваше сообщение",
+  assistantResponse: "Ответ ассистента",
+  messageActions: "Действия с сообщением",
+  edit: "Изменить сообщение",
+  editConfirm: "Отправить",
+  editCancel: "Отмена",
+  feedbackPositive: "Хороший ответ",
+  feedbackNegative: "Плохой ответ",
+  previousResponse: "Предыдущий ответ",
+  nextResponse: "Следующий ответ",
+  approveTool: "Одобрить",
+  rejectTool: "Отклонить",
+  messageInfo: "Подробности",
+  newChat: "Новый чат",
+  loadingConversations: "Загрузка бесед",
+  conversationSearchEmpty: "Нет подходящих бесед",
+  conversationList: "Беседы",
+  loadingConversation: "Загрузка беседы",
+  deleteConversation: "Удалить",
+  archiveConversation: "Архивировать",
+  unarchiveConversation: "Разархивировать",
+  conversationActions: "Действия с беседой",
+  conversationRunning: "Отвечает",
+  conversationWaiting: "Ждёт вас",
+  renameConversation: "Переименовать",
+  conversationTitle: "Название беседы",
+  pinConversation: "Закрепить",
+  unpinConversation: "Открепить",
+  deleteConversationConfirm: "Удалить «{title}»?",
+  cancel: "Отмена",
+  conversationGroupPinned: "Закреплённые",
+  conversationGroupToday: "Сегодня",
+  conversationGroupYesterday: "Вчера",
+  conversationGroupWeek: "Последние 7 дней",
+  conversationGroupMonth: "Последние 30 дней",
+  scrollRailLabel: "Структура беседы",
+  sidebarLabel: "Беседы",
+  splitHandleLabel: "Изменить размер панелей",
+  launcherOpen: "Открыть чат",
+  launcherClose: "Закрыть чат",
+  launcherHeading: "Чат",
+  launcherMaximize: "Развернуть чат",
+  launcherRestore: "Уменьшить чат",
+  transcript: "История сообщений",
+  tag: "ru",
+  direction: "ltr"
+}, Ju = {
+  inputPlaceholder: "メッセージを入力…",
+  sendButton: "送信",
+  copy: "コピー",
+  copied: "コピーしました",
+  retry: "再試行",
+  thinking: "思考",
+  elicitationOther: "その他…",
+  elicitationOtherPlaceholder: "回答を入力…",
+  elicitationOtherLabel: "自由回答",
+  submitButton: "確定",
+  stopButton: "停止",
+  queueLabel: "応答の完了後に送信",
+  queueEdit: "編集",
+  queueRemove: "削除",
+  elicitationRecommended: "おすすめ",
+  elicitationSkip: "スキップ",
+  elicitationHide: "いったん隠す",
+  elicitationWaiting: "回答を待っています",
+  elicitationYes: "はい",
+  elicitationNo: "いいえ",
+  elicitationAnswerLabel: "あなたの回答",
+  approvalInstructionPlaceholder: "または、代わりにしてほしいことを伝える…",
+  approvalOptionsLabel: "あなたの判断",
+  approvalArgsLabel: "引数",
+  approvalAsk: "{tool} を許可しますか？",
+  approvalAskBy: "{agent} に {tool} を許可しますか？",
+  approvalWaiting: "待機中",
+  scrollToBottom: "一番下へスクロール",
+  suggestionsLabel: "おすすめのプロンプト",
+  contextLabel: "コンテキストウィンドウ",
+  contextSystem: "システムプロンプト",
+  contextTools: "ツール",
+  contextSummary: "要約",
+  contextMessages: "メッセージ",
+  contextOther: "その他",
+  contextFree: "空き",
+  contextTotal: "合計",
+  contextReclaim: "今すぐ圧縮すると約 {n} トークン空きます",
+  contextCompactNow: "今すぐ圧縮",
+  checkpointCount: "{n} 件のメッセージをモデル用に要約しました",
+  checkpointCountOne: "1 件のメッセージをモデル用に要約しました",
+  checkpointLegacy: "以前のメッセージは要約されました",
+  checkpointGroup: "コンテキストの要約",
+  checkpointShow: "要約を表示",
+  checkpointHide: "要約を隠す",
+  checkpointRestore: "元に戻す",
+  checkpointRestoreConfirm: "元のメッセージをもう一度モデルに送信しますか？",
+  checkpointPending: "コンテキストを要約しています…",
+  checkpointFailed: "コンテキストを要約できませんでした",
+  toolRunning: "実行中",
+  toolQueued: "順番待ち",
+  toolFailed: "失敗",
+  toolCompleted: "完了",
+  toolRejected: "拒否",
+  toolStopped: "停止",
+  toolInput: "入力",
+  toolOutput: "出力",
+  toolRejectedSaid: "あなたの指示：「{instruction}」",
+  toolRefusedByPolicy: "ポリシーにより拒否",
+  toolNotRunAfterRefusal: "未実行：以前の呼び出しが拒否されました",
+  toolTimedOut: "タイムアウト",
+  toolUnavailable: "ここでは利用できません",
+  toolNoApprover: "承認できる人がいませんでした",
+  toolTurnLimit: "ターン数の上限に達しました",
+  maxTurnsReached: "無限ループを避けるため、{n} ターンで停止しました。",
+  sourcesCount: "{n} 件の出典",
+  sourcesOne: "1 件の出典",
+  sourcesCard: "出典",
+  sourcePrevious: "前の出典",
+  sourceNext: "次の出典",
+  sourcePosition: "出典 {i}/{n}",
+  opensInNewTab: "（新しいタブで開きます）",
+  imageLoad: "{host} から画像を読み込む",
+  imageLoadNamed: "{host} から画像「{alt}」を読み込む",
+  questionDeclined: "回答しませんでした。",
+  artifactNotCreated: "作成されませんでした",
+  thoughtFor: "思考時間：{duration}",
+  thought: "思考完了",
+  turnWorking: "作業中…",
+  turnWorked: "作業時間 {duration}",
+  turnUsed: "{tools}を使用",
+  turnTools: "other:{n} 個のツール",
+  feedbackReasonTitle: "何が問題でしたか？",
+  feedbackReasonDismiss: "今はしない",
+  triggersLoading: "読み込み中…",
+  triggersEmpty: "結果がありません",
+  triggersError: "このリストを読み込めませんでした",
+  triggersRetry: "再試行",
+  triggersBack: "戻る",
+  triggersCommandNew: "新しい会話を始める",
+  triggersCommandStop: "応答を停止",
+  triggersCommandRetry: "もう一度回答",
+  triggersCommandCopy: "最後の応答をコピー",
+  triggersCommandCompact: "以前のメッセージを要約",
+  triggersCompactNothing: "まだ圧縮するものがありません",
+  triggersCompactBusy: "応答が終わるまでお待ちください",
+  triggersCompactNoWindow: "このモデルは読み取れる量を示していません",
+  triggersCompactFailed: "要約を作成できませんでした",
+  triggersCommandModel: "モデルを変更",
+  triggersCommandApproval: "承認モードを変更",
+  actionUpload: "ファイルを添付",
+  removeAttachment: "{name} を削除",
+  messageFrom: "{name} からのメッセージ",
+  selectSearchPlaceholder: "検索…",
+  selectSearchLabel: "選択肢を検索",
+  loading: "読み込み中…",
+  download: "ダウンロード",
+  openArtifact: "開く",
+  closeArtifact: "閉じる",
+  artifactVersion: "バージョン {n} / {total}",
+  previousVersion: "前のバージョン",
+  nextVersion: "次のバージョン",
+  modelContextWindow: "コンテキスト {n}",
+  previewPending: "このアーティファクトを実行するには「プレビュー」を押してください。",
+  sandboxError: "生成中にサンドボックスが失敗しました。",
+  sandboxErrorHint: "よくある原因：モデルが無効なコードを生成しました（未定義の変数、誤った引数の型など）。もう一度試してください。モデルが別のコードを生成する場合があります。",
+  preview: "プレビュー",
+  code: "コード",
+  generating: "生成中…",
+  rebuildingPreview: "プレビューを再構築しています…",
+  typing: "入力中",
+  responseCutOff: "モデルの長さの上限で途切れました。",
+  error: "エラー",
+  errorUnreachable: "ただいまアシスタントに接続できません。しばらくしてからもう一度お試しください。",
+  errorTimeout: "応答に時間がかかりすぎました。しばらくしてからもう一度お試しください。",
+  errorRefused: "現在、アシスタントは応答を許可されていません。",
+  errorRateLimited: "現在リクエストが多すぎます。しばらくしてからもう一度お試しください。",
+  errorTooLong: "この会話はモデルには長すぎます。新しい会話を始めてください。",
+  errorFailed: "アシスタントが応答できませんでした。しばらくしてからもう一度お試しください。",
+  errorNoAnswer: "アシスタントはこのリクエストに応答できませんでした。",
+  running: "実行中…",
+  run: "実行",
+  file: "ファイル",
+  modelSelectorPlaceholder: "モデルを選択…",
+  approvalModeLabel: "承認モード",
+  roleNameUser: "あなた",
+  roleNameAssistant: "アシスタント",
+  yourMessage: "あなたのメッセージ",
+  assistantResponse: "アシスタントの回答",
+  messageActions: "メッセージの操作",
+  edit: "メッセージを編集",
+  editConfirm: "送信",
+  editCancel: "キャンセル",
+  feedbackPositive: "良い回答",
+  feedbackNegative: "悪い回答",
+  previousResponse: "前の回答",
+  nextResponse: "次の回答",
+  approveTool: "承認",
+  rejectTool: "拒否",
+  messageInfo: "詳細",
+  newChat: "新しいチャット",
+  loadingConversations: "会話を読み込み中",
+  conversationSearchEmpty: "一致する会話はありません",
+  conversationList: "会話",
+  loadingConversation: "この会話を読み込み中",
+  deleteConversation: "削除",
+  archiveConversation: "アーカイブ",
+  unarchiveConversation: "アーカイブを解除",
+  conversationActions: "会話の操作",
+  conversationRunning: "回答中",
+  conversationWaiting: "あなたの返答待ち",
+  renameConversation: "名前を変更",
+  conversationTitle: "会話のタイトル",
+  pinConversation: "ピン留め",
+  unpinConversation: "ピン留めを外す",
+  deleteConversationConfirm: "「{title}」を削除しますか？",
+  cancel: "キャンセル",
+  conversationGroupPinned: "ピン留め済み",
+  conversationGroupToday: "今日",
+  conversationGroupYesterday: "昨日",
+  conversationGroupWeek: "過去 7 日間",
+  conversationGroupMonth: "過去 30 日間",
+  scrollRailLabel: "会話のアウトライン",
+  sidebarLabel: "会話",
+  splitHandleLabel: "パネルのサイズを変更",
+  launcherOpen: "チャットを開く",
+  launcherClose: "チャットを閉じる",
+  launcherHeading: "チャット",
+  launcherMaximize: "チャットを拡大",
+  launcherRestore: "チャットを縮小",
+  transcript: "会話の記録",
+  tag: "ja",
+  direction: "ltr"
+}, ed = {
+  inputPlaceholder: "메시지를 입력하세요…",
+  sendButton: "보내기",
+  copy: "복사",
+  copied: "복사했습니다!",
+  retry: "다시 시도",
+  thinking: "생각",
+  elicitationOther: "기타…",
+  elicitationOtherPlaceholder: "답변을 입력하세요…",
+  elicitationOtherLabel: "직접 입력",
+  submitButton: "제출",
+  stopButton: "중지",
+  queueLabel: "응답이 끝나면 전송됩니다",
+  queueEdit: "편집",
+  queueRemove: "삭제",
+  elicitationRecommended: "추천",
+  elicitationSkip: "건너뛰기",
+  elicitationHide: "잠시 숨기기",
+  elicitationWaiting: "답변을 기다리는 중",
+  elicitationYes: "예",
+  elicitationNo: "아니요",
+  elicitationAnswerLabel: "내 답변",
+  approvalInstructionPlaceholder: "또는 대신 할 일을 알려 주세요…",
+  approvalOptionsLabel: "내 결정",
+  approvalArgsLabel: "인수",
+  approvalAsk: "{tool}을(를) 허용할까요?",
+  approvalAskBy: "{agent}에 대해 {tool}을(를) 허용할까요?",
+  approvalWaiting: "대기 중",
+  scrollToBottom: "맨 아래로 스크롤",
+  suggestionsLabel: "추천 프롬프트",
+  contextLabel: "컨텍스트 창",
+  contextSystem: "시스템 프롬프트",
+  contextTools: "도구",
+  contextSummary: "요약",
+  contextMessages: "메시지",
+  contextOther: "기타",
+  contextFree: "여유",
+  contextTotal: "합계",
+  contextReclaim: "지금 압축하면 약 {n}개 토큰을 확보할 수 있습니다",
+  contextCompactNow: "지금 압축",
+  checkpointCount: "모델을 위해 메시지 {n}개를 요약했습니다",
+  checkpointCountOne: "모델을 위해 메시지 1개를 요약했습니다",
+  checkpointLegacy: "이전 메시지가 요약되었습니다",
+  checkpointGroup: "컨텍스트 요약",
+  checkpointShow: "요약 보기",
+  checkpointHide: "요약 숨기기",
+  checkpointRestore: "복원",
+  checkpointRestoreConfirm: "원래 메시지를 모델에 다시 보낼까요?",
+  checkpointPending: "컨텍스트를 요약하는 중…",
+  checkpointFailed: "컨텍스트를 요약하지 못했습니다",
+  toolRunning: "실행 중",
+  toolQueued: "순서 대기",
+  toolFailed: "실패",
+  toolCompleted: "완료",
+  toolRejected: "거부됨",
+  toolStopped: "중지됨",
+  toolInput: "입력",
+  toolOutput: "출력",
+  toolRejectedSaid: "내가 한 말: “{instruction}”",
+  toolRefusedByPolicy: "정책에 의해 거부됨",
+  toolNotRunAfterRefusal: "실행 안 됨: 이전 호출이 거부되었습니다",
+  toolTimedOut: "시간 초과",
+  toolUnavailable: "여기서는 사용할 수 없음",
+  toolNoApprover: "승인할 수 있는 사람이 없었습니다",
+  toolTurnLimit: "턴 한도에 도달함",
+  maxTurnsReached: "무한 반복을 막기 위해 {n}턴 후 중지했습니다.",
+  sourcesCount: "출처 {n}개",
+  sourcesOne: "출처 1개",
+  sourcesCard: "출처",
+  sourcePrevious: "이전 출처",
+  sourceNext: "다음 출처",
+  sourcePosition: "출처 {i}/{n}",
+  opensInNewTab: "(새 탭에서 열림)",
+  imageLoad: "{host}에서 이미지 불러오기",
+  imageLoadNamed: "{host}에서 이미지 “{alt}” 불러오기",
+  questionDeclined: "답변하지 않기로 했습니다.",
+  artifactNotCreated: "생성되지 않음",
+  thoughtFor: "생각 시간: {duration}",
+  thought: "생각 완료",
+  turnWorking: "작업 중…",
+  turnWorked: "작업 시간 {duration}",
+  turnUsed: "{tools} 사용",
+  turnTools: "other:도구 {n}개",
+  feedbackReasonTitle: "무엇이 문제였나요?",
+  feedbackReasonDismiss: "나중에",
+  triggersLoading: "불러오는 중…",
+  triggersEmpty: "결과 없음",
+  triggersError: "이 목록을 불러올 수 없습니다",
+  triggersRetry: "다시 시도",
+  triggersBack: "뒤로",
+  triggersCommandNew: "새 대화 시작",
+  triggersCommandStop: "응답 중지",
+  triggersCommandRetry: "다시 답변",
+  triggersCommandCopy: "마지막 응답 복사",
+  triggersCommandCompact: "이전 메시지 요약",
+  triggersCompactNothing: "아직 압축할 내용이 없습니다",
+  triggersCompactBusy: "응답이 끝날 때까지 기다려 주세요",
+  triggersCompactNoWindow: "이 모델은 읽을 수 있는 양을 알려 주지 않습니다",
+  triggersCompactFailed: "요약을 작성할 수 없습니다",
+  triggersCommandModel: "모델 변경",
+  triggersCommandApproval: "승인 모드 변경",
+  actionUpload: "파일 첨부",
+  removeAttachment: "{name} 제거",
+  messageFrom: "{name}님의 메시지",
+  selectSearchPlaceholder: "검색…",
+  selectSearchLabel: "옵션 검색",
+  loading: "불러오는 중…",
+  download: "다운로드",
+  openArtifact: "열기",
+  closeArtifact: "닫기",
+  artifactVersion: "버전 {n} / {total}",
+  previousVersion: "이전 버전",
+  nextVersion: "다음 버전",
+  modelContextWindow: "컨텍스트 {n}",
+  previewPending: "이 아티팩트를 실행하려면 미리 보기를 누르세요.",
+  sandboxError: "생성 중에 샌드박스가 실패했습니다.",
+  sandboxErrorHint: "흔한 원인: 모델이 잘못된 코드를 생성했습니다(정의되지 않은 변수, 잘못된 인수 유형). 다시 시도하세요. 모델이 다른 코드를 생성할 수 있습니다.",
+  preview: "미리 보기",
+  code: "코드",
+  generating: "생성 중…",
+  rebuildingPreview: "미리 보기를 다시 만드는 중…",
+  typing: "입력 중",
+  responseCutOff: "모델의 길이 한도에서 잘렸습니다.",
+  error: "오류",
+  errorUnreachable: "지금은 어시스턴트에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+  errorTimeout: "응답 시간이 너무 오래 걸렸습니다. 잠시 후 다시 시도해 주세요.",
+  errorRefused: "지금은 어시스턴트가 답변할 권한이 없습니다.",
+  errorRateLimited: "지금은 요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+  errorTooLong: "이 대화는 모델이 처리하기에 너무 깁니다. 새 대화를 시작해 주세요.",
+  errorFailed: "어시스턴트가 답변하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+  errorNoAnswer: "어시스턴트가 이 요청에 답변하지 못했습니다.",
+  running: "실행 중…",
+  run: "실행",
+  file: "파일",
+  modelSelectorPlaceholder: "모델 선택…",
+  approvalModeLabel: "승인 모드",
+  roleNameUser: "나",
+  roleNameAssistant: "어시스턴트",
+  yourMessage: "내 메시지",
+  assistantResponse: "어시스턴트 응답",
+  messageActions: "메시지 작업",
+  edit: "메시지 편집",
+  editConfirm: "보내기",
+  editCancel: "취소",
+  feedbackPositive: "좋은 응답",
+  feedbackNegative: "나쁜 응답",
+  previousResponse: "이전 응답",
+  nextResponse: "다음 응답",
+  approveTool: "승인",
+  rejectTool: "거부",
+  messageInfo: "세부 정보",
+  newChat: "새 채팅",
+  loadingConversations: "대화를 불러오는 중",
+  conversationSearchEmpty: "일치하는 대화가 없습니다",
+  conversationList: "대화",
+  loadingConversation: "이 대화를 불러오는 중",
+  deleteConversation: "삭제",
+  archiveConversation: "보관",
+  unarchiveConversation: "보관 해제",
+  conversationActions: "대화 작업",
+  conversationRunning: "답변 중",
+  conversationWaiting: "내 답변 대기 중",
+  renameConversation: "이름 바꾸기",
+  conversationTitle: "대화 제목",
+  pinConversation: "고정",
+  unpinConversation: "고정 해제",
+  deleteConversationConfirm: "“{title}”을(를) 삭제할까요?",
+  cancel: "취소",
+  conversationGroupPinned: "고정됨",
+  conversationGroupToday: "오늘",
+  conversationGroupYesterday: "어제",
+  conversationGroupWeek: "지난 7일",
+  conversationGroupMonth: "지난 30일",
+  scrollRailLabel: "대화 개요",
+  sidebarLabel: "대화",
+  splitHandleLabel: "패널 크기 조정",
+  launcherOpen: "채팅 열기",
+  launcherClose: "채팅 닫기",
+  launcherHeading: "채팅",
+  launcherMaximize: "채팅 확대",
+  launcherRestore: "채팅 축소",
+  transcript: "대화 기록",
+  tag: "ko",
+  direction: "ltr"
+}, td = {
+  inputPlaceholder: "输入消息…",
+  sendButton: "发送",
+  copy: "复制",
+  copied: "已复制！",
+  retry: "重试",
+  thinking: "思考",
+  elicitationOther: "其他…",
+  elicitationOtherPlaceholder: "输入你的回答…",
+  elicitationOtherLabel: "自定义回答",
+  submitButton: "提交",
+  stopButton: "停止",
+  queueLabel: "回复结束后发送",
+  queueEdit: "编辑",
+  queueRemove: "移除",
+  elicitationRecommended: "推荐",
+  elicitationSkip: "跳过",
+  elicitationHide: "暂时隐藏",
+  elicitationWaiting: "等待你的回答",
+  elicitationYes: "是",
+  elicitationNo: "否",
+  elicitationAnswerLabel: "你的回答",
+  approvalInstructionPlaceholder: "或者告诉它改做什么…",
+  approvalOptionsLabel: "你的决定",
+  approvalArgsLabel: "参数",
+  approvalAsk: "允许 {tool}？",
+  approvalAskBy: "为 {agent} 允许 {tool}？",
+  approvalWaiting: "等待中",
+  scrollToBottom: "滚动到底部",
+  suggestionsLabel: "建议的提示",
+  contextLabel: "上下文窗口",
+  contextSystem: "系统提示词",
+  contextTools: "工具",
+  contextSummary: "摘要",
+  contextMessages: "消息",
+  contextOther: "其他",
+  contextFree: "可用",
+  contextTotal: "总计",
+  contextReclaim: "现在压缩可释放约 {n} 个 token",
+  contextCompactNow: "立即压缩",
+  checkpointCount: "已为模型总结 {n} 条消息",
+  checkpointCountOne: "已为模型总结 1 条消息",
+  checkpointLegacy: "较早的消息已被总结",
+  checkpointGroup: "上下文摘要",
+  checkpointShow: "显示摘要",
+  checkpointHide: "隐藏摘要",
+  checkpointRestore: "恢复",
+  checkpointRestoreConfirm: "要将原始消息重新发送给模型吗？",
+  checkpointPending: "正在总结上下文…",
+  checkpointFailed: "无法总结上下文",
+  toolRunning: "运行中",
+  toolQueued: "排队中",
+  toolFailed: "失败",
+  toolCompleted: "完成",
+  toolRejected: "已拒绝",
+  toolStopped: "已停止",
+  toolInput: "输入",
+  toolOutput: "输出",
+  toolRejectedSaid: "你说：“{instruction}”",
+  toolRefusedByPolicy: "被规则拒绝",
+  toolNotRunAfterRefusal: "未运行：之前的调用已被拒绝",
+  toolTimedOut: "已超时",
+  toolUnavailable: "此处不可用",
+  toolNoApprover: "无人可以批准",
+  toolTurnLimit: "已达轮次上限",
+  maxTurnsReached: "为避免无限循环，已在 {n} 轮后停止。",
+  sourcesCount: "{n} 个来源",
+  sourcesOne: "1 个来源",
+  sourcesCard: "来源",
+  sourcePrevious: "上一个来源",
+  sourceNext: "下一个来源",
+  sourcePosition: "来源 {i}/{n}",
+  opensInNewTab: "（在新标签页中打开）",
+  imageLoad: "从 {host} 加载图片",
+  imageLoadNamed: "从 {host} 加载图片“{alt}”",
+  questionDeclined: "你选择不回答。",
+  artifactNotCreated: "未创建",
+  thoughtFor: "思考用时：{duration}",
+  thought: "思考完成",
+  turnWorking: "处理中…",
+  turnWorked: "用时 {duration}",
+  turnUsed: "使用了 {tools}",
+  turnTools: "other:{n} 个工具",
+  feedbackReasonTitle: "哪里出了问题？",
+  feedbackReasonDismiss: "暂不",
+  triggersLoading: "加载中…",
+  triggersEmpty: "没有结果",
+  triggersError: "无法加载此列表",
+  triggersRetry: "重试",
+  triggersBack: "返回",
+  triggersCommandNew: "开始新对话",
+  triggersCommandStop: "停止回复",
+  triggersCommandRetry: "重新回答",
+  triggersCommandCopy: "复制最后一条回复",
+  triggersCommandCompact: "总结之前的消息",
+  triggersCompactNothing: "暂无可压缩的内容",
+  triggersCompactBusy: "请等待回复结束",
+  triggersCompactNoWindow: "此模型未说明可读取的内容量",
+  triggersCompactFailed: "无法生成摘要",
+  triggersCommandModel: "切换模型",
+  triggersCommandApproval: "更改审批模式",
+  actionUpload: "附加文件",
+  removeAttachment: "移除 {name}",
+  messageFrom: "来自 {name} 的消息",
+  selectSearchPlaceholder: "搜索…",
+  selectSearchLabel: "搜索选项",
+  loading: "加载中…",
+  download: "下载",
+  openArtifact: "打开",
+  closeArtifact: "关闭",
+  artifactVersion: "第 {n} 版，共 {total} 版",
+  previousVersion: "上一个版本",
+  nextVersion: "下一个版本",
+  modelContextWindow: "{n} 上下文",
+  previewPending: "按“预览”运行此工件。",
+  sandboxError: "生成过程中沙箱出错。",
+  sandboxErrorHint: "常见原因：模型生成了无效代码（未定义的变量、错误的参数类型）。请重试，模型可能会生成不同的代码。",
+  preview: "预览",
+  code: "代码",
+  generating: "生成中…",
+  rebuildingPreview: "正在重建预览…",
+  typing: "正在输入",
+  responseCutOff: "已在模型的长度上限处截断。",
+  error: "错误",
+  errorUnreachable: "暂时无法连接助手，请稍后再试。",
+  errorTimeout: "响应时间过长，请稍后再试。",
+  errorRefused: "助手暂时无权回答。",
+  errorRateLimited: "当前请求过多，请稍后再试。",
+  errorTooLong: "这段对话对模型来说太长了，请开始新的对话。",
+  errorFailed: "助手未能回答，请稍后再试。",
+  errorNoAnswer: "助手无法回答这个请求。",
+  running: "运行中…",
+  run: "运行",
+  file: "文件",
+  modelSelectorPlaceholder: "选择模型…",
+  approvalModeLabel: "审批模式",
+  roleNameUser: "你",
+  roleNameAssistant: "助手",
+  yourMessage: "你的消息",
+  assistantResponse: "助手回复",
+  messageActions: "消息操作",
+  edit: "编辑消息",
+  editConfirm: "发送",
+  editCancel: "取消",
+  feedbackPositive: "好的回复",
+  feedbackNegative: "不好的回复",
+  previousResponse: "上一条回复",
+  nextResponse: "下一条回复",
+  approveTool: "批准",
+  rejectTool: "拒绝",
+  messageInfo: "详情",
+  newChat: "新对话",
+  loadingConversations: "正在加载对话",
+  conversationSearchEmpty: "没有匹配的对话",
+  conversationList: "对话",
+  loadingConversation: "正在加载此对话",
+  deleteConversation: "删除",
+  archiveConversation: "归档",
+  unarchiveConversation: "取消归档",
+  conversationActions: "对话操作",
+  conversationRunning: "正在回答",
+  conversationWaiting: "等待你回复",
+  renameConversation: "重命名",
+  conversationTitle: "对话标题",
+  pinConversation: "置顶",
+  unpinConversation: "取消置顶",
+  deleteConversationConfirm: "删除“{title}”？",
+  cancel: "取消",
+  conversationGroupPinned: "已置顶",
+  conversationGroupToday: "今天",
+  conversationGroupYesterday: "昨天",
+  conversationGroupWeek: "过去 7 天",
+  conversationGroupMonth: "过去 30 天",
+  scrollRailLabel: "对话大纲",
+  sidebarLabel: "对话",
+  splitHandleLabel: "调整窗格大小",
+  launcherOpen: "打开聊天",
+  launcherClose: "关闭聊天",
+  launcherHeading: "聊天",
+  launcherMaximize: "放大聊天窗口",
+  launcherRestore: "缩小聊天窗口",
+  transcript: "对话记录",
+  tag: "zh-CN",
+  direction: "ltr"
+}, nd = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  de: Qu,
+  es: Vu,
+  fr: Ku,
+  it: Yu,
+  ja: Ju,
+  ko: ed,
+  ptBR: Xu,
+  ru: Zu,
+  zhCN: td
+}, Symbol.toStringTag, { value: "Module" }));
+function Gi() {
   const n = [];
   let e = !1;
   const t = () => {
@@ -14,7 +1682,7 @@ function zi() {
     n.push(() => r(s()));
   }) : (e = !0, s());
 }
-function Xu(n, e) {
+function sd(n, e) {
   const t = (s) => {
     const r = e(), i = (o) => () => {
       o(), s();
@@ -26,11 +1694,11 @@ function Xu(n, e) {
     return typeof s == "function" ? t(s) : s.then(t);
   };
 }
-const Al = Symbol("aparte.approvalGate");
-function Qu(n) {
-  return n?.[Al];
+const yl = Symbol("aparte.approvalGate");
+function rd(n) {
+  return n?.[yl];
 }
-function Yu(n, e) {
+function id(n, e) {
   const t = async (s, r) => {
     const i = n(), o = typeof i == "function" ? i : await i;
     try {
@@ -39,36 +1707,36 @@ function Yu(n, e) {
       o();
     }
   };
-  return t[Al] = { turn: n, ask: e }, t;
+  return t[yl] = { turn: n, ask: e }, t;
 }
-const Zu = 300 * 1e3, Ju = 10, Gi = /* @__PURE__ */ new Set();
-function ed(n) {
+const od = 300 * 1e3, ad = 10, ji = /* @__PURE__ */ new Set();
+function ld(n) {
   const e = String(n?.type ?? "undefined");
-  Gi.has(e) || (Gi.add(e), console.warn(
+  ji.has(e) || (ji.add(e), console.warn(
     `[runStreamAgent] Ignoring unrecognised stream event "${e}". The reply is unaffected; this usually means the provider or its SDK emits a part this version of aparté does not map yet.`
   ));
 }
-async function ji(n) {
+async function Ki(n) {
   const {
     transportCall: e,
     toolLookup: t,
     toolConfigLookup: s,
     emitter: r,
     signal: i,
-    maxTurns: o = Ju,
-    toolTimeoutMs: a = Zu,
+    maxTurns: o = ad,
+    toolTimeoutMs: a = od,
     deferral: l,
     parallelTools: c = !0
   } = n;
   let u = n.baseRequest, h = 0;
-  const d = n.idGen ?? ((T) => `${T}-${h++}`), p = od(r, d, i, a), f = Qu(n.approvalResolver), m = f ? Xu(zi(), f.turn) : zi(), g = f ? f.ask : n.approvalResolver, b = {
+  const d = n.idGen ?? ((T) => `${T}-${h++}`), p = fd(r, d, i, a), f = rd(n.approvalResolver), m = f ? sd(Gi(), f.turn) : Gi(), g = f ? f.ask : n.approvalResolver, b = {
     emitter: r,
     canAsk: !l && g !== void 0,
     canBackground: !l,
     transportCall: e,
     toolLookup: t,
     toolConfigLookup: s,
-    approvalResolver: c && g ? Yu(m, g) : g,
+    approvalResolver: c && g ? id(m, g) : g,
     maxTurns: o,
     toolTimeoutMs: a,
     parallelTools: c,
@@ -85,7 +1753,7 @@ async function ji(n) {
     p.close();
   }
   async function C() {
-    const T = l ? td(y) : [];
+    const T = l ? cd(y) : [];
     if (T.length > 0) {
       const O = [], I = { turns: 1, maxTurns: o, toolLookup: t, toolConfigLookup: s, approvalResolver: g, approvalTurn: m, emitter: r, signal: i, toolTimeoutMs: a, declareCall: () => {
       }, append: A, deferral: l, runBase: b };
@@ -130,13 +1798,13 @@ async function ji(n) {
           r({ type: "tool-aborted", toolCallId: R, cause: "no-handler" }), E = !1;
           continue;
         }
-        const N = await Sl(q, { id: R, name: V.name, input: V.input }, i, a, b);
+        const N = await Al(q, { id: R, name: V.name, input: V.input }, i, a, b);
         if (N.status === "aborted") {
           r(N.cause ? { type: "tool-aborted", toolCallId: R, cause: N.cause } : { type: "tool-aborted", toolCallId: R }), E = !1;
           continue;
         }
         if (N.status === "failed")
-          throw r({ type: "tool-failed", toolCallId: R, error: ti(N.error) }), N.error;
+          throw r({ type: "tool-failed", toolCallId: R, error: ni(N.error) }), N.error;
         r({ type: "tool-resolved", toolCallId: R, result: N.content, structuredResult: N.structuredContent }), A({ role: "assistant", content: "", toolCalls: [{ id: R, name: V.name, input: V.input }] }), A({ role: "tool", content: N.content, toolCallId: R, toolName: V.name }), u = { ...u, toolChoice: "none", tools: void 0 };
       }
       const I = { ...u, messages: y }, H = u.toolChoice;
@@ -181,7 +1849,7 @@ async function ji(n) {
         append: A,
         deferral: l && { ...l, outcomes: void 0 },
         runBase: b
-      }, Q = c ? nd(se) : void 0;
+      }, Q = c ? ud(se) : void 0;
       let we = !1;
       const me = U[Symbol.asyncIterator](), pe = async () => {
         if (!i.aborted) return !1;
@@ -197,8 +1865,8 @@ async function ji(n) {
           try {
             const oe = me.next();
             if (Q?.busy()) {
-              const ae = await Promise.race([oe, Q.onHalt.then(() => Ki)]);
-              if (ae === Ki) {
+              const ae = await Promise.race([oe, Q.onHalt.then(() => Vi)]);
+              if (ae === Vi) {
                 we = !0, Promise.resolve(oe).catch(() => {
                 });
                 break;
@@ -239,7 +1907,7 @@ async function ji(n) {
           if (R.type === "error")
             throw R.code === void 0 ? new Error(R.message) : Object.assign(new Error(R.message), { code: R.code });
           if (R.type !== "tool_use") {
-            ed(R);
+            ld(R);
             continue;
           }
           ve = !0;
@@ -297,7 +1965,7 @@ async function ji(n) {
     return I && A({ role: "assistant", content: I }), A({ role: "user", content: O }), !0;
   }
 }
-function td(n) {
+function cd(n) {
   for (let e = n.length - 1; e >= 0; e--) {
     const t = n[e];
     if (t.role === "assistant") {
@@ -318,12 +1986,12 @@ function dr(n, e) {
 function We(n, e) {
   return n.decided?.(e), e;
 }
-function kl(n) {
+function wl(n) {
   const e = n.reason?.trim(), t = n.by ?? (e ? "policy" : "person"), s = e || (t === "policy" ? "Tool execution was refused by the approval policy." : t === "earlier-refusal" ? "Not run: an earlier call of the same step was refused." : n.instruction ? `The user rejected this tool call and said: ${n.instruction}` : "Tool execution was rejected by the user.");
   return n.instruction ? { reason: s, by: t, instruction: n.instruction } : { reason: s, by: t };
 }
 function hr(n, e, t) {
-  const s = kl(t);
+  const s = wl(t);
   return n.emitter({ type: "tool-rejected", toolCallId: e.id, ...s }), n.declareCall(e), n.append({ role: "tool", content: s.reason, toolCallId: e.id, toolName: e.name }), We(n, "stop-turn");
 }
 async function pr(n, e) {
@@ -379,7 +2047,7 @@ async function pr(n, e) {
       return hr(e, n, p), "stop-turn";
     p.payload && typeof p.payload == "object" && !Array.isArray(p.payload) && (l = { ...s, ...p.payload }), e.emitter({ type: "tool-approved", toolCallId: n.id }), e.asking?.(!1);
   }
-  const u = await Sl(
+  const u = await Al(
     a,
     { id: n.id, name: n.name, input: l },
     t,
@@ -389,11 +2057,11 @@ async function pr(n, e) {
   if (u.status === "aborted")
     return e.emitter(u.cause ? { type: "tool-aborted", toolCallId: n.id, cause: u.cause } : { type: "tool-aborted", toolCallId: n.id }), We(e, "stop-run");
   if (u.status === "failed")
-    throw e.emitter({ type: "tool-failed", toolCallId: n.id, error: ti(u.error) }), u.error;
+    throw e.emitter({ type: "tool-failed", toolCallId: n.id, error: ni(u.error) }), u.error;
   return e.emitter({ type: "tool-resolved", toolCallId: n.id, result: u.content, structuredResult: u.structuredContent }), e.declareCall(n), e.append({ role: "tool", content: u.content, toolCallId: n.id, toolName: n.name }), "continue";
 }
-const Ki = Symbol("halted");
-function nd(n) {
+const Vi = Symbol("halted");
+function ud(n) {
   const e = new AbortController(), t = () => e.abort();
   n.signal.aborted ? e.abort() : n.signal.addEventListener("abort", t, { once: !0 });
   const s = [], r = [];
@@ -507,7 +2175,7 @@ function nd(n) {
     }
   };
 }
-async function Sl(n, e, t, s, r) {
+async function Al(n, e, t, s, r) {
   if (t.aborted) return { status: "aborted", cause: "stopped" };
   const i = new AbortController(), o = () => i.abort();
   t.addEventListener("abort", o, { once: !0 });
@@ -520,7 +2188,7 @@ async function Sl(n, e, t, s, r) {
     c = setTimeout(() => {
       u = !0, i.abort(), m({ status: "aborted", cause: "timeout" });
     }, s);
-  }), { run: d, closeOpen: p } = id(r, e.id, i.signal);
+  }), { run: d, closeOpen: p } = pd(r, e.id, i.signal);
   let f;
   try {
     return await Promise.race([
@@ -531,11 +2199,11 @@ async function Sl(n, e, t, s, r) {
   } catch (m) {
     return m?.name === "AbortError" ? t.aborted ? { status: "aborted", cause: "stopped" } : u ? { status: "aborted", cause: "timeout" } : { status: "aborted" } : (f = { error: m }, { status: "failed", error: m });
   } finally {
-    clearTimeout(c), t.removeEventListener("abort", o), a && t.removeEventListener("abort", a), p(f ? "failed" : "stopped", f ? { error: ti(f.error) } : void 0);
+    clearTimeout(c), t.removeEventListener("abort", o), a && t.removeEventListener("abort", a), p(f ? "failed" : "stopped", f ? { error: ni(f.error) } : void 0);
   }
 }
-const sd = /* @__PURE__ */ new Set(["run-start", "run-done", "run-aborted", "run-suspended"]), rd = (n) => sd.has(n.type);
-function id(n, e, t) {
+const dd = /* @__PURE__ */ new Set(["run-start", "run-done", "run-aborted", "run-suspended"]), hd = (n) => dd.has(n.type);
+function pd(n, e, t) {
   const { emitter: s, background: r, ...i } = n, o = [];
   return {
     run: {
@@ -578,7 +2246,7 @@ function fr(n, e, t, s, r, i) {
     agentId: e,
     signal: r,
     emit(u) {
-      if (!(!o || rd(u))) {
+      if (!(!o || hd(u))) {
         if (u.type === "agent-start" || u.type === "agent-end") {
           const h = u.parentAgentId ? u : { ...u, parentAgentId: e };
           h.type === "agent-start" ? a.set(h.agentId, h.parentAgentId) : a.delete(h.agentId), n(h);
@@ -590,7 +2258,7 @@ function fr(n, e, t, s, r, i) {
     end: l
   };
 }
-function od(n, e, t, s) {
+function fd(n, e, t, s) {
   const r = [];
   let i = null, o = !1;
   const a = () => r.some((l) => !l.ended);
@@ -636,7 +2304,7 @@ ${c.join(`
     }
   };
 }
-function ti(n) {
+function ni(n) {
   return n instanceof Error ? n.message || n.name : typeof n == "string" ? n : String(n);
 }
 function Le(n) {
@@ -651,7 +2319,7 @@ function Pt(n) {
 function Pe(n) {
   return n.getRootNode().activeElement ?? document.activeElement;
 }
-function Cl(n, e, t = {}) {
+function kl(n, e, t = {}) {
   const { gap: s = 4, margin: r = 8, side: i = "below", align: o = "start", rtl: a = !1 } = t, l = e.getBoundingClientRect(), c = (d, p, f) => Math.max(r, Math.min(d, p - f - r));
   let u, h;
   if (i === "beside") {
@@ -663,29 +2331,29 @@ function Cl(n, e, t = {}) {
   }
   e.style.top = `${c(u, window.innerHeight, l.height)}px`, e.style.left = `${c(h, window.innerWidth, l.width)}px`;
 }
-const qn = '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]', ad = 500;
+const qn = '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]', gd = 500;
 let Tt = null;
-function ld(n, e) {
+function md(n, e) {
   for (let t = n; t && t !== e; t = t.parentElement)
     if (t.hidden) return !1;
   return !0;
 }
 function Yn(n, e) {
-  return !n.disabled && n.getAttribute("aria-disabled") !== "true" && ld(n, e);
+  return !n.disabled && n.getAttribute("aria-disabled") !== "true" && md(n, e);
 }
-function El(n, e) {
+function Sl(n, e) {
   return n.tagName === "BUTTON" || n.tagName === "A" && e === "Enter";
 }
-function Tl(n) {
+function Cl(n) {
   return getComputedStyle(n).direction === "rtl";
 }
-function cd(n) {
+function _d(n) {
   return (n.getAttribute("aria-label") ?? n.textContent ?? "").replace(/\s+/g, " ").trim().toLocaleLowerCase();
 }
-function ud(n) {
+function bd(n) {
   return !!n?.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])');
 }
-function dd(n, e) {
+function vd(n, e) {
   for (let t = e; t; ) {
     if (t === n) return !0;
     const s = t.assignedSlot, r = t.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? t.host ?? null : null;
@@ -693,7 +2361,7 @@ function dd(n, e) {
   }
   return !1;
 }
-function xl(n, e) {
+function El(n, e) {
   let t = !1, s = null, r = null, i = !1, o = "", a = 0;
   const l = () => [...n.querySelectorAll(qn)].filter((_) => {
     const S = _.parentElement?.closest('[role="menu"]');
@@ -705,7 +2373,7 @@ function xl(n, e) {
     i = !1;
   }, d = (_) => {
     const S = je(_);
-    S instanceof Node && n.contains(S) || S instanceof Node && r?.isConnected && !dd(S, r) || E.close(!1);
+    S instanceof Node && n.contains(S) || S instanceof Node && r?.isConnected && !vd(S, r) || E.close(!1);
   }, p = () => E.close(!1), f = (_) => {
     if (!t) return;
     const S = _.relatedTarget;
@@ -721,7 +2389,7 @@ function xl(n, e) {
       E.close(!0);
       return;
     }
-    if (_.altKey || _.ctrlKey || _.metaKey || ud(S)) return;
+    if (_.altKey || _.ctrlKey || _.metaKey || bd(S)) return;
     const k = l();
     if (!k.length) return;
     const C = k.indexOf(Pe(n)), w = (U) => {
@@ -743,18 +2411,18 @@ function xl(n, e) {
       case "Enter":
       case " ": {
         const U = S.closest(qn);
-        U && n.contains(U) && !El(U, _.key) && (_.preventDefault(), U.click());
+        U && n.contains(U) && !Sl(U, _.key) && (_.preventDefault(), U.click());
         return;
       }
     }
     if ([..._.key].length !== 1) return;
     _.preventDefault();
     const T = Date.now();
-    o = T - a > ad ? _.key : o + _.key, a = T;
+    o = T - a > gd ? _.key : o + _.key, a = T;
     const O = [...o.toLocaleLowerCase()], I = O.every((U) => U === O[0]) ? O[0] : O.join(""), H = [...I].length === 1 ? C + 1 : Math.max(C, 0);
     for (let U = 0; U < k.length; U++) {
       const K = k[(H + U) % k.length];
-      if (cd(K).startsWith(I)) {
+      if (_d(K).startsWith(I)) {
         c(K);
         return;
       }
@@ -780,7 +2448,7 @@ function xl(n, e) {
   const E = {
     isOpen: () => t,
     open(_, S, k, C, w) {
-      Tt && Tt !== E && Tt.close(!1), t = !0, Tt = E, s = C, r = w, o = "", n.hidden = !1, n.style.position = "fixed", Cl(_, n, S), document.addEventListener("pointerdown", u, !0), document.addEventListener("pointerup", h, !0), document.addEventListener("pointercancel", h, !0), window.addEventListener("scroll", d, !0), window.addEventListener("resize", p), e.onToggle?.(!0);
+      Tt && Tt !== E && Tt.close(!1), t = !0, Tt = E, s = C, r = w, o = "", n.hidden = !1, n.style.position = "fixed", kl(_, n, S), document.addEventListener("pointerdown", u, !0), document.addEventListener("pointerup", h, !0), document.addEventListener("pointercancel", h, !0), window.addEventListener("scroll", d, !0), window.addEventListener("resize", p), e.onToggle?.(!0);
       const T = l(), O = T.find((I) => I.getAttribute("role") === "menuitemradio" && I.getAttribute("aria-checked") === "true");
       c(k === "last" ? T[T.length - 1] : O ?? T[0]);
     },
@@ -794,17 +2462,17 @@ function xl(n, e) {
   };
   return E;
 }
-function Vi(n, e, t, s = !1) {
+function Xi(n, e, t, s = !1) {
   const r = n.getAttribute(e);
   return (r === null || !s) && n.setAttribute(e, t), () => {
     r === null ? n.removeAttribute(e) : n.setAttribute(e, r);
   };
 }
-function hd(n, e, t = {}) {
+function yd(n, e, t = {}) {
   const { onOpen: s, onClose: r, ...i } = t, o = [
-    Vi(n, "aria-haspopup", "menu", !0),
-    Vi(n, "aria-expanded", "false")
-  ], a = xl(e, {
+    Xi(n, "aria-haspopup", "menu", !0),
+    Xi(n, "aria-expanded", "false")
+  ], a = El(e, {
     owns: (d) => n.contains(d),
     onToggle: (d) => n.setAttribute("aria-expanded", String(d)),
     onClose: r
@@ -814,19 +2482,19 @@ function hd(n, e, t = {}) {
       (d === "last" ? p[p.length - 1] : p[0])?.focus({ preventScroll: !0 });
       return;
     }
-    s?.() !== !1 && a.open(n.getBoundingClientRect(), { ...i, rtl: i.rtl ?? Tl(n) }, d, n, n);
+    s?.() !== !1 && a.open(n.getBoundingClientRect(), { ...i, rtl: i.rtl ?? Cl(n) }, d, n, n);
   }, c = () => {
     a.isOpen() ? a.close(!0) : l("first");
   }, u = () => c(), h = (d) => {
-    d.altKey || d.ctrlKey || d.metaKey || d.isComposing || (d.key === "ArrowDown" || d.key === "ArrowUp" ? (d.preventDefault(), l(d.key === "ArrowUp" ? "last" : "first")) : (d.key === "Enter" || d.key === " ") && !El(n, d.key) && (d.preventDefault(), c()));
+    d.altKey || d.ctrlKey || d.metaKey || d.isComposing || (d.key === "ArrowDown" || d.key === "ArrowUp" ? (d.preventDefault(), l(d.key === "ArrowUp" ? "last" : "first")) : (d.key === "Enter" || d.key === " ") && !Sl(n, d.key) && (d.preventDefault(), c()));
   };
   return n.addEventListener("click", u), n.addEventListener("keydown", h), () => {
     a.release(), n.removeEventListener("click", u), n.removeEventListener("keydown", h);
     for (const d of o) d();
   };
 }
-function pd(n, e, t = {}) {
-  const { onOpen: s, onClose: r, gap: i, margin: o, rtl: a } = t, l = xl(e, { onClose: r }), c = (d, p, f) => {
+function wd(n, e, t = {}) {
+  const { onOpen: s, onClose: r, gap: i, margin: o, rtl: a } = t, l = El(e, { onClose: r }), c = (d, p, f) => {
     const m = Pe(n), g = m && m !== document.body && !e.contains(m) ? m : l.returnTarget();
     return l.close(!1), s?.(d) === !1 ? !1 : (l.open(p, {
       // At the pointer it opens on the spot, the way the browser's own does.
@@ -834,7 +2502,7 @@ function pd(n, e, t = {}) {
       margin: o,
       side: "below",
       align: "start",
-      rtl: a ?? Tl(n)
+      rtl: a ?? Cl(n)
     }, "first", g, d), !0);
   }, u = (d) => {
     const p = je(d);
@@ -854,7 +2522,7 @@ function pd(n, e, t = {}) {
     l.release(), n.removeEventListener("contextmenu", u), n.removeEventListener("keydown", h);
   };
 }
-function fd(n, e = {}) {
+function Ad(n, e = {}) {
   const t = e.activation === "manual", s = () => [...n.querySelectorAll('[role="tab"]')].filter((d) => d.closest('[role="tablist"]') === n), r = (d) => Yn(d, n), i = () => s().find((d) => d.getAttribute("aria-selected") === "true") ?? null, o = (d) => {
     const p = d.getAttribute("aria-controls");
     return p ? n.getRootNode().querySelector(`[id="${Le(p)}"]`) : null;
@@ -912,43 +2580,43 @@ function fd(n, e = {}) {
     n.removeEventListener("click", c), n.removeEventListener("keydown", u);
   };
 }
-const gd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6a2.5 2.5 0 0 0-2.5-2.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></svg>', md = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 7"/></svg>', _d = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3.7 10.4a.9.9 0 0 0 .1 1.7l6.2 2 2 6.2a.9.9 0 0 0 1.7.1L21 3Z"/><path d="M10 14 21 3"/></svg>', bd = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="aparte-icon aparte-icon-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>', vd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.75v5"/><path d="M12 16.25h.01"/></svg>', yd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 9.5 12 16l6.5-6.5"/></svg>', wd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 14.5 12 8l6.5 6.5"/></svg>', Ad = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4.5h5.5V10"/><path d="M10 19.5H4.5V14"/><path d="m19.5 4.5-6 6"/><path d="m4.5 19.5 6-6"/></svg>', kd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 10H14V4.5"/><path d="M4.5 14H10v5.5"/><path d="m14 10 5.5-5.5"/><path d="m10 14-5.5 5.5"/></svg>', Sd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6.5 10.5 12 5 17.5"/><path d="M13 18h6"/></svg>', Cd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.4 21a5.2 5.2 0 0 1-3.7-8.9l8.6-8.6a3.5 3.5 0 0 1 4.9 4.9l-8.6 8.6a1.7 1.7 0 0 1-2.5-2.5l7.4-7.4"/></svg>', Ed = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="M20.5 15.5l-4-4-8 8"/></svg>', Td = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8.5Z"/><path d="M13.5 3v5.5H19"/></svg>', xd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v15"/><path d="M6 13.5l6 6 6-6"/></svg>', Rd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.35-5.65L4 8.5"/><path d="M4 3.5v5h5"/></svg>', Id = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5H6a2 2 0 0 0-2 2v11.5a2 2 0 0 0 2 2h11.5a2 2 0 0 0 2-2V13"/><path d="M17.75 3.25a2.05 2.05 0 0 1 2.9 2.9l-9.15 9.15-3.9 1 1-3.9Z"/></svg>', Ld = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 10.5v10"/><path d="M6.5 10.5h3l3.2-6.4a1.75 1.75 0 0 1 3.3.8V9h4a2 2 0 0 1 2 2.35l-1.3 7.3a2 2 0 0 1-2 1.6H9.5"/></svg>', Md = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 13.5v-10"/><path d="M17.5 13.5h-3l-3.2 6.4a1.75 1.75 0 0 1-3.3-.8V15h-4a2 2 0 0 1-2-2.35l1.3-7.3a2 2 0 0 1 2-1.6h9.1"/></svg>', Od = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 9 12l5.5 6"/></svg>', Nd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6 15 12l-5.5 6"/></svg>', Pd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 3.5a5.5 5.5 0 0 0-5.1 7.6L3.5 17l3.5 3.5 5.9-5.9a5.5 5.5 0 0 0 7.6-5.1l-3.1 3.1-2.7-.8-.8-2.7 3.1-3.1Z"/></svg>', $d = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11"/><path d="M17.5 6.5l-11 11"/></svg>', Dd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>', Bd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.5" height="14" rx="1.5"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.5"/></svg>', qd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.25"/><path d="M12 7.75h.01"/></svg>', Hd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 21 8"/><path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><polyline points="9 14 12 11 15 14"/><line x1="12" y1="11" x2="12" y2="19"/></svg>', Fd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 21 8"/><path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><polyline points="9 14 12 17 15 14"/><line x1="12" y1="11" x2="12" y2="17"/></svg>', Wd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v12m0 0-4.5-4.5M12 15.5l4.5-4.5M4.5 20h15"/></svg>', Ud = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="12" r="1.1"/><circle cx="12" cy="12" r="1.1"/><circle cx="18.5" cy="12" r="1.1"/></svg>', zd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.5h7"/><path d="M10 3.5v5l-3 3.5V14h10v-2l-3-3.5v-5"/><path d="M12 14v6.5"/></svg>', Gd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M8 7V5a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 16 5v2"/><path d="m6.5 7 .8 12a1.5 1.5 0 0 0 1.5 1.5h6.4a1.5 1.5 0 0 0 1.5-1.4L17.5 7"/><path d="M10 11v5.5M14 11v5.5"/></svg>', jd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H9.5L4.5 21V6.5A2.5 2.5 0 0 1 6.5 4Z"/></svg>', Kd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M4.5 12h15M4.5 17h15"/></svg>', Vd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.7 4.3 2.9 18a1.5 1.5 0 0 0 1.3 2.3h15.6a1.5 1.5 0 0 0 1.3-2.3L13.3 4.3a1.5 1.5 0 0 0-2.6 0Z"/><path d="M12 9.5V14M12 17.2v.1"/></svg>', Xd = {
-  copy: gd,
-  check: md,
-  send: _d,
-  loading: bd,
-  error: vd,
-  expand: yd,
-  collapse: wd,
-  maximize: Ad,
-  minimize: kd,
-  terminal: Sd,
-  paperclip: Cd,
-  image: Ed,
-  file: Td,
-  scrollDown: xd,
-  retry: Rd,
-  edit: Id,
-  thumbUp: Ld,
-  thumbDown: Md,
-  prevBranch: Od,
-  nextBranch: Nd,
-  tool: Pd,
-  close: $d,
-  stop: Dd,
-  pause: Bd,
-  info: qd,
-  archive: Hd,
-  unarchive: Fd,
-  download: Wd,
-  more: Ud,
-  pin: zd,
-  trash: Gd,
-  menu: Kd,
-  alertTriangle: Vd,
-  messageSquare: jd
+const kd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6a2.5 2.5 0 0 0-2.5-2.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></svg>', Sd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 7"/></svg>', Cd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3.7 10.4a.9.9 0 0 0 .1 1.7l6.2 2 2 6.2a.9.9 0 0 0 1.7.1L21 3Z"/><path d="M10 14 21 3"/></svg>', Ed = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="aparte-icon aparte-icon-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>', Td = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.75v5"/><path d="M12 16.25h.01"/></svg>', xd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 9.5 12 16l6.5-6.5"/></svg>', Rd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 14.5 12 8l6.5 6.5"/></svg>', Id = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4.5h5.5V10"/><path d="M10 19.5H4.5V14"/><path d="m19.5 4.5-6 6"/><path d="m4.5 19.5 6-6"/></svg>', Ld = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 10H14V4.5"/><path d="M4.5 14H10v5.5"/><path d="m14 10 5.5-5.5"/><path d="m10 14-5.5 5.5"/></svg>', Md = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6.5 10.5 12 5 17.5"/><path d="M13 18h6"/></svg>', Od = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.4 21a5.2 5.2 0 0 1-3.7-8.9l8.6-8.6a3.5 3.5 0 0 1 4.9 4.9l-8.6 8.6a1.7 1.7 0 0 1-2.5-2.5l7.4-7.4"/></svg>', Nd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="8.5" cy="9" r="1.5"/><path d="M20.5 15.5l-4-4-8 8"/></svg>', Pd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8.5Z"/><path d="M13.5 3v5.5H19"/></svg>', $d = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v15"/><path d="M6 13.5l6 6 6-6"/></svg>', Dd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.35-5.65L4 8.5"/><path d="M4 3.5v5h5"/></svg>', Bd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5H6a2 2 0 0 0-2 2v11.5a2 2 0 0 0 2 2h11.5a2 2 0 0 0 2-2V13"/><path d="M17.75 3.25a2.05 2.05 0 0 1 2.9 2.9l-9.15 9.15-3.9 1 1-3.9Z"/></svg>', qd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 10.5v10"/><path d="M6.5 10.5h3l3.2-6.4a1.75 1.75 0 0 1 3.3.8V9h4a2 2 0 0 1 2 2.35l-1.3 7.3a2 2 0 0 1-2 1.6H9.5"/></svg>', Hd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 13.5v-10"/><path d="M17.5 13.5h-3l-3.2 6.4a1.75 1.75 0 0 1-3.3-.8V15h-4a2 2 0 0 1-2-2.35l1.3-7.3a2 2 0 0 1 2-1.6h9.1"/></svg>', Fd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 9 12l5.5 6"/></svg>', Wd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6 15 12l-5.5 6"/></svg>', Ud = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 3.5a5.5 5.5 0 0 0-5.1 7.6L3.5 17l3.5 3.5 5.9-5.9a5.5 5.5 0 0 0 7.6-5.1l-3.1 3.1-2.7-.8-.8-2.7 3.1-3.1Z"/></svg>', zd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11"/><path d="M17.5 6.5l-11 11"/></svg>', Gd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>', jd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.5" height="14" rx="1.5"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.5"/></svg>', Kd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.25"/><path d="M12 7.75h.01"/></svg>', Vd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 21 8"/><path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><polyline points="9 14 12 11 15 14"/><line x1="12" y1="11" x2="12" y2="19"/></svg>', Xd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 21 8"/><path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><polyline points="9 14 12 17 15 14"/><line x1="12" y1="11" x2="12" y2="17"/></svg>', Qd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v12m0 0-4.5-4.5M12 15.5l4.5-4.5M4.5 20h15"/></svg>', Yd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="12" r="1.1"/><circle cx="12" cy="12" r="1.1"/><circle cx="18.5" cy="12" r="1.1"/></svg>', Zd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.5h7"/><path d="M10 3.5v5l-3 3.5V14h10v-2l-3-3.5v-5"/><path d="M12 14v6.5"/></svg>', Jd = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M8 7V5a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 16 5v2"/><path d="m6.5 7 .8 12a1.5 1.5 0 0 0 1.5 1.5h6.4a1.5 1.5 0 0 0 1.5-1.4L17.5 7"/><path d="M10 11v5.5M14 11v5.5"/></svg>', eh = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H9.5L4.5 21V6.5A2.5 2.5 0 0 1 6.5 4Z"/></svg>', th = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M4.5 12h15M4.5 17h15"/></svg>', nh = '<svg class="aparte-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.7 4.3 2.9 18a1.5 1.5 0 0 0 1.3 2.3h15.6a1.5 1.5 0 0 0 1.3-2.3L13.3 4.3a1.5 1.5 0 0 0-2.6 0Z"/><path d="M12 9.5V14M12 17.2v.1"/></svg>', sh = {
+  copy: kd,
+  check: Sd,
+  send: Cd,
+  loading: Ed,
+  error: Td,
+  expand: xd,
+  collapse: Rd,
+  maximize: Id,
+  minimize: Ld,
+  terminal: Md,
+  paperclip: Od,
+  image: Nd,
+  file: Pd,
+  scrollDown: $d,
+  retry: Dd,
+  edit: Bd,
+  thumbUp: qd,
+  thumbDown: Hd,
+  prevBranch: Fd,
+  nextBranch: Wd,
+  tool: Ud,
+  close: zd,
+  stop: Gd,
+  pause: jd,
+  info: Kd,
+  archive: Vd,
+  unarchive: Xd,
+  download: Qd,
+  more: Yd,
+  pin: Zd,
+  trash: Jd,
+  menu: th,
+  alertTriangle: nh,
+  messageSquare: eh
 };
-function Rl(n) {
+function Tl(n) {
   return typeof n == "string" ? n : n.filter((e) => e.type === "text").map((e) => e.text).join("");
 }
 var Z = /* @__PURE__ */ ((n) => (n.CONFIG_NO_PROVIDER = "CONFIG_NO_PROVIDER", n.CONFIG_MISSING_KEY = "CONFIG_MISSING_KEY", n.CONFIG_INVALID_KEY = "CONFIG_INVALID_KEY", n.CONFIG_INVALID_MODEL = "CONFIG_INVALID_MODEL", n.USAGE_RATE_LIMIT = "USAGE_RATE_LIMIT", n.USAGE_CONTEXT_EXCEEDED = "USAGE_CONTEXT_EXCEEDED", n.USAGE_BAD_REQUEST = "USAGE_BAD_REQUEST", n.NET_OFFLINE = "NET_OFFLINE", n.NET_TIMEOUT = "NET_TIMEOUT", n.NET_ERROR = "NET_ERROR", n.PROVIDER_ERROR = "PROVIDER_ERROR", n.PROVIDER_UNAVAILABLE = "PROVIDER_UNAVAILABLE", n.PROVIDER_POLICY = "PROVIDER_POLICY", n.PROVIDER_MISCONFIGURED = "PROVIDER_MISCONFIGURED", n.MAX_TURNS_EXCEEDED = "MAX_TURNS_EXCEEDED", n.UNKNOWN_ERROR = "UNKNOWN_ERROR", n))(Z || {});
@@ -1002,7 +2670,7 @@ class ge extends Error {
     }
   }
 }
-const En = Xd, tn = {
+const En = sh, tn = {
   inputPlaceholder: "Type a message...",
   sendButton: "Send",
   copy: "Copy",
@@ -1185,25 +2853,25 @@ const En = Xd, tn = {
   launcherRestore: "Shrink the chat",
   transcript: "Transcript"
 };
-function Qd(n) {
+function rh(n) {
   return typeof n.buildRequest == "function" && typeof n.parseStream == "function" && typeof n.defaultEndpoint == "string" && (typeof n.authHeaders == "function" || typeof n.authQuery == "function");
 }
-function Yd(n) {
+function ih(n) {
   return typeof n == "string" ? { key: n } : n && typeof n == "object" ? { key: n.apiKey, endpoint: n.endpoint } : {};
 }
-function Zd(n, e, t) {
+function oh(n, e, t) {
   const s = n?.error, r = typeof s == "object" ? s?.message : s;
   return typeof r == "string" && r ? r : `${t} ${e}`;
 }
-function Jd(n) {
+function ah(n) {
   return typeof n == "string" && Object.values(Z).includes(n);
 }
-async function eh(n, e = "HTTP", t) {
+async function lh(n, e = "HTTP", t) {
   const s = await n.json().catch(() => {
-  }), r = Zd(s, n.status, e), i = s?.error?.code, o = t?.classifyError?.(n.status, s) ?? (Jd(i) ? i : void 0) ?? ge.codeForStatus(n.status) ?? Z.UNKNOWN_ERROR;
+  }), r = oh(s, n.status, e), i = s?.error?.code, o = t?.classifyError?.(n.status, s) ?? (ah(i) ? i : void 0) ?? ge.codeForStatus(n.status) ?? Z.UNKNOWN_ERROR;
   return new ge(r, o, void 0, void 0, n.status);
 }
-async function th(n, e, t) {
+async function ch(n, e, t) {
   const s = await e.json();
   if (typeof n.parseText != "function")
     throw new Error(`Provider "${t}" cannot resolve a non-streaming response: parseText is not implemented.`);
@@ -1214,9 +2882,9 @@ async function th(n, e, t) {
   } catch {
     i = void 0;
   }
-  return nh(r, i);
+  return uh(r, i);
 }
-function nh(n, e) {
+function uh(n, e) {
   if (!e || e.sources.length === 0) return n;
   const t = [{ type: "text", delta: n }, { type: "sources", ...e }, { type: "done" }];
   return new ReadableStream({
@@ -1226,15 +2894,15 @@ function nh(n, e) {
     }
   });
 }
-class sh {
+class dh {
   byok;
   warnedBrowserKey = !1;
   constructor(e = {}) {
     this.byok = e.byok ?? !1;
   }
   async chat(e, t, s, r) {
-    const { key: i, endpoint: o } = Yd(s);
-    if (!this.byok && i && this.warnBrowserKeyOnce(r.providerId), !Qd(e)) {
+    const { key: i, endpoint: o } = ih(s);
+    if (!this.byok && i && this.warnBrowserKeyOnce(r.providerId), !rh(e)) {
       if (typeof e.chat != "function")
         throw new Error(`Provider "${r.providerId}" exposes neither a format-adapter surface nor chat().`);
       return e.chat(t, s, r);
@@ -1253,9 +2921,9 @@ class sh {
       signal: r.signal
     });
     if (!h.ok)
-      throw await eh(h, "HTTP", e);
+      throw await lh(h, "HTTP", e);
     if (t.stream === !1)
-      return th(e, h, r.providerId);
+      return ch(e, h, r.providerId);
     if (!h.body)
       throw new Error(`Provider "${r.providerId}" returned no response body for a streaming request.`);
     return e.parseStream(h.body);
@@ -1269,7 +2937,7 @@ class sh {
 function be() {
   return typeof crypto < "u" && typeof crypto.randomUUID == "function" ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
-const rh = [
+const hh = [
   { start: "<think>", end: "</think>" },
   { start: "<thinking>", end: "</thinking>" }
 ];
@@ -1290,7 +2958,7 @@ class gr {
   _pendingSegment = null;
   constructor(e = {}) {
     const t = e.thinkingDelimiters;
-    this._thinkingDelimiters = t ? Array.isArray(t) ? t : [t] : rh, this._blocks = e.blocks ?? [], this._options = {
+    this._thinkingDelimiters = t ? Array.isArray(t) ? t : [t] : hh, this._blocks = e.blocks ?? [], this._options = {
       autoGenerateIds: e.autoGenerateIds ?? !0,
       idPrefix: e.idPrefix ?? "seg"
     }, this._state = this._createInitialState();
@@ -1617,16 +3285,16 @@ class gr {
     return 0;
   }
 }
-function ih(n, e) {
+function ph(n, e) {
   const t = new gr(e), s = t.parse(n), r = t.finalize();
   return [...s.segments, ...r];
 }
-const oh = /* @__PURE__ */ new Set(["pending", "awaiting-approval"]), ah = ["content", "output", "result"];
-function lh(n) {
-  return ah.some((e) => e in n);
+const fh = /* @__PURE__ */ new Set(["pending", "awaiting-approval"]), gh = ["content", "output", "result"];
+function mh(n) {
+  return gh.some((e) => e in n);
 }
-function Xi(n, e, t, s) {
-  const r = dh(e, s);
+function Qi(n, e, t, s) {
+  const r = vh(e, s);
   return {
     ...r,
     messageId: e.messageId ?? t,
@@ -1637,7 +3305,7 @@ function Xi(n, e, t, s) {
     ...Zn(r, { startedAt: gs(e)?.startedAt ?? Date.now() })
   };
 }
-function ch(n, e, t, s = !1) {
+function _h(n, e, t, s = !1) {
   const { queued: r, ...i } = e;
   return {
     ...i,
@@ -1647,18 +3315,18 @@ function ch(n, e, t, s = !1) {
     ...e.type === "tool_call" && (e.status === "awaiting-approval" || e.status === "pending" && !s) && !e.deferred?.ticket ? { status: "aborted" } : {}
   };
 }
-const uh = /* @__PURE__ */ new Set(["id", "type", "messageId", "index"]);
+const bh = /* @__PURE__ */ new Set(["id", "type", "messageId", "index"]);
 function gs(n) {
   return n.meta?.aparte;
 }
 function Zn(n, e) {
   return { meta: { ...n.meta, aparte: { ...n.meta?.aparte, ...e } } };
 }
-function dh(n, e) {
+function vh(n, e) {
   if (!e) return n;
   const t = { ...n };
   for (const [s, r] of Object.entries(e))
-    if (!(uh.has(s) || s in n)) {
+    if (!(bh.has(s) || s in n)) {
       if (s === "meta") {
         const { aparte: i, ...o } = r ?? {};
         t.meta = o;
@@ -1669,18 +3337,18 @@ function dh(n, e) {
   return t;
 }
 function bt(n) {
-  return n.type === "tool_call" ? !oh.has(n.status) : n.isStreaming === !1;
+  return n.type === "tool_call" ? !fh.has(n.status) : n.isStreaming === !1;
 }
-function hh(n, e) {
+function yh(n, e) {
   if (bt(n)) return e;
   const t = { ...n, ...e };
   if (bt(t)) {
     const s = gs(n)?.endedAt;
     return { ...e, ...Zn(n, { endedAt: s ?? Date.now() }) };
   }
-  return lh(e) ? { ...e, ...Zn(n, { endedAt: Date.now() }) } : e;
+  return mh(e) ? { ...e, ...Zn(n, { endedAt: Date.now() }) } : e;
 }
-function Il(n, e) {
+function xl(n, e) {
   const t = { ...n, ...e };
   return "meta" in e ? {
     ...t,
@@ -1693,12 +3361,12 @@ function Il(n, e) {
     }
   } : t;
 }
-function ph(n) {
+function wh(n) {
   const { startedAt: e, endedAt: t } = gs(n) ?? {};
   if (!(e == null || t == null))
     return t - e;
 }
-function fh(n) {
+function Ah(n) {
   return bt(n) ? {} : Zn(n, { endedAt: Date.now() });
 }
 function Ls(n) {
@@ -1707,10 +3375,10 @@ function Ls(n) {
     ...n.isStreaming === !1 ? { isStreaming: !1 } : {}
   };
 }
-function Ll(n) {
+function Rl(n) {
   return n != null && n !== "streaming" && n !== "pending";
 }
-function gh(n) {
+function kh(n) {
   return n.filter((e) => !bt(e)).map((e) => e.id);
 }
 function Hn(n) {
@@ -1718,17 +3386,17 @@ function Hn(n) {
   const e = n.status === "streaming" || n.status === "pending" || (n.deferredCalls?.length ?? 0) > 0;
   return {
     ...n,
-    segments: n.segments.reduce((t, s) => (t.push(ch(t, s, n.id, e)), t), [])
+    segments: n.segments.reduce((t, s) => (t.push(_h(t, s, n.id, e)), t), [])
   };
 }
-function mh(n) {
+function Sh(n) {
   for (let e = 0; e < n.length; e++) {
     const t = n[e];
     t.index !== e && (n[e] = { ...t, index: e });
   }
 }
 const Jn = "data-aparte-host", es = Symbol.for("aparte.instanceConfig");
-function _h(n, e, t) {
+function Ch(n, e, t) {
   if (e === t) return;
   const s = (r) => {
     const i = r.aparteConfigChanged;
@@ -1737,9 +3405,9 @@ function _h(n, e, t) {
   s(n);
   for (const r of n.querySelectorAll("*")) s(r);
 }
-function Ml(n, e) {
+function Il(n, e) {
   const t = n[es] ?? P(n.parentElement);
-  n[es] = e, n.setAttribute(Jn, ""), _h(n, e, t);
+  n[es] = e, n.setAttribute(Jn, ""), Ch(n, e, t);
 }
 function P(n) {
   const e = `[${Jn}]`;
@@ -1772,8 +3440,8 @@ function z(n) {
   }
   return e;
 }
-const W = z, cn = "aparte-code-drawing", Ol = "aparte-code-pending", Qi = "data-aparte-open", Nl = "data-aparte-drawn", bh = 4 * 1024 * 1024;
-class vh {
+const W = z, cn = "aparte-code-drawing", Ll = "aparte-code-pending", Yi = "data-aparte-open", Ml = "data-aparte-drawn", Eh = 4 * 1024 * 1024;
+class Th {
   entries = /* @__PURE__ */ new Map();
   size = 0;
   get(e) {
@@ -1786,40 +3454,40 @@ class vh {
     const r = { html: t };
     this.entries.set(e, r), this.size += Ms(e, r);
     for (const [i, o] of this.entries) {
-      if (this.size <= bh || i === e) break;
+      if (this.size <= Eh || i === e) break;
       this.entries.delete(i), this.size -= Ms(i, o);
     }
     return r;
   }
 }
-const Ms = (n, e) => n.length + (e.html?.length ?? 0), Ke = /* @__PURE__ */ new WeakMap(), ni = /* @__PURE__ */ new WeakMap(), Yi = /* @__PURE__ */ new WeakMap(), Zi = /* @__PURE__ */ new WeakMap(), Ji = /* @__PURE__ */ new WeakMap(), Pl = /* @__PURE__ */ new WeakMap(), $l = /* @__PURE__ */ new WeakMap(), Dl = /* @__PURE__ */ new WeakMap(), eo = /* @__PURE__ */ new WeakSet(), to = /* @__PURE__ */ new WeakSet(), Os = /* @__PURE__ */ new WeakMap(), no = /* @__PURE__ */ new WeakMap(), Tn = /* @__PURE__ */ new WeakMap();
-function yh(n) {
-  let e = Yi.get(n);
-  return e || (e = new vh(), Yi.set(n, e)), e;
-}
-function wh(n) {
+const Ms = (n, e) => n.length + (e.html?.length ?? 0), Ke = /* @__PURE__ */ new WeakMap(), si = /* @__PURE__ */ new WeakMap(), Zi = /* @__PURE__ */ new WeakMap(), Ji = /* @__PURE__ */ new WeakMap(), eo = /* @__PURE__ */ new WeakMap(), Ol = /* @__PURE__ */ new WeakMap(), Nl = /* @__PURE__ */ new WeakMap(), Pl = /* @__PURE__ */ new WeakMap(), to = /* @__PURE__ */ new WeakSet(), no = /* @__PURE__ */ new WeakSet(), Os = /* @__PURE__ */ new WeakMap(), so = /* @__PURE__ */ new WeakMap(), Tn = /* @__PURE__ */ new WeakMap();
+function xh(n) {
   let e = Zi.get(n);
-  return e || (e = /* @__PURE__ */ new Map(), Zi.set(n, e)), e;
+  return e || (e = new Th(), Zi.set(n, e)), e;
 }
-function so(n, e) {
+function Rh(n) {
+  let e = Ji.get(n);
+  return e || (e = /* @__PURE__ */ new Map(), Ji.set(n, e)), e;
+}
+function ro(n, e) {
   let t = n.get(e);
   return t || (t = /* @__PURE__ */ new Map(), n.set(e, t)), t;
 }
 function un(n, e) {
-  eo.has(n) || (eo.add(n), console.warn(`[aparte] The ${n.languages.join("/")} renderer failed; the source is shown instead.`, e));
+  to.has(n) || (to.add(n), console.warn(`[aparte] The ${n.languages.join("/")} renderer failed; the source is shown instead.`, e));
 }
-function Ah(n) {
+function Ih(n) {
   for (const e of Array.from(n.classList))
     if (e.startsWith("language-")) return e.slice(9).toLowerCase() || null;
   return null;
 }
-function kh(n) {
+function Lh(n) {
   return n.classList.contains("math-display") ? !0 : n.classList.contains("math-inline") ? !1 : n.parentElement?.tagName === "PRE";
 }
-function Sh(n) {
-  return n.hasAttribute(Qi) || n.parentElement?.tagName === "PRE" && n.parentElement.hasAttribute(Qi);
+function Mh(n) {
+  return n.hasAttribute(Yi) || n.parentElement?.tagName === "PRE" && n.parentElement.hasAttribute(Yi);
 }
-function Ch(n, e) {
+function Oh(n, e) {
   let t = "";
   try {
     t = n.cacheKey?.(e) ?? "";
@@ -1828,13 +3496,13 @@ function Ch(n, e) {
   }
   return `${e.language}${e.display ? "d" : "i"}${t}${e.source}`;
 }
-function Bl(n) {
+function $l(n) {
   return typeof n?.then == "function";
 }
-function Eh(n) {
+function Nh(n) {
   return n.closest("pre") ?? Ke.get(n)?.drawing ?? n;
 }
-function Th(n) {
+function Ph(n) {
   return n.closest("pre") ?? n.parentElement ?? n;
 }
 const Ns = /* @__PURE__ */ new Set(), Ps = /* @__PURE__ */ new Map();
@@ -1844,16 +3512,16 @@ function ms(n, e) {
     $s = !1;
     const t = [...Ns], s = [...Ps];
     Ns.clear(), Ps.clear();
-    for (const r of t) Rh(r);
+    for (const r of t) Dh(r);
     for (const [r, i] of s) r.isConnected && Ft(r, i);
   }));
 }
-const ro = /* @__PURE__ */ new WeakMap();
-function xh(n, e, t) {
-  let s = ro.get(n);
+const io = /* @__PURE__ */ new WeakMap();
+function $h(n, e, t) {
+  let s = io.get(n);
   if (!s) {
     const r = /* @__PURE__ */ new Map();
-    ro.set(n, r), s = r, n.then(
+    io.set(n, r), s = r, n.then(
       () => {
         for (const [i, o] of r) ms(i, o);
         r.clear();
@@ -1864,29 +3532,29 @@ function xh(n, e, t) {
   (!s.has(e) || t === void 0) && s.set(e, t);
 }
 let ht = null;
-function ql(n) {
+function Dl(n) {
   for (let e = n.parentElement; e; e = e.parentElement) {
     const t = getComputedStyle(e).overflowY;
     if (t === "auto" || t === "scroll") return e;
   }
   return null;
 }
-function Rh(n) {
+function Dh(n) {
   if (!n.isConnected) return;
-  const e = ql(n), t = e ? e.getBoundingClientRect().top + (parseFloat(getComputedStyle(e).scrollPaddingTop) || 0) : 0;
+  const e = Dl(n), t = e ? e.getBoundingClientRect().top + (parseFloat(getComputedStyle(e).scrollPaddingTop) || 0) : 0;
   ht = { scroller: e, top: t };
   try {
-    Ft(n, Dl.get(n) ?? {});
+    Ft(n, Pl.get(n) ?? {});
   } finally {
     ht = null;
   }
 }
-function Ih(n, e) {
-  const t = Eh(n);
-  if (to.has(t) || typeof IntersectionObserver > "u") return !1;
-  const s = ql(t);
-  let r = no.get(IntersectionObserver);
-  r || (r = { byScroller: /* @__PURE__ */ new WeakMap() }, no.set(IntersectionObserver, r));
+function Bh(n, e) {
+  const t = Nh(n);
+  if (no.has(t) || typeof IntersectionObserver > "u") return !1;
+  const s = Dl(t);
+  let r = so.get(IntersectionObserver);
+  r || (r = { byScroller: /* @__PURE__ */ new WeakMap() }, so.set(IntersectionObserver, r));
   let i = s ? r.byScroller.get(s) : r.page;
   if (!i) {
     const o = new IntersectionObserver((a) => {
@@ -1896,7 +3564,7 @@ function Ih(n, e) {
         o.unobserve(c);
         const u = (Tn.get(o) ?? 1) - 1;
         if (Tn.set(o, u), u <= 0 && (o.disconnect(), s ? r.byScroller.delete(s) : r.page === o && (r.page = void 0)), !c.isConnected) continue;
-        to.add(c);
+        no.add(c);
         const h = Os.get(c);
         h && ms(h);
       }
@@ -1910,11 +3578,11 @@ function rn(n, e, t, s, r, i, o = !0) {
     Bt(e, r.open);
     return;
   }
-  const a = ht ? Th(e) : null, l = a ? a.getBoundingClientRect() : null, c = Ke.get(e);
+  const a = ht ? Ph(e) : null, l = a ? a.getBoundingClientRect() : null, c = Ke.get(e);
   let u = c?.drawing;
-  if (u || (u = document.createElement("span"), u.className = cn, r.display && u.setAttribute("data-aparte-display", ""), s.bare ? u.setAttribute("data-aparte-bare", "") : u.setAttribute("dir", "ltr"), e.after(u), ni.set(u, e), e.parentElement?.tagName === "PRE" && e.parentElement.setAttribute(Nl, "")), c?.entry !== t || u.childNodes.length === 0) {
-    let h = o ? Ji.get(n) : void 0;
-    o && !h && (h = /* @__PURE__ */ new WeakMap(), Ji.set(n, h));
+  if (u || (u = document.createElement("span"), u.className = cn, r.display && u.setAttribute("data-aparte-display", ""), s.bare ? u.setAttribute("data-aparte-bare", "") : u.setAttribute("dir", "ltr"), e.after(u), si.set(u, e), e.parentElement?.tagName === "PRE" && e.parentElement.setAttribute(Ml, "")), c?.entry !== t || u.childNodes.length === 0) {
+    let h = o ? eo.get(n) : void 0;
+    o && !h && (h = /* @__PURE__ */ new WeakMap(), eo.set(n, h));
     const d = h?.get(t);
     if (d && d.owner !== e && !d.owner.isConnected && e.isConnected && !d.drawing.isConnected && d.drawing.childNodes.length > 0)
       u.replaceChildren(...d.drawing.childNodes), d.drawing.remove(), Bt(d.owner, !1);
@@ -1928,32 +3596,32 @@ function rn(n, e, t, s, r, i, o = !0) {
     }
     h && (c && c.entry !== t && h.get(c.entry)?.drawing === u && h.delete(c.entry), h.set(t, { drawing: u, owner: e }));
   }
-  if (e.hidden = !0, e.style.setProperty("display", "none"), e.classList.remove(Ol), Ke.set(e, { renderer: s, key: i, drawing: u, entry: t, ctx: r }), a && l && ht) {
+  if (e.hidden = !0, e.style.setProperty("display", "none"), e.classList.remove(Ll), Ke.set(e, { renderer: s, key: i, drawing: u, entry: t, ctx: r }), a && l && ht) {
     const h = a.getBoundingClientRect().height - l.height;
     h > 0 && l.bottom <= ht.top && (ht.scroller ? ht.scroller.scrollTop += h : window.scrollBy(0, h));
   }
 }
 function Bt(n, e) {
   const t = Ke.get(n);
-  t && (t.drawing.remove(), Ke.delete(n)), n.parentElement?.tagName === "PRE" && n.parentElement.removeAttribute(Nl), n.hidden = !1, n.style.removeProperty("display"), n.classList.toggle(Ol, e);
+  t && (t.drawing.remove(), Ke.delete(n)), n.parentElement?.tagName === "PRE" && n.parentElement.removeAttribute(Ml), n.hidden = !1, n.style.removeProperty("display"), n.classList.toggle(Ll, e);
 }
-function Lh(n, e, t, s, r, i) {
-  const o = Ch(t, s);
+function qh(n, e, t, s, r, i) {
+  const o = Oh(t, s);
   let a = Ke.get(e);
   if (a && a.renderer === t && a.key === o && a.drawing.childNodes.length > 0) return;
-  const l = yh(t), c = l.get(o);
+  const l = xh(t), c = l.get(o);
   if (c) {
     rn(n, e, c, t, s, o, !i);
     return;
   }
   if (!a && !i) {
-    const f = Pl.get(n)?.get(r);
+    const f = Ol.get(n)?.get(r);
     f && s.source.startsWith(f.source) && rn(n, e, f, t, s, null), a = Ke.get(e);
   }
-  if (t.lazy && !i && !a && Ih(e, n)) return;
-  const u = wh(t), h = u.get(o);
+  if (t.lazy && !i && !a && Bh(e, n)) return;
+  const u = Rh(t), h = u.get(o);
   if (h) {
-    xh(h, n, i);
+    $h(h, n, i);
     return;
   }
   let d;
@@ -1962,7 +3630,7 @@ function Lh(n, e, t, s, r, i) {
   } catch (f) {
     un(t, f), d = null;
   }
-  if (!Bl(d)) {
+  if (!$l(d)) {
     rn(n, e, l.set(o, d ?? null), t, s, o, !i);
     return;
   }
@@ -1972,10 +3640,10 @@ function Lh(n, e, t, s, r, i) {
   u.set(o, p), p.then(() => ms(n, i), () => {
   });
 }
-function Mh(n, e, t, s, r) {
-  const i = so(Pl, n), o = i.get(r);
+function Hh(n, e, t, s, r) {
+  const i = ro(Ol, n), o = i.get(r);
   o && s.source.startsWith(o.source) ? Ke.get(e)?.entry !== o && rn(n, e, o, t, s, null) : (i.delete(r), Bt(e, !0));
-  const a = so($l, n);
+  const a = ro(Nl, n);
   if (a.get(r) === s.source) return;
   a.set(r, s.source);
   const l = () => {
@@ -1991,7 +3659,7 @@ function Mh(n, e, t, s, r) {
   } catch {
     u = null;
   }
-  if (!Bl(u)) {
+  if (!$l(u)) {
     c(u) ? rn(n, e, i.get(r), t, s, null) : u == null && l();
     return;
   }
@@ -1999,20 +3667,20 @@ function Mh(n, e, t, s, r) {
     c(h) ? ms(n) : h == null && l();
   }, l);
 }
-function Oh(n) {
+function Fh(n) {
   for (const e of ["code", "kbd", "samp"])
     for (const t of Array.from(n.getElementsByTagName(e))) t.hasAttribute("dir") || t.setAttribute("dir", "ltr");
 }
 function Ft(n, e = {}) {
   if (typeof document > "u") return;
   const { streaming: t = !1, refresh: s = !1, language: r } = e;
-  if (!s && (Oh(n), Dl.set(n, { streaming: t }), t || $l.delete(n), !$(n).hasCodeLanguageRenderer())) {
-    n.querySelector(`.${cn}`) && Hl(n);
+  if (!s && (Fh(n), Pl.set(n, { streaming: t }), t || Nl.delete(n), !$(n).hasCodeLanguageRenderer())) {
+    n.querySelector(`.${cn}`) && Bl(n);
     return;
   }
   const i = Array.from(n.querySelectorAll('code[class*="language-"]')).filter((a) => !a.closest(`.${cn}`)), o = /* @__PURE__ */ new Map();
   i.forEach((a, l) => {
-    const c = Ah(a);
+    const c = Ih(a);
     if (!c || r && c !== r) return;
     const u = $(s ? a : n), h = u.getCodeLanguageRenderer(c), d = Ke.get(a);
     if (s && (!d || d.key === null)) return;
@@ -2020,26 +3688,26 @@ function Ft(n, e = {}) {
       d && Bt(a, !1);
       return;
     }
-    const p = kh(a), f = `${c}|${p ? "d" : "i"}`, m = o.get(f) ?? 0;
+    const p = Lh(a), f = `${c}|${p ? "d" : "i"}`, m = o.get(f) ?? 0;
     o.set(f, m + 1);
     const g = `${f}|${m}`, b = a.textContent ?? "";
     if (!b.trim()) {
       d && Bt(a, !1);
       return;
     }
-    const y = t && (Sh(a) || l === i.length - 1), A = { language: c, source: b, display: p, open: y, host: a, config: u };
-    y ? Mh(n, a, h, A, g) : Lh(n, a, h, A, g, s ? e : void 0);
+    const y = t && (Mh(a) || l === i.length - 1), A = { language: c, source: b, display: p, open: y, host: a, config: u };
+    y ? Hh(n, a, h, A, g) : qh(n, a, h, A, g, s ? e : void 0);
   });
 }
-function Hl(n) {
+function Bl(n) {
   for (const e of Array.from(n.querySelectorAll(`.${cn}`))) {
-    const t = ni.get(e);
+    const t = si.get(e);
     t ? Bt(t, !1) : e.remove();
   }
 }
-function Nh(n) {
+function Wh(n) {
   for (const e of Array.from(n.querySelectorAll(`.${cn}`))) {
-    const t = ni.get(e), s = t ? Ke.get(t) : void 0;
+    const t = si.get(e), s = t ? Ke.get(t) : void 0;
     if (s)
       try {
         s.renderer.relabel?.(e, s.ctx);
@@ -2051,7 +3719,7 @@ function Nh(n) {
 function mr(n, e) {
   return !!n && $(e).hasCodeLanguageRenderer(n);
 }
-const Fl = /* @__PURE__ */ new Set([
+const ql = /* @__PURE__ */ new Set([
   "script",
   "style",
   "iframe",
@@ -2078,7 +3746,7 @@ const Fl = /* @__PURE__ */ new Set([
   "svg",
   "math",
   "portal"
-]), si = /* @__PURE__ */ new Set([
+]), ri = /* @__PURE__ */ new Set([
   "a",
   "p",
   "br",
@@ -2141,7 +3809,7 @@ const Fl = /* @__PURE__ */ new Set([
   "time",
   "wbr",
   "address"
-]), Ph = /* @__PURE__ */ new Set([
+]), Uh = /* @__PURE__ */ new Set([
   // `id`/`name` are intentionally NOT allowlisted — they enable DOM clobbering
   // and LLM-authored markup has no legitimate need for author-controlled ids.
   "class",
@@ -2155,7 +3823,7 @@ const Fl = /* @__PURE__ */ new Set([
   "aria-hidden",
   "aria-describedby",
   "aria-level"
-]), $h = {
+]), zh = {
   // `target` and `rel` are NOT copied from the model's markup — `copyAttributes`
   // decides both below. Legacy `name` is dropped too (obsolete + a DOM-clobbering
   // vector).
@@ -2170,7 +3838,7 @@ const Fl = /* @__PURE__ */ new Set([
   ol: /* @__PURE__ */ new Set(["start", "type", "reversed"]),
   time: /* @__PURE__ */ new Set(["datetime"]),
   details: /* @__PURE__ */ new Set(["open"])
-}, Dh = /* @__PURE__ */ new Set(["href", "src"]), Bh = /^(?:https?:|mailto:|tel:|ftp:|sms:)/i, qh = /^(?:[#/.?]|[a-z0-9._~%+-]+(?:[/?#]|$))/i, Hh = /^data:image\/(?:png|jpe?g|gif|webp|avif|bmp|x-icon|svg\+xml)[;,]/i, ri = /[\u0000-\u0020]+/g, io = /^(?:https?:)?[/\\]{2}|^https?:/i, Fh = /^aparte-/i, Wh = /* @__PURE__ */ new Set([
+}, Gh = /* @__PURE__ */ new Set(["href", "src"]), jh = /^(?:https?:|mailto:|tel:|ftp:|sms:)/i, Kh = /^(?:[#/.?]|[a-z0-9._~%+-]+(?:[/?#]|$))/i, Vh = /^data:image\/(?:png|jpe?g|gif|webp|avif|bmp|x-icon|svg\+xml)[;,]/i, ii = /[\u0000-\u0020]+/g, oo = /^(?:https?:)?[/\\]{2}|^https?:/i, Xh = /^aparte-/i, Qh = /* @__PURE__ */ new Set([
   "data-aparte-chat",
   "data-aparte-host",
   "data-aparte-theme",
@@ -2185,11 +3853,11 @@ const Fl = /* @__PURE__ */ new Set([
   "data-aparte-card-part",
   "data-segment-id",
   "data-action"
-]), Uh = ["data-aparte-dialog-", "data-aparte-sidebar-", "data-checkpoint-"];
-function zh(n) {
-  return Wh.has(n) || Uh.some((e) => n.startsWith(e));
+]), Yh = ["data-aparte-dialog-", "data-aparte-sidebar-", "data-checkpoint-"];
+function Zh(n) {
+  return Qh.has(n) || Yh.some((e) => n.startsWith(e));
 }
-const Gh = /* @__PURE__ */ new Set([
+const Jh = /* @__PURE__ */ new Set([
   "button",
   "link",
   "checkbox",
@@ -2223,17 +3891,17 @@ const Gh = /* @__PURE__ */ new Set([
   "progressbar",
   "tabpanel"
 ]);
-function jh(n, e) {
+function ep(n, e) {
   const t = e === "source" ? "img" : e;
   for (const s of n.matchAll(/(?:^|[^a-z0-9+.-])([a-z][a-z0-9+.-]*:[^\s,]*)/gi))
     if (!_s(s[1], t)) return !1;
   return !0;
 }
 function _s(n, e) {
-  const t = n.replace(ri, "");
-  return !t || Bh.test(t) || e === "img" && Hh.test(t) ? !0 : /^[a-z][a-z0-9+.-]*:/i.test(t) ? !1 : qh.test(t);
+  const t = n.replace(ii, "");
+  return !t || jh.test(t) || e === "img" && Vh.test(t) ? !0 : /^[a-z][a-z0-9+.-]*:/i.test(t) ? !1 : Kh.test(t);
 }
-const Kh = /* @__PURE__ */ new Set([
+const tp = /* @__PURE__ */ new Set([
   "color",
   "background-color",
   "font-style",
@@ -2248,40 +3916,40 @@ const Kh = /* @__PURE__ */ new Set([
   "text-decoration-style",
   "white-space"
 ]);
-function Vh(n) {
+function np(n) {
   return n.includes("\\") ? !1 : n.startsWith("--") && !n.startsWith("--aparte-");
 }
-function Xh(n) {
+function sp(n) {
   const e = [];
   for (const t of n.split(";")) {
     const s = t.trim(), r = s.indexOf(":");
     if (r === -1) continue;
     const i = s.slice(0, r).trim().toLowerCase(), o = s.slice(r + 1);
-    o.trim() && (!Kh.has(i) && !Vh(i) || o.includes("\\") || /url\s*\(|expression\s*\(|javascript:|vbscript:|[<>]/i.test(o) || e.push(s));
+    o.trim() && (!tp.has(i) && !np(i) || o.includes("\\") || /url\s*\(|expression\s*\(|javascript:|vbscript:|[<>]/i.test(o) || e.push(s));
   }
   return e.length ? e.join("; ") : null;
 }
 function _r(n, e, t) {
-  const s = $h[n];
-  if (e.startsWith("on") || e.startsWith("formaction") || !e.startsWith("data-") && !Ph.has(e) && !(s && s.has(e)) || zh(e) || e === "role" && t.trim().toLowerCase().split(/\s+/).some((r) => Gh.has(r)) || Dh.has(e) && !_s(t, n) || e === "srcset" && !jh(t, n)) return null;
-  if (e === "style") return Xh(t);
+  const s = zh[n];
+  if (e.startsWith("on") || e.startsWith("formaction") || !e.startsWith("data-") && !Uh.has(e) && !(s && s.has(e)) || Zh(e) || e === "role" && t.trim().toLowerCase().split(/\s+/).some((r) => Jh.has(r)) || Gh.has(e) && !_s(t, n) || e === "srcset" && !ep(t, n)) return null;
+  if (e === "style") return sp(t);
   if (e === "class") {
-    const r = t.split(/\s+/).filter((i) => i && !Fh.test(i));
+    const r = t.split(/\s+/).filter((i) => i && !Xh.test(i));
     return r.length ? r.join(" ") : null;
   }
   return t;
 }
-function ii(n, e) {
-  const t = n.replace(ri, ""), s = e.trim().toLowerCase();
-  return s === "_self" && !io.test(t) ? [["target", "_self"]] : s || io.test(t) ? [["target", "_blank"], ["rel", "noopener noreferrer"]] : [];
+function oi(n, e) {
+  const t = n.replace(ii, ""), s = e.trim().toLowerCase();
+  return s === "_self" && !oo.test(t) ? [["target", "_self"]] : s || oo.test(t) ? [["target", "_blank"], ["rel", "noopener noreferrer"]] : [];
 }
-function Qh(n, e, t) {
+function rp(n, e, t) {
   for (const s of Array.from(n.attributes)) {
     const r = s.name.toLowerCase(), i = _r(t, r, s.value);
     i !== null && e.setAttribute(r, i);
   }
   if (t === "a")
-    for (const [s, r] of ii(e.getAttribute("href") ?? "", n.getAttribute("target") ?? "")) e.setAttribute(s, r);
+    for (const [s, r] of oi(e.getAttribute("href") ?? "", n.getAttribute("target") ?? "")) e.setAttribute(s, r);
 }
 function br(n, e, t) {
   for (const s of Array.from(n.childNodes)) {
@@ -2291,23 +3959,23 @@ function br(n, e, t) {
     }
     if (s.nodeType !== 1) continue;
     const r = s, i = r.tagName.toLowerCase();
-    if (Fl.has(i)) continue;
-    if (!si.has(i)) {
+    if (ql.has(i)) continue;
+    if (!ri.has(i)) {
       br(r, e, t);
       continue;
     }
     const o = i === "input";
     if (o && (r.getAttribute("type") ?? "").trim().toLowerCase() !== "checkbox") continue;
     const a = t.createElement(i);
-    Qh(r, a, i), o && (a.setAttribute("type", "checkbox"), a.setAttribute("disabled", "")), br(r, a, t), e.appendChild(a);
+    rp(r, a, i), o && (a.setAttribute("type", "checkbox"), a.setAttribute("disabled", "")), br(r, a, t), e.appendChild(a);
   }
 }
-const Yh = /* @__PURE__ */ new Set(["html", "head", "body"]), Zh = /* @__PURE__ */ new Set(["link", "meta", "base", "embed", "frame"]), oo = /* @__PURE__ */ new Map();
-function Jh(n) {
-  let e = oo.get(n);
-  return e || (e = new RegExp(`<\\s*\\/\\s*${n}\\s*>`, "gi"), oo.set(n, e)), e;
+const ip = /* @__PURE__ */ new Set(["html", "head", "body"]), op = /* @__PURE__ */ new Set(["link", "meta", "base", "embed", "frame"]), ao = /* @__PURE__ */ new Map();
+function ap(n) {
+  let e = ao.get(n);
+  return e || (e = new RegExp(`<\\s*\\/\\s*${n}\\s*>`, "gi"), ao.set(n, e)), e;
 }
-const ao = /--!?>/g, ep = /[A-Za-z]/, xn = /\s/, tp = /[\s/>]/, np = /[\s/>=]/, sp = /^[a-z][a-z0-9_.:-]*$/, rp = {
+const lo = /--!?>/g, lp = /[A-Za-z]/, xn = /\s/, cp = /[\s/>]/, up = /[\s/>=]/, dp = /^[a-z][a-z0-9_.:-]*$/, hp = {
   amp: "&",
   lt: "<",
   gt: ">",
@@ -2328,42 +3996,42 @@ const ao = /--!?>/g, ep = /[A-Za-z]/, xn = /\s/, tp = /[\s/>]/, np = /[\s/>=]/, 
   newline: `
 `
 };
-function ip(n) {
+function pp(n) {
   return n.includes("&") ? n.replace(/&(?:#x([0-9a-f]+)|#([0-9]+)|([a-z]+));?/gi, (e, t, s, r) => {
-    if (r !== void 0) return rp[r.toLowerCase()] ?? e;
+    if (r !== void 0) return hp[r.toLowerCase()] ?? e;
     const i = t !== void 0 ? parseInt(t, 16) : parseInt(s ?? "", 10);
     return i > 0 && i <= 1114111 && (i < 55296 || i > 57343) ? String.fromCodePoint(i) : "�";
   }) : n;
 }
-const op = (n) => n.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-function ap(n, e) {
-  if (!si.has(n)) return "";
+const fp = (n) => n.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function gp(n, e) {
+  if (!ri.has(n)) return "";
   const t = n === "input", s = (i) => e.find(([o]) => o === i)?.[1];
   if (t && (s("type") ?? "").trim().toLowerCase() !== "checkbox") return "";
   const r = [];
   t && (r.push('type="checkbox"'), s("checked") !== void 0 && r.push("checked"), r.push("disabled"));
   for (const [i, o] of e) {
-    if (!sp.test(i) || t && (i === "type" || i === "checked" || i === "disabled")) continue;
+    if (!dp.test(i) || t && (i === "type" || i === "checked" || i === "disabled")) continue;
     const a = _r(n, i, o);
-    a !== null && r.push(`${i}="${op(a)}"`);
+    a !== null && r.push(`${i}="${fp(a)}"`);
   }
   if (n === "a") {
     const i = e.find(([a]) => a === "href"), o = i ? _r("a", "href", i[1]) : null;
-    for (const [a, l] of ii(o ?? "", s("target") ?? "")) r.push(`${a}="${l}"`);
+    for (const [a, l] of oi(o ?? "", s("target") ?? "")) r.push(`${a}="${l}"`);
   }
   return `<${n}${r.length ? " " + r.join(" ") : ""}>`;
 }
-function oi(n, e) {
+function ai(n, e) {
   const t = n.length;
   let s = e;
-  for (; s < t && !tp.test(n[s]); ) s++;
+  for (; s < t && !cp.test(n[s]); ) s++;
   const r = n.slice(e, s).toLowerCase(), i = [], o = /* @__PURE__ */ new Set();
   for (; s < t; ) {
     for (; s < t && (xn.test(n[s]) || n[s] === "/"); ) s++;
     if (s >= t) break;
     if (n[s] === ">") return { tag: r, attrs: i, end: s + 1 };
     const a = s++;
-    for (; s < t && !np.test(n[s]); ) s++;
+    for (; s < t && !up.test(n[s]); ) s++;
     const l = n.slice(a, s).toLowerCase();
     let c = s;
     for (; c < t && xn.test(n[c]); ) c++;
@@ -2381,11 +4049,11 @@ function oi(n, e) {
         u = n.slice(d, c), s = c;
       }
     }
-    o.has(l) || (o.add(l), i.push([l, ip(u)]));
+    o.has(l) || (o.add(l), i.push([l, pp(u)]));
   }
   return { tag: r, attrs: i, end: -1 };
 }
-function lp(n) {
+function mp(n) {
   const e = n.length;
   let t = "", s = 0;
   for (; s < e; ) {
@@ -2399,15 +4067,15 @@ function lp(n) {
       if (n[u] === ">") s = u + 1;
       else if (n.startsWith("->", u)) s = u + 2;
       else {
-        ao.lastIndex = u;
-        const h = ao.exec(n);
+        lo.lastIndex = u;
+        const h = lo.exec(n);
         if (!h) break;
         s = h.index + h[0].length;
       }
       continue;
     }
     const i = n[r + 1] === "/", o = r + (i ? 2 : 1);
-    if (!ep.test(n[o] ?? "")) {
+    if (!lp.test(n[o] ?? "")) {
       if (n[r + 1] === "!" || n[r + 1] === "?" || i) {
         const u = n.indexOf(">", r + 1);
         s = u < 0 ? e : u + 1;
@@ -2415,47 +4083,47 @@ function lp(n) {
         t += "&lt;", s = r + 1;
       continue;
     }
-    const { tag: a, attrs: l, end: c } = oi(n, o);
+    const { tag: a, attrs: l, end: c } = ai(n, o);
     if (c < 0) break;
     if (s = c, i)
-      si.has(a) && (t += `</${a}>`);
-    else if (Fl.has(a) && !Yh.has(a) && !Zh.has(a)) {
-      const u = Jh(a);
+      ri.has(a) && (t += `</${a}>`);
+    else if (ql.has(a) && !ip.has(a) && !op.has(a)) {
+      const u = ap(a);
       u.lastIndex = c;
       const h = u.exec(n);
       if (!h) break;
       s = h.index + h[0].length;
-    } else t += ap(a, l);
+    } else t += gp(a, l);
   }
   return t;
 }
-function lo(n) {
-  return lp(n);
+function co(n) {
+  return mp(n);
 }
-const co = (n) => {
+const uo = (n) => {
   if (!n) return n;
-  if (typeof DOMParser > "u") return lo(n);
+  if (typeof DOMParser > "u") return co(n);
   let e;
   try {
     e = new DOMParser().parseFromString(n, "text/html");
   } catch {
-    return lo(n);
+    return co(n);
   }
   const t = e.createElement("div");
   return br(e.body, t, e), t.innerHTML;
-}, cp = (n) => n.localName === "aparte-chat" || n.hasAttribute("data-aparte-chat");
-function up(n) {
+}, _p = (n) => n.localName === "aparte-chat" || n.hasAttribute("data-aparte-chat");
+function bp(n) {
   if (n.parentElement) return n.parentElement;
   const e = n.getRootNode?.();
   return e && "host" in e ? e.host : null;
 }
 function et(n) {
-  for (let e = n ?? null; e; e = up(e)) {
+  for (let e = n ?? null; e; e = bp(e)) {
     if (e.localName.startsWith("aparte-")) {
       const t = e.getAttribute("target");
       if (t) return t;
     }
-    if (cp(e) && e.id) return e.id;
+    if (_p(e) && e.id) return e.id;
   }
 }
 function xe(n, e, t, s = {}) {
@@ -2467,13 +4135,13 @@ function xe(n, e, t, s = {}) {
     detail: i
   }));
 }
-const Ze = "aparte-citation", Wl = "aparte-citation-marker", Ul = /[\p{L}\p{N}]/u, dp = [24, 12, 6], zl = /* @__PURE__ */ new Set(["A", "ABBR", "B", "CITE", "CODE", "DEL", "EM", "I", "INS", "KBD", "MARK", "Q", "S", "SMALL", "SPAN", "STRONG", "SUB", "SUP", "U"]), uo = /[.,;:!?)\]}»"'’”…。、，．！？：；」』）】》،؛؟]/, hp = /[\u00a0\u202f]/, ai = /* @__PURE__ */ new WeakMap(), Gl = /* @__PURE__ */ new WeakMap(), ho = /* @__PURE__ */ new WeakSet(), Wn = /* @__PURE__ */ new WeakMap();
+const Ze = "aparte-citation", Hl = "aparte-citation-marker", Fl = /[\p{L}\p{N}]/u, vp = [24, 12, 6], Wl = /* @__PURE__ */ new Set(["A", "ABBR", "B", "CITE", "CODE", "DEL", "EM", "I", "INS", "KBD", "MARK", "Q", "S", "SMALL", "SPAN", "STRONG", "SUB", "SUP", "U"]), ho = /[.,;:!?)\]}»"'’”…。、，．！？：；」』）】》،؛؟]/, yp = /[\u00a0\u202f]/, li = /* @__PURE__ */ new WeakMap(), Ul = /* @__PURE__ */ new WeakMap(), po = /* @__PURE__ */ new WeakSet(), Wn = /* @__PURE__ */ new WeakMap();
 let nt = null;
-function li(n) {
+function ci(n) {
   const e = n.url?.trim();
   return e && /^https?:\/\//i.test(e) && _s(e, "a") ? e : void 0;
 }
-function jl(n, e, t, s) {
+function zl(n, e, t, s) {
   const r = document.createElement("a");
   r.href = n;
   const i = t.decideLink(n);
@@ -2484,7 +4152,7 @@ function jl(n, e, t, s) {
   return r;
 }
 function ts(n) {
-  const e = li(n);
+  const e = ci(n);
   if (e)
     try {
       return new URL(e).hostname.replace(/^www\./, "");
@@ -2492,7 +4160,7 @@ function ts(n) {
     }
   return n.title ?? "";
 }
-function pp(n) {
+function wp(n) {
   const e = ts(n[0]) || "?";
   return n.length > 1 ? `${e} +${n.length - 1}` : e;
 }
@@ -2500,25 +4168,25 @@ function vr(n, e) {
   const t = n.getLocale();
   return e === 1 ? t.sourcesOne ?? "1 source" : (t.sourcesCount ?? "{n} sources").replace("{n}", () => String(e));
 }
-function fp(n) {
+function Ap(n) {
   if (typeof document > "u") return "";
   const e = document.createElement("textarea");
   return e.innerHTML = n, e.value;
 }
-function po(n) {
-  return n.replace(/^[ \t]*(?:>[ \t]*)*(?:\d{1,9}[.)]|[*+-])[ \t]+(?:\[[ xX]\][ \t]+)?/gm, "").replace(/<!--[\s\S]*?-->/g, "").replace(/!\[[^\]\n]*\]\([^)\n]*\)/g, "").replace(/<([a-z][a-z0-9+.-]*:[^>\s]+)>/gi, "$1").replace(/\]\([^)\n]*\)/g, "]").replace(/<\/?[A-Za-z][^>\n]*>/g, "").replace(/&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);/gi, fp);
+function fo(n) {
+  return n.replace(/^[ \t]*(?:>[ \t]*)*(?:\d{1,9}[.)]|[*+-])[ \t]+(?:\[[ xX]\][ \t]+)?/gm, "").replace(/<!--[\s\S]*?-->/g, "").replace(/!\[[^\]\n]*\]\([^)\n]*\)/g, "").replace(/<([a-z][a-z0-9+.-]*:[^>\s]+)>/gi, "$1").replace(/\]\([^)\n]*\)/g, "]").replace(/<\/?[A-Za-z][^>\n]*>/g, "").replace(/&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);/gi, Ap);
 }
-function gp(n) {
+function kp(n) {
   const e = n.replace(/^ {0,3}(?:`{3,}|~{3,})[^\n]*$/gm, "");
   let t = "", s = 0;
   for (const i of e.matchAll(/(`+)([^`][\s\S]*?)\1/g))
-    t += po(e.slice(s, i.index)) + i[2], s = (i.index ?? 0) + i[0].length;
-  t += po(e.slice(s));
+    t += fo(e.slice(s, i.index)) + i[2], s = (i.index ?? 0) + i[0].length;
+  t += fo(e.slice(s));
   let r = "";
-  for (const i of t) Ul.test(i) && (r += i);
+  for (const i of t) Fl.test(i) && (r += i);
   return r;
 }
-function mp(n) {
+function Sp(n) {
   let e = "";
   const t = [], s = n.ownerDocument.createTreeWalker(n, NodeFilter.SHOW_TEXT, {
     // A drawing (a formula, a diagram) shows its source differently; its placeholder, hidden
@@ -2529,7 +4197,7 @@ function mp(n) {
     const i = r.data;
     for (let o = 0; o < i.length; ) {
       const a = (i.codePointAt(o) ?? 0) > 65535 ? 2 : 1, l = i.slice(o, o + a);
-      if (o += a, !!Ul.test(l)) {
+      if (o += a, !!Fl.test(l)) {
         e += l;
         for (let c = 0; c < a; c++) t.push([r, o]);
       }
@@ -2537,16 +4205,16 @@ function mp(n) {
   }
   return { text: e, ends: t };
 }
-function _p(n, e) {
+function Cp(n, e) {
   let t = 0;
   for (let s = n.indexOf(e); s >= 0; s = n.indexOf(e, s + 1)) t++;
   return t;
 }
-function bp(n, e, t) {
-  const s = gp(n.slice(0, Math.max(0, Math.min(n.length, e.end))));
+function Ep(n, e, t) {
+  const s = kp(n.slice(0, Math.max(0, Math.min(n.length, e.end))));
   if (!s) return null;
-  for (const r of dp) {
-    const i = s.slice(-r), o = _p(s, i);
+  for (const r of vp) {
+    const i = s.slice(-r), o = Cp(s, i);
     let a = -1;
     for (let l = 0; l < o && (l === 0 || a >= 0); l++) a = t.text.indexOf(i, a + 1);
     if (a >= 0) return t.ends[a + i.length - 1] ?? null;
@@ -2554,85 +4222,85 @@ function bp(n, e, t) {
   }
   return null;
 }
-function fo(n, e) {
+function go(n, e) {
   let t = e;
-  for (; t < n.length && (uo.test(n[t]) || hp.test(n[t]) && uo.test(n[t + 1] ?? "")); ) t++;
+  for (; t < n.length && (ho.test(n[t]) || yp.test(n[t]) && ho.test(n[t + 1] ?? "")); ) t++;
   return t - e;
 }
-function vp(n, e, t, s) {
+function Tp(n, e, t, s) {
   const r = t.parentElement?.closest("pre");
   if (r && n.contains(r)) {
     r.after(e);
     return;
   }
   let i = null;
-  for (let l = t.parentElement; l && l !== n && zl.has(l.tagName); l = l.parentElement) i = l;
+  for (let l = t.parentElement; l && l !== n && Wl.has(l.tagName); l = l.parentElement) i = l;
   if (!i) {
-    t.splitText(s + fo(t.data, s)), t.after(e);
+    t.splitText(s + go(t.data, s)), t.after(e);
     return;
   }
   let o = i;
   for (; o.nextSibling instanceof Element && o.nextSibling.classList.contains("aparte-code-drawing"); ) o = o.nextSibling;
   const a = o.nextSibling;
   if (a instanceof Text) {
-    const l = fo(a.data, 0);
+    const l = go(a.data, 0);
     l > 0 && (a.splitText(l), o = a);
   }
   o.parentNode.insertBefore(e, o.nextSibling);
 }
-function yp(n, e, t, s) {
+function xp(n, e, t, s) {
   const r = (l) => {
     const c = document.createElement("span");
-    c.className = Wl, c.hidden = !0, l.parentNode.insertBefore(c, l), c.append(l), c.after(n);
+    c.className = Hl, c.hidden = !0, l.parentNode.insertBefore(c, l), c.append(l), c.after(n);
   }, i = e.data.lastIndexOf(s, t);
   if (i >= 0 && i + s.length >= t) {
     const l = e.splitText(i);
     return l.splitText(s.length), r(l), !0;
   }
   const o = e.parentElement, a = s.replace(/^\[|\]$/g, "");
-  return o && zl.has(o.tagName) && o.textContent?.trim() === a ? (r(o), !0) : !1;
+  return o && Wl.has(o.tagName) && o.textContent?.trim() === a ? (r(o), !0) : !1;
 }
-function wp(n, e) {
+function Rp(n, e) {
   const t = document.createElement("button");
-  return t.type = "button", t.className = "aparte-citation aparte-tag aparte-tag--sm", t.setAttribute("aria-haspopup", "dialog"), t.setAttribute("aria-expanded", "false"), ai.set(t, n), Kl(t, e), t;
+  return t.type = "button", t.className = "aparte-citation aparte-tag aparte-tag--sm", t.setAttribute("aria-haspopup", "dialog"), t.setAttribute("aria-expanded", "false"), li.set(t, n), Gl(t, e), t;
 }
-function Kl(n, e) {
-  const t = ai.get(n) ?? [], s = pp(t);
+function Gl(n, e) {
+  const t = li.get(n) ?? [], s = wp(t);
   n.dataset.label = s, n.setAttribute("aria-label", `${s}, ${vr(e, t.length)}`);
 }
-function Vl(n) {
+function jl(n) {
   const e = /* @__PURE__ */ new Set();
   for (const t of Array.from(n.querySelectorAll(`.${Ze}`)))
     t.parentNode && e.add(t.parentNode), t.remove();
-  for (const t of Array.from(n.querySelectorAll(`.${Wl}`)))
+  for (const t of Array.from(n.querySelectorAll(`.${Hl}`)))
     t.parentNode && e.add(t.parentNode), t.replaceWith(...Array.from(t.childNodes));
   for (const t of e) t.normalize();
   Wn.delete(n);
 }
-function go(n, e) {
+function mo(n, e) {
   if (typeof document > "u") return;
   const t = e.citations ?? [], s = new Map((e.sources ?? []).map((m) => [m.id, m])), r = JSON.stringify([e.content, t, [...s.values()].map((m) => [m.id, m.url, m.title, m.snippet])]), i = Array.from(n.querySelectorAll(`.${Ze}`)), o = Wn.get(n);
   if (o && o.signature === r && o.count === i.length) return;
   const a = document.activeElement, l = nt?.root === n && (a === nt.chip || (!a || a === document.body) && !nt.chip.isConnected) ? nt.at : -1, c = Y?.root === n ? Y.chip.isConnected ? i.indexOf(Y.chip) : Y.at : -1;
-  if (Vl(n), t.length === 0 || s.size === 0) {
+  if (jl(n), t.length === 0 || s.size === 0) {
     Wn.set(n, { signature: r, count: 0 }), c >= 0 && qe(!1);
     return;
   }
   const u = $(n);
-  ho.has(n) || (ho.add(n), n.addEventListener("click", (m) => {
+  po.has(n) || (po.add(n), n.addEventListener("click", (m) => {
     const g = m.target?.closest?.(`.${Ze}`);
-    !g || !n.contains(g) || (m.preventDefault(), Sp(g));
+    !g || !n.contains(g) || (m.preventDefault(), Mp(g));
   }), n.addEventListener("focusin", (m) => {
     const g = m.target;
     g.classList?.contains(Ze) && (nt = { root: n, chip: g, at: Array.from(n.querySelectorAll(`.${Ze}`)).indexOf(g) });
   }), n.addEventListener("focusout", (m) => {
     nt?.root === n && m.relatedTarget && (nt = null);
   }));
-  const h = mp(n), d = /* @__PURE__ */ new Map();
+  const h = Sp(n), d = /* @__PURE__ */ new Map();
   for (const m of t) {
     const g = m.sources.map((_) => s.get(_)).filter((_) => !!_);
     if (g.length === 0) continue;
-    const b = bp(e.content, m, h);
+    const b = Ep(e.content, m, h);
     if (!b) continue;
     const y = h.ends.indexOf(b), A = m.marker && m.start !== void 0 ? e.content.slice(m.start, m.end) : null, E = d.get(y) ?? { node: b[0], offset: b[1], marker: A, sources: [] };
     for (const _ of g) E.sources.includes(_) || E.sources.push(_);
@@ -2640,8 +4308,8 @@ function go(n, e) {
   }
   const p = [...d.values()].sort((m, g) => m.node === g.node ? g.offset - m.offset : m.node.compareDocumentPosition(g.node) & Node.DOCUMENT_POSITION_FOLLOWING ? 1 : -1);
   for (const m of p) {
-    const g = wp(m.sources, u);
-    Gl.set(g, n), !(m.marker && yp(g, m.node, m.offset, m.marker)) && vp(n, g, m.node, m.offset);
+    const g = Rp(m.sources, u);
+    Ul.set(g, n), !(m.marker && xp(g, m.node, m.offset, m.marker)) && Tp(n, g, m.node, m.offset);
   }
   const f = Array.from(n.querySelectorAll(`.${Ze}`));
   if (Wn.set(n, { signature: r, count: f.length }), l >= 0 && (f[l] ? f[l].focus({ preventScroll: !0 }) : nt = null), c >= 0 && Y) {
@@ -2649,20 +4317,20 @@ function go(n, e) {
     m ? (Y.chip = m, Y.at = c, m.setAttribute("aria-expanded", "true"), m.setAttribute("aria-controls", Y.el.id)) : qe(!1);
   }
 }
-function Ap(n) {
+function Ip(n) {
   const e = $(n);
-  for (const t of Array.from(n.querySelectorAll(`.${Ze}`))) Kl(t, e);
+  for (const t of Array.from(n.querySelectorAll(`.${Ze}`))) Gl(t, e);
 }
-let Y = null, kp = 0;
-function Sp(n) {
-  Y?.chip === n ? qe(!0) : Cp(n);
+let Y = null, Lp = 0;
+function Mp(n) {
+  Y?.chip === n ? qe(!0) : Op(n);
 }
-function Cp(n) {
+function Op(n) {
   qe(!1);
-  const e = ai.get(n) ?? [];
+  const e = li.get(n) ?? [];
   if (e.length === 0) return;
-  const t = Gl.get(n) ?? n.parentElement, s = Array.from(t.querySelectorAll(`.${Ze}`)).indexOf(n), r = $(n), i = document.createElement("div");
-  i.className = "aparte-citation-card aparte-popover", i.id = `aparte-citation-card-${++kp}`;
+  const t = Ul.get(n) ?? n.parentElement, s = Array.from(t.querySelectorAll(`.${Ze}`)).indexOf(n), r = $(n), i = document.createElement("div");
+  i.className = "aparte-citation-card aparte-popover", i.id = `aparte-citation-card-${++Lp}`;
   const o = n.closest(".aparte-viewport-container, aparte-chat-viewport") ?? n.ownerDocument.documentElement;
   i.dir = getComputedStyle(o).direction === "rtl" ? "rtl" : "ltr", i.setAttribute("role", "dialog"), i.setAttribute("aria-label", r.getLocale().sourcesCard ?? "Sources");
   const a = document.createElement("div");
@@ -2671,48 +4339,48 @@ function Cp(n) {
   l.className = "aparte-sr-only", l.setAttribute("role", "status"), i.append(a, l);
   const c = typeof i.showPopover == "function";
   c && (i.popover = "manual"), (n.closest("aparte-chat-viewport")?.parentElement ?? n.ownerDocument.body).append(i), c && i.showPopover(), n.setAttribute("aria-expanded", "true"), n.setAttribute("aria-controls", i.id);
-  const u = typeof MutationObserver == "function" ? new MutationObserver(Tp) : null;
-  u?.observe(n.ownerDocument.body, { childList: !0, subtree: !0 }), Y = { root: t, chip: n, at: s, el: i, body: a, status: l, sources: e, index: 0, config: r, watch: u }, Zl(), dn(), document.addEventListener("keydown", Xl, !0), document.addEventListener("pointerdown", Ql, !0), window.addEventListener("scroll", Yl, !0), window.addEventListener("resize", dn), i.addEventListener("focusout", Rp), i.addEventListener("keydown", xp), Ep(i);
+  const u = typeof MutationObserver == "function" ? new MutationObserver(Pp) : null;
+  u?.observe(n.ownerDocument.body, { childList: !0, subtree: !0 }), Y = { root: t, chip: n, at: s, el: i, body: a, status: l, sources: e, index: 0, config: r, watch: u }, Ql(), dn(), document.addEventListener("keydown", Kl, !0), document.addEventListener("pointerdown", Vl, !0), window.addEventListener("scroll", Xl, !0), window.addEventListener("resize", dn), i.addEventListener("focusout", Dp), i.addEventListener("keydown", $p), Np(i);
 }
-function Ep(n) {
+function Np(n) {
   (n.querySelector("a") ?? n.querySelector("button:not([disabled])"))?.focus();
 }
 function qe(n) {
   if (!Y) return;
   const { chip: e, el: t, watch: s } = Y;
-  Y = null, s?.disconnect(), t.remove(), e.setAttribute("aria-expanded", "false"), e.removeAttribute("aria-controls"), document.removeEventListener("keydown", Xl, !0), document.removeEventListener("pointerdown", Ql, !0), window.removeEventListener("scroll", Yl, !0), window.removeEventListener("resize", dn), n && e.isConnected && e.focus();
+  Y = null, s?.disconnect(), t.remove(), e.setAttribute("aria-expanded", "false"), e.removeAttribute("aria-controls"), document.removeEventListener("keydown", Kl, !0), document.removeEventListener("pointerdown", Vl, !0), window.removeEventListener("scroll", Xl, !0), window.removeEventListener("resize", dn), n && e.isConnected && e.focus();
 }
-function Tp() {
+function Pp() {
   Y && !Y.chip.isConnected && qe(!1);
 }
-function Xl(n) {
+function Kl(n) {
   n.key !== "Escape" || !Y || (n.preventDefault(), qe(!0));
 }
-function xp(n) {
+function $p(n) {
   if (n.key !== "Tab" || !Y) return;
   const e = Array.from(Y.el.querySelectorAll("a[href], button:not([disabled])")), t = n.shiftKey ? e[0] : e[e.length - 1];
   document.activeElement === t && (n.preventDefault(), qe(!0));
 }
-function Ql(n) {
+function Vl(n) {
   if (!Y) return;
   const e = n.target;
   e && (Y.el.contains(e) || Y.chip.contains(e)) || qe(!1);
 }
-function Rp(n) {
+function Dp(n) {
   if (!Y) return;
   const e = n.relatedTarget;
   e && (Y.el.contains(e) || Y.chip.contains(e)) || e && qe(!1);
 }
-function Ip(n) {
+function Bp(n) {
   for (let e = n.parentElement; e; e = e.parentElement) {
     const t = getComputedStyle(e).overflowY;
     if (t === "auto" || t === "scroll") return e;
   }
   return null;
 }
-function Yl() {
+function Xl() {
   if (!Y) return;
-  const n = Ip(Y.chip);
+  const n = Bp(Y.chip);
   if (n) {
     const e = n.getBoundingClientRect(), t = Y.chip.getBoundingClientRect();
     if (t.bottom < e.top || t.top > e.bottom) {
@@ -2735,21 +4403,21 @@ function dn() {
   let l = t.bottom + r;
   l + e.offsetHeight > window.innerHeight - 8 && t.top - e.offsetHeight - r > 8 && (l = t.top - e.offsetHeight - r), e.style.left = `${a - s.left}px`, e.style.top = `${l - s.top}px`;
 }
-function Zl() {
+function Ql() {
   if (!Y) return;
   const { el: n, body: e, status: t, sources: s, index: r, config: i } = Y, o = i.getLocale(), a = s[r], l = n.contains(document.activeElement) ? document.activeElement.dataset.aparteCardPart : void 0;
   if (e.replaceChildren(), s.length > 1) {
     const d = document.createElement("div");
     d.className = "aparte-citation-card__pager";
-    const p = mo(o.sourcePrevious ?? "Previous source", i.getIcon("prevBranch"), "prev", r === 0, () => _o(-1)), f = document.createElement("span");
+    const p = _o(o.sourcePrevious ?? "Previous source", i.getIcon("prevBranch"), "prev", r === 0, () => bo(-1)), f = document.createElement("span");
     f.className = "aparte-citation-card__position", f.textContent = `${r + 1}/${s.length}`, f.setAttribute("aria-hidden", "true");
-    const m = mo(o.sourceNext ?? "Next source", i.getIcon("nextBranch"), "next", r === s.length - 1, () => _o(1));
+    const m = _o(o.sourceNext ?? "Next source", i.getIcon("nextBranch"), "next", r === s.length - 1, () => bo(1));
     d.append(p, f, m), e.append(d);
   }
-  const c = li(a), u = a.title || ts(a) || a.url || "";
+  const c = ci(a), u = a.title || ts(a) || a.url || "";
   if (c) {
-    const d = jl(c, u, i, o.opensInNewTab ?? "(opens in a new tab)");
-    d.className = "aparte-citation-card__title", d.dataset.aparteCardPart = "link", d.addEventListener("click", Lp), e.append(d);
+    const d = zl(c, u, i, o.opensInNewTab ?? "(opens in a new tab)");
+    d.className = "aparte-citation-card__title", d.dataset.aparteCardPart = "link", d.addEventListener("click", qp), e.append(d);
   } else {
     const d = document.createElement("p");
     d.className = "aparte-citation-card__title", d.textContent = u, d.dir = "auto", e.append(d);
@@ -2768,7 +4436,7 @@ function Zl() {
     d && !d.disabled ? d.focus() : (n.querySelector(".aparte-citation-card__pager button:not([disabled])") ?? n.querySelector("a"))?.focus();
   }
 }
-function Lp(n) {
+function qp(n) {
   const e = Y?.chip, t = n.currentTarget;
   if (!e?.isConnected) return;
   const s = {
@@ -2778,14 +4446,14 @@ function Lp(n) {
   };
   xe(e, "aparte-link-click", s, { cancelable: !0 }) || n.preventDefault();
 }
-function mo(n, e, t, s, r) {
+function _o(n, e, t, s, r) {
   const i = document.createElement("button");
   return i.type = "button", i.className = "aparte-btn aparte-btn--icon aparte-btn--sm", i.setAttribute("aria-label", n), i.dataset.aparteCardPart = t, i.disabled = s, i.innerHTML = e, i.addEventListener("click", r), i;
 }
-function _o(n) {
-  Y && (Y.index = Math.max(0, Math.min(Y.sources.length - 1, Y.index + n)), Zl(), dn());
+function bo(n) {
+  Y && (Y.index = Math.max(0, Math.min(Y.sources.length - 1, Y.index + n)), Ql(), dn());
 }
-function Mp(n, e, t, s) {
+function Hp(n, e, t, s) {
   let r = n.querySelector(":scope > .aparte-sources");
   const i = [], o = /* @__PURE__ */ new Set();
   for (const h of t) {
@@ -2811,8 +4479,8 @@ function Mp(n, e, t, s) {
   for (const h of i) {
     const d = document.createElement("li");
     d.className = "aparte-sources__item";
-    const p = ts(h), f = h.title || p || h.url || "", m = li(h);
-    if (m ? d.append(jl(m, f, s, a)) : d.append(Object.assign(document.createElement("span"), { textContent: f, dir: "auto" })), p && p !== f) {
+    const p = ts(h), f = h.title || p || h.url || "", m = ci(h);
+    if (m ? d.append(zl(m, f, s, a)) : d.append(Object.assign(document.createElement("span"), { textContent: f, dir: "auto" })), p && p !== f) {
       const g = document.createElement("span");
       g.className = "aparte-sources__domain", g.textContent = p, g.dir = "auto", d.append(" ", g);
     }
@@ -2820,14 +4488,14 @@ function Mp(n, e, t, s) {
   }
   r.replaceChildren(c, u);
 }
-const jt = /* @__PURE__ */ new WeakMap(), bo = "<i>a</i>";
-function vo() {
-  return $().renderMarkdown(bo) !== z(bo);
+const jt = /* @__PURE__ */ new WeakMap(), vo = "<i>a</i>";
+function yo() {
+  return $().renderMarkdown(vo) !== z(vo);
 }
 function hn(n, e, t, s) {
-  Op(n, e, t, s), Ft(e, { streaming: s });
+  Fp(n, e, t, s), Ft(e, { streaming: s });
 }
-function Op(n, e, t, s) {
+function Fp(n, e, t, s) {
   const r = $();
   if (s) {
     if (jt.delete(e), n._aparteSmd === void 0) {
@@ -2842,13 +4510,13 @@ function Op(n, e, t, s) {
     }
   } else if (n._aparteSmd) {
     const i = n._aparteSmd, o = t.slice(i.written);
-    if (o && (i.renderer.write(o), i.written = t.length), i.renderer.end(), n._aparteSmd = void 0, !vo()) {
-      Hl(e), Vl(e), e.innerHTML = r.sanitizeHtml(e.innerHTML), jt.set(e, { content: t, config: r, version: ze(r), writer: "parser" });
+    if (o && (i.renderer.write(o), i.written = t.length), i.renderer.end(), n._aparteSmd = void 0, !yo()) {
+      Bl(e), jl(e), e.innerHTML = r.sanitizeHtml(e.innerHTML), jt.set(e, { content: t, config: r, version: ze(r), writer: "parser" });
       return;
     }
   } else {
     const i = jt.get(e);
-    if (i?.content === t && (i.writer === "parser" && !vo() || i.writer === "markdown" && i.config === r && i.version === ze(r)))
+    if (i?.content === t && (i.writer === "parser" && !yo() || i.writer === "markdown" && i.config === r && i.version === ze(r)))
       return;
   }
   e.innerHTML = r.renderMarkdown(t), s ? jt.delete(e) : jt.set(e, { content: t, config: r, version: ze(r), writer: "markdown" });
@@ -2863,17 +4531,17 @@ function yr(n) {
     if (mr(r, n) || t.closest(".aparte-code-drawing")) continue;
     const i = t.textContent ?? "";
     t.setAttribute("data-aparte-highlighted", ""), $().highlightCode(i, r, { fallback: !1 }).then((o) => {
-      (s.isConnected || s.parentElement) && Jl(s, o);
+      (s.isConnected || s.parentElement) && Yl(s, o);
     }).catch(() => t.removeAttribute("data-aparte-highlighted"));
   }
 }
-function Jl(n, e) {
+function Yl(n, e) {
   const t = document.createElement("template");
   t.innerHTML = e;
   for (const s of Array.from(t.content.querySelectorAll("code"))) s.setAttribute("data-aparte-highlighted", "");
   n.replaceWith(t.content);
 }
-const Np = {
+const Wp = {
   type: "text",
   render: (n) => `<div class="aparte-segment aparte-segment-text" data-segment-id="${z(n.id)}"><div class="aparte-segment-content" dir="auto">${$().renderMarkdown(n.content)}</div></div>`,
   /*
@@ -2884,7 +4552,7 @@ const Np = {
    */
   setup: (n, e) => {
     const t = n.querySelector(".aparte-segment-content");
-    t && (e.isStreaming === !0 ? hn(n, t, e.content, !0) : (Ft(t, { streaming: !1 }), yr(t)), go(t, e));
+    t && (e.isStreaming === !0 ? hn(n, t, e.content, !0) : (Ft(t, { streaming: !1 }), yr(t)), mo(t, e));
   },
   update: (n, e) => {
     const t = n.querySelector(".aparte-segment-content");
@@ -2893,11 +4561,11 @@ const Np = {
       t,
       e.content,
       e.isStreaming !== !1
-    ), e.isStreaming === !1 && yr(t), go(t, e));
+    ), e.isStreaming === !1 && yr(t), mo(t, e));
   },
   getStyles: () => ""
 };
-function ec(n, e) {
+function Zl(n, e) {
   const t = Math.max(1, Math.round(n / 1e3));
   try {
     const s = (o, a) => new Intl.NumberFormat(e, { style: "unit", unit: a, unitDisplay: "narrow" }).format(o);
@@ -2908,20 +4576,20 @@ function ec(n, e) {
     return `${t}s`;
   }
 }
-const Pp = 24;
+const Up = 24;
 function wr(n) {
   if (n.label && n.label !== "Thinking") return n.label;
   const e = $();
   if (!bt(n)) return e.t("thinking");
-  const s = n.showDuration ?? e.getSegmentDefaults("thinking")?.showDuration === !0 ? ph(n) : void 0;
-  return s === void 0 ? e.t("thought") : e.t("thoughtFor").replace("{duration}", () => ec(s, e.getLocale().tag || void 0));
+  const s = n.showDuration ?? e.getSegmentDefaults("thinking")?.showDuration === !0 ? wh(n) : void 0;
+  return s === void 0 ? e.t("thought") : e.t("thoughtFor").replace("{duration}", () => Zl(s, e.getLocale().tag || void 0));
 }
 const Ar = (n) => n.isStreaming === !0;
-function yo(n, e) {
+function wo(n, e) {
   const t = wr(e), s = n.querySelector(".aparte-thinking-label");
   s && s.textContent !== t && (s.textContent = t), s?.classList.toggle("aparte-shimmer", Ar(e)), n.querySelector(".aparte-thinking-content")?.setAttribute("aria-label", t);
 }
-const $p = {
+const zp = {
   type: "thinking",
   /*
    * Markdown, like every other prose surface.
@@ -2956,22 +4624,22 @@ const $p = {
    * The default label is the only config-derived text here — and `segment.label`
    * still wins, exactly as in `render`, because that string is the app's.
    */
-  relabel: (n, e) => yo(n, e),
+  relabel: (n, e) => wo(n, e),
   /** A block restored from storage is drawn here: `update` only runs on one that changes. */
   setup: (n, e) => {
     const t = n.querySelector(".aparte-thinking-content");
     t && (Ar(e) ? hn(n, t, e.content, !0) : Ft(t, { streaming: !1 }));
   },
   update: (n, e) => {
-    yo(n, e);
+    wo(n, e);
     const t = n.querySelector(".aparte-thinking-content");
     if (!t) return;
-    const s = t.scrollHeight - t.scrollTop - t.clientHeight <= Pp, r = e.isStreaming !== !1;
+    const s = t.scrollHeight - t.scrollTop - t.clientHeight <= Up, r = e.isStreaming !== !1;
     hn(n, t, e.content, r), r || yr(t), s && (t.scrollTop = t.scrollHeight);
   },
   getStyles: () => ""
 };
-function tc(n) {
+function Jl(n) {
   return typeof navigator < "u" && navigator.clipboard && typeof navigator.clipboard.writeText == "function" ? navigator.clipboard.writeText(n) : new Promise((e, t) => {
     if (typeof document > "u" || typeof document.execCommand != "function") {
       t(new Error("[aparte] No clipboard available in this context"));
@@ -2990,42 +4658,42 @@ function tc(n) {
     s.remove(), r instanceof HTMLElement && r.focus(), i ? e() : t(new Error("[aparte] Clipboard write failed"));
   });
 }
-const Dp = 1500;
+const Gp = 1500;
 function kr(n, e) {
   n.setAttribute("aria-label", e), n.setAttribute("title", e);
 }
-function ci(n) {
+function ui(n) {
   const e = W($().t("copy")), t = $().getIcon("copy");
   return `<button type="button" class="aparte-btn aparte-btn--icon aparte-btn--sm ${W(n)}" data-action="copy" aria-label="${e}" title="${e}">${t}</button>`;
 }
-function nc(n, e) {
+function ec(n, e) {
   n.addEventListener("click", () => {
-    tc(e()).catch(() => {
+    Jl(e()).catch(() => {
     }), n.innerHTML = $(n).getIcon("check"), kr(n, $(n).t("copied")), n.dataset.copied = "1", setTimeout(() => {
       n.innerHTML = $(n).getIcon("copy"), kr(n, $(n).t("copy")), delete n.dataset.copied;
-    }, Dp);
+    }, Gp);
   });
 }
-function sc(n) {
+function tc(n) {
   n.dataset.copied || (kr(n, $().t("copy")), n.innerHTML = $().getIcon("copy"));
 }
-const Bp = 400, qp = 256, wo = /* @__PURE__ */ new Map();
-function Hp(n, e, t) {
-  if (n.delete(e), n.size >= qp) {
+const jp = 400, Kp = 256, Ao = /* @__PURE__ */ new Map();
+function Vp(n, e, t) {
+  if (n.delete(e), n.size >= Kp) {
     const s = n.keys().next().value;
     s !== void 0 && n.delete(s);
   }
   n.set(e, t);
 }
-function Ao(n) {
+function ko(n) {
   const e = Number(n.dataset.aparteHlLen);
   return Number.isFinite(e) && e > 0 ? e : 0;
 }
-function Fp(n, e, t, s, r) {
+function Xp(n, e, t, s, r) {
   const i = n.querySelector(e);
   if (!i) return;
   delete i.dataset.aparteSettled;
-  const o = i.querySelector("[data-aparte-tail]"), a = Ao(i);
+  const o = i.querySelector("[data-aparte-tail]"), a = ko(i);
   if (o && a <= t.length)
     o.textContent = t.slice(a);
   else {
@@ -3037,9 +4705,9 @@ function Fp(n, e, t, s, r) {
 `) + 1;
   if (l <= a) return;
   const c = Date.now();
-  c - (wo.get(r) ?? 0) < Bp || (Hp(wo, r, c), $(n).highlightCode(t.slice(0, l), s).then((u) => {
+  c - (Ao.get(r) ?? 0) < jp || (Vp(Ao, r, c), $(n).highlightCode(t.slice(0, l), s).then((u) => {
     const h = n.querySelector(e);
-    if (!h || h.dataset.aparteSettled !== void 0 || l <= Ao(h)) return;
+    if (!h || h.dataset.aparteSettled !== void 0 || l <= ko(h)) return;
     h.innerHTML = u;
     const d = h.querySelector("code") ?? h, p = document.createElement("span");
     p.dataset.aparteTail = "", p.textContent = t.slice(l), d.appendChild(p), h.dataset.aparteHlLen = String(l);
@@ -3047,7 +4715,7 @@ function Fp(n, e, t, s, r) {
   }));
 }
 const Ds = /* @__PURE__ */ new WeakMap(), Ot = /* @__PURE__ */ new WeakMap(), Bs = /* @__PURE__ */ new WeakMap();
-function ko(n, e) {
+function So(n, e) {
   const t = n.querySelector(".aparte-code-content-wrapper");
   if (!t) return;
   const s = `${e.language ?? ""}${e.content}`, r = $(), i = Bs.get(n);
@@ -3061,11 +4729,11 @@ function ko(n, e) {
   });
 }
 const ns = (n) => (n.language || "").trim().split(/\s+/)[0] ?? "";
-function So(n, e) {
+function Co(n, e) {
   const t = ns(e), s = t ? $(n).getCodeLanguageRenderer(t) : void 0;
   n.toggleAttribute("data-aparte-bare", !!s && s.card !== !0);
 }
-function Co(n, e) {
+function Eo(n, e) {
   const t = n.querySelector(".aparte-code-content-wrapper");
   if (!t) return;
   Ot.set(n, (Ot.get(n) ?? 0) + 1), t.dataset.aparteSettled = "";
@@ -3073,10 +4741,10 @@ function Co(n, e) {
   let r = Array.from(t.querySelectorAll("pre > code")).find((i) => i.classList.contains(`language-${s}`));
   r || (t.innerHTML = `<pre><code class="language-${z(s)}"></code></pre>`, r = t.querySelector("pre > code")), r.textContent !== e.content && (r.textContent = e.content), Ft(t, { streaming: e.isStreaming === !0 });
 }
-const Wp = {
+const Qp = {
   type: "code",
   render: (n) => {
-    const e = ci("aparte-code-copy");
+    const e = ui("aparte-code-copy");
     return `
         <div class="aparte-segment aparte-segment-code" data-segment-id="${z(n.id)}">
             <div class="aparte-code-header">
@@ -3093,15 +4761,15 @@ const Wp = {
   /** The copy button's icon and tooltip — nothing else here comes from config. */
   relabel: (n) => {
     const e = n.querySelector(".aparte-code-copy");
-    e && sc(e);
+    e && tc(e);
   },
   setup: (n, e) => {
-    Ds.set(n, e.content), So(n, e), mr(ns(e), n) ? Co(n, e) : e.isStreaming !== !0 && ko(n, e);
+    Ds.set(n, e.content), Co(n, e), mr(ns(e), n) ? Eo(n, e) : e.isStreaming !== !0 && So(n, e);
     const t = n.querySelector(".aparte-code-copy");
-    t && nc(t, () => Ds.get(n) ?? "");
+    t && ec(t, () => Ds.get(n) ?? "");
   },
   update: (n, e) => {
-    Ds.set(n, e.content), So(n, e), mr(ns(e), n) ? Co(n, e) : e.isStreaming === !0 ? Fp(n, ".aparte-code-content-wrapper", e.content, e.language || "", e.id) : ko(n, e);
+    Ds.set(n, e.content), Co(n, e), mr(ns(e), n) ? Eo(n, e) : e.isStreaming === !0 ? Xp(n, ".aparte-code-content-wrapper", e.content, e.language || "", e.id) : So(n, e);
   },
   getStyles: () => ""
 };
@@ -3131,7 +4799,7 @@ function Sr(n, e) {
       return;
   }
 }
-const Up = {
+const Yp = {
   type: "error",
   render: (n) => {
     const e = $(), t = Sr(n.code, (i) => e.t(i)), s = e.getErrorRenderer?.();
@@ -3175,7 +4843,7 @@ const Up = {
   },
   getStyles: () => ""
 };
-function rc(n, e) {
+function nc(n, e) {
   if (!n || typeof n != "object" || Object.keys(n).length === 0) return "";
   if (e)
     try {
@@ -3189,18 +4857,18 @@ function rc(n, e) {
     return "";
   }
 }
-const Eo = /* @__PURE__ */ new WeakSet();
+const To = /* @__PURE__ */ new WeakSet();
 function mt(n, e) {
   for (const t of e.getToolLineProviders())
     try {
       const s = t(n);
       if (s && typeof s == "object") return s;
     } catch (s) {
-      Eo.has(t) || (Eo.add(t), console.error("[aparte] A tool-line provider threw; the row keeps its default line. Further throws from it are not reported.", s));
+      To.has(t) || (To.add(t), console.error("[aparte] A tool-line provider threw; the row keeps its default line. Further throws from it are not reported.", s));
     }
 }
 const qt = (n) => typeof n == "string" ? n.trim() : "";
-function ui(n, e, t = mt(n, e)) {
+function di(n, e, t = mt(n, e)) {
   const s = n.toolCall?.name ?? "tool", r = e.getToolDisplay(s)?.label;
   if (r !== void 0)
     try {
@@ -3211,10 +4879,10 @@ function ui(n, e, t = mt(n, e)) {
   const i = qt(t?.label);
   return i ? { text: i, isLabel: !0 } : { text: s, isLabel: !1 };
 }
-function zp(n, e, t = mt(n, e)) {
-  return ic(n, e, t).text;
+function Zp(n, e, t = mt(n, e)) {
+  return sc(n, e, t).text;
 }
-function ic(n, e, t = mt(n, e)) {
+function sc(n, e, t = mt(n, e)) {
   const s = e.getToolSummary(n.toolCall?.name ?? "");
   if (s)
     try {
@@ -3225,7 +4893,7 @@ function ic(n, e, t = mt(n, e)) {
   const r = qt(t?.target);
   return { text: r, isWords: r !== "" };
 }
-function oc(n, e) {
+function rc(n, e) {
   if (n === void 0) return "";
   try {
     return qt(typeof n == "function" ? n(e) : n);
@@ -3233,20 +4901,20 @@ function oc(n, e) {
     return "";
   }
 }
-function ac(n, e, t) {
-  return oc(t.getToolDisplay(n.toolCall?.name ?? "")?.activity, n) || qt(e?.activity);
+function ic(n, e, t) {
+  return rc(t.getToolDisplay(n.toolCall?.name ?? "")?.activity, n) || qt(e?.activity);
 }
-function Gp(n, e, t) {
-  return oc(t.getToolDisplay(n.toolCall?.name ?? "")?.note, n) || qt(e?.note);
+function Jp(n, e, t) {
+  return rc(t.getToolDisplay(n.toolCall?.name ?? "")?.note, n) || qt(e?.note);
 }
-function lc(n) {
-  return rc(n.toolCall?.input, $().getToolInputFormatter(n.toolCall?.name ?? ""));
+function oc(n) {
+  return nc(n.toolCall?.input, $().getToolInputFormatter(n.toolCall?.name ?? ""));
 }
 function Cr(n) {
   const e = $(), t = n.status ?? "pending", s = (r) => z(r);
   return t === "awaiting-approval" ? `${e.getIcon("pause")}${s(e.t("approvalWaiting"))}` : bs(n) ? s(e.t("toolQueued")) : t === "pending" ? s(e.t("toolRunning")) : t === "resolved" ? `${e.getIcon("check")}${s(e.t("toolCompleted"))}` : t === "rejected" ? `${e.getIcon("close")}${s(e.t("toolRejected"))}` : t === "aborted" ? `${e.getIcon("stop")}${s(e.t("toolStopped"))}` : t === "failed" ? `${e.getIcon("close")}${s(e.t("toolFailed"))}` : "";
 }
-function jp(n) {
+function ef(n) {
   const e = $();
   if (n.status === "rejected") {
     const t = n.refusal?.by;
@@ -3270,11 +4938,11 @@ function jp(n) {
     }
   return "";
 }
-function cc(n, e) {
-  return [jp(n), Gp(n, e, $())].filter(Boolean).join(" · ");
+function ac(n, e) {
+  return [ef(n), Jp(n, e, $())].filter(Boolean).join(" · ");
 }
 function Er(n) {
-  const e = Qp(n.result ?? "");
+  const e = rf(n.result ?? "");
   return !e || n.status === "rejected" && n.refusal ? null : { key: "toolOutput", text: e };
 }
 function qs(n, e, t) {
@@ -3282,7 +4950,7 @@ function qs(n, e, t) {
   if (r === !1) return { kind: "none" };
   if (typeof r != "function") return { kind: "parts" };
   try {
-    const i = r(n, t ? Kp(t) : void 0);
+    const i = r(n, t ? tf(t) : void 0);
     return i ? { kind: "body", body: typeof i == "string" ? $().sanitizeHtml(i) : i } : { kind: "none" };
   } catch {
     return { kind: "none" };
@@ -3292,27 +4960,27 @@ function Tr(n) {
   return n.tagName === "DETAILS" ? n : n.querySelector(":scope > details.aparte-tool-disclosure");
 }
 const xr = (n) => n.querySelector(':scope > .aparte-tool-detail[data-details="app"], :scope > .aparte-tool-disclosure > .aparte-tool-detail[data-details="app"]');
-function uc(n, e) {
+function lc(n, e) {
   const t = n.querySelector(".aparte-tool-detail");
-  t && (typeof e != "string" && e.parentNode === t || (typeof e == "string" ? (t.innerHTML = e, pn.delete(t)) : (t.replaceChildren(e), pn.set(t, e)), Un.set(t, dc(e))));
+  t && (typeof e != "string" && e.parentNode === t || (typeof e == "string" ? (t.innerHTML = e, pn.delete(t)) : (t.replaceChildren(e), pn.set(t, e)), Un.set(t, cc(e))));
 }
 const pn = /* @__PURE__ */ new WeakMap();
-function Kp(n) {
+function tf(n) {
   const e = xr(n), t = e ? pn.get(e) : void 0;
   return t && t.parentNode === e ? t : void 0;
 }
-const Un = /* @__PURE__ */ new WeakMap(), dc = (n) => typeof n == "string" ? n : n.outerHTML;
-function Vp(n, e) {
+const Un = /* @__PURE__ */ new WeakMap(), cc = (n) => typeof n == "string" ? n : n.outerHTML;
+function nf(n, e) {
   if (typeof e != "string" && n.contains(e)) {
     Un.set(n, e.outerHTML);
     return;
   }
-  const t = Un.get(n), s = dc(e);
+  const t = Un.get(n), s = cc(e);
   if (t === s) return;
   const r = document.createElement("div");
   typeof e == "string" ? r.innerHTML = e : r.append(e);
   const i = document.createElement("div");
-  t !== void 0 && (i.innerHTML = t), t !== void 0 && Rr(i, r) && Rr(i, n) ? hc(n, i, r) : (n.replaceChildren(...Array.from(r.childNodes)), typeof e == "string" ? pn.delete(n) : pn.set(n, e)), Un.set(n, s);
+  t !== void 0 && (i.innerHTML = t), t !== void 0 && Rr(i, r) && Rr(i, n) ? uc(n, i, r) : (n.replaceChildren(...Array.from(r.childNodes)), typeof e == "string" ? pn.delete(n) : pn.set(n, e)), Un.set(n, s);
 }
 function Rr(n, e) {
   if (n.childNodes.length !== e.childNodes.length) return !1;
@@ -3322,7 +4990,7 @@ function Rr(n, e) {
   }
   return !0;
 }
-function hc(n, e, t) {
+function uc(n, e, t) {
   for (let s = 0; s < n.childNodes.length; s++) {
     const r = n.childNodes[s], i = e.childNodes[s], o = t.childNodes[s];
     if (r instanceof Element && i instanceof Element && o instanceof Element) {
@@ -3330,17 +4998,17 @@ function hc(n, e, t) {
         i.getAttribute(a) !== l && r.setAttribute(a, l);
       for (const { name: a } of Array.from(i.attributes))
         o.hasAttribute(a) || r.removeAttribute(a);
-      hc(r, i, o);
+      uc(r, i, o);
     } else i.nodeValue !== o.nodeValue && (r.nodeValue = o.nodeValue);
   }
 }
-function To(n, e, t) {
+function xo(n, e, t) {
   const s = n.querySelector(".aparte-tool-note");
   if (!s) return;
-  const r = cc(e, t);
+  const r = ac(e, t);
   s.textContent !== r && (s.textContent = r), s.toggleAttribute("hidden", !r), r ? s.setAttribute("title", r) : s.removeAttribute("title");
 }
-function xo(n, e, t, s) {
+function Ro(n, e, t, s) {
   const r = n.querySelector(`[data-part="${e}"]`);
   if (!t) {
     r?.remove();
@@ -3362,24 +5030,24 @@ function xo(n, e, t, s) {
   const c = document.createElement("span");
   c.className = "aparte-tool-part-label", c.textContent = o.t(s);
   const u = document.createElement("template");
-  u.innerHTML = ci("aparte-tool-copy"), l.append(c, u.content);
+  u.innerHTML = ui("aparte-tool-copy"), l.append(c, u.content);
   const h = document.createElement("div");
   h.className = "aparte-tool-part-body", h.setAttribute("role", "region"), h.tabIndex = 0, h.setAttribute("aria-label", c.textContent);
   const d = document.createElement("pre"), p = document.createElement("code");
-  p.textContent = t, d.appendChild(p), h.appendChild(d), a.append(l, h), e === "input" ? i.prepend(a) : i.appendChild(a), pc(a);
+  p.textContent = t, d.appendChild(p), h.appendChild(d), a.append(l, h), e === "input" ? i.prepend(a) : i.appendChild(a), dc(a);
 }
-function pc(n) {
+function dc(n) {
   for (const e of n.querySelectorAll(".aparte-tool-copy")) {
     if (e.dataset.wired) continue;
     e.dataset.wired = "1";
     const t = e.closest(".aparte-tool-part");
-    nc(e, () => t?.querySelector(".aparte-tool-part-body")?.textContent ?? "");
+    ec(e, () => t?.querySelector(".aparte-tool-part-body")?.textContent ?? "");
   }
 }
-const Xp = 2e5;
-function fc(n) {
+const sf = 2e5;
+function hc(n) {
   const e = n.trim();
-  if (!(e.length > Xp || !(e.startsWith("{") || e.startsWith("["))))
+  if (!(e.length > sf || !(e.startsWith("{") || e.startsWith("["))))
     try {
       const t = JSON.parse(e);
       return t !== null && typeof t == "object" ? t : void 0;
@@ -3387,59 +5055,59 @@ function fc(n) {
       return;
     }
 }
-function Qp(n) {
-  const e = fc(n);
+function rf(n) {
+  const e = hc(n);
   return e === void 0 ? n : JSON.stringify(e, null, 2);
 }
-function Ro(n) {
+function Io(n) {
   const e = $();
   for (const t of n.querySelectorAll(".aparte-tool-part-body")) {
     const s = t.querySelector("code")?.textContent ?? "";
-    !s || fc(s) === void 0 || e.highlightCode(s, "json").then((r) => {
+    !s || hc(s) === void 0 || e.highlightCode(s, "json").then((r) => {
       (t.querySelector("code")?.textContent ?? "") === s && (t.innerHTML = r);
     }).catch(() => {
     });
   }
 }
-function gc(n, e) {
-  return ic(n, $(), e);
-}
-function Io(n, e, t) {
-  const s = n.querySelector(".aparte-tool-target");
-  if (!s) return;
-  const { text: r, isWords: i } = gc(e, t);
-  s.textContent !== r && (s.textContent = r), s.toggleAttribute("hidden", !r), s.classList.toggle("aparte-tool-target--words", i);
+function pc(n, e) {
+  return sc(n, $(), e);
 }
 function Lo(n, e, t) {
+  const s = n.querySelector(".aparte-tool-target");
+  if (!s) return;
+  const { text: r, isWords: i } = pc(e, t);
+  s.textContent !== r && (s.textContent = r), s.toggleAttribute("hidden", !r), s.classList.toggle("aparte-tool-target--words", i);
+}
+function Mo(n, e, t) {
   const s = n.querySelector(".aparte-tool-activity");
   if (!s) return;
-  const r = ac(e, t, $());
+  const r = ic(e, t, $());
   s.textContent !== r && (s.textContent = r), s.toggleAttribute("hidden", !r);
 }
-function mc(n, e) {
-  return ui(n, $(), e);
+function fc(n, e) {
+  return di(n, $(), e);
 }
-function _c(n) {
+function gc(n) {
   const e = $(), t = e.getToolDisplay(n.toolCall?.name ?? "")?.icon;
   return (t ? e.getIcon(t) : void 0) || e.getIcon("tool");
 }
-const di = (n) => $().getToolDisplay(n.toolCall?.name ?? "")?.quiet ?? !0, bs = (n) => (n.status ?? "pending") === "pending" && (n.queued === !0 || n.deferred?.reason === "queued");
-function bc(n) {
-  const e = n.status ?? "pending", t = di(n), s = e === "pending" && !bs(n);
+const hi = (n) => $().getToolDisplay(n.toolCall?.name ?? "")?.quiet ?? !0, bs = (n) => (n.status ?? "pending") === "pending" && (n.queued === !0 || n.deferred?.reason === "queued");
+function mc(n) {
+  const e = n.status ?? "pending", t = hi(n), s = e === "pending" && !bs(n);
   return {
     shimmer: t && s,
     spinner: !t && s,
     stateHidden: t && (s || e === "resolved")
   };
 }
-function Mo(n, e) {
-  const t = bc(e);
-  n.toggleAttribute("data-quiet", di(e)), n.toggleAttribute("data-queued", bs(e)), n.querySelector(".aparte-tool-spinner")?.toggleAttribute("hidden", !t.spinner), n.querySelector(".aparte-tool-name")?.classList.toggle("aparte-shimmer", t.shimmer), n.querySelector(".aparte-tool-state")?.classList.toggle("aparte-sr-only", t.stateHidden);
+function Oo(n, e) {
+  const t = mc(e);
+  n.toggleAttribute("data-quiet", hi(e)), n.toggleAttribute("data-queued", bs(e)), n.querySelector(".aparte-tool-spinner")?.toggleAttribute("hidden", !t.spinner), n.querySelector(".aparte-tool-name")?.classList.toggle("aparte-shimmer", t.shimmer), n.querySelector(".aparte-tool-state")?.classList.toggle("aparte-sr-only", t.stateHidden);
 }
-function Oo(n, e, t) {
+function No(n, e, t) {
   const s = n.querySelector(".aparte-tool-name");
   if (!s) return;
-  const { text: r, isLabel: i } = mc(e, t);
+  const { text: r, isLabel: i } = fc(e, t);
   s.textContent !== r && (s.textContent = r), s.classList.toggle("aparte-tool-name--label", i);
 }
 const Ir = /* @__PURE__ */ new WeakMap();
@@ -3447,11 +5115,11 @@ function vs(n) {
   const e = n?.open;
   return e && typeof e.onOpen == "function" ? e : void 0;
 }
-function Yp(n) {
+function of(n) {
   const e = vs(n);
   return e ? ` data-opens${e.current ? " data-current" : ""}` : "";
 }
-function hi(n) {
+function pi(n) {
   const e = vs(n);
   if (!e) return "";
   const t = W(typeof e.label == "string" ? e.label.trim() : ""), s = $().getIcon("maximize");
@@ -3465,15 +5133,15 @@ function Hs(n, e, t) {
       i.remove(), i = null;
     else {
       const a = document.createElement("template");
-      a.innerHTML = hi(e), i = a.content.firstElementChild, r.insertBefore(i, r.querySelector(":scope > .aparte-tool-activity"));
+      a.innerHTML = pi(e), i = a.content.firstElementChild, r.insertBefore(i, r.querySelector(":scope > .aparte-tool-activity"));
     }
   if (n.toggleAttribute("data-opens", !!s && !!i), n.toggleAttribute("data-current", !!s?.current && !!i), !s || !i) return;
   const o = typeof s.label == "string" ? s.label.trim() : "";
   i.getAttribute("aria-label") !== o && (i.setAttribute("aria-label", o), i.title = o), s.current ? i.setAttribute("aria-current", "true") : i.removeAttribute("aria-current");
 }
-const No = /* @__PURE__ */ new WeakSet();
-function Zp(n) {
-  No.has(n) || (No.add(n), n.addEventListener("click", (e) => {
+const Po = /* @__PURE__ */ new WeakSet();
+function af(n) {
+  Po.has(n) || (Po.add(n), n.addEventListener("click", (e) => {
     const t = Ir.get(n), s = e.target;
     if (!(!t || !s?.closest || s.closest(".aparte-segment-tool-call") !== n) && !(!s.closest(".aparte-tool-open") && (Tr(n) || s.closest(".aparte-tool-line")?.parentElement !== n || n.ownerDocument.getSelection?.()?.isCollapsed === !1)))
       try {
@@ -3483,8 +5151,8 @@ function Zp(n) {
       }
   }));
 }
-function Po(n, e, t = !0) {
-  const s = Cr(n), r = _c(n), i = gc(n, e), o = ac(n, e, $()), a = cc(n, e), l = mc(n, e), c = bc(n), u = t ? hi(e) : "";
+function $o(n, e, t = !0) {
+  const s = Cr(n), r = gc(n), i = pc(n, e), o = ic(n, e, $()), a = ac(n, e), l = fc(n, e), c = mc(n), u = t ? pi(e) : "";
   return `
                 <span class="aparte-tool-label">
                     <span class="aparte-tool-icon">${r}</span>
@@ -3496,25 +5164,25 @@ function Po(n, e, t = !0) {
                 <span class="aparte-tool-note"${a ? ` title="${W(a)}"` : " hidden"}>${z(a)}</span>${u}
                 <span class="aparte-tool-activity"${o ? "" : " hidden"}>${z(o)}</span>`;
 }
-function $o(n) {
+function Do(n) {
   return `<div class="aparte-segment aparte-segment-tool-call" data-segment-id="${z(n.id)}" data-status="${W(n.status ?? "pending")}" data-tool-call-id="${W(n.toolCall?.id ?? "")}" data-tool-name="${W(n.toolCall?.name ?? "tool")}" hidden></div>`;
 }
 const xt = (n) => n.hidden && n.classList.contains("aparte-segment-tool-call") && n.childElementCount === 0, nn = /* @__PURE__ */ new WeakMap(), zn = /* @__PURE__ */ new WeakMap();
-function Jp(n) {
+function lf(n) {
   return zn.get(n) ?? null;
 }
-function Do(n, e) {
+function Bo(n, e) {
   const t = nn.get(n);
   return t || (n.classList.contains("aparte-segment-tool-call") ? null : e);
 }
-function Bo(n, e, t) {
-  const s = n.toolCall?.name ?? "tool", r = n.status ?? "pending", i = n.toolCall?.id ?? "", o = Po(n, t), a = (di(n) ? " data-quiet" : "") + (bs(n) ? " data-queued" : ""), l = Yp(t), c = $().getIcon("expand"), u = e.kind === "parts" ? lc(n) : "", h = e.kind === "parts" ? Er(n) : null;
+function qo(n, e, t) {
+  const s = n.toolCall?.name ?? "tool", r = n.status ?? "pending", i = n.toolCall?.id ?? "", o = $o(n, t), a = (hi(n) ? " data-quiet" : "") + (bs(n) ? " data-queued" : ""), l = of(t), c = $().getIcon("expand"), u = e.kind === "parts" ? oc(n) : "", h = e.kind === "parts" ? Er(n) : null;
   if (e.kind === "none" || e.kind === "parts" && !u && !h)
     return `
         <div class="aparte-segment aparte-segment-tool-call" data-segment-id="${z(n.id)}" data-status="${W(r)}" data-tool-call-id="${W(i)}" data-tool-name="${W(s)}"${a}${l}><div class="aparte-tool-line">${o}</div>
         </div>
     `;
-  const d = $(), p = ci("aparte-tool-copy"), f = n.collapsed !== void 0 ? !n.collapsed : d.getToolDisplay(s)?.open === !0, m = hi(t), g = m ? `<details class="aparte-tool-disclosure"${f ? " open" : ""}>` : "", b = m ? `<div class="aparte-segment aparte-segment-tool-call" data-segment-id="${z(n.id)}" data-status="${W(r)}" data-tool-call-id="${W(i)}" data-tool-name="${W(s)}"${a}${l}>${g}` : `<details class="aparte-segment aparte-segment-tool-call" data-segment-id="${z(n.id)}" data-status="${W(r)}" data-tool-call-id="${W(i)}" data-tool-name="${W(s)}"${a}${l}${f ? " open" : ""}>`, y = m ? `</details><span class="aparte-tool-open-slot">${m}</span></div>` : "</details>", A = Po(n, t, !1);
+  const d = $(), p = ui("aparte-tool-copy"), f = n.collapsed !== void 0 ? !n.collapsed : d.getToolDisplay(s)?.open === !0, m = pi(t), g = m ? `<details class="aparte-tool-disclosure"${f ? " open" : ""}>` : "", b = m ? `<div class="aparte-segment aparte-segment-tool-call" data-segment-id="${z(n.id)}" data-status="${W(r)}" data-tool-call-id="${W(i)}" data-tool-name="${W(s)}"${a}${l}>${g}` : `<details class="aparte-segment aparte-segment-tool-call" data-segment-id="${z(n.id)}" data-status="${W(r)}" data-tool-call-id="${W(i)}" data-tool-name="${W(s)}"${a}${l}${f ? " open" : ""}>`, y = m ? `</details><span class="aparte-tool-open-slot">${m}</span></div>` : "</details>", A = $o(n, t, !1);
   if (e.kind === "body") {
     const E = document.createElement("template");
     E.innerHTML = `
@@ -3523,7 +5191,7 @@ function Bo(n, e, t) {
             <div class="aparte-tool-detail" data-details="app"></div>
         ${y}`.trim();
     const _ = E.content.firstElementChild;
-    return uc(_, e.body), _;
+    return lc(_, e.body), _;
   }
   return `
         ${b}
@@ -3547,15 +5215,15 @@ const on = {
   type: "tool_call",
   render: (n) => {
     const e = n.toolCall?.name ?? "tool";
-    if ($().isToolHidden(e)) return $o(n);
+    if ($().isToolHidden(e)) return Do(n);
     const t = $().getToolRenderer(e);
     if (t) {
-      vc(e, t);
+      _c(e, t);
       const r = t.render(n);
-      return r instanceof HTMLElement && (nn.set(r, t), zn.set(r, t)), r || $o(n);
+      return r instanceof HTMLElement && (nn.set(r, t), zn.set(r, t)), r || Do(n);
     }
     const s = mt(n, $());
-    return Bo(n, qs(n, s), s);
+    return qo(n, qs(n, s), s);
   },
   /**
    * The pill's glyphs, and the label it wears while a person is deciding.
@@ -3569,25 +5237,25 @@ const on = {
    */
   relabel: (n, e) => {
     if (xt(n)) return;
-    const t = $(), s = Do(n, t.getToolRenderer(e.toolCall?.name) ?? null);
+    const t = $(), s = Bo(n, t.getToolRenderer(e.toolCall?.name) ?? null);
     if (s) {
       s.relabel?.(n, e);
       return;
     }
     const r = mt(e, t), i = n.querySelector(".aparte-tool-icon");
-    i && (i.innerHTML = _c(e)), Oo(n, e, r), Io(n, e, r), Lo(n, e, r), To(n, e, r), Hs(n, r, !1);
+    i && (i.innerHTML = gc(e)), No(n, e, r), Lo(n, e, r), Mo(n, e, r), xo(n, e, r), Hs(n, r, !1);
     const o = n.querySelector('[data-part="input"] .aparte-tool-part-label');
     o && (o.textContent = t.t("toolInput")), n.querySelector('[data-part="input"] .aparte-tool-part-body')?.setAttribute("aria-label", t.t("toolInput"));
     const a = Er(e), l = n.querySelector('[data-part="output"] .aparte-tool-part-label');
     l && a && (l.textContent = t.t(a.key)), a && n.querySelector('[data-part="output"] .aparte-tool-part-body')?.setAttribute("aria-label", t.t(a.key));
-    for (const h of n.querySelectorAll(".aparte-tool-copy")) sc(h);
+    for (const h of n.querySelectorAll(".aparte-tool-copy")) tc(h);
     const c = xr(n);
     if (c) {
       const h = qs(e, r, n);
-      h.kind === "body" && Vp(c, h.body);
+      h.kind === "body" && nf(c, h.body);
     }
     const u = n.querySelector(".aparte-tool-state");
-    u && (u.innerHTML = Cr(e)), Mo(n, e);
+    u && (u.innerHTML = Cr(e)), Oo(n, e);
   },
   /**
    * Patch in place. NEVER re-render, and never touch `open`.
@@ -3608,7 +5276,7 @@ const on = {
       n.setAttribute("data-status", t);
       return;
     }
-    const r = s ? null : $().getToolRenderer(e.toolCall?.name) ?? null, i = xt(n) ? null : Do(n, r);
+    const r = s ? null : $().getToolRenderer(e.toolCall?.name) ?? null, i = xt(n) ? null : Bo(n, r);
     if (i && i === r && i.update && !xt(n)) {
       i.update(n, e);
       return;
@@ -3623,23 +5291,23 @@ const on = {
       o(on.render(e));
       return;
     }
-    const a = mt(e, $()), l = qs(e, a, n), c = l.kind === "parts" ? lc(e) : "", u = l.kind === "parts" ? Er(e) : null, h = l.kind === "body" || !!c || !!u, d = !!xr(n), p = Tr(n), f = !!p && p !== n;
+    const a = mt(e, $()), l = qs(e, a, n), c = l.kind === "parts" ? oc(e) : "", u = l.kind === "parts" ? Er(e) : null, h = l.kind === "body" || !!c || !!u, d = !!xr(n), p = Tr(n), f = !!p && p !== n;
     if (h !== !!p || h && l.kind === "body" !== d || h && f !== !!vs(a)) {
-      const g = p?.open, b = o(Bo(e, l, a)), y = b && g !== void 0 ? Tr(b) : null;
+      const g = p?.open, b = o(qo(e, l, a)), y = b && g !== void 0 ? Tr(b) : null;
       y && g !== void 0 && (y.open = g);
       return;
     }
     n.setAttribute("data-status", t);
     const m = n.querySelector(".aparte-tool-state");
-    if (m && (m.innerHTML = Cr(e)), Mo(n, e), Oo(n, e, a), Io(n, e, a), Lo(n, e, a), To(n, e, a), Hs(n, a, !0), l.kind === "body") {
-      uc(n, l.body);
+    if (m && (m.innerHTML = Cr(e)), Oo(n, e), No(n, e, a), Lo(n, e, a), Mo(n, e, a), xo(n, e, a), Hs(n, a, !0), l.kind === "body") {
+      lc(n, l.body);
       return;
     }
-    xo(n, "input", c, "toolInput"), xo(n, "output", u?.text ?? "", u?.key ?? "toolOutput"), Ro(n);
+    Ro(n, "input", c, "toolInput"), Ro(n, "output", u?.text ?? "", u?.key ?? "toolOutput"), Io(n);
   },
   setup: (n, e) => {
     const s = $().isToolHidden(e.toolCall?.name ?? "tool") ? void 0 : $().getToolRenderer(e.toolCall?.name);
-    s && zn.set(n, s), !xt(n) && (s || (Hs(n, mt(e, $()), !1), Zp(n)), pc(n), Ro(n), s && nn.set(n, s), s?.setup?.(n, e));
+    s && zn.set(n, s), !xt(n) && (s || (Hs(n, mt(e, $()), !1), af(n)), dc(n), Io(n), s && nn.set(n, s), s?.setup?.(n, e));
   },
   /**
    * The row leaves for good: the registered renderer that drew it, if any, cleans up. A
@@ -3663,25 +5331,25 @@ const on = {
   // has no other way onto the page.
   getStyles: () => ""
 };
-function qo(n) {
+function Ho(n) {
   const e = document.createElement("div");
   return e.className = "aparte-segment aparte-segment-activity", e.setAttribute("data-segment-id", n.id), e.setAttribute("data-activity-type", n.activityType), e.hidden = !0, e;
 }
-const Ho = (n) => n.hidden && n.classList.contains("aparte-segment-activity") && n.childElementCount === 0, Rt = /* @__PURE__ */ new WeakMap(), Gn = /* @__PURE__ */ new WeakMap();
-function ef(n) {
+const Fo = (n) => n.hidden && n.classList.contains("aparte-segment-activity") && n.childElementCount === 0, Rt = /* @__PURE__ */ new WeakMap(), Gn = /* @__PURE__ */ new WeakMap();
+function cf(n) {
   return Gn.get(n) ?? null;
 }
 const Fs = (n) => $().getActivityRenderer(n.activityType) ?? null, an = {
   type: "activity",
   render: (n) => {
     const e = Fs(n);
-    if (!e) return qo(n);
+    if (!e) return Ho(n);
     const t = e.render(n);
-    return t instanceof HTMLElement ? (Rt.set(t, e), Gn.set(t, e), t) : t.trim() ? t : qo(n);
+    return t instanceof HTMLElement ? (Rt.set(t, e), Gn.set(t, e), t) : t.trim() ? t : Ho(n);
   },
   setup: (n, e) => {
     const t = Fs(e);
-    t && (Gn.set(n, t), !Ho(n) && (Rt.set(n, t), t.setup?.(n, e)));
+    t && (Gn.set(n, t), !Fo(n) && (Rt.set(n, t), t.setup?.(n, e)));
   },
   /**
    * The agent sent it again. The renderer that drew it patches it, when it can and is still
@@ -3693,7 +5361,7 @@ const Fs = (n) => $().getActivityRenderer(n.activityType) ?? null, an = {
       s.update(n, e);
       return;
     }
-    if (!t && !s && Ho(n)) {
+    if (!t && !s && Fo(n)) {
       n.setAttribute("data-activity-type", e.activityType);
       return;
     }
@@ -3722,12 +5390,12 @@ const Fs = (n) => $().getActivityRenderer(n.activityType) ?? null, an = {
       }
     }
   }
-}, Fo = /* @__PURE__ */ new WeakMap();
+}, Wo = /* @__PURE__ */ new WeakMap();
 function vt(n) {
-  let e = Fo.get(n);
-  return e || (e = { renderers: /* @__PURE__ */ new Map(), defaultsInstalled: !1, defaultsDeclined: !1 }, Fo.set(n, e)), e;
+  let e = Wo.get(n);
+  return e || (e = { renderers: /* @__PURE__ */ new Map(), defaultsInstalled: !1, defaultsDeclined: !1 }, Wo.set(n, e)), e;
 }
-function tf(n) {
+function uf(n) {
   const e = vt(n);
   if (n === ke || e.defaultsDeclined) return e.renderers;
   const t = new Map(vt(ke).renderers);
@@ -3735,27 +5403,27 @@ function tf(n) {
   return t;
 }
 let lt = null;
-function nf(n, e = $()) {
+function df(n, e = $()) {
   const t = vt(e);
-  t.renderers.get(n.type) !== n && (t.renderers.set(n.type, n), pi(e), Mt(e));
+  t.renderers.get(n.type) !== n && (t.renderers.set(n.type, n), fi(e), Mt(e));
 }
-function sf(n = $()) {
+function hf(n = $()) {
   vt(n).defaultsDeclined = !0;
 }
-function rf(n = $()) {
+function pf(n = $()) {
   const e = vt(n);
   if (!(e.defaultsInstalled || e.defaultsDeclined)) {
     e.defaultsInstalled = !0;
-    for (const t of yc)
+    for (const t of bc)
       e.renderers.has(t.type) || e.renderers.set(t.type, t);
-    pi(n);
+    fi(n);
   }
 }
-function Wo(n, e = $()) {
-  return tf(e).get(n);
+function Uo(n, e = $()) {
+  return uf(e).get(n);
 }
 const Rn = /* @__PURE__ */ new Set();
-function pi(n = $()) {
+function fi(n = $()) {
   if (typeof document > "u") return;
   (!lt || !lt.isConnected) && (lt = document.createElement("style"), lt.id = "aparte-renderer-styles", document.head.appendChild(lt), lt.textContent = Array.from(Rn).join(`
 `));
@@ -3767,31 +5435,31 @@ function pi(n = $()) {
   e && (lt.textContent = Array.from(Rn).join(`
 `));
 }
-const Uo = /* @__PURE__ */ new WeakMap();
-function vc(n, e) {
+const zo = /* @__PURE__ */ new WeakMap();
+function _c(n, e) {
   if (typeof document > "u") return;
   const t = e.getStyles?.();
   if (!t) return;
-  let s = Uo.get(e);
-  if (s || (s = `aparte-tool-renderer-${n}`, Uo.set(e, s)), document.getElementById(s)) return;
+  let s = zo.get(e);
+  if (s || (s = `aparte-tool-renderer-${n}`, zo.set(e, s)), document.getElementById(s)) return;
   const r = document.createElement("style");
   r.id = s, r.textContent = t, document.head.appendChild(r);
 }
-function of(n = $()) {
+function ff(n = $()) {
   const e = vt(n);
   e.defaultsInstalled = !0;
-  for (const t of yc)
-    e.renderers.has(t.type) || nf(t, n);
-  pi(n);
+  for (const t of bc)
+    e.renderers.has(t.type) || df(t, n);
+  fi(n);
 }
-const yc = [
-  Np,
-  $p,
+const bc = [
   Wp,
-  Up,
+  zp,
+  Qp,
+  Yp,
   on,
   an
-], wc = kl;
+], vc = wl;
 function Ws(n) {
   const { target: e, config: t, messageId: s, targetId: r, conversationId: i, observe: o = !0 } = n, a = { messageId: s, ...i ? { conversationId: i } : {} };
   let l = new gr({ blocks: t.getStreamBlocks() }), c = /* @__PURE__ */ new Set(), u = null;
@@ -3922,7 +5590,7 @@ function Ws(n) {
         };
         h.set(D.id, D), L.queued && d.add(D.id);
         const F = t.getToolRenderer(L.name);
-        F && vc(L.name, F), e.addSegment?.(D);
+        F && _c(L.name, F), e.addSegment?.(D);
         break;
       }
       case "tool-running": {
@@ -4017,13 +5685,13 @@ function Ws(n) {
       le(L);
       return;
     }
-    !F && !zo.has(D) && (zo.add(D), console.warn(
+    !F && !Go.has(D) && (Go.add(D), console.warn(
       `[aparte] A sub-agent's events arrived (agent "${String(G)}") and nothing draws them: they are kept out of the reply and not shown. Add @aparte/plugin-subagents (setupSubagents()) to show one line per sub-agent, or hear them with config.observeRunEvents().`
     )), L.type === "tool-awaiting-approval" && Ne(e, "aparte-tool-approval-request", { toolCallId: L.toolCallId, toolName: L.name, input: L.input, agentId: G, ...a }, r);
   };
 }
-const zo = /* @__PURE__ */ new WeakSet();
-function af(n, e) {
+const Go = /* @__PURE__ */ new WeakSet();
+function gf(n, e) {
   return {
     [Symbol.asyncIterator]() {
       const t = n.getReader(), s = () => {
@@ -4055,7 +5723,7 @@ function af(n, e) {
   };
 }
 new TextEncoder();
-function fi(n) {
+function gi(n) {
   const e = typeof document > "u" ? void 0 : document.baseURI;
   try {
     return e ? new URL(n, e) : new URL(n);
@@ -4063,11 +5731,11 @@ function fi(n) {
     return null;
   }
 }
-function lf() {
+function mf() {
   const n = typeof location > "u" ? null : location.origin;
   return n && n !== "null" ? n : null;
 }
-function cf(n) {
+function _f(n) {
   try {
     const e = new URL(n);
     return e.protocol === "http:" || e.protocol === "https:" ? e.origin : null;
@@ -4075,10 +5743,10 @@ function cf(n) {
     return null;
   }
 }
-function uf(n, e) {
+function bf(n, e) {
   return n === e ? !0 : typeof n == "function" || typeof e == "function" ? !1 : n.length === e.length && n.every((t, s) => t === e[s]);
 }
-const Go = /* @__PURE__ */ new WeakSet();
+const jo = /* @__PURE__ */ new WeakSet();
 function Us(n) {
   if (typeof n == "function")
     return (r, i) => {
@@ -4086,7 +5754,7 @@ function Us(n) {
         const o = n(i ? i.href : r);
         return o === "load" || o === "drop" ? o : "hold";
       } catch (o) {
-        return Go.has(n) || (Go.add(n), console.warn("[aparte] The image policy threw, so the pictures it was asked about are held.", o)), "hold";
+        return jo.has(n) || (jo.add(n), console.warn("[aparte] The image policy threw, so the pictures it was asked about are held.", o)), "hold";
       }
     };
   let e = !1, t = !1;
@@ -4096,16 +5764,16 @@ function Us(n) {
     if (i === "*") e = !0;
     else if (i === "self" || i === "'self'") t = !0;
     else {
-      const o = cf(i);
+      const o = _f(i);
       o ? s.add(o) : console.warn(`[aparte] setImagePolicy: ${JSON.stringify(r)} is not 'self', '*' or an http(s) origin, so it allows nothing.`);
     }
   }
-  return (r, i) => e || i && (s.has(i.origin) || t && i.origin === lf()) ? "load" : "hold";
+  return (r, i) => e || i && (s.has(i.origin) || t && i.origin === mf()) ? "load" : "hold";
 }
 const _t = /^[\u0000- ]*$/;
-function df(n, e, t) {
+function vf(n, e, t) {
   if (_t.test(e)) return "load";
-  const s = fi(e);
+  const s = gi(e);
   if (s) {
     if (s.protocol === "data:" || s.protocol === "blob:") return "load";
     if (s.protocol !== "http:" && s.protocol !== "https:") return "drop";
@@ -4114,20 +5782,20 @@ function df(n, e, t) {
   return r === "hold" && s !== null && t?.has(s.href) ? "load" : r;
 }
 const ss = /* @__PURE__ */ new WeakMap();
-function hf(n, e) {
-  const t = fi(e);
+function yf(n, e) {
+  const t = gi(e);
   if (!t) return;
   let s = ss.get(n);
   s || ss.set(n, s = /* @__PURE__ */ new Set()), s.add(t.href);
 }
-function pf(n) {
+function wf(n) {
   return ss.get(n);
 }
-function ff(n) {
+function Af(n) {
   ss.delete(n);
 }
-const In = /[\t\n\f\r ]/, gf = /^(?:|\d+w(?: \d+h)?|(?:\d+|\d*\.\d+)(?:[eE][+-]?\d+)?x)$/;
-function Ac(n) {
+const In = /[\t\n\f\r ]/, kf = /^(?:|\d+w(?: \d+h)?|(?:\d+|\d*\.\d+)(?:[eE][+-]?\d+)?x)$/;
+function yc(n) {
   const e = [], t = n.length;
   let s = 0;
   for (; s < t; ) {
@@ -4170,45 +5838,45 @@ function Ac(n) {
       }
     }
     const a = o.join(" ");
-    i && gf.test(a) && e.push({ url: i, descriptor: a });
+    i && kf.test(a) && e.push({ url: i, descriptor: a });
   }
   return e;
 }
-function kc(n) {
+function wc(n) {
   return n.map((e) => e.descriptor ? `${e.url} ${e.descriptor}` : e.url).join(", ");
 }
-function Sc(n) {
-  const e = fi(n);
+function Ac(n) {
+  const e = gi(n);
   if (e?.hostname) return e.hostname;
   const t = n.trim();
   return t.length > 48 ? `${t.slice(0, 47)}…` : t;
 }
 function rs(n, e, t, s = !1) {
-  const r = Sc(n), i = e ? t.named(r, e) : t.load(r), o = t.icon;
+  const r = Ac(n), i = e ? t.named(r, e) : t.load(r), o = t.icon;
   return `${s ? '<span class="aparte-tag aparte-image-held" role="button" tabindex="0"' : `<a class="aparte-tag aparte-image-held" href="${W(n)}" target="_blank" rel="noopener noreferrer"`} data-aparte-image="${W(n)}"${e ? ` data-aparte-image-alt="${W(e)}"` : ""} title="${W(t.load(r))}" aria-label="${W(i)}"><span class="aparte-image-held__icon" aria-hidden="true">${o}</span>` + (e ? `<span class="aparte-tag__label aparte-image-held__alt">${z(e)}</span>` : "") + `<span class="aparte-image-held__host">${z(r)}</span>${s ? "</span>" : "</a>"}`;
 }
-function Cc(n, e) {
+function kc(n, e) {
   return `<img src="${W(n)}" alt="${W(e)}" referrerpolicy="no-referrer">`;
 }
-const Ec = /<(?:img|source)\b|data-aparte-image/i, mf = "a[data-aparte-image], span[data-aparte-image]";
-function _f(n, e, t) {
-  return !n || !Ec.test(n) ? n : typeof document > "u" ? Sf(n, e, t) : bf(n, e, t);
+const Sc = /<(?:img|source)\b|data-aparte-image/i, Sf = "a[data-aparte-image], span[data-aparte-image]";
+function Cf(n, e, t) {
+  return !n || !Sc.test(n) ? n : typeof document > "u" ? Mf(n, e, t) : Ef(n, e, t);
 }
-function Tc(n, e, t) {
-  const s = e === void 0 ? [] : Ac(e), r = _t.test(n) ? s[0]?.url : n;
+function Cc(n, e, t) {
+  const s = e === void 0 ? [] : yc(e), r = _t.test(n) ? s[0]?.url : n;
   if (r === void 0) return null;
   const i = t(r);
   if (i !== "load") return { decision: i, address: r, srcset: null };
   const o = s.filter((a) => t(a.url) === "load");
-  return { decision: i, address: r, srcset: o.length ? kc(o) : null };
+  return { decision: i, address: r, srcset: o.length ? wc(o) : null };
 }
-function xc(n, e, t) {
+function Ec(n, e, t) {
   if (!_t.test(n) && t(n) !== "load") return !1;
   if (e === void 0) return _t.test(n) ? !1 : null;
-  const s = Ac(e).filter((r) => t(r.url) === "load");
-  return s.length ? kc(s) : _t.test(n) ? !1 : null;
+  const s = yc(e).filter((r) => t(r.url) === "load");
+  return s.length ? wc(s) : _t.test(n) ? !1 : null;
 }
-function bf(n, e, t) {
+function Ef(n, e, t) {
   const s = document.createElement("template");
   s.innerHTML = n;
   const r = s.content;
@@ -4217,12 +5885,12 @@ function bf(n, e, t) {
     const c = document.createElement("template");
     return c.innerHTML = l, c.content;
   };
-  for (const l of Array.from(r.querySelectorAll(mf))) {
+  for (const l of Array.from(r.querySelectorAll(Sf))) {
     const c = l.getAttribute("data-aparte-image") ?? "", u = l.getAttribute("data-aparte-image-alt") ?? "", h = _t.test(c) ? "drop" : e(c);
-    o = !0, h === "drop" ? l.remove() : l.replaceWith(a(h === "load" ? Cc(c, u) : rs(c, u, i ??= t(), !!l.parentElement?.closest("a"))));
+    o = !0, h === "drop" ? l.remove() : l.replaceWith(a(h === "load" ? kc(c, u) : rs(c, u, i ??= t(), !!l.parentElement?.closest("a"))));
   }
   for (const l of Array.from(r.querySelectorAll("source"))) {
-    const c = xc(l.getAttribute("src") ?? "", l.getAttribute("srcset") ?? void 0, e);
+    const c = Ec(l.getAttribute("src") ?? "", l.getAttribute("srcset") ?? void 0, e);
     if (c === !1) {
       l.remove(), o = !0;
       continue;
@@ -4230,7 +5898,7 @@ function bf(n, e, t) {
     c === null ? l.hasAttribute("srcset") && (l.removeAttribute("srcset"), o = !0) : c !== l.getAttribute("srcset") && (l.setAttribute("srcset", c), o = !0);
   }
   for (const l of Array.from(r.querySelectorAll("img"))) {
-    const c = Tc(l.getAttribute("src") ?? "", l.getAttribute("srcset") ?? void 0, e);
+    const c = Cc(l.getAttribute("src") ?? "", l.getAttribute("srcset") ?? void 0, e);
     if (!c) {
       l.hasAttribute("srcset") && (l.removeAttribute("srcset"), o = !0), l.parentElement?.localName === "picture" && l.getAttribute("referrerpolicy") !== "no-referrer" && (l.setAttribute("referrerpolicy", "no-referrer"), o = !0);
       continue;
@@ -4247,12 +5915,12 @@ function bf(n, e, t) {
   }
   return o ? s.innerHTML : n;
 }
-const vf = /* @__PURE__ */ new Set(["script", "style", "textarea", "title", "xmp", "iframe", "noembed", "noframes", "noscript", "plaintext"]), yf = /* @__PURE__ */ new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]), wf = /[A-Za-z]/, Af = /^[a-z][a-z0-9_.:-]*$/;
+const Tf = /* @__PURE__ */ new Set(["script", "style", "textarea", "title", "xmp", "iframe", "noembed", "noframes", "noscript", "plaintext"]), xf = /* @__PURE__ */ new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]), Rf = /[A-Za-z]/, If = /^[a-z][a-z0-9_.:-]*$/;
 function zs(n, e, t) {
-  const s = e.filter(([i]) => !(i in t) && Af.test(i)), r = Object.entries(t).filter((i) => i[1] !== null);
+  const s = e.filter(([i]) => !(i in t) && If.test(i)), r = Object.entries(t).filter((i) => i[1] !== null);
   return `<${n}${[...s, ...r].map(([i, o]) => ` ${i}="${W(o)}"`).join("")}>`;
 }
-function kf(n, e, t) {
+function Lf(n, e, t) {
   const s = new RegExp(`<(/?)${e}(?=[\\s/>])`, "g");
   s.lastIndex = t;
   let r = 1;
@@ -4263,8 +5931,8 @@ function kf(n, e, t) {
     }
   return -1;
 }
-function Sf(n, e, t) {
-  if (!n || !Ec.test(n)) return n;
+function Mf(n, e, t) {
+  if (!n || !Sc.test(n)) return n;
   const s = n.toLowerCase(), r = n.length;
   let i, o = "", a = 0, l = 0;
   const c = [];
@@ -4280,11 +5948,11 @@ function Sf(n, e, t) {
       continue;
     }
     const h = n[u + 1] === "/", d = u + (h ? 2 : 1);
-    if (!wf.test(n[d] ?? "")) {
+    if (!Rf.test(n[d] ?? "")) {
       o += "<", a = u + 1;
       continue;
     }
-    const { tag: p, attrs: f, end: m } = oi(n, d);
+    const { tag: p, attrs: f, end: m } = ai(n, d);
     if (m < 0) {
       o += n.slice(u);
       break;
@@ -4298,26 +5966,26 @@ function Sf(n, e, t) {
       continue;
     }
     const b = (y) => f.find(([A]) => A === y)?.[1];
-    if (vf.has(p)) {
+    if (Tf.has(p)) {
       const y = s.indexOf(`</${p}`, m), A = y < 0 ? r : y;
       o += g + n.slice(m, A), a = A;
       continue;
     }
     if ((p === "a" || p === "span") && b("data-aparte-image") !== void 0) {
-      const y = kf(s, p, m);
+      const y = Lf(s, p, m);
       y >= 0 ? a = y : p === "a" && (l += 1);
       const A = b("data-aparte-image") ?? "", E = b("data-aparte-image-alt") ?? "", _ = _t.test(A) ? "drop" : e(A);
-      _ === "load" ? o += Cc(A, E) : _ === "hold" && (o += rs(A, E, i ??= t(), l > 0));
+      _ === "load" ? o += kc(A, E) : _ === "hold" && (o += rs(A, E, i ??= t(), l > 0));
       continue;
     }
     if (p === "a" && (l += 1), p === "source") {
-      const y = xc(b("src") ?? "", b("srcset"), e);
+      const y = Ec(b("src") ?? "", b("srcset"), e);
       if (y === !1) continue;
       o += y === (b("srcset") ?? null) ? g : zs(p, f, { srcset: y });
       continue;
     }
     if (p === "img") {
-      const y = Tc(b("src") ?? "", b("srcset"), e);
+      const y = Cc(b("src") ?? "", b("srcset"), e);
       if (!y) {
         const A = c[c.length - 1] === "picture";
         b("srcset") === void 0 && (!A || b("referrerpolicy") === "no-referrer") ? o += g : o += zs(p, f, { srcset: null, ...A ? { referrerpolicy: "no-referrer" } : {} });
@@ -4326,61 +5994,61 @@ function Sf(n, e, t) {
       y.decision === "hold" ? o += rs(y.address, b("alt") ?? "", i ??= t(), l > 0) : y.decision === "load" && (o += zs(p, f, { srcset: y.srcset, referrerpolicy: "no-referrer" }));
       continue;
     }
-    !yf.has(p) && !g.endsWith("/>") && c.push(p), o += g;
+    !xf.has(p) && !g.endsWith("/>") && c.push(p), o += g;
   }
   return o;
 }
-const Cf = /^(?:#|mailto:|tel:|sms:)/i, Ef = [["target", "_blank"], ["rel", "noopener noreferrer"]], Tf = Object.freeze({ target: "_blank", rel: "noopener noreferrer" }), xf = Object.freeze({});
-function gi(n, e, t) {
-  return n !== "external-only" && !Cf.test(e.replace(ri, "")) ? Ef : ii(e, t);
+const Of = /^(?:#|mailto:|tel:|sms:)/i, Nf = [["target", "_blank"], ["rel", "noopener noreferrer"]], Pf = Object.freeze({ target: "_blank", rel: "noopener noreferrer" }), $f = Object.freeze({});
+function mi(n, e, t) {
+  return n !== "external-only" && !Of.test(e.replace(ii, "")) ? Nf : oi(e, t);
 }
-function Rf(n, e) {
-  return gi(n, e, "").length ? Tf : xf;
+function Df(n, e) {
+  return mi(n, e, "").length ? Pf : $f;
 }
-const Rc = /<a[\s/>]/i;
-function If(n, e) {
-  return !n || !Rc.test(n) ? n : typeof document > "u" ? Bf(n, e) : Mf(n, e);
+const Tc = /<a[\s/>]/i;
+function Bf(n, e) {
+  return !n || !Tc.test(n) ? n : typeof document > "u" ? jf(n, e) : Hf(n, e);
 }
-function Lf(n) {
+function qf(n) {
   const e = (n ?? "").split(/[ \t\n\f\r]+/).filter((t) => t && t.toLowerCase() !== "opener");
   for (const t of ["noopener", "noreferrer"])
     e.some((s) => s.toLowerCase() === t) || e.push(t);
   return e.join(" ");
 }
-function Ic(n, e, t) {
+function xc(n, e, t) {
   const s = n.find(([i]) => i === "target")?.[1];
   if (s !== "_blank") return (e ?? void 0) === s ? null : { target: s, rel: void 0 };
-  const r = Lf(t);
+  const r = qf(t);
   return (e ?? void 0) === s && (t ?? void 0) === r ? null : { target: s, rel: r };
 }
-function Mf(n, e) {
+function Hf(n, e) {
   const t = document.createElement("template");
   t.innerHTML = n;
   let s = !1;
   for (const r of Array.from(t.content.querySelectorAll("a[href]"))) {
-    const i = gi(e, r.getAttribute("href") ?? "", r.getAttribute("target") ?? ""), o = Ic(i, r.getAttribute("target"), r.getAttribute("rel"));
+    const i = mi(e, r.getAttribute("href") ?? "", r.getAttribute("target") ?? ""), o = xc(i, r.getAttribute("target"), r.getAttribute("rel"));
     o && (r.removeAttribute("target"), o.target !== void 0 && r.setAttribute("target", o.target), o.rel !== void 0 && (r.removeAttribute("rel"), r.setAttribute("rel", o.rel)), s = !0);
   }
   return s ? t.innerHTML : n;
 }
-const Of = /* @__PURE__ */ new Set(["script", "style", "textarea", "title", "xmp", "iframe", "noembed", "noframes", "noscript", "plaintext"]), Nf = /[A-Za-z]/, Pf = /^[a-z][a-z0-9_.:-]*$/, jo = /--!?>/g;
-function $f(n, e) {
+const Ff = /* @__PURE__ */ new Set(["script", "style", "textarea", "title", "xmp", "iframe", "noembed", "noframes", "noscript", "plaintext"]), Wf = /[A-Za-z]/, Uf = /^[a-z][a-z0-9_.:-]*$/, Ko = /--!?>/g;
+function zf(n, e) {
   if (n[e] === ">") return e + 1;
   if (n.startsWith("->", e)) return e + 2;
-  jo.lastIndex = e;
-  const t = jo.exec(n);
+  Ko.lastIndex = e;
+  const t = Ko.exec(n);
   return t ? t.index + t[0].length : n.length;
 }
-function Df(n, e, t) {
+function Gf(n, e, t) {
   const s = (c) => e.find(([u]) => u === c)?.[1], r = s("href");
   if (r === void 0) return n;
-  const i = gi(t, r, s("target") ?? ""), o = Ic(i, s("target"), s("rel"));
+  const i = mi(t, r, s("target") ?? ""), o = xc(i, s("target"), s("rel"));
   if (!o) return n;
-  const a = e.filter(([c]) => c !== "target" && (o.rel === void 0 || c !== "rel") && Pf.test(c)), l = [];
+  const a = e.filter(([c]) => c !== "target" && (o.rel === void 0 || c !== "rel") && Uf.test(c)), l = [];
   return o.target !== void 0 && l.push(["target", o.target]), o.rel !== void 0 && l.push(["rel", o.rel]), `<a${[...a, ...l].map(([c, u]) => ` ${c}="${W(u)}"`).join("")}>`;
 }
-function Bf(n, e) {
-  if (!n || !Rc.test(n)) return n;
+function jf(n, e) {
+  if (!n || !Tc.test(n)) return n;
   const t = n.toLowerCase(), s = n.length;
   let r = "", i = 0;
   for (; i < s; ) {
@@ -4390,16 +6058,16 @@ function Bf(n, e) {
       break;
     }
     if (r += n.slice(i, o), n.startsWith("<!--", o)) {
-      const p = $f(n, o + 4);
+      const p = zf(n, o + 4);
       r += n.slice(o, p), i = p;
       continue;
     }
     const a = n[o + 1] === "/", l = o + (a ? 2 : 1);
-    if (!Nf.test(n[l] ?? "")) {
+    if (!Wf.test(n[l] ?? "")) {
       r += "<", i = o + 1;
       continue;
     }
-    const { tag: c, attrs: u, end: h } = oi(n, l);
+    const { tag: c, attrs: u, end: h } = ai(n, l);
     if (h < 0) {
       r += n.slice(o);
       break;
@@ -4410,12 +6078,12 @@ function Bf(n, e) {
       r += d;
       continue;
     }
-    if (Of.has(c)) {
+    if (Ff.has(c)) {
       const p = t.indexOf(`</${c}`, h), f = p < 0 ? s : p;
       r += d + n.slice(h, f), i = f;
       continue;
     }
-    r += c === "a" ? Df(d, u, e) : d;
+    r += c === "a" ? Gf(d, u, e) : d;
   }
   return r;
 }
@@ -4435,18 +6103,18 @@ class Nt extends DOMException {
     ), this.reason = e;
   }
 }
-function qf(n) {
+function Kf(n) {
   return n ? n.tagName?.toLowerCase() === "aparte-chat" || n.hasAttribute?.("data-aparte-chat") === !0 : !1;
 }
 function Je(n) {
   let e = n ?? null;
   for (; e; ) {
-    if (qf(e)) return e;
+    if (Kf(e)) return e;
     e = e.parentElement;
   }
   return null;
 }
-class Ko {
+class Vo {
   exact = /* @__PURE__ */ new Map();
   // Keyed by the pattern's spelling, so two RegExp instances of one pattern are one
   // entry; a Map keeps first-insertion order, which is the order patterns are tried in.
@@ -4483,7 +6151,7 @@ class Ko {
     this.exact.clear(), this.patterns.clear(), this.any = void 0;
   }
 }
-let Vo = !1;
+let Xo = !1;
 const ct = {
   copy: !1,
   retry: !1,
@@ -4493,16 +6161,16 @@ const ct = {
 }, Ln = {
   attachmentPreview: !1,
   filePreview: !1
-}, Xo = () => {
-}, Lc = /* @__PURE__ */ new WeakMap();
+}, Qo = () => {
+}, Rc = /* @__PURE__ */ new WeakMap();
 function ze(n) {
-  return Lc.get(n) ?? 0;
+  return Rc.get(n) ?? 0;
 }
 function Ie(n) {
-  Lc.set(n, ze(n) + 1);
+  Rc.set(n, ze(n) + 1);
 }
 const Lr = /* @__PURE__ */ new Set(), Mn = /* @__PURE__ */ new Set();
-function Hf(n) {
+function Vf(n) {
   return Lr.add(n), () => {
     Lr.delete(n);
   };
@@ -4520,14 +6188,14 @@ function Mt(n) {
         }
   }), Mn.add(n);
 }
-const Ff = (n) => n instanceof RegExp ? `re:${String(n)}` : `name:${n}`, Gs = ["hidden", "open", "details", "quiet"];
+const Xf = (n) => n instanceof RegExp ? `re:${String(n)}` : `name:${n}`, Gs = ["hidden", "open", "details", "quiet"];
 function js(n, e) {
   if (!n || !(e in n) || e in Object.prototype) return;
   const t = n[e];
   return typeof t == "function" ? t.bind(n) : void 0;
 }
-const Qo = /* @__PURE__ */ new WeakSet();
-function Wf(n) {
+const Yo = /* @__PURE__ */ new WeakSet();
+function Qf(n) {
   const e = /* @__PURE__ */ new Set();
   for (let t = n; t && t !== Object.prototype; t = Object.getPrototypeOf(t))
     for (const s of Object.getOwnPropertyNames(t)) s !== "constructor" && e.add(s);
@@ -4541,7 +6209,7 @@ class Mr {
   // HTML sanitizer applied to markdown/highlight PROVIDER output (untrusted,
   // LLM-authored) before it is injected via innerHTML. Default = built-in
   // zero-dep allowlist sanitizer; `null` disables it (trusted content only).
-  _sanitizer = co;
+  _sanitizer = uo;
   // Which pictures a model or a tool chose load without a click (`image-policy.ts`): by
   // default only `data:` and `blob:`, which make no request.
   _imagePolicy = [];
@@ -4595,7 +6263,7 @@ class Mr {
   _elicitationAnswerOnClick = !0;
   _elicitationFieldRenderer;
   // Transport: where chat requests go + how auth is handled (AparteDirectTransport = browser-direct).
-  _transport = new sh();
+  _transport = new dh();
   _modelPreferenceProvider;
   // Per-call approval policy (a mode: plan / ask / auto). `null` = the tools' own flags.
   _approvalPolicy = null;
@@ -4645,13 +6313,13 @@ class Mr {
   // Tool Registry
   _tools = /* @__PURE__ */ new Map();
   // By exact name, pattern or '*' — see `tool-table.ts` for the one resolution rule.
-  _toolRenderers = new Ko();
+  _toolRenderers = new Vo();
   /** {@link overrideToolRenderer}'s stacks: what each matcher held below every override. */
   /** Per matcher: what it held below every override, then one entry per override — an object of its own, so two overrides of the same renderer are told apart. */
   _toolRendererOverrides = /* @__PURE__ */ new Map();
   /** Bumped by `reset()`: a restore function from before it must not undo what came after. */
   _overrideGeneration = 0;
-  _toolDisplays = new Ko();
+  _toolDisplays = new Vo();
   /** By activity type — see {@link registerActivityRenderer}. */
   _activityRenderers = /* @__PURE__ */ new Map();
   /** What a plugin says about a call, read after the app's display — see {@link setToolLineProvider}. */
@@ -4878,8 +6546,8 @@ class Mr {
    * nor turn its pictures back into requests the reader never made.
    */
   sanitizeHtml(e) {
-    const t = this._sanitizer ? this._sanitizer(e) : e, s = If(t, this._linkTarget);
-    return _f(s, (r) => this.decideImage(r), () => this._heldImageWords());
+    const t = this._sanitizer ? this._sanitizer(e) : e, s = Bf(t, this._linkTarget);
+    return Cf(s, (r) => this.decideImage(r), () => this._heldImageWords());
   }
   /**
    * Which pictures a model or a tool chose load before the reader asks — in a reply's
@@ -4903,7 +6571,7 @@ class Mr {
    * @example aparteGlobalConfig.setImagePolicy((url) => url.startsWith('https://images.example.com/') ? 'load' : 'hold');
    */
   setImagePolicy(e) {
-    this._imagePolicyNamed = !0, !uf(e, this._imagePolicy) && (this._imagePolicy = typeof e == "function" ? e : [...e], this._imageDecider = Us(e), Ie(this), this._notify());
+    this._imagePolicyNamed = !0, !bf(e, this._imagePolicy) && (this._imagePolicy = typeof e == "function" ? e : [...e], this._imageDecider = Us(e), Ie(this), this._notify());
   }
   /**
    * What the picture at `url` does under this config's image policy: `'load'`, `'hold'`
@@ -4912,7 +6580,7 @@ class Mr {
    * the request.
    */
   decideImage(e) {
-    const t = df(this._imageDecider, e, pf(this));
+    const t = vf(this._imageDecider, e, wf(this));
     return t === "hold" && this._noteHeldImage(e), t;
   }
   /**
@@ -4922,8 +6590,8 @@ class Mr {
    * policy, whatever it is: `setImagePolicy([])` keeps the default and the silence.
    */
   _noteHeldImage(e) {
-    this._imagePolicyNamed || Vo || (Vo = !0, console.warn(
-      `[aparte] A picture from ${Sc(e)} waits for the reader's click: pictures a model or a tool chose load only from the sources the app allows. To load yours, call aparteGlobalConfig.setImagePolicy(['https://cdn.example.com']); to keep holding them without this note, setImagePolicy([]). Why: https://apartejs.dev/guides/markdown/#pictures-a-reply-can-load`
+    this._imagePolicyNamed || Xo || (Xo = !0, console.warn(
+      `[aparte] A picture from ${Ac(e)} waits for the reader's click: pictures a model or a tool chose load only from the sources the app allows. To load yours, call aparteGlobalConfig.setImagePolicy(['https://cdn.example.com']); to keep holding them without this note, setImagePolicy([]). Why: https://apartejs.dev/guides/markdown/#pictures-a-reply-can-load`
     ));
   }
   /**
@@ -4933,7 +6601,7 @@ class Mr {
    * its own "Show images", then draws again. Nothing on screen is redrawn by this call.
    */
   showImage(e) {
-    hf(this, e);
+    yf(this, e);
   }
   /** What a held picture says, in this config's language. */
   _heldImageWords() {
@@ -4977,7 +6645,7 @@ class Mr {
    * Object.assign(link, aparteGlobalConfig.decideLink(url));
    */
   decideLink(e) {
-    return Rf(this._linkTarget, e);
+    return Df(this._linkTarget, e);
   }
   /**
    * Set the system prompt template. Supports `{{key}}` placeholders resolved via setSystemPromptVarsProvider.
@@ -5028,11 +6696,11 @@ class Mr {
    */
   registerIcons(e) {
     const t = this._iconProvider;
-    if (t && Qo.has(t))
+    if (t && Yo.has(t))
       Object.assign(t, e);
     else {
       const s = Object.assign(Object.create(t ?? null), e);
-      Qo.add(s), this._iconProvider = s;
+      Yo.add(s), this._iconProvider = s;
     }
     this._notify();
   }
@@ -5049,7 +6717,7 @@ class Mr {
     const e = this._iconProvider, t = {};
     for (const s of Object.keys(En))
       t[s] = js(e, s) ?? (() => En[s]);
-    for (const s of Wf(e)) {
+    for (const s of Qf(e)) {
       const r = js(e, s);
       r && !(s in t) && (t[s] = r);
     }
@@ -5721,7 +7389,7 @@ class Mr {
    * restore();
    */
   overrideToolRenderer(e, t) {
-    const s = Ff(e), r = this._toolRenderers.get(e);
+    const s = Xf(e), r = this._toolRenderers.get(e);
     let i = this._toolRendererOverrides.get(s);
     i ? i[i.length - 1].renderer !== r && i.splice(0, i.length, { renderer: r }) : (i = [{ renderer: r }], this._toolRendererOverrides.set(s, i));
     const o = { renderer: t };
@@ -6204,7 +7872,7 @@ class Mr {
     const t = this._elicitationQueueKey(e), s = this._elicitationQueue.get(t), r = s === void 0 ? this._present(e) : s.then(
       () => this._present(e),
       () => this._present(e)
-    ), i = r.then(Xo, Xo).then(() => {
+    ), i = r.then(Qo, Qo).then(() => {
       this._elicitationQueue.get(t) === i && this._elicitationQueue.delete(t);
     });
     return this._elicitationQueue.set(t, i), r;
@@ -6309,7 +7977,7 @@ class Mr {
    * `keyResolver` among them), and the {@link AparteConfig.subscribe | subscribe()} listeners.
    */
   reset() {
-    this._markdownProvider = void 0, this._streamingMarkdownProvider = void 0, this._highlightProvider = void 0, this._codeLanguageRenderers.clear(), this._systemPromptTemplate = void 0, this._systemPromptVarsProvider = void 0, this._statusRenderer = void 0, this._errorRenderer = void 0, this._attachmentRenderer = void 0, this._siblingNavRenderer = void 0, this._bubbleShellRenderer = void 0, this._iconProvider = void 0, this._segmentDefaults.clear(), this._avatarProvider = void 0, this._keyProvider = void 0, this._conversationManager = void 0, this._elicitationPresenters = [], this._elicitationQueue.clear(), this._elicitationObservers.clear(), this._locale = tn, this._actions = [], this._sanitizer = co, this._imagePolicy = [], this._imageDecider = Us([]), this._imagePolicyNamed = !1, ff(this), this._linkTarget = "new-tab", this._aiProviders.clear(), this._fetchedModels.clear(), this._tools.clear(), this._toolRenderers.clear(), this._toolRendererOverrides.clear(), this._activityRenderers.clear(), this._overrideGeneration++, Mt(this), this._toolDisplays.clear(), this._toolLineProvider = null, this._extraToolLineProviders = [], this._stepLabels.clear(), this._streamBlocks.clear(), this._runEventObservers = [], this._modelConfig = {}, this._requireModelSelection = !1, this._queueWhileStreaming = !1, this._autoReply = !0, this._autoReplyByConversation.clear(), this._elicitationAllowOther = !0, this._elicitationLayout = "stepped", this._elicitationAnswerOnClick = !0, this._elicitationFieldRenderer = void 0, this._modelPreferenceProvider = void 0, this._approvalPolicy = null, this._compactor = null, this._bubbleActionsConfig = { ...ct }, this._turnSummary = null, this._streamingCaret = !1, this._dateSeparators = !1, this._hostHandlers = { ...Ln }, this._notify();
+    this._markdownProvider = void 0, this._streamingMarkdownProvider = void 0, this._highlightProvider = void 0, this._codeLanguageRenderers.clear(), this._systemPromptTemplate = void 0, this._systemPromptVarsProvider = void 0, this._statusRenderer = void 0, this._errorRenderer = void 0, this._attachmentRenderer = void 0, this._siblingNavRenderer = void 0, this._bubbleShellRenderer = void 0, this._iconProvider = void 0, this._segmentDefaults.clear(), this._avatarProvider = void 0, this._keyProvider = void 0, this._conversationManager = void 0, this._elicitationPresenters = [], this._elicitationQueue.clear(), this._elicitationObservers.clear(), this._locale = tn, this._actions = [], this._sanitizer = uo, this._imagePolicy = [], this._imageDecider = Us([]), this._imagePolicyNamed = !1, Af(this), this._linkTarget = "new-tab", this._aiProviders.clear(), this._fetchedModels.clear(), this._tools.clear(), this._toolRenderers.clear(), this._toolRendererOverrides.clear(), this._activityRenderers.clear(), this._overrideGeneration++, Mt(this), this._toolDisplays.clear(), this._toolLineProvider = null, this._extraToolLineProviders = [], this._stepLabels.clear(), this._streamBlocks.clear(), this._runEventObservers = [], this._modelConfig = {}, this._requireModelSelection = !1, this._queueWhileStreaming = !1, this._autoReply = !0, this._autoReplyByConversation.clear(), this._elicitationAllowOther = !0, this._elicitationLayout = "stepped", this._elicitationAnswerOnClick = !0, this._elicitationFieldRenderer = void 0, this._modelPreferenceProvider = void 0, this._approvalPolicy = null, this._compactor = null, this._bubbleActionsConfig = { ...ct }, this._turnSummary = null, this._streamingCaret = !1, this._dateSeparators = !1, this._hostHandlers = { ...Ln }, this._notify();
   }
   // ─────────────────────────────────────────────────────────────────────────
   // Default Fallbacks (Zero-dependency)
@@ -6322,59 +7990,59 @@ class Mr {
   }
 }
 const Ks = Symbol.for("aparte.globalConfig.1");
-function Uf() {
+function Yf() {
   return typeof window < "u" ? (window[Ks] || (window[Ks] = new Mr()), window[Ks]) : new Mr();
 }
-const ke = Uf(), Yo = "aparte-config-change";
+const ke = Yf(), Zo = "aparte-config-change";
 function wt(n, e) {
   const t = (s) => {
     const r = s.detail;
     r?.config && r.config !== P(n) || e();
   };
-  return window.addEventListener(Yo, t), () => window.removeEventListener(Yo, t);
+  return window.addEventListener(Zo, t), () => window.removeEventListener(Zo, t);
 }
-const zf = /[\p{Z}\s]+/gu, Gf = /[\p{Cc}\p{Co}\p{Cn}\p{Cs}\u2800]|(?!(?:\u200C|\u200D|\uFE0E|\uFE0F))\p{Default_Ignorable_Code_Point}/u, jf = /\u{1F3F4}\u{E0067}\u{E0062}(?:\u{E0065}\u{E006E}\u{E0067}|\u{E0073}\u{E0063}\u{E0074}|\u{E0077}\u{E006C}\u{E0073})\u{E007F}/gu, Kf = /(?:^| )\p{M}|\p{Mn}{5,}/u, Vf = /* @__PURE__ */ new Set(["‌", "‍", "︎", "️"]), Xf = /^[0-9#*]$/, Qf = /^\p{Emoji}$/u, Zo = /^\p{Extended_Pictographic}$/u, Yf = /^\p{Emoji_Modifier}$/u, Jo = /^[\p{scx=Arab}\p{scx=Syrc}\p{scx=Thaa}\p{scx=Nkoo}\p{scx=Adlm}\p{scx=Rohg}\p{scx=Mong}\p{scx=Deva}\p{scx=Beng}\p{scx=Guru}\p{scx=Gujr}\p{scx=Orya}\p{scx=Taml}\p{scx=Telu}\p{scx=Knda}\p{scx=Mlym}\p{scx=Sinh}\p{scx=Mymr}\p{scx=Khmr}]$/u, Zf = /^[\u094D\u09CD\u0A4D\u0ACD\u0B4D\u0BCD\u0C4D\u0CCD\u0D4D\u0DCA\u1039\u17D2]$/;
-function Jf(n) {
+const Zf = /[\p{Z}\s]+/gu, Jf = /[\p{Cc}\p{Co}\p{Cn}\p{Cs}\u2800]|(?!(?:\u200C|\u200D|\uFE0E|\uFE0F))\p{Default_Ignorable_Code_Point}/u, eg = /\u{1F3F4}\u{E0067}\u{E0062}(?:\u{E0065}\u{E006E}\u{E0067}|\u{E0073}\u{E0063}\u{E0074}|\u{E0077}\u{E006C}\u{E0073})\u{E007F}/gu, tg = /(?:^| )\p{M}|\p{Mn}{5,}/u, ng = /* @__PURE__ */ new Set(["‌", "‍", "︎", "️"]), sg = /^[0-9#*]$/, rg = /^\p{Emoji}$/u, Jo = /^\p{Extended_Pictographic}$/u, ig = /^\p{Emoji_Modifier}$/u, ea = /^[\p{scx=Arab}\p{scx=Syrc}\p{scx=Thaa}\p{scx=Nkoo}\p{scx=Adlm}\p{scx=Rohg}\p{scx=Mong}\p{scx=Deva}\p{scx=Beng}\p{scx=Guru}\p{scx=Gujr}\p{scx=Orya}\p{scx=Taml}\p{scx=Telu}\p{scx=Knda}\p{scx=Mlym}\p{scx=Sinh}\p{scx=Mymr}\p{scx=Khmr}]$/u, og = /^[\u094D\u09CD\u0A4D\u0ACD\u0B4D\u0BCD\u0C4D\u0CCD\u0D4D\u0DCA\u1039\u17D2]$/;
+function ag(n) {
   const e = Array.from(n);
   for (let t = 0; t < e.length; t++) {
     const s = e[t];
-    if (!Vf.has(s)) continue;
+    if (!ng.has(s)) continue;
     const r = e[t - 1] ?? "", i = e[t + 1] ?? "";
     if (s === "︎" || s === "️") {
-      if (Xf.test(r)) {
+      if (sg.test(r)) {
         if (s !== "️" || i !== "⃣") return !1;
-      } else if (!Qf.test(r)) return !1;
+      } else if (!rg.test(r)) return !1;
       continue;
     }
     if (s === "‍") {
       const o = r === "️" ? e[t - 2] ?? "" : r;
-      if ((Zo.test(o) || Yf.test(o)) && Zo.test(i)) continue;
+      if ((Jo.test(o) || ig.test(o)) && Jo.test(i)) continue;
     }
-    if (!(Jo.test(r) && (Jo.test(i) || Zf.test(r) && (i === "" || i === " "))))
+    if (!(ea.test(r) && (ea.test(i) || og.test(r) && (i === "" || i === " "))))
       return !1;
   }
   return !0;
 }
-const eg = 100;
-function tg(n) {
-  const e = (typeof n == "string" ? n : n.label).replace(zf, " ").trim();
-  if (!e || e.length > eg) return null;
-  const t = e.replace(jf, "🏴");
-  return Gf.test(t) || Kf.test(t) || !Jf(t) ? null : e;
+const lg = 100;
+function cg(n) {
+  const e = (typeof n == "string" ? n : n.label).replace(Zf, " ").trim();
+  if (!e || e.length > lg) return null;
+  const t = e.replace(eg, "🏴");
+  return Jf.test(t) || tg.test(t) || !ag(t) ? null : e;
 }
-const ng = /* @__PURE__ */ new WeakSet();
-function ea(n) {
-  return !!n && ng.has(n);
+const ug = /* @__PURE__ */ new WeakSet();
+function ta(n) {
+  return !!n && ug.has(n);
 }
-function sg(n) {
+function dg(n) {
   const e = n.segments, t = e[e.length - 1];
   return n.status !== "streaming" || !t || t.isStreaming !== void 0 || t.type !== "text" && t.type !== "thinking" ? e : [...e.slice(0, -1), { ...t, isStreaming: !0 }];
 }
-function ta(n, e, t) {
+function na(n, e, t) {
   if (n.setTokens?.(e.tokens), n.setAuthor?.(e.author), n.setKind?.(e.kind), e.segments && e.segments.length > 0) {
     const s = n.getSegments?.() ?? [];
     if (s.length === e.segments.length) {
-      const r = Ll(e.status);
+      const r = Rl(e.status);
       for (const i of e.segments)
         if ("content" in i) {
           const o = { content: i.content };
@@ -6383,12 +8051,12 @@ function ta(n, e, t) {
           i.type === "text" && (i.sources || i.citations || a?.sources || a?.citations) && Object.assign(o, { sources: i.sources, citations: i.citations }), n.updateSegment?.(i.id, o);
         }
     } else
-      n.setSegments?.(sg(e));
+      n.setSegments?.(dg(e));
   } else e.content !== void 0 && n.setContent?.(e.content);
   e.attachments && e.attachments.length > 0 && n.setAttachments?.(e.attachments), t && t.count > 1 && n.setSiblings?.(t.count, t.index), e.usage !== void 0 && n.setUsage?.(e.usage), n.setFinishReason?.(e.finishReason), n.setContextSummary?.(e.contextSummary, { legacy: e.compaction === !0 }), n.setNote?.(e.note);
 }
-const rg = 2, mi = Symbol.for("aparte.derivedSegments");
-function ig(n, e, t) {
+const hg = 2, _i = Symbol.for("aparte.derivedSegments");
+function pg(n, e, t) {
   if (t <= 0 || n.length <= t) return { messages: n, tree: e };
   const s = n.length - t, r = n.slice(s), i = r[0], o = i?.id;
   let a;
@@ -6424,35 +8092,35 @@ function ig(n, e, t) {
   };
   return { messages: r, tree: d };
 }
-function _i(n) {
-  if (!n[mi]) return n;
+function bi(n) {
+  if (!n[_i]) return n;
   const { segments: e, ...t } = n;
   return t;
 }
-function og(n) {
-  return n.map(_i);
+function fg(n) {
+  return n.map(bi);
 }
-function ag(n) {
+function gg(n) {
   return {
     ...n,
-    messages: n.messages.map((e) => ({ ...e, message: _i(e.message) }))
+    messages: n.messages.map((e) => ({ ...e, message: bi(e.message) }))
   };
 }
-function Mc(n) {
+function Ic(n) {
   return JSON.stringify(n, (e, t) => t && typeof t == "object" && !Array.isArray(t) ? Object.fromEntries(Object.keys(t).sort().map((s) => [s, t[s]])) : t);
 }
-function Oc(n) {
-  return Hn(_i(n));
+function Lc(n) {
+  return Hn(bi(n));
 }
 function On(n) {
-  return Mc(n.map(Oc));
+  return Ic(n.map(Lc));
 }
-function na(n) {
+function sa(n) {
   const e = [...n.messages].sort((t, s) => t.message.id < s.message.id ? -1 : t.message.id > s.message.id ? 1 : 0);
-  return Mc(e.map((t) => ({ parentId: t.parentId, message: Oc(t.message) })));
+  return Ic(e.map((t) => ({ parentId: t.parentId, message: Lc(t.message) })));
 }
-const sa = (n) => n.role === "user" && !n.compaction;
-class lg {
+const ra = (n) => n.role === "user" && !n.compaction;
+class mg {
   _adapter;
   _conversations = [];
   _activeId = null;
@@ -6589,7 +8257,7 @@ class lg {
       createdAt: t,
       updatedAt: t,
       messages: [],
-      schemaVersion: rg
+      schemaVersion: hg
     };
     this._activeId = s.id, this._loaded.add(s.id), this._initPromise && await this._initPromise.catch(() => {
     }), this._conversations = [s, ...this._conversations];
@@ -6650,13 +8318,13 @@ class lg {
       console.warn(`[AparteConversationManager] updateMessages('${e}') before its messages were loaded: ignored.`);
       return;
     }
-    const i = t.find(sa);
-    this._retention && ({ messages: t, tree: s } = ig(t, s, this._retention.maxMessages));
-    const o = og(t), a = s === void 0 ? void 0 : ag(s);
+    const i = t.find(ra);
+    this._retention && ({ messages: t, tree: s } = pg(t, s, this._retention.maxMessages));
+    const o = fg(t), a = s === void 0 ? void 0 : gg(s);
     let l = !0, c = s !== void 0;
     try {
       if (a !== void 0 && r.tree !== void 0) {
-        const p = na(a) !== na(r.tree);
+        const p = sa(a) !== sa(r.tree);
         l = p || a.headId === r.tree.headId && On(o) !== On(r.messages), c = p || a.headId !== r.tree.headId;
       } else
         l = On(o) !== On(r.messages), a !== void 0 && (c = !0);
@@ -6664,7 +8332,7 @@ class lg {
     }
     let u;
     if (r.autoTitle) {
-      const p = r.messages.find(sa);
+      const p = r.messages.find(ra);
       i && (i.content ?? "") !== (p?.content ?? "") && (u = await this._title(i));
     }
     if (!l && !c && u === void 0) return;
@@ -6779,7 +8447,7 @@ class lg {
     return (e.content ?? "").trim();
   }
 }
-function Nc(n) {
+function Mc(n) {
   return n.map((e) => ({
     id: be(),
     name: e.name,
@@ -6789,17 +8457,17 @@ function Nc(n) {
     blob: e
   }));
 }
-function cg(n) {
+function _g(n) {
   if (n?.length && !(typeof URL > "u" || typeof URL.revokeObjectURL != "function"))
     for (const e of n)
       e.url?.startsWith("blob:") && URL.revokeObjectURL(e.url);
 }
 const Or = /* @__PURE__ */ new Map();
-function Pc(n, e) {
+function Oc(n, e) {
   e ? Or.set(n, e) : Or.delete(n);
 }
 function Nr(n, e) {
-  Pc(n, e);
+  Oc(n, e);
   try {
     window.dispatchEvent(new CustomEvent("aparte-conversation-status", { detail: { id: n, status: e } }));
   } catch {
@@ -6809,7 +8477,7 @@ function Vs(n) {
   return Or.get(n) ?? null;
 }
 const jn = Symbol.for("aparte.openConversation");
-function ug(n, e) {
+function bg(n, e) {
   const t = n;
   return t[jn] = e, () => {
     t[jn] === e && delete t[jn];
@@ -6828,8 +8496,8 @@ function Xs(n, e, t) {
   let s = Pr.get(n);
   t ? (s || Pr.set(n, s = /* @__PURE__ */ new Set()), s.add(e)) : s?.delete(e);
 }
-const dg = 6;
-class hg {
+const vg = 6;
+class yg {
   _binding;
   _options;
   _activeId = null;
@@ -7015,7 +8683,7 @@ class hg {
       const r = s, i = r.detail?.targetId;
       if (i && i !== this._binding.hostId) return;
       this._forgetDraft();
-      const o = r.detail?.content ?? "", a = r.detail?.files, l = a?.length ? Nc(a) : void 0, c = {
+      const o = r.detail?.content ?? "", a = r.detail?.files, l = a?.length ? Mc(a) : void 0, c = {
         id: be(),
         role: "user",
         content: o,
@@ -7051,7 +8719,7 @@ class hg {
     }, this._onCompactDone = (s) => {
       const r = s.detail;
       r?.targetId && r.targetId !== this._binding.hostId || queueMicrotask(() => this._persistOnceSummarised(r ?? {}, 0));
-    }, typeof window < "u" && (window.addEventListener("aparte-conversation-select", this._onSelectConversation), window.addEventListener("aparte-compact-done", this._onCompactDone)), this._bound = !0, this._manager(), this._withdrawOpenConversation = ug(e, () => this._openId()), () => this.unbind();
+    }, typeof window < "u" && (window.addEventListener("aparte-conversation-select", this._onSelectConversation), window.addEventListener("aparte-compact-done", this._onCompactDone)), this._bound = !0, this._manager(), this._withdrawOpenConversation = bg(e, () => this._openId()), () => this.unbind();
   }
   /** Takes the open-conversation reader off the host (see `bind`). */
   _withdrawOpenConversation = null;
@@ -7250,7 +8918,7 @@ class hg {
       );
       r = a || l;
     }
-    if (r || !this._binding.afterRender || t >= dg) {
+    if (r || !this._binding.afterRender || t >= vg) {
       this._persistActive();
       return;
     }
@@ -7326,7 +8994,7 @@ function it(n) {
 function It(n) {
   return n.status === "streaming" || n.status === "pending" ? !0 : n.status === void 0 && it(n) && !n.content?.trim() && !n.segments?.length;
 }
-function pg(n) {
+function wg(n) {
   if (n.hasAttribute("data-glide")) return () => {
   };
   const e = n.ownerDocument, t = () => {
@@ -7336,7 +9004,7 @@ function pg(n) {
   };
   return e.addEventListener("pointerdown", s, !0), e.addEventListener("keydown", s, !0), n.addEventListener("aparte-send", s), t;
 }
-class fg {
+class Ag {
   constructor(e) {
     this._options = e;
   }
@@ -7393,14 +9061,14 @@ function $r(n) {
   }
   return { messages: n };
 }
-const gg = "The earlier part of this conversation was compacted. This is a summary of what came before; continue from it.", bi = (n) => `${gg}
+const kg = "The earlier part of this conversation was compacted. This is a summary of what came before; continue from it.", vi = (n) => `${kg}
 
 ${n}`, is = /* @__PURE__ */ new WeakMap();
-function mg(n) {
-  const e = { role: "user", content: bi(n) };
+function Sg(n) {
+  const e = { role: "user", content: vi(n) };
   return is.set(e, e.content), e;
 }
-function _g(n) {
+function Cg(n) {
   for (const e of n) {
     const t = is.get(e);
     if (t !== void 0) return t;
@@ -7425,13 +9093,13 @@ ${h}` } : { ...a, content: [...e(u), { type: "text", text: `
   }
   return s;
 }
-const ra = "The tool call was stopped before it ran.", bg = "The tool returned no output.";
-function vg(n) {
+const ia = "The tool call was stopped before it ran.", Eg = "The tool returned no output.";
+function Tg(n) {
   const e = n.result?.trim();
-  return n.status === "resolved" ? e || bg : n.status === "failed" ? e || "The tool failed." : n.status === "rejected" && e || ra;
+  return n.status === "resolved" ? e || Eg : n.status === "failed" ? e || "The tool failed." : n.status === "rejected" && e || ia;
 }
-const Qs = (n) => n.type === "tool_call" && !!n.deferred && (n.status === "awaiting-approval" || n.status === "pending"), ia = (n) => n.type === "tool_call" && (n.status === "pending" || n.status === "awaiting-approval");
-function $c(n, e, t = {}) {
+const Qs = (n) => n.type === "tool_call" && !!n.deferred && (n.status === "awaiting-approval" || n.status === "pending"), oa = (n) => n.type === "tool_call" && (n.status === "pending" || n.status === "awaiting-approval");
+function Nc(n, e, t = {}) {
   const s = n.segments ?? [];
   if (n.role !== "assistant" || !s.some((c) => c.type === "tool_call")) {
     const c = e(s) || (typeof n.content == "string" ? n.content : "");
@@ -7450,16 +9118,16 @@ function $c(n, e, t = {}) {
         toolCalls: o.map((u) => ({ id: u.toolCall.id, name: u.toolCall.name, input: u.toolCall.input }))
       });
       for (const u of o)
-        t.openDeferred && ia(u) || r.push({ role: "tool", content: vg(u), toolCallId: u.toolCall.id, toolName: u.toolCall.name });
+        t.openDeferred && oa(u) || r.push({ role: "tool", content: Tg(u), toolCallId: u.toolCall.id, toolName: u.toolCall.name });
     }
     i = [], o = [];
   };
   let l = !1;
   for (const c of s)
-    c.type === "tool_call" ? (o.push(c), t.openDeferred && ia(c) && (l = !0)) : (o.length > 0 && !l && a(), i.push(c));
+    c.type === "tool_call" ? (o.push(c), t.openDeferred && oa(c) && (l = !0)) : (o.length > 0 && !l && a(), i.push(c));
   return a(), r;
 }
-const Dc = (n) => n.status === "streaming" || n.status === "pending";
+const Pc = (n) => n.status === "streaming" || n.status === "pending";
 function ys(n) {
   if (!n?.length) return "";
   const e = "```", t = [];
@@ -7487,20 +9155,20 @@ ${e}`);
   return t.join(`
 `).trim();
 }
-function yg(n) {
+function xg(n) {
   const e = ys(n.segments);
   return e || (typeof n.content == "string" && n.content ? n.content : "");
 }
 function Dr(n) {
-  const e = yg(n);
-  return n.compaction ? bi(e) : e;
+  const e = xg(n);
+  return n.compaction ? vi(e) : e;
 }
-const wg = /* @__PURE__ */ new Set([
+const Rg = /* @__PURE__ */ new Set([
   Z.USAGE_CONTEXT_EXCEEDED,
   Z.PROVIDER_POLICY,
   Z.USAGE_BAD_REQUEST
 ]);
-function Ag(n, e) {
+function Ig(n, e) {
   const t = n.segments ?? [];
   let s;
   for (let r = t.length - 1; r >= 0; r--) {
@@ -7510,9 +9178,9 @@ function Ag(n, e) {
       break;
     }
   }
-  return s !== void 0 && wg.has(s) ? !0 : e.some((r) => (r.attachments?.length ?? 0) > 0);
+  return s !== void 0 && Rg.has(s) ? !0 : e.some((r) => (r.attachments?.length ?? 0) > 0);
 }
-function kg(n) {
+function Lg(n) {
   const e = /* @__PURE__ */ new Set();
   let t = [];
   for (const s of n)
@@ -7523,7 +9191,7 @@ function kg(n) {
     else if (it(s)) {
       if (s.status !== "error")
         t = [];
-      else if (Ag(s, t)) {
+      else if (Ig(s, t)) {
         for (const r of t) e.add(r);
         e.add(s), t = [];
       }
@@ -7531,10 +9199,10 @@ function kg(n) {
   return e.size === 0 ? [...n] : n.filter((s) => !e.has(s));
 }
 function Vn(n) {
-  return kg(n.filter((e) => e.kind === void 0)).filter((e) => e.role !== "user" && e.role !== "assistant" ? !1 : e.status !== "error" && !Dc(e)).flatMap((e) => {
+  return Lg(n.filter((e) => e.kind === void 0)).filter((e) => e.role !== "user" && e.role !== "assistant" ? !1 : e.status !== "error" && !Pc(e)).flatMap((e) => {
     const t = (r) => e.author?.name && (r.role === "user" || r.role === "assistant") ? { ...r, name: e.author.name } : r;
     if (e.role === "assistant" && e.segments?.some((r) => r.type === "tool_call"))
-      return $c(e, ys).map(t);
+      return Nc(e, ys).map(t);
     const s = Dr(e);
     return s ? [t({ role: e.role, content: s })] : [];
   });
@@ -7542,7 +9210,7 @@ function Vn(n) {
 function $t(n) {
   return n ? Math.ceil(n.length / 3.8) : 0;
 }
-const vi = (n) => {
+const yi = (n) => {
   if (!n) return 0;
   try {
     return $t(JSON.stringify(n));
@@ -7550,61 +9218,61 @@ const vi = (n) => {
     return 0;
   }
 };
-function Bc(n) {
+function $c(n) {
   let e = 0;
   for (const t of n)
-    e += $t(Rl(t.content)), t.toolCalls?.length && (e += vi(t.toolCalls));
+    e += $t(Tl(t.content)), t.toolCalls?.length && (e += yi(t.toolCalls));
   return e;
 }
-function Sg(n) {
+function Mg(n) {
   return n.some((e) => typeof e.content != "string" && e.content.some((t) => t.type !== "text"));
 }
-function Cg(n) {
+function Og(n) {
   const e = (n.tools ?? []).map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema }));
-  return Bc(n.messages) + (e.length ? vi(e) : 0);
+  return $c(n.messages) + (e.length ? yi(e) : 0);
 }
-function Eg(n) {
-  return Bc(Vn(n));
+function Ng(n) {
+  return $c(Vn(n));
 }
 const Br = (n) => n.totalTokens ?? n.inputTokens + n.outputTokens;
-function qc(n) {
+function Dc(n) {
   const e = n.getCurrentModel()?.capabilities;
   return (e ? !e.includes("function_calling") : !1) ? [] : n.getTools();
 }
-function Tg(n, e) {
+function Pg(n, e) {
   if (typeof e == "number" && Number.isFinite(e) && e > 0) return e;
   const t = n.getCurrentModel()?.contextWindow;
   return t && t > 0 ? t : void 0;
 }
-const Hc = (n, e) => n.segments?.some((t) => t.type === e) === !0;
-function xg(n) {
+const Bc = (n, e) => n.segments?.some((t) => t.type === e) === !0;
+function $g(n) {
   const e = n.usage?.inputTokens, t = n.contextEstimate;
-  return Hc(n, "tool_call") ? 1 : e && t && e > 0 && t > 0 ? Math.min(3, Math.max(0.5, e / t)) : 1;
+  return Bc(n, "tool_call") ? 1 : e && t && e > 0 && t > 0 ? Math.min(3, Math.max(0.5, e / t)) : 1;
 }
-function Rg(n, e) {
+function Dg(n, e) {
   const t = n.usage;
-  if (!Hc(n, "thinking") || !(t.inputTokens > 0)) return Br(t);
+  if (!Bc(n, "thinking") || !(t.inputTokens > 0)) return Br(t);
   const s = n.segments ?? [], r = s.map((o) => o.type).lastIndexOf("tool_call"), i = Math.round(e * $t(ys(s.slice(r + 1))));
   return t.inputTokens + (t.outputTokens > 0 ? Math.min(i, t.outputTokens) : i);
 }
-function Ig(n) {
-  const { messages: e, config: t } = n, s = $r(e), r = qc(t), i = $t(t.resolveSystemPrompt()) + $t(t.resolveToolSystemPrompts(r)), o = r.map((b) => ({ name: b.name, description: b.description, inputSchema: b.inputSchema })), a = o.length ? vi(o) : 0, l = s.summary === void 0 ? 0 : $t(bi(s.summary)), c = { system: i, tools: a, summary: l, messages: Eg(s.messages) }, u = i + a + l + c.messages;
+function Bg(n) {
+  const { messages: e, config: t } = n, s = $r(e), r = Dc(t), i = $t(t.resolveSystemPrompt()) + $t(t.resolveToolSystemPrompts(r)), o = r.map((b) => ({ name: b.name, description: b.description, inputSchema: b.inputSchema })), a = o.length ? yi(o) : 0, l = s.summary === void 0 ? 0 : $t(vi(s.summary)), c = { system: i, tools: a, summary: l, messages: Ng(s.messages) }, u = i + a + l + c.messages;
   let h = -1;
   for (let b = e.length - 1; b >= 0; b--)
     if (e[b].role === "assistant" && e[b].usage) {
       h = b;
       break;
     }
-  const d = h >= 0 ? e[h] : void 0, p = Tg(t, n.windowOverride), f = (b, y) => ({
+  const d = h >= 0 ? e[h] : void 0, p = Pg(t, n.windowOverride), f = (b, y) => ({
     ...p !== void 0 ? { window: p } : {},
     used: b,
     estimated: y,
     parts: c,
     other: Math.max(0, b - u)
-  }), m = d !== void 0 && !n.viewChanged && h === e.length - 1 && !e.some((b) => b.contextSummary !== void 0 && b.contextSummary.createdAt > d.timestamp), g = d ? xg(d) : 1;
-  return d && m ? f(Rg(d, g), !1) : f(Math.round(g * u), !0);
+  }), m = d !== void 0 && !n.viewChanged && h === e.length - 1 && !e.some((b) => b.contextSummary !== void 0 && b.contextSummary.createdAt > d.timestamp), g = d ? $g(d) : 1;
+  return d && m ? f(Dg(d, g), !1) : f(Math.round(g * u), !0);
 }
-let Lg = 0, Xn = null;
+let qg = 0, Xn = null;
 function fn(n) {
   Xn?.push(n);
 }
@@ -7612,7 +9280,7 @@ function J(n, e, t) {
   const s = document.createElement(n);
   return e && (s.className = e), t != null && (s.textContent = t), s;
 }
-function yi(n, e, t) {
+function wi(n, e, t) {
   const s = J("span", "aparte-elic-option-body"), r = J("span", "aparte-elic-option-title", n);
   if (r.dir = "auto", t) {
     const i = J(
@@ -7626,9 +9294,9 @@ function yi(n, e, t) {
 }
 function qr(n, e, t) {
   const s = J("button", "aparte-btn aparte-btn--block aparte-btn--surface aparte-elic-option aparte-elic-option--command" + (t ? " aparte-elic-option--recommended" : ""));
-  return s.type = "button", s.appendChild(yi(n, e, t)), s;
+  return s.type = "button", s.appendChild(wi(n, e, t)), s;
 }
-function wi(n, e, t) {
+function Ai(n, e, t) {
   let s;
   if (e.title && e.title.trim() !== t?.trim()) {
     const r = J("p", "aparte-elic-title", e.title);
@@ -7636,19 +9304,19 @@ function wi(n, e, t) {
   }
   return e.description && n.appendChild(Object.assign(J("p", "aparte-elic-desc", e.description), { dir: "auto" })), s;
 }
-function Fc(n, e) {
+function qc(n, e) {
   n.setAttribute("role", e.multiple || e.commands ? "group" : "radiogroup"), e.titleId ? n.setAttribute("aria-labelledby", e.titleId) : e.fallbackLabel && n.setAttribute("aria-label", e.fallbackLabel);
 }
-function Mg(n, e, t, s) {
-  const r = J("div", "aparte-elic-field aparte-elic-enum"), i = wi(r, n, t), o = J("div", "aparte-elic-options"), a = `elic-${be()}`, l = n.multiple ? "checkbox" : "radio", c = l === "checkbox" ? "aparte-checkbox" : "aparte-radio", u = n.allowOther ?? $().getElicitationOptions().allowOther, h = new Set(Array.isArray(n.default) ? n.default : n.default != null ? [n.default] : []), d = s != null && !n.multiple && h.size === 0;
-  Fc(o, { multiple: n.multiple, commands: d, titleId: i, fallbackLabel: t });
+function Hg(n, e, t, s) {
+  const r = J("div", "aparte-elic-field aparte-elic-enum"), i = Ai(r, n, t), o = J("div", "aparte-elic-options"), a = `elic-${be()}`, l = n.multiple ? "checkbox" : "radio", c = l === "checkbox" ? "aparte-checkbox" : "aparte-radio", u = n.allowOther ?? $().getElicitationOptions().allowOther, h = new Set(Array.isArray(n.default) ? n.default : n.default != null ? [n.default] : []), d = s != null && !n.multiple && h.size === 0;
+  qc(o, { multiple: n.multiple, commands: d, titleId: i, fallbackLabel: t });
   const p = (_, S, k, C) => {
     if (d) {
       const O = qr(S, k, C);
       return O.addEventListener("click", () => s?.(_)), O;
     }
     const w = J("label", "aparte-field-choice aparte-elic-option" + (C ? " aparte-elic-option--recommended" : "")), T = J("input", c + " aparte-elic-control");
-    return T.type = l, T.name = a, T.value = _, h.has(_) && (T.checked = !0), w.append(T, yi(S, k, C)), w;
+    return T.type = l, T.name = a, T.value = _, h.has(_) && (T.checked = !0), w.append(T, wi(S, k, C)), w;
   };
   for (const _ of n.options)
     o.appendChild(p(_.value, _.label ?? _.value, _.description, _.recommended));
@@ -7716,9 +9384,9 @@ function Mg(n, e, t, s) {
     focus: () => g()[0]?.focus()
   };
 }
-function Og(n, e, t, s) {
-  const r = J("div", "aparte-elic-field aparte-elic-boolean"), i = wi(r, n, t), o = J("div", "aparte-elic-options"), a = `elic-${be()}`, l = s != null && n.default == null;
-  if (Fc(o, { commands: l, titleId: i, fallbackLabel: t }), l) {
+function Fg(n, e, t, s) {
+  const r = J("div", "aparte-elic-field aparte-elic-boolean"), i = Ai(r, n, t), o = J("div", "aparte-elic-options"), a = `elic-${be()}`, l = s != null && n.default == null;
+  if (qc(o, { commands: l, titleId: i, fallbackLabel: t }), l) {
     const d = $(), p = (f, m, g) => {
       const b = qr(m);
       if (b.addEventListener("click", () => s?.(f)), g) {
@@ -7756,9 +9424,9 @@ function Og(n, e, t, s) {
     focus: () => o.querySelector("input")?.focus()
   };
 }
-function Ng(n, e, t) {
+function Wg(n, e, t) {
   const s = J("div", "aparte-elic-field aparte-elic-string");
-  wi(s, n, t);
+  Ai(s, n, t);
   const r = n.multiline ? J("textarea", "aparte-field aparte-field--textarea aparte-elic-text") : J("input", "aparte-field aparte-elic-text");
   n.multiline || (r.type = "text"), n.placeholder && r.setAttribute("placeholder", n.placeholder), n.default && (r.value = n.default), n.maxLength != null && r.setAttribute("maxlength", String(n.maxLength));
   const i = n.title || n.description || t || void 0;
@@ -7780,7 +9448,7 @@ function Ng(n, e, t) {
     focus: () => r.focus()
   };
 }
-function oa(n, e, t, s, r) {
+function aa(n, e, t, s, r) {
   const i = $().getElicitationFieldRenderer()?.(n, { key: s, notifyChange: e });
   if (i)
     return {
@@ -7791,26 +9459,26 @@ function oa(n, e, t, s, r) {
     };
   switch (n.type) {
     case "enum":
-      return Mg(n, e, t, r);
+      return Hg(n, e, t, r);
     case "boolean":
-      return Og(n, e, t, r);
+      return Fg(n, e, t, r);
     // No `settle`: text is written, not chosen, so it always needs a commit.
     case "string":
-      return Ng(n, e, t);
+      return Wg(n, e, t);
   }
 }
-function Pg(n, e, t) {
+function Ug(n, e, t) {
   const s = [], r = Xn;
   Xn = s;
   try {
-    return { ...$g(n, e, t), relabel: () => {
+    return { ...zg(n, e, t), relabel: () => {
       for (const o of s) o();
     } };
   } finally {
     Xn = r;
   }
 }
-function $g(n, e, t) {
+function zg(n, e, t) {
   const s = J("div", "aparte-elic-panel"), r = typeof n == "function" ? n() : n;
   r && s.appendChild(Object.assign(J("p", "aparte-elic-message", r), { dir: "auto" }));
   let i = null, o = !1;
@@ -7828,7 +9496,7 @@ function $g(n, e, t) {
     const b = () => {
       g(), t();
     }, y = p.map(([w, T]) => {
-      const O = oa(T, b, void 0, w);
+      const O = aa(T, b, void 0, w);
       return !T.title && !O.el.querySelector(".aparte-elic-title") && O.el.insertBefore(Object.assign(J("p", "aparte-elic-title", w), { dir: "auto" }), O.el.firstChild), c.appendChild(O.el), { key: w, field: O, required: f.has(w), header: T.header };
     }), A = () => y.every((w) => !w.required || w.field.isComplete()), E = {
       el: s,
@@ -7849,7 +9517,7 @@ function $g(n, e, t) {
     if (y.length < 2 || m.getElicitationOptions().layout !== "stepped") return E;
     s.classList.add("aparte-elic-panel--stepped");
     let _ = 0;
-    const S = `aparte-elic-${++Lg}`, k = J("div", "aparte-tabs aparte-tabs--underline aparte-elic-steps");
+    const S = `aparte-elic-${++qg}`, k = J("div", "aparte-tabs aparte-tabs--underline aparte-elic-steps");
     k.setAttribute("role", "tablist");
     const C = y.map((w, T) => {
       const O = J("button", "aparte-tabs__tab aparte-elic-step");
@@ -7857,7 +9525,7 @@ function $g(n, e, t) {
     });
     return s.insertBefore(k, c), k.addEventListener("aparte-tab-change", (w) => {
       _ = C.indexOf(w.detail.tab);
-    }), fd(k), k.addEventListener("click", (w) => {
+    }), Ad(k), k.addEventListener("click", (w) => {
       const T = C.indexOf(w.target.closest(".aparte-elic-step"));
       T >= 0 && T === _ && y[T].field.focus();
     }), g = () => {
@@ -7875,7 +9543,7 @@ function $g(n, e, t) {
       focus: () => y[_]?.field.focus()
     };
   }
-  const h = $().getElicitationOptions().answerOnClick, d = oa(e, t, r, void 0, h ? a : void 0);
+  const h = $().getElicitationOptions().answerOnClick, d = aa(e, t, r, void 0, h ? a : void 0);
   return c.appendChild(d.el), {
     el: s,
     dismiss: u,
@@ -7889,20 +9557,20 @@ function $g(n, e, t) {
     onSettle: l
   };
 }
-let Dg = 0;
+let Gg = 0;
 function Fe(n, e, t) {
   const s = document.createElement(n);
   return e && (s.className = e), t != null && (s.textContent = t), s;
 }
-let Bg = 0;
-function qg(n, e, t, s, r = !0, i) {
+let jg = 0;
+function Kg(n, e, t, s, r = !0, i) {
   const o = $(), a = Fe("div", "aparte-elic-panel aparte-approval-panel"), l = Fe("div", "aparte-elic-body");
   a.appendChild(l);
   const c = () => typeof n == "function" ? n() : n, u = c() ? Object.assign(Fe("p", "aparte-elic-message", c()), { dir: "auto" }) : null;
   u && l.appendChild(u);
   let h = null;
   if (s) {
-    h = Fe("div", "aparte-approval-args-label", o.t("approvalArgsLabel")), h.id = "aparte-approval-args-" + ++Dg;
+    h = Fe("div", "aparte-approval-args-label", o.t("approvalArgsLabel")), h.id = "aparte-approval-args-" + ++Gg;
     const k = Fe("pre", "aparte-approval-args");
     k.textContent = s, k.setAttribute("role", "group"), k.setAttribute("aria-labelledby", h.id), k.tabIndex = 0, l.append(h, k);
   }
@@ -7916,8 +9584,8 @@ function qg(n, e, t, s, r = !0, i) {
   const m = (k) => {
     f || (f = !0, p?.(k));
   }, g = Fe("div", "aparte-approval-options");
-  g.setAttribute("role", "group"), g.setAttribute("aria-label", o.t("approvalOptionsLabel")), u && (u.id ||= `aparte-approval-ask-${++Bg}`, g.setAttribute("aria-describedby", u.id));
-  const b = [], y = (k) => typeof k.label == "function" ? k.label() : k.label, A = (k) => typeof k.description == "function" ? k.description() : k.description, E = (k) => yi(y(k), A(k));
+  g.setAttribute("role", "group"), g.setAttribute("aria-label", o.t("approvalOptionsLabel")), u && (u.id ||= `aparte-approval-ask-${++jg}`, g.setAttribute("aria-describedby", u.id));
+  const b = [], y = (k) => typeof k.label == "function" ? k.label() : k.label, A = (k) => typeof k.description == "function" ? k.description() : k.description, E = (k) => wi(y(k), A(k));
   for (const k of e) {
     const C = k.tone ?? "affirm", w = Fe("button", `aparte-btn aparte-btn--block aparte-btn--surface aparte-approval-option aparte-approval-option--${C}`);
     w.type = "button", w.appendChild(E(k)), w.addEventListener("click", () => m({ option: k.value })), g.appendChild(w), b.push({ button: w, option: k });
@@ -7944,11 +9612,11 @@ function qg(n, e, t, s, r = !0, i) {
     }
   };
 }
-function Hg(n) {
+function Vg(n) {
   return P(n.target ?? null).requestUserInput(n);
 }
-const Fg = "Not run: an earlier call of the same step was refused.", aa = (n) => JSON.stringify([n.id, n.name, n.input]), la = /* @__PURE__ */ new Set(), ut = /* @__PURE__ */ new Map(), ca = "aparte-chat, aparte-chat-viewport, [data-aparte-chat]";
-function Wg(n) {
+const Xg = "Not run: an earlier call of the same step was refused.", la = (n) => JSON.stringify([n.id, n.name, n.input]), ca = /* @__PURE__ */ new Set(), ut = /* @__PURE__ */ new Map(), ua = "aparte-chat, aparte-chat-viewport, [data-aparte-chat]";
+function Qg(n) {
   return {
     id: n,
     getMetadata: () => ({ id: n, name: n }),
@@ -7961,7 +9629,7 @@ function Wg(n) {
     }
   };
 }
-function Ug(n, e) {
+function Yg(n, e) {
   const t = [];
   let s = 0;
   for (const r of [...e].sort((i, o) => i.start - o.start)) {
@@ -7970,11 +9638,11 @@ function Ug(n, e) {
   }
   return t;
 }
-function ua(n, e) {
+function da(n, e) {
   const t = n.findIndex((s) => s.id === e);
   return t !== -1 && n.slice(t + 1).some((s) => s.kind !== void 0 || s.role === "assistant" && !it(s));
 }
-class zg {
+class Zg {
   _boundHandler = null;
   /** Between `start()` and `stop()`: the listeners are on `window`. The send handler alone is
    *  not the sign — the constructor prepares it without listening. */
@@ -8044,7 +9712,7 @@ class zg {
     this.options = {
       autoRegister: !0,
       ...e
-    }, this._config = e.config ?? ke, this._registerKeyResolver(), this.options.autoRegister ? of(this._config) : sf(this._config), this._setupListeners();
+    }, this._config = e.config ?? ke, this._registerKeyResolver(), this.options.autoRegister ? ff(this._config) : hf(this._config), this._setupListeners();
   }
   /**
    * What every fresh user action does before it starts a turn.
@@ -8160,7 +9828,7 @@ class zg {
    * no DOM) or its own presenter, both strictly more capable than an id on an event.
    */
   async _askForApproval(e, t, s, r) {
-    const i = e.agent?.name?.trim(), o = this._approvalPreviewOf(e, s), a = await Hg({
+    const i = e.agent?.name?.trim(), o = this._approvalPreviewOf(e, s), a = await Vg({
       kind: "approval",
       /*
        * A function, like the option labels below, and for the same reason: the
@@ -8174,7 +9842,7 @@ class zg {
           type: "tool_call",
           status: "awaiting-approval",
           toolCall: { id: e.id, name: e.name, input: e.input }
-        }, p = ui(d, h).text, f = zp(d, h), m = f ? `${p} ${f}` : p;
+        }, p = di(d, h).text, f = Zp(d, h), m = f ? `${p} ${f}` : p;
         return i ? (u.approvalAskBy ?? "Allow {tool} for {agent}?").replace(/\{(agent|tool)\}/g, (g, b) => b === "agent" ? i : m) : (u.approvalAsk ?? "Allow {tool}?").replace("{tool}", () => m);
       },
       // A plain string, not a function: the arguments are the model's — its JSON, or
@@ -8182,7 +9850,7 @@ class zg {
       // language. Same text the transcript row shows, from the same function and the
       // same config — the chat's, which the row renders with — so the two surfaces
       // cannot disagree about what is being run.
-      details: rc(e.input, P(s).getToolInputFormatter(e.name)),
+      details: nc(e.input, P(s).getToolInputFormatter(e.name)),
       // Functions, not strings, same as the question: these follow a language
       // switch while the request is open, which a resolved string cannot.
       options: [
@@ -8211,7 +9879,7 @@ class zg {
    */
   get _modelRunsElsewhere() {
     const e = this.options.streamRunner;
-    return !!e && e !== ji;
+    return !!e && e !== Ki;
   }
   /**
    * The provider a turn runs on: the registered one, else, when the model runs
@@ -8220,7 +9888,7 @@ class zg {
    */
   _providerFor(e) {
     const t = e ? this._config.getAIProvider(e) : void 0;
-    return t || (this._modelRunsElsewhere ? Wg(e ?? "") : void 0);
+    return t || (this._modelRunsElsewhere ? Qg(e ?? "") : void 0);
   }
   async _resolveAuth(e) {
     if (this.options.keyResolver) {
@@ -8246,7 +9914,7 @@ class zg {
       messageId: t,
       ...l ? { targetId: l } : {}
     }, u = this._toolsForCurrentModel(), h = async (k) => {
-      const C = _g(k), w = C === void 0 ? a?.meta : { ...a?.meta, historySummary: C };
+      const C = Cg(k), w = C === void 0 ? a?.meta : { ...a?.meta, historySummary: C };
       let T = {
         messages: k,
         modelId: i,
@@ -8284,7 +9952,7 @@ class zg {
       if (C && k.some((O) => O.id === C)) return [C, t];
       const w = k.findIndex((O) => O.id === t), T = w > 0 ? k[w - 1] : void 0;
       return T?.role === "user" ? [T.id, t] : [t];
-    }, g = () => a?.resume ? this._resumeMessages(e, t, d.messages) : d.messages, b = () => Cg({ messages: g(), tools: d.tools }), y = () => Sg(g()) ? void 0 : b(), A = () => {
+    }, g = () => a?.resume ? this._resumeMessages(e, t, d.messages) : d.messages, b = () => Og({ messages: g(), tools: d.tools }), y = () => Mg(g()) ? void 0 : b(), A = () => {
       this._closeOpenCalls(e, t), Ne(e, "aparte-message-aborted", { messageId: t }, l), this._updateMessage(e, t, { status: "completed" });
     }, E = () => this._isAborted || p.signal.aborted, _ = async () => {
       let k = a?.resume ? { usage: void 0, suspended: a.resume } : await this._streamLoop(e, t, s, d, o, p, void 0, a?.files, a?.conversationId, a?.userMessage);
@@ -8405,7 +10073,7 @@ class zg {
    * the same rule, so send / retry / edit and the gauge cannot drift.
    */
   _toolsForCurrentModel() {
-    return qc(this._config);
+    return Dc(this._config);
   }
   /**
    * Whether the AI answers in a conversation of `target` (`setAutoReply`): the client's
@@ -8429,7 +10097,7 @@ class zg {
     const i = pt(r) ?? void 0;
     if (!this._autoReplies(r, i)) return;
     const o = r.getMessages?.() ?? [], a = o.findIndex((E) => E.id === t), l = a >= 0 ? o[a] : void 0;
-    if (l && l.role === "assistant" && !it(l) || ua(o, t)) return;
+    if (l && l.role === "assistant" && !it(l) || da(o, t)) return;
     const c = l?.role === "user" ? a + 1 : a, u = a >= 0 ? o.slice(0, c) : o, h = {
       id: be(),
       role: "assistant",
@@ -8485,11 +10153,11 @@ class zg {
       return;
     }
     const o = pt(i) ?? void 0;
-    if (!this._autoReplies(i, o) || ua(i.getMessages?.() ?? [], t)) return;
+    if (!this._autoReplies(i, o) || da(i.getMessages?.() ?? [], t)) return;
     const a = i.getMessages?.().find((y) => y.id === t);
     i.updateMessage?.(t, {
       content: s,
-      ...a?.tokens ? { tokens: Ug(s, a.tokens) } : {}
+      ...a?.tokens ? { tokens: Yg(s, a.tokens) } : {}
     });
     const l = i.getMessages?.() ?? [], c = l.findIndex((y) => y.id === t);
     if (i.truncateResponsesAfter)
@@ -8586,7 +10254,7 @@ class zg {
   /** The first chat that can render, own tree first — the path when nothing names one. */
   _scanForTarget(e) {
     for (const t of this._rootsFor(e))
-      for (const s of t.querySelectorAll(ca)) {
+      for (const s of t.querySelectorAll(ua)) {
         const r = this._asRenderTarget(s);
         if (r) return r;
       }
@@ -8607,7 +10275,7 @@ class zg {
     const s = this._scanForTarget(t);
     if (s) return s;
     for (const r of this._rootsFor(t)) {
-      const i = r.querySelector(ca);
+      const i = r.querySelector(ua);
       if (i) return i;
     }
     return null;
@@ -8667,7 +10335,7 @@ class zg {
    * `mergeAdjacentMessages` joins the two where the history is assembled.
    */
   _summaryMessage(e) {
-    return e === void 0 ? [] : [mg(e)];
+    return e === void 0 ? [] : [Sg(e)];
   }
   /** A message's tokens and metadata as a turn's `_meta`: a send and its retry say the same. */
   _turnMeta(e) {
@@ -8712,7 +10380,7 @@ class zg {
         role: "user",
         content: t,
         timestamp: Date.now(),
-        ...E.length > 0 ? { attachments: Nc(E) } : {},
+        ...E.length > 0 ? { attachments: Mc(E) } : {},
         ...e.detail?.tokens?.length ? { tokens: e.detail.tokens } : {},
         ...e.detail?.meta ? { metadata: e.detail.meta } : {}
       }), e.detail && typeof e.detail == "object" && (e.detail.echoed = !0, e.detail.messageId = _);
@@ -8787,7 +10455,7 @@ class zg {
     if (i !== -1)
       o = i;
     else {
-      for (; o > 0 && Dc(r[o - 1]); ) o--;
+      for (; o > 0 && Pc(r[o - 1]); ) o--;
       o > 0 && r[o - 1].role === "user" && o--;
     }
     return [...this._summaryMessage(s), ...Vn(r.slice(0, o))];
@@ -8830,7 +10498,7 @@ ${c}
 \`\`\``
           });
         }, l.onerror = () => a(new Error(`Failed to read file: ${i.name}`)), l.readAsText(i);
-      }) : (la.has(i.name) || (la.add(i.name), console.warn(
+      }) : (ca.has(i.name) || (ca.add(i.name), console.warn(
         `[aparte] ${i.name} (${i.type || "unknown type"}) is attached to the message but is not sent to the model: aparté inlines images and text files only. Handle it in your app (RAG, an upload) — the chip stays visible either way.`
       )), Promise.resolve(null)))
     )).filter((i) => i !== null);
@@ -8853,7 +10521,7 @@ ${c}
   /** One run of the loop: its usage, and whether it paused (a server loop). */
   async _streamLoop(e, t, s, r, i, o = new AbortController(), a, l, c, u) {
     this._streamController !== o && this._streamController?.abort(), this._streamController = o;
-    const h = this.options.streamRunner ?? ji;
+    const h = this.options.streamRunner ?? Ki;
     return this._runViaStreamRunner(h, e, t, s, r, i, o, a, l, c, u);
   }
   /**
@@ -8889,7 +10557,7 @@ ${c}
       }
     }, _ = async (I) => {
       const H = await this._config.getTransport().chat(r, I, o, { providerId: r.id, signal: d });
-      return typeof H == "string" ? H : af(H, d);
+      return typeof H == "string" ? H : gf(H, d);
     }, S = (I) => {
       const H = this._config.getToolHandler(I);
       if (!H) return;
@@ -8977,7 +10645,7 @@ ${c}
   async _answerDeferred(e, t, s, r, i, o = /* @__PURE__ */ new Set(), a = /* @__PURE__ */ new Set()) {
     const l = {}, { messageId: c } = t, u = this._approvalResolverFor(e, t, !0), h = (d) => {
       for (const p of s.slice(d + 1))
-        l[p.toolCallId] = { kind: "decision", approved: !1, reason: Fg, by: "earlier-refusal" };
+        l[p.toolCallId] = { kind: "decision", approved: !1, reason: Xg, by: "earlier-refusal" };
     };
     for (const [d, p] of s.entries()) {
       if (r.aborted) break;
@@ -8990,14 +10658,14 @@ ${c}
           if (!r.aborted && y?.name !== "AbortError") throw y;
         }
         if (!b || r.aborted) return;
-        if (l[p.toolCallId] = { kind: "decision", ...b }, b.approved) a.add(aa(f));
+        if (l[p.toolCallId] = { kind: "decision", ...b }, b.approved) a.add(la(f));
         else {
           h(d);
           break;
         }
       } else if (p.reason === "external") {
         let b = null;
-        const y = aa(f);
+        const y = la(f);
         if (!o.has(y) && !a.has(y))
           try {
             b = await this._gateBrowserTool(g, r, e, t, i);
@@ -9126,7 +10794,7 @@ ${c}
    */
   _resumeMessages(e, t, s) {
     const r = e.getMessages?.().find((i) => i.id === t);
-    return [...s, ...r ? $c(r, ys, { openDeferred: !0 }) : []];
+    return [...s, ...r ? Nc(r, ys, { openDeferred: !0 }) : []];
   }
   /**
    * What the send of a reloaded turn put before its reply, rebuilt the way
@@ -9253,10 +10921,10 @@ ${c}
     Ne(e, "aparte-message-error", { messageId: t, error: s }, this._targetIdOf(e));
   }
 }
-function Wc(n) {
-  return n.next ? Wc(n.next) : "current" in n ? n : null;
+function Hc(n) {
+  return n.next ? Hc(n.next) : "current" in n ? n : null;
 }
-class Gg {
+class Jg {
   _nodes = /* @__PURE__ */ new Map();
   _head = null;
   _root = { next: null, children: [] };
@@ -9359,7 +11027,7 @@ class Gg {
     const t = this._nodes.get(e);
     if (!t) return;
     const s = t.prev ?? this._root;
-    s.next = t, this._head = Wc(t);
+    s.next = t, this._head = Hc(t);
   }
   /**
    * Remove all descendants of `messageId` (inclusive) and, when the head was among
@@ -9475,7 +11143,7 @@ class Gg {
     e.children = [], e.next = null;
   }
 }
-function jg(n, e, t) {
+function em(n, e, t) {
   let s = "other";
   try {
     s = new Intl.PluralRules(t).select(e);
@@ -9484,19 +11152,19 @@ function jg(n, e, t) {
   const r = n.split("|"), i = (a) => r.find((l) => l.startsWith(`${a}:`)), o = i(s) ?? i("other") ?? n;
   return o.slice(o.indexOf(":") + 1).replace("{n}", String(e));
 }
-const Kg = ".aparte-message-content, .aparte-segments, .aparte-content, .aparte-checkpoint__summary";
+const tm = ".aparte-message-content, .aparte-segments, .aparte-content, .aparte-checkpoint__summary";
 function Ge(n) {
-  return !!n?.closest?.(Kg);
+  return !!n?.closest?.(tm);
 }
-const da = Symbol.for("aparte.dialogTriggers");
+const ha = Symbol.for("aparte.dialogTriggers");
 let Hr = null, os = null;
-function Vg(n) {
+function nm(n) {
   Hr = n.target, os = null;
 }
-function Xg(n) {
+function sm(n) {
   os = n.target;
 }
-function Qg(n) {
+function rm(n) {
   const e = n.target;
   if (!e?.closest) return;
   const t = e.closest("[data-aparte-dialog-open]");
@@ -9516,12 +11184,12 @@ function Qg(n) {
     Hr = null, os = null, r && e.close();
   }
 }
-function Yg(n = document) {
+function im(n = document) {
   const e = n;
-  e[da] || (e[da] = !0, n.addEventListener("pointerdown", Vg, !0), n.addEventListener("pointerup", Xg, !0), n.addEventListener("click", Qg));
+  e[ha] || (e[ha] = !0, n.addEventListener("pointerdown", nm, !0), n.addEventListener("pointerup", sm, !0), n.addEventListener("click", rm));
 }
-const Ys = "defer-hydration", gn = /* @__PURE__ */ new WeakMap(), mn = /* @__PURE__ */ new WeakMap(), Kt = /* @__PURE__ */ new WeakSet(), as = /* @__PURE__ */ new WeakSet(), Fr = /* @__PURE__ */ new WeakMap(), ha = /* @__PURE__ */ new WeakSet();
-function pa(n) {
+const Ys = "defer-hydration", gn = /* @__PURE__ */ new WeakMap(), mn = /* @__PURE__ */ new WeakMap(), Kt = /* @__PURE__ */ new WeakSet(), as = /* @__PURE__ */ new WeakSet(), Fr = /* @__PURE__ */ new WeakMap(), pa = /* @__PURE__ */ new WeakSet();
+function fa(n) {
   if (as.has(n)) return !1;
   if (mn.has(n)) return !0;
   const e = n.closest(`[${Ys}]`);
@@ -9531,13 +11199,13 @@ function pa(n) {
   if (!t) {
     t = [], gn.set(e, t);
     const s = new MutationObserver(() => {
-      e.hasAttribute(Ys) || Zg(e);
+      e.hasAttribute(Ys) || om(e);
     });
     s.observe(e, { attributes: !0, attributeFilter: [Ys] }), Fr.set(e, s);
   }
   return t.push(n), !0;
 }
-function Zg(n) {
+function om(n) {
   Fr.get(n)?.disconnect(), Fr.delete(n);
   const e = gn.get(n) ?? [];
   gn.delete(n);
@@ -9545,11 +11213,11 @@ function Zg(n) {
     mn.delete(t), t.isConnected && !as.has(t) && t.connectedCallback?.();
 }
 function ie(n) {
-  if (ha.has(n)) return;
-  ha.add(n);
+  if (pa.has(n)) return;
+  pa.add(n);
   const e = n.prototype, t = e.connectedCallback, s = e.attributeChangedCallback, r = e.disconnectedCallback, i = n.observedAttributes ?? [];
   e.connectedCallback = function() {
-    if (pa(this)) {
+    if (fa(this)) {
       Kt.add(this);
       return;
     }
@@ -9562,7 +11230,7 @@ function ie(n) {
     }
     as.add(this), t?.call(this);
   }, s && (e.attributeChangedCallback = function(o, a, l) {
-    if (pa(this)) {
+    if (fa(this)) {
       Kt.add(this);
       return;
     }
@@ -9581,7 +11249,7 @@ function ie(n) {
 function Ee(n) {
   return n === "" ? !0 : !!n;
 }
-class Uc extends HTMLElement {
+class Fc extends HTMLElement {
   static get observedAttributes() {
     return ["value", "disabled", "selected", "data-status"];
   }
@@ -9625,8 +11293,8 @@ class Uc extends HTMLElement {
     t || (t = document.createElement("span"), t.className = "aparte-status-dot", t.setAttribute("aria-hidden", "true"), this.appendChild(t)), t.setAttribute("data-status", e);
   }
 }
-ie(Uc);
-customElements.get("aparte-option") || customElements.define("aparte-option", Uc);
+ie(Fc);
+customElements.get("aparte-option") || customElements.define("aparte-option", Fc);
 class ws extends HTMLElement {
   /** Ids for the label span the group points `aria-labelledby` at. */
   static _labelIdSeq = 0;
@@ -10018,7 +11686,7 @@ class _n extends HTMLElement {
     }
     const s = this._trigger?.querySelector(".aparte-select-label-sizer");
     if (s) {
-      const i = [e, ...Array.from(this.querySelectorAll("aparte-option"), (a) => fa(a))], o = Array.from(s.children, (a) => a.getAttribute("data-label") ?? "");
+      const i = [e, ...Array.from(this.querySelectorAll("aparte-option"), (a) => ga(a))], o = Array.from(s.children, (a) => a.getAttribute("data-label") ?? "");
       (i.length !== o.length || i.some((a, l) => a !== o[l])) && s.replaceChildren(...i.map((a) => {
         const l = document.createElement("span");
         return l.setAttribute("data-label", a), l;
@@ -10030,7 +11698,7 @@ class _n extends HTMLElement {
   }
   _getSelectedLabel() {
     for (const e of this.querySelectorAll("aparte-option"))
-      if (e.getAttribute("value") === this._value) return fa(e);
+      if (e.getAttribute("value") === this._value) return ga(e);
     return "";
   }
   _filterOptions(e) {
@@ -10052,7 +11720,7 @@ class _n extends HTMLElement {
     }));
   }
 }
-function fa(n) {
+function ga(n) {
   let e = "";
   for (const t of n.childNodes)
     t.nodeType === Node.ELEMENT_NODE && t.matches(".aparte-option__meta, .aparte-status-dot") || (e += t.textContent ?? "");
@@ -10060,7 +11728,7 @@ function fa(n) {
 }
 ie(_n);
 customElements.get("aparte-select") || customElements.define("aparte-select", _n);
-class zc extends HTMLElement {
+class Wc extends HTMLElement {
   static get observedAttributes() {
     return ["value"];
   }
@@ -10082,9 +11750,9 @@ class zc extends HTMLElement {
     this.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle class="aparte-spinner-track" cx="12" cy="12" r="${this._r}"/><circle class="aparte-spinner-fill" cx="12" cy="12" r="${this._r}" stroke-dasharray="${r}" stroke-dashoffset="${s.toFixed(2)}"/></svg>`;
   }
 }
-ie(zc);
-customElements.get("aparte-progress-spinner") || customElements.define("aparte-progress-spinner", zc);
-class Gc extends HTMLElement {
+ie(Wc);
+customElements.get("aparte-progress-spinner") || customElements.define("aparte-progress-spinner", Wc);
+class Uc extends HTMLElement {
   static get observedAttributes() {
     return ["name"];
   }
@@ -10103,19 +11771,19 @@ class Gc extends HTMLElement {
     this.innerHTML = t ?? "", this.firstElementChild?.setAttribute("aria-hidden", "true");
   }
 }
-ie(Gc);
-customElements.get("aparte-icon") || customElements.define("aparte-icon", Gc);
-const Wr = ".aparte-elic-option--command, .aparte-approval-option", Jg = 'input:not([type="checkbox"]):not([type="radio"]):not([type="button"]), textarea, select, [contenteditable]:not([contenteditable="false"])';
-function ga(n) {
+ie(Uc);
+customElements.get("aparte-icon") || customElements.define("aparte-icon", Uc);
+const Wr = ".aparte-elic-option--command, .aparte-approval-option", am = 'input:not([type="checkbox"]):not([type="radio"]):not([type="button"]), textarea, select, [contenteditable]:not([contenteditable="false"])';
+function ma(n) {
   [...n.querySelectorAll(Wr)].forEach((t, s) => {
     s >= 9 || (t.setAttribute("data-shortcut", String(s + 1)), t.setAttribute("aria-keyshortcuts", String(s + 1)));
   });
 }
-function ma(n) {
+function _a(n) {
   const e = (t) => {
     if (t.defaultPrevented || t.repeat || t.isComposing || t.keyCode === 229 || t.ctrlKey || t.metaKey || t.altKey || t.shiftKey || n.hasAttribute("data-collapsed")) return;
     const s = t.target instanceof Element ? t.target : null;
-    if (!(!s || s.closest(Jg))) {
+    if (!(!s || s.closest(am))) {
       if (/^[1-9]$/.test(t.key)) {
         if (!s.closest(Wr)) return;
         const r = n.querySelectorAll(Wr)[Number(t.key) - 1];
@@ -10132,7 +11800,7 @@ function ma(n) {
   };
   return n.addEventListener("keydown", e), () => n.removeEventListener("keydown", e);
 }
-function _a(n) {
+function ba(n) {
   let e = n.activeElement;
   for (; e?.shadowRoot?.activeElement; ) e = e.shadowRoot.activeElement;
   return e;
@@ -10142,7 +11810,7 @@ function Zs(n, e) {
     if (t === e) return !0;
   return !1;
 }
-function ba(n, e, t, s, r) {
+function va(n, e, t, s, r) {
   const i = document.createElement("button");
   i.type = "button", i.className = "aparte-btn aparte-btn--icon aparte-btn--sm aparte-btn--ghost aparte-elic-hide", i.setAttribute("aria-expanded", "true"), i.innerHTML = t.getIcon("expand");
   const o = document.createElement("button");
@@ -10159,7 +11827,7 @@ function ba(n, e, t, s, r) {
     n.removeAttribute("data-collapsed"), r(), s();
   }), e.prepend(i), n.append(o), { relabel: l };
 }
-class va extends HTMLElement {
+class ya extends HTMLElement {
   _pending = null;
   /**
    * A turn ended — cancel the open question only if it was OUR turn.
@@ -10216,7 +11884,7 @@ class va extends HTMLElement {
     const t = this._getComposer();
     return t ? new Promise((s, r) => {
       let i = !1;
-      const o = {}, a = _a(document), l = () => {
+      const o = {}, a = ba(document), l = () => {
         const I = e.message;
         return String(typeof I == "function" ? I() : I ?? "");
       }, c = "aparte-chat, [data-aparte-chat], [data-aparte-host]", u = 'input, textarea, select, [contenteditable]:not([contenteditable="false"])', h = t.closest(c) ?? t.parentElement ?? t, d = !(a instanceof HTMLElement) || a === document.body, p = d ? null : a, f = p !== null && Zs(p, h), m = p !== null && p.matches(u), g = p !== null && !f && (m || p.tagName === "IFRAME" || p.closest(c) !== null), b = (I) => {
@@ -10236,7 +11904,7 @@ class va extends HTMLElement {
       }, A = () => {
         if (i) return !1;
         i = !0, this._pending = null;
-        const I = _a(document), H = I instanceof Node && Zs(I, t);
+        const I = ba(document), H = I instanceof Node && Zs(I, t);
         return t.hidePanel(o.token), b(""), H && ((!g && p !== null && p.isConnected && !Zs(p, t) ? p : null) ?? t).focus(), !0;
       }, E = (I) => {
         A() && s(I);
@@ -10252,9 +11920,9 @@ class va extends HTMLElement {
       }
       const S = P(this);
       if (e.kind === "approval") {
-        const I = () => K.isComplete() && !K.el.hasAttribute("data-collapsed"), H = () => I() ? "submit" : "none", U = () => t.setPanelSubmitEnabled(I(), H()), K = Ae(S, () => qg(e.message, e.options ?? [], U, e.details, e.allowOther ?? !0, e.preview));
-        ga(K.el), ma(K.el), K.onSettle((ve) => E({ action: "accept", content: ve }));
-        const le = ba(K.el, K.dismiss, S, () => K.focus(), U);
+        const I = () => K.isComplete() && !K.el.hasAttribute("data-collapsed"), H = () => I() ? "submit" : "none", U = () => t.setPanelSubmitEnabled(I(), H()), K = Ae(S, () => Kg(e.message, e.options ?? [], U, e.details, e.allowOther ?? !0, e.preview));
+        ma(K.el), _a(K.el), K.onSettle((ve) => E({ action: "accept", content: ve }));
+        const le = va(K.el, K.dismiss, S, () => K.focus(), U);
         this._pending = {
           abort: () => _(),
           composer: t,
@@ -10274,9 +11942,9 @@ class va extends HTMLElement {
       const k = e.schema ?? { type: "string" }, C = () => {
         const I = w.el.hasAttribute("data-collapsed");
         t.setPanelSubmitEnabled(!I && w.canProceed(), I ? "none" : w.mode());
-      }, w = Ae(S, () => Pg(e.message, k, C)), T = document.createElement("button");
-      T.type = "button", T.className = "aparte-btn aparte-elic-skip", T.textContent = S.t("elicitationSkip"), T.addEventListener("click", () => E({ action: "decline" })), w.dismiss.appendChild(T), ga(w.el), ma(w.el);
-      const O = ba(w.el, w.dismiss, S, () => w.focus(), C);
+      }, w = Ae(S, () => Ug(e.message, k, C)), T = document.createElement("button");
+      T.type = "button", T.className = "aparte-btn aparte-elic-skip", T.textContent = S.t("elicitationSkip"), T.addEventListener("click", () => E({ action: "decline" })), w.dismiss.appendChild(T), ma(w.el), _a(w.el);
+      const O = va(w.el, w.dismiss, S, () => w.focus(), C);
       w.onSettle((I) => E({ action: "accept", content: I })), this._pending = {
         abort: () => _(),
         composer: t,
@@ -10347,11 +12015,11 @@ class va extends HTMLElement {
     ), null;
   }
 }
-typeof customElements < "u" && !customElements.get("aparte-elicitation") && (ie(va), customElements.define("aparte-elicitation", va));
-function jc(n) {
+typeof customElements < "u" && !customElements.get("aparte-elicitation") && (ie(ya), customElements.define("aparte-elicitation", ya));
+function zc(n) {
   return !n.hasAttribute("loading") && !n.querySelector("aparte-chat-bubble");
 }
-class Kc extends HTMLElement {
+class Gc extends HTMLElement {
   static get observedAttributes() {
     return ["placeholder", "disabled", "submit-on-enter", "attachments", "type-to-focus"];
   }
@@ -10371,7 +12039,7 @@ class Kc extends HTMLElement {
    */
   _ownsShell = !1;
   connectedCallback() {
-    this.setAttribute("data-aparte-chat", ""), this._render(), this._forwardAttr("placeholder"), this._forwardAttr("disabled"), this._forwardAttr("submit-on-enter"), this._forwardAttr("type-to-focus"), this._syncEmptyWatch(), this._syncLoadingWatch(), this._watchForViewport(), this._offGlide?.(), this._offGlide = pg(this);
+    this.setAttribute("data-aparte-chat", ""), this._render(), this._forwardAttr("placeholder"), this._forwardAttr("disabled"), this._forwardAttr("submit-on-enter"), this._forwardAttr("type-to-focus"), this._syncEmptyWatch(), this._syncLoadingWatch(), this._watchForViewport(), this._offGlide?.(), this._offGlide = wg(this);
   }
   disconnectedCallback() {
     this._offGlide?.(), this._offGlide = null, this._observer?.disconnect(), this._observer = null, this._loadingObserver?.disconnect(), this._loadingObserver = null, this._childObserver?.disconnect(), this._childObserver = null;
@@ -10491,12 +12159,12 @@ class Kc extends HTMLElement {
    */
   _updateEmpty() {
     const e = this.querySelector("aparte-chat-viewport");
-    this.toggleAttribute("data-empty", !e || jc(e));
+    this.toggleAttribute("data-empty", !e || zc(e));
   }
 }
-ie(Kc);
-customElements.get("aparte-chat") || customElements.define("aparte-chat", Kc);
-function em(n, e) {
+ie(Gc);
+customElements.get("aparte-chat") || customElements.define("aparte-chat", Gc);
+function lm(n, e) {
   const t = [];
   let s = -1, r = -1, i = 0;
   const o = () => {
@@ -10511,7 +12179,7 @@ function Nn(n, e) {
   const t = `[data-segment-id="${Le(e)}"]`;
   return n.querySelector(`:scope > ${t}, :scope > .aparte-turn > .aparte-turn__body > ${t}`);
 }
-function tm(n) {
+function cm(n) {
   let e = 1 / 0, t = -1 / 0;
   for (const s of n) {
     const { startedAt: r, endedAt: i } = gs(s) ?? {};
@@ -10520,53 +12188,53 @@ function tm(n) {
   }
   return n.length > 0 ? t - e : void 0;
 }
-const nm = (n, e) => e ? n.split(e).length - 1 : 0;
-function sm(n, e) {
+const um = (n, e) => e ? n.split(e).length - 1 : 0;
+function dm(n, e) {
   const t = n.createElement("span");
   t.className = "aparte-tag aparte-inline-token", e.kind && (t.dataset.kind = e.kind);
   const s = n.createElement("span");
   return s.className = "aparte-tag__label", s.textContent = e.label, t.appendChild(s), t;
 }
-function rm(n, e, t) {
-  let s = nm(e.slice(0, t.start), t.text);
+function hm(n, e, t) {
+  let s = um(e.slice(0, t.start), t.text);
   const r = n.ownerDocument, i = r.createTreeWalker(n, NodeFilter.SHOW_TEXT);
   for (; i.nextNode(); ) {
     const o = i.currentNode;
     for (let a = o.data.indexOf(t.text); a >= 0; a = o.data.indexOf(t.text, a + t.text.length)) {
       if (s-- > 0) continue;
       const l = r.createRange();
-      l.setStart(o, a), l.setEnd(o, a + t.text.length), l.deleteContents(), l.insertNode(sm(r, t));
+      l.setStart(o, a), l.setEnd(o, a + t.text.length), l.deleteContents(), l.insertNode(dm(r, t));
       return;
     }
   }
 }
-function im(n, e, t) {
+function pm(n, e, t) {
   if (!n.querySelector(".aparte-inline-token"))
     for (const s of [...t].sort((r, i) => i.start - r.start))
-      s.text && rm(n, e, s);
+      s.text && hm(n, e, s);
 }
-function ya(n, e, t) {
+function wa(n, e, t) {
   const s = document.createElement("button");
   return s.type = "button", s.className = `aparte-btn aparte-btn--sm ${e}`, s.textContent = n, s.addEventListener("click", t), s;
 }
-function om(n) {
+function fm(n) {
   const e = document.createElement("div");
   e.className = "aparte-feedback-reasons", e.setAttribute("role", "group"), e.setAttribute("aria-label", n.title);
   const t = document.createElement("span");
   t.textContent = n.title, e.appendChild(t);
   for (const s of n.reasons)
-    e.appendChild(ya(s, "aparte-btn--surface", () => n.onPick(s)));
-  return e.appendChild(ya(n.dismiss, "aparte-btn--ghost", n.onClose)), e;
+    e.appendChild(wa(s, "aparte-btn--surface", () => n.onPick(s)));
+  return e.appendChild(wa(n.dismiss, "aparte-btn--ghost", n.onClose)), e;
 }
-const wa = (n) => !!n && typeof n.getMessages == "function" && typeof n.updateMessage == "function";
-function am(n) {
+const Aa = (n) => !!n && typeof n.getMessages == "function" && typeof n.updateMessage == "function";
+function gm(n) {
   const e = Je(n);
-  if (wa(e)) return e;
+  if (Aa(e)) return e;
   const t = n.closest("aparte-chat-viewport");
-  return wa(t) ? t : null;
+  return Aa(t) ? t : null;
 }
-function lm(n, e) {
-  const t = am(n);
+function mm(n, e) {
+  const t = gm(n);
   if (!t) return 0;
   const s = t.getMessages().filter((i) => i.contextSummary !== void 0).map((i) => i.id);
   for (const i of s) t.updateMessage(i, { contextSummary: void 0 });
@@ -10581,7 +12249,7 @@ function Vt(n, e) {
   const t = Ye("button", "aparte-btn aparte-btn--ghost aparte-btn--sm aparte-checkpoint__action", e);
   return t.type = "button", t.setAttribute("data-checkpoint-action", n), t;
 }
-function cm(n) {
+function _m(n) {
   const { kind: e, locale: t } = n, s = Ye("div", "aparte-checkpoint");
   s.setAttribute("role", "group"), s.setAttribute("aria-label", t.checkpointGroup ?? "Context summary"), s.setAttribute("data-state", e);
   const r = Ye("div", "aparte-checkpoint__row aparte-divider aparte-divider--label"), i = Ye("div", "aparte-checkpoint__label");
@@ -10609,22 +12277,22 @@ function cm(n) {
   }
   return s;
 }
-function Aa(n, e) {
-  return n.type === "tool_call" ? Jp(e) : n.type === "activity" ? ef(e) : null;
+function ka(n, e) {
+  return n.type === "tool_call" ? lf(e) : n.type === "activity" ? cf(e) : null;
 }
-let ka = !1;
-function um(n) {
-  ka || (ka = !0, console.warn(`[aparte] No renderer for segment "${n}". Register one with registerSegmentRenderer({ type: '${n}', render }) from @aparte/core — see https://apartejs.dev/guides/customization/#custom-segment-types`));
+let Sa = !1;
+function bm(n) {
+  Sa || (Sa = !0, console.warn(`[aparte] No renderer for segment "${n}". Register one with registerSegmentRenderer({ type: '${n}', render }) from @aparte/core — see https://apartejs.dev/guides/customization/#custom-segment-types`));
 }
 function Js(n) {
   const e = typeof n.fallback == "string" && n.fallback.trim() ? n.fallback : null;
-  e || um(n.type);
+  e || bm(n.type);
   const t = document.createElement("div");
   return t.className = e ? "aparte-segment aparte-segment-fallback" : "aparte-segment aparte-segment-unknown", t.textContent = e ?? `[Unknown segment type: ${n.type}]`, t;
 }
 function st(n, e) {
-  const t = Wo(n, e);
-  return t || (rf(e), Wo(n, e));
+  const t = Uo(n, e);
+  return t || (pf(e), Uo(n, e));
 }
 function Xt(n, e) {
   let t;
@@ -10637,7 +12305,7 @@ function Xt(n, e) {
   return t && e && !t.hasAttribute("data-segment-id") && t.setAttribute("data-segment-id", e.id), t;
 }
 const ln = /* @__PURE__ */ new Map();
-function dm() {
+function vm() {
   const n = [...ln].filter(([t]) => !t.firstChild);
   ln.clear();
   const e = n.map(([, { bubble: t, role: s }]) => {
@@ -10646,8 +12314,8 @@ function dm() {
   });
   n.forEach(([t], s) => t.toggleAttribute("data-image", e[s]));
 }
-let hm = 0;
-class Vc extends HTMLElement {
+let ym = 0;
+class jc extends HTMLElement {
   _contentEl = null;
   _segmentsEl = null;
   _attachmentsEl = null;
@@ -10681,7 +12349,7 @@ class Vc extends HTMLElement {
   /** What the separator was last drawn from, so a re-sync that changes nothing leaves it (and a focused button) alone. */
   _checkpointDrawn = "";
   /** Names the separator's panel for `aria-controls`, unique on the page without needing a message id. */
-  _checkpointId = `aparte-checkpoint-${++hm}`;
+  _checkpointId = `aparte-checkpoint-${++ym}`;
   /** Cleanup returned by the avatar provider — called on disconnect/re-render. */
   _avatarCleanup = null;
   /** Whether the avatar slot holds what a provider drew, which goes when the provider does. */
@@ -10727,7 +12395,7 @@ class Vc extends HTMLElement {
   // bubbles pick up the new per-role actions + icons without being re-created.
   _onConfigChange = (e) => {
     const t = e.detail;
-    t?.config && t.config !== this._cfg || (this._updateActionBar(), this._updateName(), this._updateLocalizedLabels(), this._updateWaiting(), this._updateFinishNote(), this._checkpointDrawn = "", this._updateCheckpoint(), this._renderAvatar(), this._redrawSegmentsWhoseRendererChanged(), this._relabelSegments(), Ae(this._cfg, () => Nh(this)), Ap(this), this._syncSources(), this._updateTimestamp(this.getAttribute("timestamp")), this._redrawQueued || (this._redrawQueued = !0, queueMicrotask(() => {
+    t?.config && t.config !== this._cfg || (this._updateActionBar(), this._updateName(), this._updateLocalizedLabels(), this._updateWaiting(), this._updateFinishNote(), this._checkpointDrawn = "", this._updateCheckpoint(), this._renderAvatar(), this._redrawSegmentsWhoseRendererChanged(), this._relabelSegments(), Ae(this._cfg, () => Wh(this)), Ip(this), this._syncSources(), this._updateTimestamp(this.getAttribute("timestamp")), this._redrawQueued || (this._redrawQueued = !0, queueMicrotask(() => {
       this._redrawQueued = !1, this.isConnected && this._redrawIfStale();
     })));
   };
@@ -10767,7 +12435,7 @@ class Vc extends HTMLElement {
     const i = this._drawn.get(e.id);
     i && i.el !== t && this._release(e.id);
     const o = { el: t, renderer: s, tool: null, segment: e };
-    this._drawn.set(e.id, o), this.isConnected || this._scheduleReleaseCheck(), s?.setup && Ae(this._cfg, () => s.setup(t, r)), o.tool = Aa(e, t);
+    this._drawn.set(e.id, o), this.isConnected || this._scheduleReleaseCheck(), s?.setup && Ae(this._cfg, () => s.setup(t, r)), o.tool = ka(e, t);
   }
   /**
    * The segment as its renderer's `setup` sees it: one ADDED while the message streams is
@@ -10862,7 +12530,7 @@ class Vc extends HTMLElement {
    * as that renderer is still the one in effect.
    */
   _keepsItsDrawing(e, t) {
-    return (ea(t.renderer) || ea(t.tool)) && this._stillDrawnByCurrent(e, t);
+    return (ta(t.renderer) || ta(t.tool)) && this._stillDrawnByCurrent(e, t);
   }
   /**
    * A Markdown or highlight provider set after this message was drawn: draw it again.
@@ -10939,7 +12607,7 @@ class Vc extends HTMLElement {
     return P(this);
   }
   connectedCallback() {
-    this._render(), this._updateContent(), this._updateNote(), this._updateTimestamp(this.getAttribute("timestamp")), this._releasedWhileDetached && (this._releasedWhileDetached = !1, this._segments.length > 0 && this._renderSegments()), window.addEventListener("aparte-config-change", this._onConfigChange), this._offRenderers ??= Hf(this._onRenderersChange), this.addEventListener("click", this._onBranchPickerClick), this.addEventListener("click", this._onLinkClick), this.addEventListener("click", this._onCheckpointClick), this.addEventListener("keydown", this._onCheckpointKeydown);
+    this._render(), this._updateContent(), this._updateNote(), this._updateTimestamp(this.getAttribute("timestamp")), this._releasedWhileDetached && (this._releasedWhileDetached = !1, this._segments.length > 0 && this._renderSegments()), window.addEventListener("aparte-config-change", this._onConfigChange), this._offRenderers ??= Vf(this._onRenderersChange), this.addEventListener("click", this._onBranchPickerClick), this.addEventListener("click", this._onLinkClick), this.addEventListener("click", this._onCheckpointClick), this.addEventListener("keydown", this._onCheckpointKeydown);
   }
   /**
    * The boundary above this bubble changed — under every wrapper the chat's own config is
@@ -11022,7 +12690,7 @@ class Vc extends HTMLElement {
   _askFeedbackReason(e) {
     const t = this._cfg.getBubbleActions().feedbackReasons;
     if (!t?.length || this.querySelector(".aparte-feedback-reasons")) return;
-    const s = om({
+    const s = fm({
       reasons: t,
       title: this._cfg.t("feedbackReasonTitle"),
       dismiss: this._cfg.t("feedbackReasonDismiss"),
@@ -11038,7 +12706,7 @@ class Vc extends HTMLElement {
     this._tokens = e, this._drawTokens();
   }
   _drawTokens() {
-    this._contentEl && this._role === "user" && this._tokens?.length && im(this._contentEl, this._content, this._tokens);
+    this._contentEl && this._role === "user" && this._tokens?.length && pm(this._contentEl, this._content, this._tokens);
   }
   /** Set content directly */
   setContent(e) {
@@ -11067,7 +12735,7 @@ class Vc extends HTMLElement {
     const e = this._segmentsEl, t = e?.parentElement;
     if (!e || !t) return;
     const s = this._segments.flatMap((r) => r.type === "text" ? r.sources ?? [] : []);
-    Mp(t, e, s, this._cfg);
+    Hp(t, e, s, this._cfg);
   }
   /** A whole new list, from `setSegments` or `updateMessage({ segments })`: copied in, then drawn. */
   _replaceSegments(e) {
@@ -11102,7 +12770,7 @@ class Vc extends HTMLElement {
   updateSegment(e, t) {
     const s = this._segments.findIndex((r) => r.id === e);
     if (s !== -1) {
-      const r = Il(this._segments[s], t);
+      const r = xl(this._segments[s], t);
       this._segments[s] = r, r.isStreaming === !1 ? this._written.delete(e) : "content" in t && this._written.add(e), this._applySegmentUpdate(e, r, t), "sources" in t && this._syncSources(), this._syncCopyAction(), "status" in t || "isStreaming" in t || "queued" in t || "deferred" in t ? (this._syncTurns(), this._updateWaiting()) : this._cfg.getTurnSummary()?.label && this._turnHolding(this._drawn.get(e)?.el) && this._syncTurns();
     }
   }
@@ -11344,7 +13012,7 @@ class Vc extends HTMLElement {
       a
     ]);
     if (r && !e && l === this._checkpointDrawn) return;
-    const c = document.activeElement, u = r && c && r.contains(c) ? c.getAttribute("data-checkpoint-action") : null, h = cm({
+    const c = document.activeElement, u = r && c && r.contains(c) ? c.getAttribute("data-checkpoint-action") : null, h = _m({
       kind: s,
       count: this._contextSummary?.count,
       reason: i,
@@ -11382,7 +13050,7 @@ class Vc extends HTMLElement {
         case "restore-confirm": {
           this._confirmingRestore = !1;
           const r = this.getAttribute("message-id") ?? void 0;
-          lm(this, { messageId: r, targetId: this._resolveTargetId() }), this.setContextSummary(null);
+          mm(this, { messageId: r, targetId: this._resolveTargetId() }), this.setContextSummary(null);
           break;
         }
         case "retry": {
@@ -11454,7 +13122,7 @@ class Vc extends HTMLElement {
   _syncTurns() {
     const e = this._segmentsEl;
     if (!e || this._releasedWhileDetached) return;
-    const t = this._cfg.getTurnSummary(), s = t ? em(this._segments, (c) => this._turnRole(c)) : [];
+    const t = this._cfg.getTurnSummary(), s = t ? lm(this._segments, (c) => this._turnRole(c)) : [];
     if (s.length === 0 && !e.querySelector(":scope > .aparte-turn")) return;
     const r = (c, u, h) => {
       const d = h ? h.nextSibling : c.firstChild;
@@ -11496,16 +13164,16 @@ class Vc extends HTMLElement {
     u.textContent = h == null && l && d ? this._stepName(d) : "", r.openWhileRunning === !0 && !("touched" in e.dataset) && (e.open = l);
   }
   _turnOutcome(e, t) {
-    const s = this._cfg, r = s.getLocale().tag || void 0, i = t > 0 ? jg(s.t("turnTools"), t, r) : "", o = tm(e);
+    const s = this._cfg, r = s.getLocale().tag || void 0, i = t > 0 ? em(s.t("turnTools"), t, r) : "", o = cm(e);
     if (o !== void 0) {
-      const a = s.t("turnWorked").replace("{duration}", () => ec(o, r));
+      const a = s.t("turnWorked").replace("{duration}", () => Zl(o, r));
       return i ? `${a} · ${i}` : a;
     }
     return i ? s.t("turnUsed").replace("{tools}", () => i) : s.t("thought");
   }
   /** What a call goes by on screen — the name its row shows, through the same function. */
   _stepName(e) {
-    return ui(e, this._cfg).text;
+    return di(e, this._cfg).text;
   }
   _applySegmentUpdate(e, t, s) {
     const r = this._segmentsEl ? Nn(this._segmentsEl, e) : null;
@@ -11527,7 +13195,7 @@ class Vc extends HTMLElement {
       if (a) {
         a.segment = t;
         const l = this._segmentsEl ? Nn(this._segmentsEl, e) : null;
-        l && l !== a.el && (a.el = l, a.tool = Aa(t, l));
+        l && l !== a.el && (a.el = l, a.tool = ka(t, l));
       }
     } else {
       const a = Xt(Ae(this._cfg, () => i.render(t)), t);
@@ -11687,7 +13355,7 @@ class Vc extends HTMLElement {
       ln.delete(e), e.removeAttribute("data-image");
       return;
     }
-    ln.size === 0 && queueMicrotask(dm), ln.set(e, { bubble: this, role: this._role });
+    ln.size === 0 && queueMicrotask(vm), ln.set(e, { bubble: this, role: this._role });
   }
   _updateRole() {
     const e = this.querySelector(".aparte-message"), t = this.querySelector(".aparte-avatar"), s = this.querySelector(".aparte-name");
@@ -11732,7 +13400,7 @@ class Vc extends HTMLElement {
       const i = e.parentElement;
       e.setAttribute("data-aparte-highlighted", ""), Promise.resolve(this._cfg.highlightCode(t, r, { fallback: !1 })).then((o) => {
         const a = (o ?? "").trim();
-        !a || !i || !this._contentEl?.contains(i) || (/^<pre[\s>]/i.test(a) ? Jl(i, a) : e.innerHTML = a);
+        !a || !i || !this._contentEl?.contains(i) || (/^<pre[\s>]/i.test(a) ? Yl(i, a) : e.innerHTML = a);
       }).catch(() => {
         e.removeAttribute("data-aparte-highlighted");
       });
@@ -12112,7 +13780,7 @@ class Vc extends HTMLElement {
     switch (s) {
       case "copy": {
         const i = this._copyableText(), o = this._cfg.getIconProvider(), a = this._cfg.getLocale();
-        tc(i).then(() => {
+        Jl(i).then(() => {
           t.innerHTML = o.check(), t.setAttribute("data-copied", "");
           const l = a.copied ?? a.copy ?? "Copied";
           t.setAttribute("title", l), t.setAttribute("aria-label", l), setTimeout(() => {
@@ -12248,9 +13916,9 @@ class Vc extends HTMLElement {
     }
   }
 }
-ie(Vc);
-customElements.get("aparte-chat-bubble") || customElements.define("aparte-chat-bubble", Vc);
-class Xc extends HTMLElement {
+ie(jc);
+customElements.get("aparte-chat-bubble") || customElements.define("aparte-chat-bubble", jc);
+class Kc extends HTMLElement {
   static get observedAttributes() {
     return ["visible", "text"];
   }
@@ -12402,27 +14070,27 @@ class Xc extends HTMLElement {
     this._writeText(e), t.setAttribute("aria-label", e || this._word());
   }
 }
-ie(Xc);
-customElements.get("aparte-chat-status") || customElements.define("aparte-chat-status", Xc);
-function Sa(n, e) {
+ie(Kc);
+customElements.get("aparte-chat-status") || customElements.define("aparte-chat-status", Kc);
+function Ca(n, e) {
   if (!it(n) || n.segments?.length || typeof n.content != "string" || !n.content.trim()) return n;
-  const t = ih(n.content, { blocks: e });
+  const t = ph(n.content, { blocks: e });
   return t.length <= 1 && t.every((r) => r.type === "text") ? n : Ur({ ...n, segments: t });
 }
 function Ur(n) {
-  return Object.defineProperty(n, mi, { value: !0, enumerable: !1 }), n;
+  return Object.defineProperty(n, _i, { value: !0, enumerable: !1 }), n;
 }
-function Ca(n) {
-  return n[mi] === !0;
+function Ea(n) {
+  return n[_i] === !0;
 }
-function pm(n, e) {
+function wm(n, e) {
   try {
     return new Intl.DateTimeFormat(e || void 0, { dateStyle: "long" }).format(n);
   } catch {
     return n.toDateString();
   }
 }
-class Qc extends HTMLElement {
+class Vc extends HTMLElement {
   // The scroll surface: an internal `.aparte-viewport-container` div (core mode)
   // or the host element itself (framework-managed mode). HTMLElement covers both.
   _container = null;
@@ -12438,7 +14106,7 @@ class Qc extends HTMLElement {
   _spacerRafId = null;
   _spacerFrozenUntil = 0;
   _layoutTransitionMs = 0;
-  _repo = new Gg();
+  _repo = new Jg();
   _isAutoScrollEnabled = !0;
   /** The last scroll position we saw, so growth can be told from a gesture. */
   _lastScrollTop = 0;
@@ -12582,7 +14250,7 @@ class Qc extends HTMLElement {
     super(), this._handleScroll = this._handleScroll.bind(this), this._handleScrollEnd = this._handleScrollEnd.bind(this);
   }
   connectedCallback() {
-    this.hasAttribute("framework-managed") && (this._frameworkManagedDOM = !0), this._render(), this._setupEventListeners(), this._setupObservers(), this._updateTranscriptInset(), this._boundResetHandler = () => this.clearAll(), window.addEventListener("aparte-reset", this._boundResetHandler), window.addEventListener("aparte-config-change", this._onConfigChange), this._checkpointState ??= new fg({
+    this.hasAttribute("framework-managed") && (this._frameworkManagedDOM = !0), this._render(), this._setupEventListeners(), this._setupObservers(), this._updateTranscriptInset(), this._boundResetHandler = () => this.clearAll(), window.addEventListener("aparte-reset", this._boundResetHandler), window.addEventListener("aparte-config-change", this._onConfigChange), this._checkpointState ??= new Ag({
       // A bare `<aparte-chat-viewport id="…">` with no named host around it is its own
       // chat: the client names its events with that id (`_targetIdOf` falls back to the
       // element's own), so the watcher answers to it too, or every event is someone else's.
@@ -12695,7 +14363,7 @@ class Qc extends HTMLElement {
       // whenever someone happened to notice it had stopped — the end of
       // the turn, or the start of the next segment — and both of those
       // silently fold the waiting that followed into the duration.
-      ...fh(o)
+      ...Ah(o)
     });
     const a = this._chatIdOnce(), l = a === void 0 ? { messageId: e, segmentId: t, content: s, append: !0 } : { messageId: e, segmentId: t, content: s, append: !0, targetId: a };
     this.dispatchEvent(new CustomEvent("aparte-segment-update", { bubbles: !0, composed: !0, detail: l })), this._notifyBubble(e, "appendToSegment", s, t), this._autoScroll();
@@ -12777,7 +14445,7 @@ class Qc extends HTMLElement {
     if (!s || !r) return;
     const i = this._getOrCreateMessage(s);
     i.segments || (i.segments = []);
-    const o = Xi(
+    const o = Qi(
       i.segments,
       r,
       s,
@@ -12794,8 +14462,8 @@ class Qc extends HTMLElement {
     if (!l?.segments) return;
     const c = l.segments.findIndex((u) => u.id === o);
     if (c !== -1) {
-      const u = l.segments[c], h = hh(u, a);
-      l.segments[c] = Il(u, h), this._notifyBubble(i, "updateSegment", { segmentId: o, updates: h });
+      const u = l.segments[c], h = yh(u, a);
+      l.segments[c] = xl(u, h), this._notifyBubble(i, "updateSegment", { segmentId: o, updates: h });
     }
   }
   removeSegment(e, t) {
@@ -12804,7 +14472,7 @@ class Qc extends HTMLElement {
     const o = this._repo.getMessageById(r);
     if (o?.segments) {
       const a = o.segments.findIndex((l) => l.id === i);
-      a !== -1 && (o.segments.splice(a, 1), mh(o.segments));
+      a !== -1 && (o.segments.splice(a, 1), Sh(o.segments));
     }
     this._notifyBubble(r, "removeSegment", i);
   }
@@ -12860,7 +14528,7 @@ class Qc extends HTMLElement {
    */
   _settleSegments(e, t) {
     if (t.segments)
-      for (const s of gh(t.segments))
+      for (const s of kh(t.segments))
         this.updateSegment(e, s, { isStreaming: !1 });
   }
   /**
@@ -12875,7 +14543,7 @@ class Qc extends HTMLElement {
    */
   updateMessage(e, t) {
     const s = this._repo.getMessageById(e);
-    s && (Object.assign(s, t), t.status && (s.isStreaming = t.status === "streaming" || t.status === "pending", Ll(t.status) && this._settleSegments(e, s)), this._notifyBubble(e, "update", t), t.status && this._syncBusy(), this._autoScroll(), this._announceWrite(s, "update"));
+    s && (Object.assign(s, t), t.status && (s.isStreaming = t.status === "streaming" || t.status === "pending", Rl(t.status) && this._settleSegments(e, s)), this._notifyBubble(e, "update", t), t.status && this._syncBusy(), this._autoScroll(), this._announceWrite(s, "update"));
   }
   /**
    * Say that the app wrote into the transcript outside a turn (`aparte-transcript-change`),
@@ -12907,9 +14575,9 @@ class Qc extends HTMLElement {
    * the framework owns the DOM and will create the bubble element itself.
    */
   appendMessage(e, t) {
-    e = Sa(e, P(this).getStreamBlocks());
+    e = Ca(e, P(this).getStreamBlocks());
     const s = t?.historical ? Hn(e) : e.segments?.length ? { ...e, segments: e.segments.reduce(
-      (r, i) => (r.push(Xi(
+      (r, i) => (r.push(Qi(
         r,
         i,
         e.id,
@@ -12917,13 +14585,13 @@ class Qc extends HTMLElement {
       )), r),
       []
     ) } : { ...e };
-    if (!t?.historical && It(e) && (s.isStreaming = !0), Ca(e) && Ur(s), this._repo.addOrUpdateMessage(this._repo.headId, s), !this._frameworkManagedDOM) {
+    if (!t?.historical && It(e) && (s.isStreaming = !0), Ea(e) && Ur(s), this._repo.addOrUpdateMessage(this._repo.headId, s), !this._frameworkManagedDOM) {
       const r = this.querySelector(".aparte-messages-wrapper");
       if (r) {
         const i = document.createElement("aparte-chat-bubble");
         i.setAttribute("message-id", e.id), i.setAttribute("data-role", e.role);
         const o = e.kind ?? (e.compaction ? "compaction" : void 0);
-        o && i.setAttribute("data-kind", o), e.timestamp && i.setAttribute("timestamp", String(e.timestamp)), e.content && i.setAttribute("content", e.content), e.author && i.setAuthor?.(e.author), It(e) && i.setAttribute("streaming", ""), this._bottomSpacer && this._bottomSpacer.parentNode === r ? r.insertBefore(i, this._bottomSpacer) : r.appendChild(i), ta(i, s);
+        o && i.setAttribute("data-kind", o), e.timestamp && i.setAttribute("timestamp", String(e.timestamp)), e.content && i.setAttribute("content", e.content), e.author && i.setAuthor?.(e.author), It(e) && i.setAttribute("streaming", ""), this._bottomSpacer && this._bottomSpacer.parentNode === r ? r.insertBefore(i, this._bottomSpacer) : r.appendChild(i), na(i, s);
       }
     }
     !t?.historical && !this._bulkAppend && this._announceWrite(s, "append"), !this._bulkAppend && (this._pruneRenderedBubbles(), this._syncBusy(), e.role === "user" && (this._isAutoScrollEnabled = !0, this._smoothScrollToBottom()), this._recalculateSpacer(), e.role === "user" ? requestAnimationFrame(() => {
@@ -13060,8 +14728,8 @@ class Qc extends HTMLElement {
     this._repo.import({
       ...e,
       messages: e.messages.map((s) => {
-        const r = Sa(s.message, t), i = Hn(r);
-        return Ca(r) && Ur(i), { ...s, message: i };
+        const r = Ca(s.message, t), i = Hn(r);
+        return Ea(r) && Ur(i), { ...s, message: i };
       })
     }), this._reRenderActivePath();
   }
@@ -13077,7 +14745,7 @@ class Qc extends HTMLElement {
   clearAll(e) {
     if (e?.revokeAttachments !== !1)
       for (const t of this._repo.getAllMessages())
-        cg(t.attachments);
+        _g(t.attachments);
     if (this._repo.clear(), this._syncBusy(), !this._frameworkManagedDOM) {
       const t = this.querySelector(".aparte-messages-wrapper");
       t && Array.from(t.querySelectorAll("aparte-chat-bubble")).forEach((s) => s.remove());
@@ -13200,7 +14868,7 @@ class Qc extends HTMLElement {
         a.hasAttribute("data-date") && a.removeAttribute("data-date");
         return;
       }
-      const d = Math.round((i - u) / 864e5), p = d === 0 ? e.t("conversationGroupToday") : d === 1 ? e.t("conversationGroupYesterday") : pm(c, e.getLocale().tag);
+      const d = Math.round((i - u) / 864e5), p = d === 0 ? e.t("conversationGroupToday") : d === 1 ? e.t("conversationGroupYesterday") : wm(c, e.getLocale().tag);
       a.getAttribute("data-date") !== p && a.setAttribute("data-date", p);
     });
   }
@@ -13231,7 +14899,7 @@ class Qc extends HTMLElement {
       const o = e[i], a = t[i], l = document.createElement("aparte-chat-bubble");
       l.setAttribute("message-id", o.id), l.setAttribute("data-role", o.role);
       const c = o.kind ?? (o.compaction ? "compaction" : void 0);
-      c && l.setAttribute("data-kind", c), o.timestamp && l.setAttribute("timestamp", String(o.timestamp)), It(o) && l.setAttribute("streaming", ""), o.author && l.setAuthor?.(o.author), s.appendChild(l), ta(l, o, a);
+      c && l.setAttribute("data-kind", c), o.timestamp && l.setAttribute("timestamp", String(o.timestamp)), It(o) && l.setAttribute("streaming", ""), o.author && l.setAuthor?.(o.author), s.appendChild(l), na(l, o, a);
     }
     this._syncDateSeparators(), this._dispatchPathChanged(e, t), this._syncBusy(), this._checkpointState?.reapply(), this._recalculateSpacer();
   }
@@ -13688,9 +15356,9 @@ class Qc extends HTMLElement {
     this._container?.removeEventListener("pointerdown", this._holdPointer), document.removeEventListener("pointerup", this._releasePointer, !0), document.removeEventListener("pointercancel", this._releasePointer, !0), this._pointerHeld = !1, this._scrollBtn?.removeEventListener("click", this._onScrollBtnClick), this.removeEventListener("aparte-branch-navigate", this._onBranchNavigate), this._resizeObserver?.disconnect(), this._mutationObserver?.disconnect(), this._tailObserver?.disconnect(), this._tailObserver = null, this._tail = [], this.removeEventListener("toggle", this._onDisclosureToggle, !0), this._overlayObserver?.disconnect(), this._overlayObserver = null, this._overlayAttrObserver?.disconnect(), this._overlayAttrObserver = null, this._overlayRoot = null, this._overlayInset = -1, this._transcriptInset = -1, this._resizeObserver = null, this._mutationObserver = null, this._spacerRafId !== null && (cancelAnimationFrame(this._spacerRafId), this._spacerRafId = null), this._settleRafId !== null && (cancelAnimationFrame(this._settleRafId), this._settleRafId = null), this._settleUntil = 0;
   }
 }
-ie(Qc);
-customElements.get("aparte-chat-viewport") || customElements.define("aparte-chat-viewport", Qc);
-const fm = [
+ie(Vc);
+customElements.get("aparte-chat-viewport") || customElements.define("aparte-chat-viewport", Vc);
+const Am = [
   "input",
   "textarea",
   "select",
@@ -13703,37 +15371,37 @@ const fm = [
   '[role="menubar"]',
   '[role="tree"]',
   '[role="grid"]'
-].join(", "), gm = "aparte-chat, [data-aparte-chat]";
-function mm(n) {
+].join(", "), km = "aparte-chat, [data-aparte-chat]";
+function Sm(n) {
   const e = n.getAttribute("type-to-focus");
   return e === "page" || e === "off" ? e : "chat";
 }
-function _m(n) {
+function Cm(n) {
   if (n.defaultPrevented || n.isComposing) return !1;
   const e = n.getModifierState?.("AltGraph") === !0;
   return (n.ctrlKey || n.metaKey || n.altKey) && !e ? !1 : n.key === "Dead" ? !0 : n.key.length === 1 && n.key !== " ";
 }
-function bm(n) {
+function Em(n) {
   let e = n.activeElement;
   for (; e?.shadowRoot?.activeElement; ) e = e.shadowRoot.activeElement;
   return e;
 }
-function vm(n) {
+function Tm(n) {
   const e = n.ownerDocument;
   let t = !1;
   const s = () => {
-    const o = n.getAttribute("target"), a = n.closest(gm) ?? (o ? e.getElementById(o) : null);
+    const o = n.getAttribute("target"), a = n.closest(km) ?? (o ? e.getElementById(o) : null);
     return a ? [a, n] : [n];
   }, r = (o) => {
     const a = o.composedPath();
     t = s().some((l) => a.includes(l));
   }, i = (o) => {
-    const a = mm(n);
-    if (a === "off" || !_m(o) || n.hasAttribute("disabled")) return;
+    const a = Sm(n);
+    if (a === "off" || !Cm(o) || n.hasAttribute("disabled")) return;
     const l = n.querySelector("aparte-composer-input");
     if (!l || l.hasAttribute("disabled")) return;
-    const c = bm(e);
-    if (!c?.closest(fm)) {
+    const c = Em(e);
+    if (!c?.closest(Am)) {
       if (a === "chat") {
         const u = !c || c === e.body || c === e.documentElement;
         if (!(!u && s().some((d) => d.contains(c))) && !(u && t)) return;
@@ -13745,11 +15413,11 @@ function vm(n) {
     e.removeEventListener("pointerdown", r, !0), e.removeEventListener("keydown", i);
   };
 }
-const ym = /* @__PURE__ */ new Set(["text", "search", "email", "url", "tel", "number", "password"]);
-function wm(n) {
-  return n instanceof HTMLTextAreaElement ? n.rows === 1 : n instanceof HTMLInputElement && ym.has(n.type);
+const xm = /* @__PURE__ */ new Set(["text", "search", "email", "url", "tel", "number", "password"]);
+function Rm(n) {
+  return n instanceof HTMLTextAreaElement ? n.rows === 1 : n instanceof HTMLInputElement && xm.has(n.type);
 }
-let Am = 0;
+let Im = 0;
 class As extends HTMLElement {
   _value = "";
   _streaming = !1;
@@ -13785,7 +15453,7 @@ class As extends HTMLElement {
   /** The messages written during a reply, waiting for it to end — see {@link queue}. */
   _queue = [];
   /** Unique per composer, for the ids that name each queued message to its buttons. */
-  _queueIdBase = `aparte-queued-${++Am}`;
+  _queueIdBase = `aparte-queued-${++Im}`;
   // Window event bindings
   _onMessageStart = this._handleMessageStart.bind(this);
   _onMessageDone = this._handleMessageDone.bind(this);
@@ -13839,7 +15507,7 @@ class As extends HTMLElement {
   /** Stops the document listeners of `type-to-focus`; null while disconnected. */
   _offTypeToFocus = null;
   connectedCallback() {
-    window.addEventListener("aparte-message-start", this._onMessageStart), window.addEventListener("aparte-message-done", this._onMessageDone), window.addEventListener("aparte-message-error", this._onMessageDone), window.addEventListener("aparte-message-aborted", this._onMessageDone), window.addEventListener("aparte-config-change", this._onConfigChangeEvent), window.addEventListener("aparte-conversation-loaded", this._onConversationLoaded), queueMicrotask(() => this._warnIfUnattached()), this._evaluateModelGate(), this._applyDirection(), this._offTypeToFocus?.(), this._offTypeToFocus = vm(this);
+    window.addEventListener("aparte-message-start", this._onMessageStart), window.addEventListener("aparte-message-done", this._onMessageDone), window.addEventListener("aparte-message-error", this._onMessageDone), window.addEventListener("aparte-message-aborted", this._onMessageDone), window.addEventListener("aparte-config-change", this._onConfigChangeEvent), window.addEventListener("aparte-conversation-loaded", this._onConversationLoaded), queueMicrotask(() => this._warnIfUnattached()), this._evaluateModelGate(), this._applyDirection(), this._offTypeToFocus?.(), this._offTypeToFocus = Tm(this);
   }
   disconnectedCallback() {
     window.removeEventListener("aparte-message-start", this._onMessageStart), window.removeEventListener("aparte-message-done", this._onMessageDone), window.removeEventListener("aparte-message-error", this._onMessageDone), window.removeEventListener("aparte-message-aborted", this._onMessageDone), window.removeEventListener("aparte-config-change", this._onConfigChangeEvent), window.removeEventListener("aparte-conversation-loaded", this._onConversationLoaded), this._listeners.clear(), this._offTypeToFocus?.(), this._offTypeToFocus = null;
@@ -14086,7 +15754,7 @@ class As extends HTMLElement {
    * leaves the key to a field that used it, a combobox picking its highlighted row.
    */
   _onPanelKeydown = (e) => {
-    e.key !== "Enter" || e.isComposing || e.keyCode === 229 || e.defaultPrevented || !wm(e.target) || !(this.submitOnEnter ? !e.shiftKey : e.shiftKey) || (e.preventDefault(), this.submit());
+    e.key !== "Enter" || e.isComposing || e.keyCode === 229 || e.defaultPrevented || !Rm(e.target) || !(this.submitOnEnter ? !e.shiftKey : e.shiftKey) || (e.preventDefault(), this.submit());
   };
   /** Close the panel AND tell its owner, so a pending request never orphans. */
   _evictPanel() {
@@ -14346,54 +16014,54 @@ class As extends HTMLElement {
 }
 ie(As);
 customElements.get("aparte-composer") || customElements.define("aparte-composer", As);
-function Yc(n, e) {
+function Xc(n, e) {
   const t = (n ?? "").split(",").map((i) => i.trim().toLowerCase()).filter(Boolean);
   if (t.length === 0) return !0;
   const s = e.name.toLowerCase(), r = e.type.toLowerCase();
   return t.some((i) => i.startsWith(".") ? s.endsWith(i) : i.endsWith("/*") ? r.startsWith(i.slice(0, -1)) : r === i);
 }
-const Ai = "data-aparte-token", Zc = "data-aparte-text", km = "￼", vn = (n) => n.nodeType === Node.TEXT_NODE, Sm = (n) => n.nodeType === Node.ELEMENT_NODE && n.hasAttribute(Ai), Jc = (n) => Array.prototype.indexOf.call(n.parentNode.childNodes, n);
+const ki = "data-aparte-token", Qc = "data-aparte-text", Lm = "￼", vn = (n) => n.nodeType === Node.TEXT_NODE, Mm = (n) => n.nodeType === Node.ELEMENT_NODE && n.hasAttribute(ki), Yc = (n) => Array.prototype.indexOf.call(n.parentNode.childNodes, n);
 function yn(n, e = []) {
   return n.childNodes.forEach((t) => {
-    vn(t) || t.nodeName === "BR" || Sm(t) ? e.push(t) : yn(t, e);
+    vn(t) || t.nodeName === "BR" || Mm(t) ? e.push(t) : yn(t, e);
   }), e;
 }
-const eu = (n) => vn(n) ? n.data.length : 1;
-function Cm(n) {
+const Zc = (n) => vn(n) ? n.data.length : 1;
+function Om(n) {
   return yn(n).map((e) => vn(e) ? e.data : e.nodeName === "BR" ? `
-` : km).join("");
+` : Lm).join("");
 }
-function Em(n, e, t) {
+function Nm(n, e, t) {
   const s = n.ownerDocument.createRange();
   s.setStart(e, t), s.collapse(!0);
   let r = 0;
   for (const i of yn(n)) {
     if (i === e) return r + t;
-    if (s.comparePoint(i.parentNode, Jc(i)) >= 0) return r;
-    r += eu(i);
+    if (s.comparePoint(i.parentNode, Yc(i)) >= 0) return r;
+    r += Zc(i);
   }
   return r;
 }
-function Ea(n, e) {
+function Ta(n, e) {
   let t = e;
   for (const s of yn(n)) {
     if (vn(s) && t <= s.data.length) return [s, t];
-    if (t === 0) return [s.parentNode, Jc(s)];
-    t -= eu(s);
+    if (t === 0) return [s.parentNode, Yc(s)];
+    t -= Zc(s);
   }
   return [n, n.childNodes.length];
 }
-function Ta(n, e, t) {
-  const s = n.ownerDocument.createRange();
-  return s.setStart(...Ea(n, e)), s.setEnd(...Ea(n, t)), s;
-}
 function xa(n, e, t) {
+  const s = n.ownerDocument.createRange();
+  return s.setStart(...Ta(n, e)), s.setEnd(...Ta(n, t)), s;
+}
+function Ra(n, e, t) {
   const s = n.createElement("span");
-  s.className = "aparte-tag aparte-inline-token", s.setAttribute("contenteditable", "false"), s.setAttribute(Ai, e), s.setAttribute(Zc, t.text ?? t.label), t.kind && (s.dataset.kind = t.kind);
+  s.className = "aparte-tag aparte-inline-token", s.setAttribute("contenteditable", "false"), s.setAttribute(ki, e), s.setAttribute(Qc, t.text ?? t.label), t.kind && (s.dataset.kind = t.kind);
   const r = n.createElement("span");
   return r.className = "aparte-tag__label", r.textContent = t.label, s.appendChild(r), s;
 }
-function Ra(n, e) {
+function Ia(n, e) {
   let t = "";
   const s = [];
   for (const i of yn(n))
@@ -14401,7 +16069,7 @@ function Ra(n, e) {
     else if (i.nodeName === "BR") t += `
 `;
     else {
-      const o = i, a = e.get(o.getAttribute(Ai) ?? ""), l = o.getAttribute(Zc) ?? o.textContent ?? "", c = t.length;
+      const o = i, a = e.get(o.getAttribute(ki) ?? ""), l = o.getAttribute(Qc) ?? o.textContent ?? "", c = t.length;
       t += l, s.push({
         label: o.textContent ?? "",
         text: l,
@@ -14414,7 +16082,7 @@ function Ra(n, e) {
   const r = t.length - t.trimStart().length;
   return { value: t.trim(), tokens: s.map((i) => ({ ...i, start: i.start - r, end: i.end - r })) };
 }
-class tu extends HTMLElement {
+class Jc extends HTMLElement {
   _editor = null;
   _maxHeight = 200;
   _minHeight = 44;
@@ -14447,20 +16115,20 @@ class tu extends HTMLElement {
    * alone would collapse a multi-line draft onto a single line.
    */
   getValue() {
-    return this._editor ? Ra(this._editor, this._tokens).value : "";
+    return this._editor ? Ia(this._editor, this._tokens).value : "";
   }
   /** The tokens in the draft, with their place in {@link getValue}. */
   getTokens() {
-    return this._editor ? Ra(this._editor, this._tokens).tokens : [];
+    return this._editor ? Ia(this._editor, this._tokens).tokens : [];
   }
   /** The caret, or `null` when the editor does not hold a collapsed selection. */
   getCaret() {
     const e = this.ownerDocument?.getSelection();
-    return !this._editor || !e?.rangeCount || !e.isCollapsed || !this._editor.contains(e.anchorNode) ? null : { text: Cm(this._editor), offset: Em(this._editor, e.anchorNode, e.anchorOffset) };
+    return !this._editor || !e?.rangeCount || !e.isCollapsed || !this._editor.contains(e.anchorNode) ? null : { text: Om(this._editor), offset: Nm(this._editor, e.anchorNode, e.anchorOffset) };
   }
   /** The box of a range of the draft on screen, to anchor something to the text. */
   getRangeRect(e, t = e) {
-    return this._editor ? Ta(this._editor, e, t).getClientRects?.()[0] ?? null : null;
+    return this._editor ? xa(this._editor, e, t).getClientRects?.()[0] ?? null : null;
   }
   /** Replace a range of the draft with text, and leave the caret after it. */
   replaceRange(e, t, s) {
@@ -14475,9 +16143,9 @@ class tu extends HTMLElement {
     this._tokens.set(r, s);
     const i = this.ownerDocument, o = () => {
       const a = i.createDocumentFragment();
-      return a.append(xa(i, r, s), i.createTextNode(" ")), a;
+      return a.append(Ra(i, r, s), i.createTextNode(" ")), a;
     };
-    this._write(e, t, () => this._exec("insertHTML", `${xa(i, r, s).outerHTML} `), o);
+    this._write(e, t, () => this._exec("insertHTML", `${Ra(i, r, s).outerHTML} `), o);
   }
   /** Replace the editor's content and mirror the value onto the parent composer. */
   setValue(e) {
@@ -14527,7 +16195,7 @@ class tu extends HTMLElement {
     const i = this._editor, o = this.ownerDocument?.getSelection();
     if (!i || !o) return;
     i.focus();
-    const a = Ta(i, e, t);
+    const a = xa(i, e, t);
     if (o.removeAllRanges(), o.addRange(a), s()) return;
     a.deleteContents();
     const l = r(), c = l.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? l.lastChild : l;
@@ -14609,7 +16277,7 @@ class tu extends HTMLElement {
     const t = e.clipboardData;
     if (!t) return;
     const s = this._getRoot(), r = s?.querySelector("aparte-composer-add-attachment"), i = r ? Array.from(t.items).find((a) => a.type.startsWith("image/"))?.getAsFile() : void 0;
-    if (i && Yc(r?.getAttribute("accept"), i)) {
+    if (i && Xc(r?.getAttribute("accept"), i)) {
       s?.addAttachments([i]);
       return;
     }
@@ -14647,9 +16315,9 @@ class tu extends HTMLElement {
   }
   /** Escape a value before it lands in a double-quoted HTML attribute. */
 }
-ie(tu);
-customElements.get("aparte-composer-input") || customElements.define("aparte-composer-input", tu);
-class nu extends HTMLElement {
+ie(Jc);
+customElements.get("aparte-composer-input") || customElements.define("aparte-composer-input", Jc);
+class eu extends HTMLElement {
   _button = null;
   _unsubscribes = [];
   /**
@@ -14791,9 +16459,9 @@ class nu extends HTMLElement {
     return P(this).getIcon("stop");
   }
 }
-ie(nu);
-customElements.get("aparte-composer-send") || customElements.define("aparte-composer-send", nu);
-class su extends HTMLElement {
+ie(eu);
+customElements.get("aparte-composer-send") || customElements.define("aparte-composer-send", eu);
+class tu extends HTMLElement {
   _button = null;
   _unsubscribes = [];
   // Bound handler
@@ -14848,9 +16516,9 @@ class su extends HTMLElement {
     return P(this).getIcon("stop");
   }
 }
-ie(su);
-customElements.get("aparte-composer-cancel") || customElements.define("aparte-composer-cancel", su);
-class ru extends HTMLElement {
+ie(tu);
+customElements.get("aparte-composer-cancel") || customElements.define("aparte-composer-cancel", tu);
+class nu extends HTMLElement {
   _unsubscribes = [];
   /** Object URLs minted for image previews — revoked on re-render/disconnect. */
   _objectUrls = [];
@@ -14931,9 +16599,9 @@ class ru extends HTMLElement {
     return t > 0 ? e.slice(t + 1).toUpperCase().slice(0, 4) : "FILE";
   }
 }
-ie(ru);
-customElements.get("aparte-composer-attachments") || customElements.define("aparte-composer-attachments", ru);
-class iu extends HTMLElement {
+ie(nu);
+customElements.get("aparte-composer-attachments") || customElements.define("aparte-composer-attachments", nu);
+class su extends HTMLElement {
   _button = null;
   _dragCleanup = null;
   _unsubscribes = [];
@@ -15002,7 +16670,7 @@ class iu extends HTMLElement {
   }
   /** Attach the files `accept` admits: the dialog's "All files" and a drop both bypass the browser's filter. */
   _admit(e) {
-    const t = Array.from(e).filter((s) => Yc(this.getAttribute("accept"), s));
+    const t = Array.from(e).filter((s) => Xc(this.getAttribute("accept"), s));
     t.length && this._getRoot()?.addAttachments(t);
   }
   _setupDragDrop() {
@@ -15024,9 +16692,9 @@ class iu extends HTMLElement {
     };
   }
 }
-ie(iu);
-customElements.get("aparte-composer-add-attachment") || customElements.define("aparte-composer-add-attachment", iu);
-class ou extends HTMLElement {
+ie(su);
+customElements.get("aparte-composer-add-attachment") || customElements.define("aparte-composer-add-attachment", su);
+class ru extends HTMLElement {
   _button = null;
   _unsubscribes = [];
   // Bound handler
@@ -15079,9 +16747,9 @@ class ou extends HTMLElement {
     return e ? e.trimStart().startsWith("<") ? e : P(this).getIcon(e) ?? e : "";
   }
 }
-ie(ou);
-customElements.get("aparte-composer-action") || customElements.define("aparte-composer-action", ou);
-class au extends HTMLElement {
+ie(ru);
+customElements.get("aparte-composer-action") || customElements.define("aparte-composer-action", ru);
+class iu extends HTMLElement {
   _observer = null;
   connectedCallback() {
     this._syncEmpty(), this._observer ??= new MutationObserver((e) => {
@@ -15109,8 +16777,8 @@ class au extends HTMLElement {
     s !== !this.hasAttribute("data-empty") && (s ? this.removeAttribute("data-empty") : this.setAttribute("data-empty", ""));
   }
 }
-ie(au);
-customElements.get("aparte-composer-toolbar") || customElements.define("aparte-composer-toolbar", au);
+ie(iu);
+customElements.get("aparte-composer-toolbar") || customElements.define("aparte-composer-toolbar", iu);
 function ls(n) {
   return n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
@@ -15124,12 +16792,12 @@ function zr(n, e) {
     s.hidden = e !== "" && !Array.from(s.querySelectorAll("[data-conv-id]")).some((r) => !r.hidden);
   return t;
 }
-const Ia = (n) => n === "running" || n === "waiting" ? n : null;
+const La = (n) => n === "running" || n === "waiting" ? n : null;
 function Qt(n, e) {
   return `[${n}="${Le(e)}"]`;
 }
-const er = 864e5, Tm = ["more", "edit", "pin", "archive", "unarchive", "trash"], tr = 4, nr = 8;
-class lu extends HTMLElement {
+const er = 864e5, Pm = ["more", "edit", "pin", "archive", "unarchive", "trash"], tr = 4, nr = 8;
+class ou extends HTMLElement {
   _conversations = [];
   _activeId = null;
   /**
@@ -15207,7 +16875,7 @@ class lu extends HTMLElement {
     const e = P(this);
     return {
       locale: e.getLocale(),
-      glyphs: Tm.map((t) => e.getIcon(t)).join(`
+      glyphs: Pm.map((t) => e.getIcon(t)).join(`
 `)
     };
   }
@@ -15218,7 +16886,7 @@ class lu extends HTMLElement {
   _onStatus = (e) => {
     const t = e.detail;
     if (typeof t?.id != "string") return;
-    Pc(t.id, Ia(t.status));
+    Oc(t.id, La(t.status));
     const s = this.querySelector(Qt("data-conv-id", t.id));
     s && this._applyStatus(s, t.id);
   };
@@ -15237,7 +16905,7 @@ class lu extends HTMLElement {
    * it on its own through `aparte-conversation-status`.
    */
   setConversationStatus(e, t) {
-    Nr(e, Ia(t));
+    Nr(e, La(t));
   }
   /** What a conversation is doing, as last told; `null` for neither. */
   getConversationStatus(e) {
@@ -15536,7 +17204,7 @@ class lu extends HTMLElement {
       const s = t.closest("[data-conv-id]");
       if (!s) continue;
       const r = this._newMenu();
-      this._menus.push(hd(t, r, {
+      this._menus.push(yd(t, r, {
         gap: tr,
         margin: nr,
         align: "end",
@@ -15547,7 +17215,7 @@ class lu extends HTMLElement {
       }));
     }
     const e = this._contextMenu ??= this._newMenu();
-    this._menus.push(pd(this, e, {
+    this._menus.push(wd(this, e, {
       gap: tr,
       margin: nr,
       onOpen: (t) => {
@@ -15569,7 +17237,7 @@ class lu extends HTMLElement {
    */
   _placeQuestion(e, t) {
     const s = getComputedStyle(this).direction === "rtl", r = e === this._contextMenu ? null : this.querySelector(Qt("data-more-id", t)), i = e.getBoundingClientRect(), o = s ? i.right : i.left;
-    Cl(r?.getBoundingClientRect() ?? { top: i.top, bottom: i.top, left: o, right: o }, e, {
+    kl(r?.getBoundingClientRect() ?? { top: i.top, bottom: i.top, left: o, right: o }, e, {
       gap: r ? tr : 0,
       margin: nr,
       align: r ? "end" : "start",
@@ -15777,17 +17445,17 @@ class lu extends HTMLElement {
     });
   }
 }
-ie(lu);
-customElements.get("aparte-conversation-list") || customElements.define("aparte-conversation-list", lu);
-const cu = (n) => typeof n == "string" || typeof n == "object" && n !== null && typeof n.label == "string", sr = (n) => {
+ie(ou);
+customElements.get("aparte-conversation-list") || customElements.define("aparte-conversation-list", ou);
+const au = (n) => typeof n == "string" || typeof n == "object" && n !== null && typeof n.label == "string", sr = (n) => {
   try {
     const e = JSON.parse(n);
-    return Array.isArray(e) ? e.filter(cu) : [];
+    return Array.isArray(e) ? e.filter(au) : [];
   } catch {
     return console.warn('[aparte-suggestions] `suggestions` is not a JSON array. Use ["…"] or [{"label": "…", "prompt": "…"}].'), [];
   }
-}, La = (n) => typeof n == "string" ? n : n.label, Ma = (n) => typeof n == "string" ? n : n.prompt ?? n.label;
-class uu extends HTMLElement {
+}, Ma = (n) => typeof n == "string" ? n : n.label, Oa = (n) => typeof n == "string" ? n : n.prompt ?? n.label;
+class lu extends HTMLElement {
   static get observedAttributes() {
     return ["suggestions", "target", "empty-only", "answers"];
   }
@@ -15814,7 +17482,7 @@ class uu extends HTMLElement {
     this.hasAttribute("answers") && this._showAnswers([]), this.hasAttribute("empty-only") && (this._transcript || this._watchTranscript(), this._sent = !0, this._applyEmptyOnly());
   };
   _applyEmptyOnly = () => {
-    const e = this._transcript ? jc(this._transcript) : !0;
+    const e = this._transcript ? zc(this._transcript) : !0;
     e && !this._wasEmpty && (this._sent = !1), this._wasEmpty = e, this._setHidden(!e || this._sent);
   };
   _onConfigChange = () => {
@@ -15834,7 +17502,7 @@ class uu extends HTMLElement {
    * string while the attribute (and so `attributeChangedCallback`) is never written.
    */
   set suggestions(e) {
-    this._suggestions = typeof e == "string" ? sr(e) : Array.isArray(e) ? e.filter(cu) : [], this.isConnected && this._render();
+    this._suggestions = typeof e == "string" ? sr(e) : Array.isArray(e) ? e.filter(au) : [], this.isConnected && this._render();
   }
   connectedCallback() {
     this.hasAttribute("suggestions") && this._readAttribute(), this._render(), this._watchComposer(), window.addEventListener("aparte-config-change", this._onConfigChange);
@@ -15910,7 +17578,7 @@ class uu extends HTMLElement {
    */
   _applyAnswers() {
     const e = this._transcript?.querySelectorAll('aparte-chat-bubble:not([data-kind="notice"])'), t = e && e.length ? e[e.length - 1] : null, s = t && t.getAttribute("data-role") !== "user" ? t.querySelectorAll("[data-aparte-suggestions]") : null, r = s && s.length ? s[s.length - 1] : null, i = r ? sr(r.getAttribute("data-aparte-suggestions") ?? "[]") : [];
-    this._showAnswers(i.map(tg).filter((o) => o !== null));
+    this._showAnswers(i.map(cg).filter((o) => o !== null));
   }
   /** Show these replies; the same ones already shown redraw nothing (a transcript mutation is frequent). */
   _showAnswers(e) {
@@ -15934,8 +17602,8 @@ class uu extends HTMLElement {
     o.className = "aparte-suggestions", o.setAttribute("role", "group"), o.setAttribute("aria-label", this._groupLabel());
     for (const l of this._suggestions) {
       const c = document.createElement("button");
-      c.type = "button", c.className = "aparte-btn aparte-btn--surface aparte-btn--pill aparte-suggestion", c.textContent = La(l);
-      const u = Ma(l);
+      c.type = "button", c.className = "aparte-btn aparte-btn--surface aparte-btn--pill aparte-suggestion", c.textContent = Ma(l);
+      const u = Oa(l);
       u !== c.textContent && (c.title = u), c.addEventListener("click", () => this._activate(l)), o.appendChild(c);
     }
     if (this.appendChild(o), o.scrollLeft = i, s < 0) return;
@@ -15965,7 +17633,7 @@ class uu extends HTMLElement {
     this._stopHolding(), this._sending = !0, window.addEventListener("aparte-message-start", this._onTurnStart), this._sendingTimer = setTimeout(this._stopHolding, 1e3);
   }
   _activate(e) {
-    const t = { label: La(e), prompt: Ma(e) };
+    const t = { label: Ma(e), prompt: Oa(e) };
     if (!xe(this, "aparte-suggestion", t, { cancelable: !0 })) return;
     const r = this._composer ?? this._resolveComposer();
     if (!r) {
@@ -15988,31 +17656,31 @@ class uu extends HTMLElement {
     }
   }
 }
-ie(uu);
-customElements.get("aparte-suggestions") || customElements.define("aparte-suggestions", uu);
-const Oa = (n, e) => {
+ie(lu);
+customElements.get("aparte-suggestions") || customElements.define("aparte-suggestions", lu);
+const Na = (n, e) => {
   const t = Number(n);
   return n !== null && Number.isFinite(t) && t > 0 && t <= 1 ? t : e;
-}, xm = (n) => (n instanceof Element ? n.closest("aparte-chat, [data-aparte-chat]") : null)?.id || void 0, ue = (n, e, t) => {
+}, $m = (n) => (n instanceof Element ? n.closest("aparte-chat, [data-aparte-chat]") : null)?.id || void 0, ue = (n, e, t) => {
   const s = document.createElement(n);
   return s.className = e, t !== void 0 && (s.textContent = t), s;
-}, Na = "http://www.w3.org/2000/svg", Rm = () => {
-  const n = document.createElementNS(Na, "svg");
+}, Pa = "http://www.w3.org/2000/svg", Dm = () => {
+  const n = document.createElementNS(Pa, "svg");
   n.setAttribute("class", "aparte-context__ring"), n.setAttribute("viewBox", "0 0 36 36");
   for (const e of ["track", "value"]) {
-    const t = document.createElementNS(Na, "circle");
+    const t = document.createElementNS(Pa, "circle");
     t.setAttribute("class", `aparte-context__${e}`), t.setAttribute("cx", "18"), t.setAttribute("cy", "18"), t.setAttribute("r", "15.5"), e === "value" && t.setAttribute("pathLength", "100"), n.appendChild(t);
   }
   return n;
-}, Pa = (n) => !!n && typeof n.getMessages == "function", Im = (n) => {
+}, $a = (n) => !!n && typeof n.getMessages == "function", Bm = (n) => {
   if (!n) return null;
-  if (Pa(n)) return n;
+  if ($a(n)) return n;
   const e = n.viewport ?? n.querySelector("aparte-chat-viewport");
-  return Pa(e) ? e : null;
+  return $a(e) ? e : null;
 };
-let Lm = 0;
-const Mm = { system: 0, tools: 0, summary: 0, messages: 0 };
-class du extends HTMLElement {
+let qm = 0;
+const Hm = { system: 0, tools: 0, summary: 0, messages: 0 };
+class cu extends HTMLElement {
   static get observedAttributes() {
     return ["window", "warn", "danger", "target", "variant", "used"];
   }
@@ -16056,7 +17724,7 @@ class du extends HTMLElement {
    * there. Until then the chat's list is not trusted: a framework's may not have caught up.
    */
   _onReset = (e) => {
-    this._isMine(xm(e.target)) && (this._remember(e.target), this._used = null, this._lastDone = null, this._viewChanged = !1, this._overflow = !1, this._compact = null, this._blank = !0, this._render());
+    this._isMine($m(e.target)) && (this._remember(e.target), this._used = null, this._lastDone = null, this._viewChanged = !1, this._overflow = !1, this._compact = null, this._blank = !0, this._render());
   };
   /**
    * The messages of a stored conversation are on screen: the reading is the last reply's
@@ -16196,7 +17864,7 @@ class du extends HTMLElement {
   }
   /** The chat's active path, or `null` when it cannot be read from here. */
   _messages() {
-    const e = Im(this._chat());
+    const e = Bm(this._chat());
     if (!e) return null;
     try {
       return e.getMessages();
@@ -16215,7 +17883,7 @@ class du extends HTMLElement {
    */
   _measure(e) {
     const t = this._messages(), s = this._lastDone, r = t && s?.messageId ? t.map((o) => o.id === s.messageId && !o.usage ? { ...o, usage: s.usage } : o) : t, i = !!r?.some((o) => o.role === "assistant" && o.usage);
-    return r && (i && !this._blank || this._overflow && r.length > 0) ? Ig({ messages: r, config: this._cfg(), windowOverride: e, viewChanged: this._viewChanged }) : this._used === null ? null : { window: e, used: this._used, estimated: !1, parts: { ...Mm }, other: this._used };
+    return r && (i && !this._blank || this._overflow && r.length > 0) ? Bg({ messages: r, config: this._cfg(), windowOverride: e, viewChanged: this._viewChanged }) : this._used === null ? null : { window: e, used: this._used, estimated: !1, parts: { ...Hm }, other: this._used };
   }
   _render() {
     const e = this._window(), t = e === null ? null : this._measure(e);
@@ -16224,13 +17892,13 @@ class du extends HTMLElement {
       return;
     }
     this._measured = t, this.removeAttribute("data-empty");
-    const s = t.used, r = Math.min(1, s / e), i = Oa(this.getAttribute("warn"), 0.75), o = Oa(this.getAttribute("danger"), 0.9), a = this._overflow || r >= o ? "danger" : r >= i ? "warn" : "ok";
+    const s = t.used, r = Math.min(1, s / e), i = Na(this.getAttribute("warn"), 0.75), o = Na(this.getAttribute("danger"), 0.9), a = this._overflow || r >= o ? "danger" : r >= i ? "warn" : "ok";
     this.setAttribute("data-level", a);
     const l = this.getAttribute("variant") === "ring";
     let c = this.querySelector(".aparte-context");
     c && c.classList.contains("aparte-context--ring") !== l && (this.replaceChildren(), c = null, this._panelSignature = "");
     let u = this.querySelector('[role="meter"]'), h = this.querySelector(".aparte-context__text"), d = this.querySelector(".aparte-context__toggle"), p = this.querySelector(".aparte-context__name"), f = this.querySelector(".aparte-context__panel");
-    (!c || !u || !h || !d || !p || !f) && (c = ue("div", l ? "aparte-context aparte-context--ring" : "aparte-context"), u = l ? Rm() : ue("div", "aparte-progress"), u.setAttribute("role", "meter"), l || u.appendChild(ue("div", "aparte-progress__bar")), d = ue("button", "aparte-btn aparte-btn--ghost aparte-btn--sm aparte-context__toggle"), d.type = "button", p = ue("span", "aparte-sr-only"), p.classList.add("aparte-context__name"), h = ue("span", "aparte-context__text"), d.append(p, h), f = ue("div", "aparte-context__panel aparte-popover"), f.id = `aparte-context-panel-${++Lm}`, f.setAttribute("role", "group"), f.hidden = !0, d.setAttribute("aria-controls", f.id), c.append(u, d, f), this.replaceChildren(c), this._panelSignature = "");
+    (!c || !u || !h || !d || !p || !f) && (c = ue("div", l ? "aparte-context aparte-context--ring" : "aparte-context"), u = l ? Dm() : ue("div", "aparte-progress"), u.setAttribute("role", "meter"), l || u.appendChild(ue("div", "aparte-progress__bar")), d = ue("button", "aparte-btn aparte-btn--ghost aparte-btn--sm aparte-context__toggle"), d.type = "button", p = ue("span", "aparte-sr-only"), p.classList.add("aparte-context__name"), h = ue("span", "aparte-context__text"), d.append(p, h), f = ue("div", "aparte-context__panel aparte-popover"), f.id = `aparte-context-panel-${++qm}`, f.setAttribute("role", "group"), f.hidden = !0, d.setAttribute("aria-controls", f.id), c.append(u, d, f), this.replaceChildren(c), this._panelSignature = "");
     const m = this._cfg(), g = m.getLocale().tag || void 0, b = new Intl.NumberFormat(g, { notation: "compact", maximumFractionDigits: 1 }), y = t.estimated ? "~" : "", A = `${y}${b.format(s)} / ${b.format(e)}`, E = Math.round(r * 100), _ = m.t("contextLabel") || "Context window";
     if (l) {
       const S = u.querySelector(".aparte-context__value");
@@ -16380,10 +18048,10 @@ class du extends HTMLElement {
     s.width > 0 && i && e.setAttribute("data-align", "end");
   }
 }
-ie(du);
-customElements.get("aparte-context") || customElements.define("aparte-context", du);
-const Pn = 60, Om = 6, Nm = 150, Pm = 4, $m = 1, $a = 30;
-class hu extends HTMLElement {
+ie(cu);
+customElements.get("aparte-context") || customElements.define("aparte-context", cu);
+const Pn = 60, Fm = 6, Wm = 150, Um = 4, zm = 1, Da = 30;
+class uu extends HTMLElement {
   static get observedAttributes() {
     return ["target", "every"];
   }
@@ -16468,7 +18136,7 @@ class hu extends HTMLElement {
       for (const t of e) {
         if (this.contains(t.target)) continue;
         if (t.type === "attributes") {
-          if (pu(t.target)) {
+          if (du(t.target)) {
             this._queueRebuild();
             return;
           }
@@ -16479,7 +18147,7 @@ class hu extends HTMLElement {
           this._excerpts.delete(r), this._ticked(r) && this._queueRelabel(r);
           continue;
         }
-        if (t.type === "childList" && (Da(t.addedNodes) || Da(t.removedNodes))) {
+        if (t.type === "childList" && (Ba(t.addedNodes) || Ba(t.removedNodes))) {
           this._queueRebuild();
           return;
         }
@@ -16630,7 +18298,7 @@ class hu extends HTMLElement {
     (!this._intersections || !this._onScreenObserver || this._observedSurface !== s) && (this._unobserve(), this._intersections = new IntersectionObserver((l) => {
       for (const c of l) this._visible.set(c.target, c.isIntersecting ? c.intersectionRatio : 0);
       this._pickCurrent();
-    }, { root: s, rootMargin: `0px 0px -${100 - $a}% 0px`, threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }), this._onScreenObserver = new IntersectionObserver((l) => {
+    }, { root: s, rootMargin: `0px 0px -${100 - Da}% 0px`, threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }), this._onScreenObserver = new IntersectionObserver((l) => {
       for (const c of l)
         c.isIntersecting ? this._onScreen.add(c.target) : this._onScreen.delete(c.target);
       this._pickCurrent();
@@ -16684,7 +18352,7 @@ class hu extends HTMLElement {
     if (!e || t.length === 0) return null;
     const s = e.getBoundingClientRect();
     if (s.height <= 0) return null;
-    const r = s.top + s.height * $a / 100;
+    const r = s.top + s.height * Da / 100;
     let i = 0, o = t.length - 1, a = -1;
     for (; i <= o; ) {
       const l = i + o >> 1;
@@ -16796,7 +18464,7 @@ class hu extends HTMLElement {
       this._write("--aparte-scroll-rail-hit-size", ""), this._write("--aparte-scroll-rail-gap", "");
       return;
     }
-    const h = Math.max(Om, Math.floor(c / u));
+    const h = Math.max(Fm, Math.floor(c / u));
     this._write("--aparte-scroll-rail-hit-size", `${h}px`), this._write("--aparte-scroll-rail-gap", `${Math.max(0, h - a)}px`);
   }
   // ─── Interaction ──────────────────────────────────────────────────────
@@ -16850,14 +18518,14 @@ class hu extends HTMLElement {
     this._release(), this._held = e, this._alignPasses = 0, this._settleSurface = this._scrollSurface(), this._settleSurface?.addEventListener("scroll", this._onSurfaceScroll), this._bumpSettle();
   }
   _bumpSettle() {
-    this._settleTimer !== null && clearTimeout(this._settleTimer), this._settleTimer = setTimeout(() => this._settle(), Nm);
+    this._settleTimer !== null && clearTimeout(this._settleTimer), this._settleTimer = setTimeout(() => this._settle(), Wm);
   }
   /** The transcript is still: land on the message if the scroll did not, else release the hold. */
   _settle() {
     const e = this._held, t = this._settleSurface, s = e ? this._bubbleOf(e) : null;
-    if (e && s && t && this._alignPasses < Pm) {
+    if (e && s && t && this._alignPasses < Um) {
       const r = t.getBoundingClientRect().top + (parseFloat(getComputedStyle(t).scrollPaddingTop) || 0), i = s.getBoundingClientRect().top - r;
-      if (Math.abs(i) > $m) {
+      if (Math.abs(i) > zm) {
         this._alignPasses++, this._scrollTo(s), this._bumpSettle();
         return;
       }
@@ -16868,21 +18536,21 @@ class hu extends HTMLElement {
     this._settleTimer !== null && clearTimeout(this._settleTimer), this._settleTimer = null, this._settleSurface?.removeEventListener("scroll", this._onSurfaceScroll), this._settleSurface = null, this._held = null;
   }
 }
-function pu(n) {
+function du(n) {
   return n instanceof Element && n.localName === "aparte-chat-bubble";
 }
-function Da(n) {
-  return Array.from(n).some((e) => e instanceof Element && (pu(e) || e.localName === "aparte-chat-viewport" || e.querySelector("aparte-chat-bubble") !== null));
+function Ba(n) {
+  return Array.from(n).some((e) => e instanceof Element && (du(e) || e.localName === "aparte-chat-viewport" || e.querySelector("aparte-chat-bubble") !== null));
 }
 function rr(n, e) {
   if (n.length !== e.length) return !1;
   for (let t = 0; t < n.length; t++) if (n[t] !== e[t]) return !1;
   return !0;
 }
-ie(hu);
-customElements.get("aparte-scroll-rail") || customElements.define("aparte-scroll-rail", hu);
-const Dm = "(max-width: 48rem)";
-class fu extends HTMLElement {
+ie(uu);
+customElements.get("aparte-scroll-rail") || customElements.define("aparte-scroll-rail", uu);
+const Gm = "(max-width: 48rem)";
+class hu extends HTMLElement {
   static get observedAttributes() {
     return ["collapsed", "breakpoint"];
   }
@@ -16955,7 +18623,7 @@ class fu extends HTMLElement {
   connectedCallback() {
     this.classList.contains("aparte-sidebar") || this.classList.add("aparte-sidebar"), this.getAttribute("role") || this.setAttribute("role", "complementary"), this._relabel(), this._hostIntentSeeded || (this._closedByHost = this.collapsed, this._hostIntentSeeded = !0), this.addEventListener("input", this._onInput), typeof MutationObserver == "function" && (this._listWatch = new MutationObserver((e) => {
       e.some((t) => t.target !== this) && this._syncNoMatch();
-    }), this._listWatch.observe(this, { subtree: !0, attributes: !0, attributeFilter: ["data-no-match", "loading"] })), document.addEventListener("keydown", this._onKeydown), document.addEventListener("click", this._onDocumentClick), window.addEventListener("aparte-config-change", this._onConfigChange), this._launcher = this.closest("aparte-launcher"), this._launcher && typeof MutationObserver == "function" && (this._launcherWatch = new MutationObserver(() => this._followLauncher()), this._launcherWatch.observe(this._launcher, { attributes: !0, attributeFilter: ["open", "maximized", "maximizable"] })), this._watchBreakpoint(), this._syncHidden(), this._lastCollapsed = this.collapsed, this._lastRail = this._rail(), this.id || (this.id = `aparte-sidebar-${++Bm}`), this._syncToggles(), this._ready = !0;
+    }), this._listWatch.observe(this, { subtree: !0, attributes: !0, attributeFilter: ["data-no-match", "loading"] })), document.addEventListener("keydown", this._onKeydown), document.addEventListener("click", this._onDocumentClick), window.addEventListener("aparte-config-change", this._onConfigChange), this._launcher = this.closest("aparte-launcher"), this._launcher && typeof MutationObserver == "function" && (this._launcherWatch = new MutationObserver(() => this._followLauncher()), this._launcherWatch.observe(this._launcher, { attributes: !0, attributeFilter: ["open", "maximized", "maximizable"] })), this._watchBreakpoint(), this._syncHidden(), this._lastCollapsed = this.collapsed, this._lastRail = this._rail(), this.id || (this.id = `aparte-sidebar-${++jm}`), this._syncToggles(), this._ready = !0;
   }
   /**
    * The drawer's media query, from the `breakpoint` attribute: a length (`48rem`, the
@@ -16966,7 +18634,7 @@ class fu extends HTMLElement {
     this._media?.removeEventListener("change", this._onMediaChange), this._media = null;
     const e = (this.getAttribute("breakpoint") ?? "").trim();
     if (e !== "none" && typeof matchMedia == "function") {
-      const t = e ? `(max-width: ${e})` : Dm;
+      const t = e ? `(max-width: ${e})` : Gm;
       this._media = matchMedia(t), this._media.addEventListener("change", this._onMediaChange);
     } else if (e !== "none" && !this._launcher)
       return;
@@ -17073,7 +18741,7 @@ class fu extends HTMLElement {
   /** Whether a toggle control targets this sidebar: named by id, else the nearest one. */
   _drives(e) {
     const t = e.getAttribute("data-aparte-sidebar-toggle");
-    return t ? t === this.id : Hm(e) === this;
+    return t ? t === this.id : Vm(e) === this;
   }
   /**
    * A collapsed sidebar is invisible — folded to nothing in the flow, slid off the
@@ -17102,7 +18770,7 @@ class fu extends HTMLElement {
    * nothing focusable in it keeps the focus where it was, which is the honest outcome.
    */
   _focusFirst() {
-    Ba(this)[0]?.focus();
+    qa(this)[0]?.focus();
   }
   _syncScrim() {
     const e = this.drawer && !this.collapsed;
@@ -17120,7 +18788,7 @@ class fu extends HTMLElement {
         return;
       }
       if (e.key === "Tab") {
-        const t = Ba(this);
+        const t = qa(this);
         if (t.length === 0) return;
         const s = t[0], r = t[t.length - 1], i = Pe(this);
         this.contains(i) ? e.shiftKey && i === s ? (e.preventDefault(), r.focus()) : !e.shiftKey && i === r && (e.preventDefault(), s.focus()) : (e.preventDefault(), s.focus());
@@ -17173,8 +18841,8 @@ class fu extends HTMLElement {
     this.setAttribute("aria-label", e.sidebarLabel ?? "Conversations"), this.dataset.ownLabel = "locale";
   }
 }
-let Bm = 0;
-const qm = [
+let jm = 0;
+const Km = [
   "a[href]",
   "button:not([disabled])",
   'input:not([disabled]):not([type="hidden"])',
@@ -17182,30 +18850,30 @@ const qm = [
   "textarea:not([disabled])",
   '[tabindex]:not([tabindex="-1"])'
 ].join(",");
-function Ba(n) {
-  return Array.from(n.querySelectorAll(qm)).filter((e) => !e.closest("[hidden]") && e.checkVisibility?.() !== !1);
+function qa(n) {
+  return Array.from(n.querySelectorAll(Km)).filter((e) => !e.closest("[hidden]") && e.checkVisibility?.() !== !1);
 }
-function Hm(n) {
+function Vm(n) {
   return n.closest("aparte-sidebar") ?? n.closest(".aparte-app-shell")?.querySelector("aparte-sidebar") ?? Pt(n).querySelector("aparte-sidebar") ?? document.querySelector("aparte-sidebar");
 }
-ie(fu);
-customElements.get("aparte-sidebar") || customElements.define("aparte-sidebar", fu);
-function qa(n, e, t) {
+ie(hu);
+customElements.get("aparte-sidebar") || customElements.define("aparte-sidebar", hu);
+function Ha(n, e, t) {
   return Number.isFinite(n) ? n < e ? e : n > t ? t : n : e;
 }
-function Fm(n) {
+function Xm(n) {
   const e = Number.isFinite(n.startPercent) ? n.startPercent : 0;
-  if (!Number.isFinite(n.containerPx) || n.containerPx <= 0) return qa(e, 0, 100);
+  if (!Number.isFinite(n.containerPx) || n.containerPx <= 0) return Ha(e, 0, 100);
   const r = ((!n.vertical && n.rtl) !== (n.primaryEnd === !0) ? -1 : 1) * n.deltaPx * 100 / n.containerPx;
-  return qa(e + r, 0, 100);
+  return Ha(e + r, 0, 100);
 }
-function Ha(n, e, t, s, r = !1) {
+function Fa(n, e, t, s, r = !1) {
   if (n === "Home") return -100;
   if (n === "End") return 100;
   const i = (e ? 10 : 1) * (r ? -1 : 1);
   return s ? n === "ArrowUp" ? -i : n === "ArrowDown" ? i : null : n === "ArrowLeft" ? t ? i : -i : n === "ArrowRight" ? t ? -i : i : null;
 }
-const Wm = "(max-width: 48rem)", Yt = 38, Um = 300;
+const Qm = "(max-width: 48rem)", Yt = 38, Ym = 300;
 function Zt(n, e) {
   const t = Number.parseFloat(n ?? "");
   return Number.isFinite(t) ? t < 0 ? 0 : t > 100 ? 100 : t : e;
@@ -17631,7 +19299,7 @@ class ks extends HTMLElement {
       }
     }
     const t = this.orientation === "vertical" ? e.clientY : e.clientX;
-    this._position = Fm({
+    this._position = Xm({
       startPercent: this._dragStartPercent,
       deltaPx: t - this._dragOriginPx,
       containerPx: this._dragContainerPx,
@@ -17696,7 +19364,7 @@ class ks extends HTMLElement {
         t.remove();
         return;
       }
-      t.style.pointerEvents = "none", setTimeout(() => t.remove(), Um);
+      t.style.pointerEvents = "none", setTimeout(() => t.remove(), Ym);
     }
   }
   _onDoubleClick = () => {
@@ -17718,7 +19386,7 @@ class ks extends HTMLElement {
       }
       return;
     }
-    const t = Ha(
+    const t = Fa(
       e.key,
       e.shiftKey,
       this._rtl(),
@@ -17732,7 +19400,7 @@ class ks extends HTMLElement {
    * write one attribute and send one event, not thirty.
    */
   _onKeyup = (e) => {
-    !this._keying || e.target !== this._handle || Ha(e.key, e.shiftKey, this._rtl(), this.orientation === "vertical") !== null && (this._keying = !1, this._commit("keyboard"));
+    !this._keying || e.target !== this._handle || Fa(e.key, e.shiftKey, this._rtl(), this.orientation === "vertical") !== null && (this._keying = !1, this._commit("keyboard"));
   };
   /**
    * The other end of a key step. If focus leaves the seam while the key is still down —
@@ -17757,7 +19425,7 @@ class ks extends HTMLElement {
       return;
     }
     if (typeof matchMedia != "function") return;
-    const t = e ? `(max-width: ${e})` : Wm;
+    const t = e ? `(max-width: ${e})` : Qm;
     this._media = matchMedia(t), this._media.addEventListener("change", this._onMediaChange), this._applyStacked(this._media.matches);
   }
   _onMediaChange = (e) => this._applyStacked(e.matches);
@@ -17826,7 +19494,7 @@ class ks extends HTMLElement {
 }
 ie(ks);
 customElements.get("aparte-split") || customElements.define("aparte-split", ks);
-const zm = "(max-width: 30rem), (max-height: 30rem)", Gm = [
+const Zm = "(max-width: 30rem), (max-height: 30rem)", Jm = [
   "a[href]",
   "button:not([disabled])",
   'input:not([disabled]):not([type="hidden"])',
@@ -18173,7 +19841,7 @@ class Ue extends HTMLElement {
       this._applySheet(!1);
       return;
     }
-    this._media = matchMedia(e ? `(max-width: ${e})` : zm), this._media.addEventListener("change", this._onMediaChange), this._applySheet(this._media.matches);
+    this._media = matchMedia(e ? `(max-width: ${e})` : Zm), this._media.addEventListener("change", this._onMediaChange), this._applySheet(this._media.matches);
   }
   /**
    * An open chat that turns into a sheet now covers the page, and one that turns back no
@@ -18190,7 +19858,7 @@ class Ue extends HTMLElement {
   // ─── Focus and keys ───────────────────────────────────────────────────
   /** What the chat lets the focus land on: yours to decide, so only what is visible. */
   _focusables() {
-    return Array.from(this.querySelectorAll(Gm)).filter((e) => !e.closest("[hidden]") && e.checkVisibility?.() !== !1);
+    return Array.from(this.querySelectorAll(Jm)).filter((e) => !e.closest("[hidden]") && e.checkVisibility?.() !== !1);
   }
   /**
    * The composer when there is one — the person opened the chat to write — else the
@@ -18257,8 +19925,8 @@ class Ue extends HTMLElement {
 }
 ie(Ue);
 customElements.get("aparte-launcher") || customElements.define("aparte-launcher", Ue);
-const Fa = Symbol.for("aparte.imageHolds"), gu = ".aparte-image-held[data-aparte-image]";
-function mu(n) {
+const Wa = Symbol.for("aparte.imageHolds"), pu = ".aparte-image-held[data-aparte-image]";
+function fu(n) {
   const e = n.getAttribute("data-aparte-image") ?? "";
   P(n).showImage(e);
   const t = document.createElement("img");
@@ -18266,34 +19934,34 @@ function mu(n) {
   const s = n === document.activeElement;
   n.replaceWith(t), s && (t.tabIndex = -1, t.focus({ preventScroll: !0 }));
 }
-function jm(n) {
+function e_(n) {
   if (n.button !== 0 || n.ctrlKey || n.metaKey || n.shiftKey || n.altKey) return;
-  const e = n.target?.closest?.(gu);
-  e && (n.preventDefault(), n.stopPropagation(), mu(e));
+  const e = n.target?.closest?.(pu);
+  e && (n.preventDefault(), n.stopPropagation(), fu(e));
 }
-function Km(n) {
+function t_(n) {
   if (n.key !== "Enter" && n.key !== " ") return;
   const e = n.target;
-  e?.matches?.(`span${gu}`) && (n.preventDefault(), n.stopPropagation(), mu(e));
+  e?.matches?.(`span${pu}`) && (n.preventDefault(), n.stopPropagation(), fu(e));
 }
-function Vm() {
+function n_() {
   const n = document;
-  n[Fa] || (n[Fa] = !0, n.addEventListener("click", jm, !0), n.addEventListener("keydown", Km, !0));
+  n[Wa] || (n[Wa] = !0, n.addEventListener("click", e_, !0), n.addEventListener("keydown", t_, !0));
 }
-typeof document < "u" && (Yg(), Vm());
-function Xm(n) {
+typeof document < "u" && (im(), n_());
+function s_(n) {
   const e = /^data:([^;,]*)(?:;[^;,]*)*;base64,(.*)$/s.exec(n.image);
   return e ? { type: "image", source: { type: "data", value: e[2], mimeType: n.mimeType ?? (e[1] || "application/octet-stream") } } : { type: "image", source: { type: "url", value: n.image, ...n.mimeType ? { mimeType: n.mimeType } : {} } };
 }
-function Qm(n, e, t) {
+function r_(n, e, t) {
   const s = [];
   return n.forEach((r, i) => {
-    const o = `aparte-${i}`, a = Rl(r.content), l = Array.isArray(r.content) && r.content.some((u) => u.type === "image"), c = (r.role === "user" || r.role === "assistant") && r.name ? { name: r.name } : {};
+    const o = `aparte-${i}`, a = Tl(r.content), l = Array.isArray(r.content) && r.content.some((u) => u.type === "image"), c = (r.role === "user" || r.role === "assistant") && r.name ? { name: r.name } : {};
     r.role === "user" && l && !e ? s.push({
       id: o,
       role: "user",
       ...c,
-      content: r.content.map((u) => u.type === "image" ? Xm(u) : { type: "text", text: u.text })
+      content: r.content.map((u) => u.type === "image" ? s_(u) : { type: "text", text: u.text })
     }) : r.role === "system" || r.role === "user" ? (l && t(`the agent's AG-UI version takes text only, which DROPS non-text parts: the images of message ${i} are not sent.`), s.push({ id: o, role: r.role, content: a, ...c })) : r.role === "assistant" ? s.push({
       id: o,
       role: "assistant",
@@ -18309,10 +19977,10 @@ function Qm(n, e, t) {
     }) : r.role === "tool" && r.toolCallId && s.push({ id: o, role: "tool", content: a, toolCallId: r.toolCallId });
   }), s;
 }
-function Ym(n) {
+function i_(n) {
   return (n ?? []).map((e) => ({ name: e.name, description: e.description, parameters: e.inputSchema }));
 }
-const Zm = ["type", "timestamp", "rawEvent", "metadata"], Jm = {
+const o_ = ["type", "timestamp", "rawEvent", "metadata"], a_ = {
   RUN_STARTED: ["threadId", "runId", "parentRunId", "protocolVersion", "input"],
   RUN_FINISHED: ["threadId", "runId", "outcome", "result", "usage"],
   RUN_ERROR: ["message", "code", "usage"],
@@ -18344,30 +20012,30 @@ const Zm = ["type", "timestamp", "rawEvent", "metadata"], Jm = {
   SUBAGENT_STARTED: ["subagentRunId", "name", "description", "parentMessageId", "parentToolCallId", "parentSubagentRunId"],
   SUBAGENT_FINISHED: ["subagentRunId", "outcome", "result"],
   SUBAGENT_ERROR: ["subagentRunId", "message", "code"]
-}, e_ = /* @__PURE__ */ new Set(["developer", "system", "assistant", "user"]), t_ = /* @__PURE__ */ new Set(["success", "interrupt", "cancelled"]), n_ = /* @__PURE__ */ new Set(["text", "image", "audio", "video", "document"]);
-function s_(n, e) {
-  const t = Jm[n.type];
+}, l_ = /* @__PURE__ */ new Set(["developer", "system", "assistant", "user"]), c_ = /* @__PURE__ */ new Set(["success", "interrupt", "cancelled"]), u_ = /* @__PURE__ */ new Set(["text", "image", "audio", "video", "document"]);
+function d_(n, e) {
+  const t = a_[n.type];
   if (!t) {
     e(`dropped an event of a type this runner does not know: ${n.type}.`);
     return;
   }
   const s = { ...n };
   for (const i of Object.keys(s))
-    !Zm.includes(i) && !t.includes(i) && (delete s[i], e(`stripped /${i} from ${n.type}: AG-UI 1.0 does not describe it.`));
-  (s.type === "TEXT_MESSAGE_START" || s.type === "TEXT_MESSAGE_CHUNK") && typeof s.role == "string" && !e_.has(s.role) && (e(`stripped /role from ${s.type}: "${s.role}" is not a message role.`), delete s.role);
+    !o_.includes(i) && !t.includes(i) && (delete s[i], e(`stripped /${i} from ${n.type}: AG-UI 1.0 does not describe it.`));
+  (s.type === "TEXT_MESSAGE_START" || s.type === "TEXT_MESSAGE_CHUNK") && typeof s.role == "string" && !l_.has(s.role) && (e(`stripped /role from ${s.type}: "${s.role}" is not a message role.`), delete s.role);
   const r = s.outcome;
-  return s.type === "RUN_FINISHED" && r && typeof r == "object" && !Array.isArray(r) && !t_.has(String(r.type)) && (e(`stripped /outcome from RUN_FINISHED: "${String(r.type)}" is not an outcome AG-UI 1.0 describes; the run ends as a plain one.`), delete s.outcome), s.type === "MESSAGES_SNAPSHOT" && Array.isArray(s.messages) && (s.messages = s.messages.map((i, o) => {
+  return s.type === "RUN_FINISHED" && r && typeof r == "object" && !Array.isArray(r) && !c_.has(String(r.type)) && (e(`stripped /outcome from RUN_FINISHED: "${String(r.type)}" is not an outcome AG-UI 1.0 describes; the run ends as a plain one.`), delete s.outcome), s.type === "MESSAGES_SNAPSHOT" && Array.isArray(s.messages) && (s.messages = s.messages.map((i, o) => {
     const a = i?.content;
     if (!Array.isArray(a)) return i;
     const l = a.filter((c, u) => {
-      const h = n_.has(String(c?.type));
+      const h = u_.has(String(c?.type));
       return h || e(`stripped /messages/${o}/content/${u} from MESSAGES_SNAPSHOT: "${String(c?.type)}" is not a content part.`), h;
     });
     return { ...i, content: l };
   })), s;
 }
-const r_ = /* @__PURE__ */ new Set(["add", "remove", "replace", "move", "copy", "test"]);
-function i_(n) {
+const h_ = /* @__PURE__ */ new Set(["add", "remove", "replace", "move", "copy", "test"]);
+function p_(n) {
   if (n === "") return [];
   if (!n.startsWith("/")) throw new Error(`"${n}" is not a JSON Pointer`);
   return n.slice(1).split("/").map((e) => e.replace(/~1/g, "/").replace(/~0/g, "~"));
@@ -18383,7 +20051,7 @@ function wn(n, e, t) {
   return s;
 }
 function Ss(n, e) {
-  const t = i_(e), s = t.pop();
+  const t = p_(e), s = t.pop();
   let r = n;
   for (const i of t) {
     if (!bn(r)) throw new Error(`"${e}" does not resolve`);
@@ -18403,7 +20071,7 @@ function or(n, e, t) {
   const { parent: s, key: r } = Ss(n, e);
   return Array.isArray(s) ? s.splice(wn(s, r, !0), 0, t) : s[r] = t, n;
 }
-function Wa(n, e) {
+function Ua(n, e) {
   if (e === "") throw new Error("the whole document cannot be removed");
   const { parent: t, key: s } = Ss(n, e);
   if (Array.isArray(t)) t.splice(wn(t, s, !1), 1);
@@ -18411,7 +20079,7 @@ function Wa(n, e) {
   else throw new Error(`"${e}" does not resolve`);
   return n;
 }
-function o_(n, e, t) {
+function f_(n, e, t) {
   if (e === "") return t;
   const { parent: s, key: r } = Ss(n, e);
   if (Array.isArray(s)) s[wn(s, r, !1)] = t;
@@ -18426,7 +20094,7 @@ function Gr(n, e) {
   const t = Object.keys(n), s = Object.keys(e);
   return t.length === s.length && t.every((r) => Object.hasOwn(e, r) && Gr(n[r], e[r]));
 }
-function a_(n, e) {
+function g_(n, e) {
   const t = e.path;
   if (typeof t != "string") throw new Error("an operation has no path");
   const s = typeof e.from == "string" ? e.from : void 0;
@@ -18435,14 +20103,14 @@ function a_(n, e) {
     case "add":
       return or(n, t, structuredClone(e.value));
     case "remove":
-      return Wa(n, t);
+      return Ua(n, t);
     case "replace":
-      return o_(n, t, structuredClone(e.value));
+      return f_(n, t, structuredClone(e.value));
     case "move": {
       if (s === void 0) throw new Error("move has no from");
       if (t.startsWith(`${s}/`)) throw new Error(`"${s}" cannot move into its own child "${t}"`);
       const r = ir(n, s);
-      return or(Wa(n, s), t, r);
+      return or(Ua(n, s), t, r);
     }
     case "copy": {
       if (s === void 0) throw new Error("copy has no from");
@@ -18455,29 +20123,29 @@ function a_(n, e) {
       throw new Error(`unknown operation "${String(e.op)}"`);
   }
 }
-function l_(n, e, t) {
-  return _u(n, e, t, { event: "STATE_DELTA", field: "delta", what: "state" });
+function m_(n, e, t) {
+  return gu(n, e, t, { event: "STATE_DELTA", field: "delta", what: "state" });
 }
-function c_(n, e, t) {
-  return _u(n, e, t, { event: "ACTIVITY_DELTA", field: "patch", what: "activity" });
+function __(n, e, t) {
+  return gu(n, e, t, { event: "ACTIVITY_DELTA", field: "patch", what: "activity" });
 }
-function _u(n, e, t, s) {
+function gu(n, e, t, s) {
   const { event: r, field: i, what: o } = s;
   if (!Array.isArray(e))
     return t(`Failed to apply ${o} patch: ${r} carried no list of operations; the ${o} is left as it was.`), n;
   const a = [];
   e.forEach((l, c) => {
-    bn(l) && !Array.isArray(l) && r_.has(String(l.op)) ? a.push(l) : t(`dropped /${i}/${c}: ${JSON.stringify(l)} is not a JSON Patch operation.`);
+    bn(l) && !Array.isArray(l) && h_.has(String(l.op)) ? a.push(l) : t(`dropped /${i}/${c}: ${JSON.stringify(l)} is not a JSON Patch operation.`);
   });
   try {
     let l = structuredClone(n);
-    for (const c of a) l = a_(l, c);
+    for (const c of a) l = g_(l, c);
     return l;
   } catch (l) {
     return t(`Failed to apply ${o} patch: ${l.message}; the ${o} is left as it was.`), n;
   }
 }
-function u_(n = []) {
+function b_(n = []) {
   const e = new Map(n.map((r) => [r.id, JSON.parse(JSON.stringify(r))])), t = (r) => {
     let i = e.get(r);
     return i || (i = { id: r, name: "subagent", status: "running", messages: [] }, e.set(r, i)), i;
@@ -18527,8 +20195,8 @@ function u_(n = []) {
     }
   };
 }
-function d_(n, e = /* @__PURE__ */ new Map()) {
-  return n.filter((t) => t.tanstack).flatMap((t) => h_(t.messages, e).map((s, r) => {
+function v_(n, e = /* @__PURE__ */ new Map()) {
+  return n.filter((t) => t.tanstack).flatMap((t) => y_(t.messages, e).map((s, r) => {
     if (s.role !== "assistant" && s.role !== "tool") return s;
     const i = r === 0 ? {
       metadata: {
@@ -18548,7 +20216,7 @@ function d_(n, e = /* @__PURE__ */ new Map()) {
     return { ...s, subagentRunId: t.id, ...i };
   }));
 }
-function h_(n, e) {
+function y_(n, e) {
   if (e.size === 0) return [...n];
   const t = [];
   for (let s = 0; s < n.length; s++) {
@@ -18563,15 +20231,15 @@ function h_(n, e) {
   }
   return t;
 }
-function p_(n, e) {
+function w_(n, e) {
   for (let t = 0; t < Math.max(n.length, e.length); t++) {
     const s = (n[t] ?? 0) - (e[t] ?? 0);
     if (s !== 0) return s;
   }
   return 0;
 }
-function f_(n, e) {
-  const t = n !== void 0 && p_(n, [0, 0, 57]) <= 0;
+function A_(n, e) {
+  const t = n !== void 0 && w_(n, [0, 0, 57]) <= 0;
   let s = 0, r, i;
   const o = /* @__PURE__ */ new Set(), a = (l, c) => {
     o.has(l) || (o.add(l), e(c));
@@ -18607,14 +20275,14 @@ function f_(n, e) {
 function de(n) {
   return new ge(`The agent stream is malformed: ${n}.`, Z.PROVIDER_ERROR, { agUi: "malformed" });
 }
-const g_ = /* @__PURE__ */ new Set([
+const k_ = /* @__PURE__ */ new Set([
   "TEXT_MESSAGE_CONTENT",
   "TEXT_MESSAGE_CHUNK",
   "TOOL_CALL_ARGS",
   "TOOL_CALL_CHUNK",
   "REASONING_MESSAGE_CONTENT",
   "REASONING_MESSAGE_CHUNK"
-]), m_ = [
+]), S_ = [
   "messageId",
   "toolCallId",
   "toolCallName",
@@ -18636,7 +20304,7 @@ const g_ = /* @__PURE__ */ new Set([
   "description",
   "parentToolCallId",
   "parentSubagentRunId"
-], __ = {
+], C_ = {
   TEXT_MESSAGE_START: ["messageId"],
   TEXT_MESSAGE_CONTENT: ["messageId", "delta"],
   TEXT_MESSAGE_END: ["messageId"],
@@ -18654,8 +20322,8 @@ const g_ = /* @__PURE__ */ new Set([
   SUBAGENT_STARTED: ["subagentRunId"],
   SUBAGENT_FINISHED: ["subagentRunId"],
   SUBAGENT_ERROR: ["subagentRunId"]
-}, Ua = " (TanStack AI frames runs this way: give createAgUiRunner relaxedRunFraming: true to read it)";
-function b_(n) {
+}, za = " (TanStack AI frames runs this way: give createAgUiRunner relaxedRunFraming: true to read it)";
+function E_(n) {
   let e = !1, t = !1, s;
   const r = /* @__PURE__ */ new Map(), i = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), a = /* @__PURE__ */ new Set(), l = /* @__PURE__ */ new Set(), c = /* @__PURE__ */ new Map(), u = (g) => typeof g.subagentRunId == "string" ? g.subagentRunId : "", h = (g, b) => `${g}\0${b}`, d = () => {
     r.clear(), i.clear(), o.clear(), a.clear(), l.clear(), c.clear();
@@ -18667,17 +20335,17 @@ function b_(n) {
   }, m = ((g) => {
     const b = g.type, y = !e;
     e = !0;
-    for (const _ of __[b] ?? []) if (g[_] === void 0) throw de(`${b} needs "${_}"`);
-    for (const _ of m_) if (_ in g && g[_] !== void 0 && typeof g[_] != "string") throw de(`"${_}" must be a string on ${b}`);
-    if (g_.has(b) && "delta" in g && typeof g.delta != "string") throw de(`"delta" must be a string on ${b}`);
+    for (const _ of C_[b] ?? []) if (g[_] === void 0) throw de(`${b} needs "${_}"`);
+    for (const _ of S_) if (_ in g && g[_] !== void 0 && typeof g[_] != "string") throw de(`"${_}" must be a string on ${b}`);
+    if (k_.has(b) && "delta" in g && typeof g.delta != "string") throw de(`"delta" must be a string on ${b}`);
     if (b === "RUN_STARTED") {
       if (t && !n) throw de("RUN_STARTED while a run is still active");
       t = !0, s = void 0, d();
       return;
     }
     if (!n) {
-      if (y && b !== "RUN_ERROR") throw de(`the first event must be RUN_STARTED, not ${b}${Ua}`);
-      if (s === "finished" && b !== "RUN_ERROR") throw de(`${b} after the run finished${Ua}`);
+      if (y && b !== "RUN_ERROR") throw de(`the first event must be RUN_STARTED, not ${b}${za}`);
+      if (s === "finished" && b !== "RUN_ERROR") throw de(`${b} after the run finished${za}`);
       if (s === "error") throw de(`${b} after the run ended with RUN_ERROR`);
     }
     if (b === "RUN_ERROR") {
@@ -18781,7 +20449,7 @@ function b_(n) {
     if (g.length) throw de(`${g.join(", ")} still running at the end of the stream`);
   }, m;
 }
-async function* v_(n, e) {
+async function* T_(n, e) {
   const t = !!(e && /ndjson|jsonl/i.test(e)), s = n.getReader(), r = new TextDecoder();
   let i = "", o = [];
   const a = (u) => {
@@ -18838,7 +20506,7 @@ function lr(n, e) {
   }
   return 0;
 }
-function y_(n) {
+function x_(n) {
   if (n)
     try {
       const e = JSON.parse(n);
@@ -18847,25 +20515,25 @@ function y_(n) {
       return;
     }
 }
-const w_ = 64;
+const R_ = 64;
 function $n(n, e, t) {
-  for (n.delete(e), n.set(e, t); n.size > w_; ) n.delete(n.keys().next().value);
+  for (n.delete(e), n.set(e, t); n.size > R_; ) n.delete(n.keys().next().value);
 }
 const he = "";
 function fe(n) {
   return n ? { agentId: n } : {};
 }
-function A_(n) {
+function I_(n) {
   const t = n.metadata?.tanstack?.subagentPlan?.steps;
   if (!Array.isArray(t)) return;
   const s = t.map((r) => Array.isArray(r?.names) ? r.names.filter((i) => typeof i == "string" && i !== "") : []).filter((r) => r.length > 0);
   return s.length ? s : void 0;
 }
-function k_(n) {
+function L_(n) {
   if (n.reason === "tool_call" || n.reason === "confirmation" || n.reason === "approval_required") return "approval";
   if (/client_tool/.test(n.reason)) return "external";
 }
-function za(n, e = "last") {
+function Ga(n, e = "last") {
   const t = (Array.isArray(n) ? n : n && typeof n == "object" ? [n] : []).filter((o) => !!o && typeof o == "object"), s = e === "first" ? t[0] : t.at(-1);
   if (!s) return;
   const r = (o) => typeof s[o] == "number" ? s[o] : 0, i = r("cachedInputTokens");
@@ -18876,7 +20544,7 @@ function za(n, e = "last") {
     ...i ? { cacheReadTokens: i } : {}
   };
 }
-function Ga(n) {
+function ja(n) {
   if (!n.trim()) return {};
   try {
     return JSON.parse(n);
@@ -18884,7 +20552,7 @@ function Ga(n) {
     return { arguments: n };
   }
 }
-function ja(n) {
+function Ka(n) {
   if (typeof n == "string") return n;
   if (n == null) return "";
   if (Array.isArray(n)) {
@@ -18894,16 +20562,16 @@ function ja(n) {
   }
   return JSON.stringify(n);
 }
-function bu(n) {
-  return wc(n).reason;
+function mu(n) {
+  return vc(n).reason;
 }
-function S_(n, e) {
+function M_(n, e) {
   if (!e) return { interruptId: n.id, status: "cancelled" };
   if (e.kind === "decision" && n.kind === "external" && !e.approved)
     return {
       interruptId: n.id,
       status: "resolved",
-      payload: { error: bu(e) },
+      payload: { error: mu(e) },
       metadata: { tanstack: { state: "output-error" } }
     };
   if (e.kind === "decision") {
@@ -18921,32 +20589,32 @@ function S_(n, e) {
     payload: e.structuredContent !== void 0 ? e.structuredContent : e.content
   };
 }
-function C_(n) {
+function O_(n) {
   const e = n.onWarning ?? ((l) => console.warn(`[aparte] AG-UI: ${l}`)), t = n.peerProtocolVersion ? ar(n.peerProtocolVersion) : void 0, s = !t || lr(t, [1, 0]) >= 0, r = t !== void 0 && lr(t, [0, 0, 39]) <= 0, i = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), a = async (l, c) => {
-    const u = n.fetch ?? fetch, h = typeof n.headers == "function" ? await n.headers() : n.headers ?? {}, d = l.baseRequest, p = y_(l.deferral?.token), f = l.deferral?.outcomes ?? {}, m = l.conversationId || void 0, g = p?.threadId ?? (typeof n.threadId == "function" ? n.threadId(l) : n.threadId) ?? m ?? `aparte-${be()}`;
+    const u = n.fetch ?? fetch, h = typeof n.headers == "function" ? await n.headers() : n.headers ?? {}, d = l.baseRequest, p = x_(l.deferral?.token), f = l.deferral?.outcomes ?? {}, m = l.conversationId || void 0, g = p?.threadId ?? (typeof n.threadId == "function" ? n.threadId(l) : n.threadId) ?? m ?? `aparte-${be()}`;
     c.threadId = g, c.stable = n.threadId !== void 0 || m !== void 0;
-    const b = `aparte-run-${be()}`, y = new Set((p?.interrupts ?? []).map((v) => v.toolCallId)), A = Qm(d.messages, r, e), E = Array.isArray(p?.subagents) ? p.subagents : [], _ = new Set(E.filter((v) => v.tanstack).map((v) => v.id)), S = /* @__PURE__ */ new Map();
+    const b = `aparte-run-${be()}`, y = new Set((p?.interrupts ?? []).map((v) => v.toolCallId)), A = r_(d.messages, r, e), E = Array.isArray(p?.subagents) ? p.subagents : [], _ = new Set(E.filter((v) => v.tanstack).map((v) => v.id)), S = /* @__PURE__ */ new Map();
     for (const [v, M] of Object.entries(f)) {
       if (y.has(v) || M.kind === "decision" && M.approved) continue;
       const j = {
         id: `aparte-result-${v}`,
         role: "tool",
         toolCallId: v,
-        content: M.kind === "failed" ? `Error: ${M.error}` : M.kind === "decision" ? bu(M) : M.content
+        content: M.kind === "failed" ? `Error: ${M.error}` : M.kind === "decision" ? mu(M) : M.content
       }, x = p?.agents?.[v];
       x !== void 0 && _.has(x) ? S.set(v, j) : A.push(j);
     }
-    A.push(...d_(E, S)), i.has(g) && $n(i, g, i.get(g));
+    A.push(...v_(E, S)), i.has(g) && $n(i, g, i.get(g));
     const k = p ? [] : o.get(g) ?? [];
     o.delete(g);
-    const C = p?.interrupts.length ? p.interrupts.map((v) => S_(v, v.kind === "unanswerable" ? void 0 : f[v.toolCallId])) : k.length ? k.map((v) => ({ interruptId: v, status: "cancelled" })) : void 0, w = {
+    const C = p?.interrupts.length ? p.interrupts.map((v) => M_(v, v.kind === "unanswerable" ? void 0 : f[v.toolCallId])) : k.length ? k.map((v) => ({ interruptId: v, status: "cancelled" })) : void 0, w = {
       threadId: g,
       runId: b,
       ...s ? { protocolVersion: Jt } : {},
       ...p ? { parentRunId: p.runId } : {},
       state: i.has(g) ? i.get(g) : {},
       messages: A,
-      tools: Ym(d.tools),
+      tools: i_(d.tools),
       context: n.context ?? [],
       forwardedProps: n.forwardedProps ?? {},
       ...C ? { resume: C } : {}
@@ -18972,7 +20640,7 @@ function C_(n) {
     const F = l.emitter, G = /* @__PURE__ */ new Map(), se = (v) => {
       let M = G.get(v);
       return M || (M = { textOpen: !1, stepEnded: !1 }, G.set(v, M)), M;
-    }, Q = /* @__PURE__ */ new Map(), we = /* @__PURE__ */ new Map(), me = /* @__PURE__ */ new Map(), pe = new Map(Object.entries(p?.agents ?? {}).filter((v) => typeof v[1] == "string")), V = /* @__PURE__ */ new Map(), R = u_(E);
+    }, Q = /* @__PURE__ */ new Map(), we = /* @__PURE__ */ new Map(), me = /* @__PURE__ */ new Map(), pe = new Map(Object.entries(p?.agents ?? {}).filter((v) => typeof v[1] == "string")), V = /* @__PURE__ */ new Map(), R = b_(E);
     let q = !1, N = !1;
     const te = (v) => typeof v.subagentRunId == "string" ? v.subagentRunId : void 0, oe = (v) => {
       let M = typeof v.messageId == "string" ? v.messageId : void 0;
@@ -18987,7 +20655,7 @@ function C_(n) {
     }, ae = (v) => te(v) ?? (typeof v.parentMessageId == "string" ? Q.get(v.parentMessageId) : void 0) ?? he, _e = (v) => U.get(v)?.owner ?? pe.get(v), ce = (v) => {
       const M = G.get(v);
       M?.textOpen && (F({ type: "text-flush", ...fe(v) }), M.textOpen = !1);
-    }, zu = (v) => {
+    }, Wu = (v) => {
       V.has(v) || (V.set(v, { open: !0 }), F({ type: "agent-start", agentId: v }));
     }, tt = [], Es = (v) => {
       for (let M = tt.length - 1; M >= 0; M -= 1) {
@@ -19000,41 +20668,41 @@ function C_(n) {
       Ts.set(v, M), F({ type: "activity", id: v, activityType: M.activityType, content: M.content, ...fe(M.owner) });
     }, St = p?.plan;
     let Me = St && Array.isArray(St.steps) ? { steps: St.steps, status: new Map(Object.entries(St.status ?? {})) } : void 0;
-    const Di = typeof St?.id == "string" ? St.id : `router-plan:${b}`, Bi = (v, M) => {
+    const Bi = typeof St?.id == "string" ? St.id : `router-plan:${b}`, qi = (v, M) => {
       const j = v === void 0 ? -1 : Me?.steps.findIndex((B) => B.includes(v)) ?? -1;
       if (!Me || j < 0) return;
       if (M === "in-progress")
         for (const B of Me.steps.slice(0, j).flat()) Me.status.get(B) !== "failed" && Me.status.set(B, "done");
       Me.status.set(v, M);
       const x = Me.steps.flat().map((B) => ({ title: B, status: Me.status.get(B) ?? "pending" }));
-      xs(Di, { activityType: "plan", content: { steps: x }, owner: he });
+      xs(Bi, { activityType: "plan", content: { steps: x }, owner: he });
     }, zt = (v, M, j = {}) => {
       Es(v);
       const x = V.get(v);
-      x && (x.open = !1), F({ type: "agent-end", agentId: v, status: M, ...j, ...x?.parent ? { parentAgentId: x.parent } : {} }), x && !x.parent && Bi(x.name, M === "waiting" ? "blocked" : M);
-    }, qi = (v) => {
+      x && (x.open = !1), F({ type: "agent-end", agentId: v, status: M, ...j, ...x?.parent ? { parentAgentId: x.parent } : {} }), x && !x.parent && qi(x.name, M === "waiting" ? "blocked" : M);
+    }, Hi = (v) => {
       for (const [M, j] of [...V].reverse())
         j.open && (ce(M), zt(M, "failed", { error: v }));
     }, Gt = (v) => {
       const M = U.get(v);
       if (!M || K.has(v) || I.has(v)) return;
-      const j = Ga(M.args);
+      const j = ja(M.args);
       K.set(v, { name: M.name, input: j, owner: M.owner }), ce(M.owner), F({ type: "tool-start", toolCallId: v, name: M.name, input: j, ...fe(M.owner) }), se(M.owner).stepEnded = !0;
     }, Rs = (v) => {
       const M = se(v);
       M.stepEnded && (M.stepEnded = !1, ce(v), F({ type: "turn-start", ...fe(v) }));
-    }, Gu = (v) => {
+    }, Uu = (v) => {
       const M = K.get(v.toolCallId) ?? O.get(v.toolCallId);
       if (M) return M;
       const j = U.get(v.toolCallId);
-      if (j) return { name: j.name, input: Ga(j.args) };
+      if (j) return { name: j.name, input: ja(j.args) };
       const x = v.metadata;
       return { name: typeof x?.toolName == "string" ? x.toolName : "", input: x?.input ?? {} };
     };
-    let Is = !1, Hi = !1;
-    const ju = () => {
-      if (!Hi) {
-        Hi = !0, F({ type: "run-start" }), F({ type: "turn-start" });
+    let Is = !1, Fi = !1;
+    const zu = () => {
+      if (!Fi) {
+        Fi = !0, F({ type: "run-start" }), F({ type: "turn-start" });
         for (const [v, M] of Object.entries(f)) {
           const j = pe.get(v) ?? he;
           if (j && (se(j).stepEnded = !0), M.kind === "result") {
@@ -19051,21 +20719,21 @@ function C_(n) {
             F({ type: "tool-failed", toolCallId: v, error: M.error, ...fe(j) }), Se.add(v);
             continue;
           }
-          M.approved ? F({ type: "tool-approved", toolCallId: v, ...fe(j) }) : (F({ type: "tool-rejected", toolCallId: v, ...wc(M), ...fe(j) }), ve.add(v));
+          M.approved ? F({ type: "tool-approved", toolCallId: v, ...fe(j) }) : (F({ type: "tool-rejected", toolCallId: v, ...vc(M), ...fe(j) }), ve.add(v));
         }
       }
-    }, Fi = b_(!s || n.relaxedRunFraming === !0), Ku = f_(t, e);
-    async function* Vu(v, M) {
-      for await (const j of v_(v, M))
-        for (const x of Ku(j)) {
-          const B = s_(x, e);
+    }, Wi = E_(!s || n.relaxedRunFraming === !0), Gu = A_(t, e);
+    async function* ju(v, M) {
+      for await (const j of T_(v, M))
+        for (const x of Gu(j)) {
+          const B = d_(x, e);
           B && (yield B);
         }
     }
-    for await (const v of Vu(T.body, T.headers.get("content-type"))) {
-      Fi(v), ju(), /^(TEXT_MESSAGE|REASONING|TOOL_CALL)_/.test(v.type) && (Is = !1);
+    for await (const v of ju(T.body, T.headers.get("content-type"))) {
+      Wi(v), zu(), /^(TEXT_MESSAGE|REASONING|TOOL_CALL)_/.test(v.type) && (Is = !1);
       const M = te(v);
-      M !== void 0 && !v.type.startsWith("SUBAGENT_") && zu(M);
+      M !== void 0 && !v.type.startsWith("SUBAGENT_") && Wu(M);
       const j = v.metadata;
       switch (j && typeof j == "object" && typeof j.tanstack == "object" && (q = !0), v.type) {
         case "RUN_STARTED": {
@@ -19073,7 +20741,7 @@ function C_(n) {
             e(`the agent's run failed ("${Ce.message}") and the stream ran it again; the reply shows the new run.`);
             for (const [B, ee] of K)
               le.has(B) || (F({ type: "tool-aborted", toolCallId: B, ...fe(ee.owner) }), le.add(B));
-            qi(Ce.message), Ce = void 0;
+            Hi(Ce.message), Ce = void 0;
           }
           const x = v.protocolVersion;
           if (typeof x == "string") {
@@ -19133,7 +20801,7 @@ function C_(n) {
           const x = String(v.toolCallId);
           if (Gt(x), ve.has(x) || Se.has(x)) break;
           le.add(x);
-          const B = _e(x) ?? M ?? he, ee = ja(v.content);
+          const B = _e(x) ?? M ?? he, ee = Ka(v.content);
           if (B !== he && R.result(B, typeof v.messageId == "string" ? v.messageId : void 0, x, ee), v.metadata?.tanstack?.state === "output-error")
             F({ type: "tool-failed", toolCallId: x, error: ee, ...fe(B) });
           else {
@@ -19156,10 +20824,10 @@ function C_(n) {
             ...Et && typeof Et == "object" && !Array.isArray(Et) ? { metadata: Et } : {}
           }), !ee) {
             if (!Me) {
-              const Ui = A_(v);
-              Ui && (Me = { steps: Ui, status: /* @__PURE__ */ new Map() });
+              const zi = I_(v);
+              zi && (Me = { steps: zi, status: /* @__PURE__ */ new Map() });
             }
-            Bi(Xe, "in-progress");
+            qi(Xe, "in-progress");
           }
           F({
             type: "agent-start",
@@ -19183,7 +20851,7 @@ function C_(n) {
             const ee = Array.isArray(B.interruptIds) ? B.interruptIds.filter((Xe) => typeof Xe == "string") : [];
             R.end(x, "suspended", ee), zt(x, "waiting");
           } else
-            R.end(x, "finished"), zt(x, "done", v.result !== void 0 ? { result: ja(v.result) } : {});
+            R.end(x, "finished"), zt(x, "done", v.result !== void 0 ? { result: Ka(v.result) } : {});
           break;
         }
         case "RUN_ERROR": {
@@ -19202,12 +20870,12 @@ function C_(n) {
           $n(i, g, v.snapshot);
           break;
         case "STATE_DELTA":
-          $n(i, g, l_(i.has(g) ? i.get(g) : {}, v.delta, e));
+          $n(i, g, m_(i.has(g) ? i.get(g) : {}, v.delta, e));
           break;
         case "RUN_FINISHED": {
           for (const x of U.keys()) Gt(x);
           for (const x of G.keys()) ce(x);
-          V.size === 0 ? L = za(v.usage) ?? L : N && (L = za(v.usage, "first") ?? L), N = !1, se(he).stepEnded = !0;
+          V.size === 0 ? L = Ga(v.usage) ?? L : N && (L = Ga(v.usage, "first") ?? L), N = !1, se(he).stepEnded = !0;
           for (const x of G.values()) x.stepEnded = !0;
           Is = !0, D = {
             runId: typeof v.runId == "string" ? v.runId : b,
@@ -19248,7 +20916,7 @@ function C_(n) {
             e(`ACTIVITY_DELTA for "${x}", an activity no ACTIVITY_SNAPSHOT created: skipped.`);
             break;
           }
-          const ee = c_(B.content, v.patch, e);
+          const ee = __(B.content, v.patch, e);
           ee !== B.content && xs(x, { ...B, content: ee });
           break;
         }
@@ -19258,24 +20926,24 @@ function C_(n) {
     if (Ce) {
       for (const [v, M] of K) le.has(v) || F({ type: "tool-aborted", toolCallId: v, ...fe(M.owner) });
       for (const v of G.keys()) ce(v);
-      throw qi(Ce.message), Ce;
+      throw Hi(Ce.message), Ce;
     }
     if (!D)
       throw new ge("The agent stream ended without RUN_FINISHED.", Z.PROVIDER_ERROR);
     if (!Is)
       throw new ge("The agent stream was cut: it ended in the middle of a step, after a RUN_FINISHED.", Z.PROVIDER_ERROR);
-    Fi.end();
+    Wi.end();
     for (const v of G.keys()) ce(v);
-    const Ct = [], Wi = [], Cn = [];
+    const Ct = [], Ui = [], Cn = [];
     if (D.outcome?.type === "interrupt")
       for (const v of D.outcome.interrupts ?? []) {
-        const M = k_(v);
+        const M = L_(v);
         if (!M || !v.toolCallId) {
           Cn.push(v.id);
           continue;
         }
-        const j = Gu(v), x = v.subagentRunId ?? _e(v.toolCallId) ?? he;
-        M === "approval" && F({ type: "tool-awaiting-approval", toolCallId: v.toolCallId, name: j.name, input: j.input, ...fe(x) }), Wi.push({ id: v.id, toolCallId: v.toolCallId, kind: M }), Ct.push({ toolCallId: v.toolCallId, name: j.name, input: j.input, reason: M, ...fe(x) });
+        const j = Uu(v), x = v.subagentRunId ?? _e(v.toolCallId) ?? he;
+        M === "approval" && F({ type: "tool-awaiting-approval", toolCallId: v.toolCallId, name: j.name, input: j.input, ...fe(x) }), Ui.push({ id: v.id, toolCallId: v.toolCallId, kind: M }), Ct.push({ toolCallId: v.toolCallId, name: j.name, input: j.input, reason: M, ...fe(x) });
       }
     else {
       const v = D.outcome, M = Array.isArray(v?.pendingToolCallIds) ? new Set(v.pendingToolCallIds.filter((j) => typeof j == "string")) : void 0;
@@ -19291,10 +20959,10 @@ function C_(n) {
         v: 1,
         threadId: g,
         runId: D.runId,
-        interrupts: [...Wi, ...v],
+        interrupts: [...Ui, ...v],
         ...M.length ? { agents: Object.fromEntries(M) } : {},
         ...R.records().length ? { subagents: R.records(q) } : {},
-        ...Me ? { plan: { id: Di, steps: Me.steps, status: Object.fromEntries(Me.status) } } : {}
+        ...Me ? { plan: { id: Bi, steps: Me.steps, status: Object.fromEntries(Me.status) } } : {}
       };
       c.suspended = !0, F({ type: "run-suspended", pending: Ct, ...L ? { usage: L } : {}, ticket: JSON.stringify(j) });
     } else
@@ -19310,1668 +20978,11 @@ function C_(n) {
     }
   };
 }
-const E_ = {
-  inputPlaceholder: "Écrivez un message...",
-  sendButton: "Envoyer",
-  copy: "Copier",
-  copied: "Copié !",
-  retry: "Réessayer",
-  thinking: "Réflexion",
-  elicitationOther: "Autre…",
-  elicitationOtherPlaceholder: "Écrivez votre réponse…",
-  elicitationOtherLabel: "Réponse libre",
-  submitButton: "Valider",
-  stopButton: "Arrêter",
-  queueLabel: "Envoyé à la fin de la réponse",
-  queueEdit: "Modifier",
-  queueRemove: "Retirer",
-  elicitationRecommended: "Recommandé",
-  elicitationSkip: "Passer",
-  elicitationHide: "Masquer pour l'instant",
-  elicitationWaiting: "En attente de votre réponse",
-  elicitationYes: "Oui",
-  elicitationNo: "Non",
-  elicitationAnswerLabel: "Votre réponse",
-  approvalInstructionPlaceholder: "Ou dites-lui quoi faire à la place…",
-  approvalOptionsLabel: "Votre décision",
-  approvalArgsLabel: "Arguments",
-  approvalAsk: "Autoriser {tool} ?",
-  approvalAskBy: "Autoriser {tool} pour {agent} ?",
-  approvalWaiting: "En attente",
-  scrollToBottom: "Aller en bas de la conversation",
-  suggestionsLabel: "Suggestions de messages",
-  contextLabel: "Fenêtre de contexte",
-  contextSystem: "Prompt système",
-  contextTools: "Outils",
-  contextSummary: "Résumé",
-  contextMessages: "Messages",
-  contextOther: "Autre",
-  contextFree: "Libre",
-  contextTotal: "Total",
-  contextReclaim: "Compacter maintenant libérerait ~{n} tokens",
-  contextCompactNow: "Compacter maintenant",
-  checkpointCount: "{n} messages résumés pour le modèle",
-  checkpointCountOne: "1 message résumé pour le modèle",
-  checkpointLegacy: "Les messages précédents ont été résumés",
-  checkpointGroup: "Résumé du contexte",
-  checkpointShow: "Afficher le résumé",
-  checkpointHide: "Masquer le résumé",
-  checkpointRestore: "Restaurer",
-  checkpointRestoreConfirm: "Renvoyer les messages d'origine au modèle ?",
-  checkpointPending: "Résumé du contexte en cours…",
-  checkpointFailed: "Impossible de résumer le contexte",
-  toolRunning: "En cours",
-  toolQueued: "Dans la file",
-  toolFailed: "Échec",
-  toolCompleted: "Terminé",
-  toolRejected: "Refusé",
-  toolStopped: "Arrêté",
-  toolInput: "Entrée",
-  toolOutput: "Sortie",
-  toolRejectedSaid: "Vous avez dit : « {instruction} »",
-  toolRefusedByPolicy: "Refusé par une règle",
-  toolNotRunAfterRefusal: "Non exécuté : un appel précédent a été refusé",
-  toolTimedOut: "Délai dépassé",
-  toolUnavailable: "Indisponible ici",
-  toolNoApprover: "Personne ne pouvait l'approuver",
-  toolTurnLimit: "Limite de tours atteinte",
-  maxTurnsReached: "Arrêté après {n} tours pour éviter une boucle sans fin.",
-  sourcesCount: "{n} sources",
-  sourcesOne: "1 source",
-  sourcesCard: "Sources",
-  sourcePrevious: "Source précédente",
-  sourceNext: "Source suivante",
-  sourcePosition: "Source {i} sur {n}",
-  opensInNewTab: "(s’ouvre dans un nouvel onglet)",
-  imageLoad: "Charger l’image depuis {host}",
-  imageLoadNamed: "Charger l’image « {alt} » depuis {host}",
-  questionDeclined: "Vous n'avez pas répondu.",
-  artifactNotCreated: "Non créé",
-  thoughtFor: "Réflexion : {duration}",
-  thought: "Réflexion terminée",
-  turnWorking: "En cours…",
-  turnWorked: "Terminé en {duration}",
-  turnUsed: "Utilisé : {tools}",
-  turnTools: "one:{n} outil|other:{n} outils",
-  feedbackReasonTitle: "Qu’est-ce qui n’a pas marché ?",
-  feedbackReasonDismiss: "Pas maintenant",
-  triggersLoading: "Chargement…",
-  triggersEmpty: "Aucun résultat",
-  triggersError: "Impossible de charger cette liste",
-  triggersRetry: "Réessayer",
-  triggersBack: "Retour",
-  triggersCommandNew: "Commencer une nouvelle conversation",
-  triggersCommandStop: "Arrêter la réponse",
-  triggersCommandRetry: "Répondre à nouveau",
-  triggersCommandCopy: "Copier la dernière réponse",
-  triggersCommandCompact: "Résumer les messages précédents",
-  triggersCompactNothing: "Il n’y a encore rien à compacter",
-  triggersCompactBusy: "Attendez la fin de la réponse",
-  triggersCompactNoWindow: "Ce modèle n’indique pas ce qu’il peut lire",
-  triggersCompactFailed: "Le résumé n’a pas pu être écrit",
-  triggersCommandModel: "Changer de modèle",
-  triggersCommandApproval: "Changer le mode d’approbation",
-  actionUpload: "Joindre un fichier",
-  removeAttachment: "Retirer {name}",
-  messageFrom: "Message de {name}",
-  selectSearchPlaceholder: "Rechercher…",
-  selectSearchLabel: "Rechercher parmi les options",
-  loading: "Chargement…",
-  download: "Télécharger",
-  openArtifact: "Ouvrir",
-  closeArtifact: "Fermer",
-  artifactVersion: "Version {n} sur {total}",
-  previousVersion: "Version précédente",
-  nextVersion: "Version suivante",
-  modelContextWindow: "{n} de contexte",
-  previewPending: "Appuyez sur Aperçu pour exécuter cet artefact.",
-  sandboxError: "Le bac à sable a échoué pendant la génération.",
-  sandboxErrorHint: "Cause fréquente : le modèle a produit du code invalide (variable non définie, mauvais type d'argument). Relancez la demande — le modèle peut produire un autre code.",
-  preview: "Aperçu",
-  code: "Code",
-  generating: "Génération…",
-  rebuildingPreview: "Reconstruction de l'aperçu…",
-  typing: "Écrit...",
-  responseCutOff: "Coupée à la limite de longueur du modèle.",
-  error: "Erreur",
-  errorUnreachable: "L'assistant est injoignable pour le moment. Réessayez dans un instant.",
-  errorTimeout: "La réponse a pris trop de temps. Réessayez dans un instant.",
-  errorRefused: "L'assistant n'est pas autorisé à répondre pour le moment.",
-  errorRateLimited: "Trop de requêtes en ce moment. Réessayez dans un instant.",
-  errorTooLong: "Cette conversation est trop longue pour le modèle. Commencez-en une nouvelle.",
-  errorFailed: "L'assistant n'a pas pu répondre. Réessayez dans un instant.",
-  errorNoAnswer: "L'assistant n'a pas pu répondre à cette demande.",
-  running: "Exécution...",
-  run: "Exécuter",
-  file: "Fichier",
-  modelSelectorPlaceholder: "Sélectionner un modèle...",
-  approvalModeLabel: "Mode d'approbation",
-  roleNameUser: "Vous",
-  roleNameAssistant: "Assistant",
-  yourMessage: "Votre message",
-  assistantResponse: "Réponse de l'assistant",
-  messageActions: "Actions du message",
-  edit: "Modifier le message",
-  editConfirm: "Envoyer",
-  editCancel: "Annuler",
-  feedbackPositive: "Bonne réponse",
-  feedbackNegative: "Mauvaise réponse",
-  previousResponse: "Réponse précédente",
-  nextResponse: "Réponse suivante",
-  approveTool: "Approuver",
-  rejectTool: "Rejeter",
-  messageInfo: "Détails",
-  newChat: "Nouvelle conversation",
-  loadingConversations: "Chargement des conversations",
-  conversationSearchEmpty: "Aucune conversation ne correspond",
-  conversationList: "Conversations",
-  loadingConversation: "Chargement de la conversation",
-  deleteConversation: "Supprimer",
-  archiveConversation: "Archiver",
-  unarchiveConversation: "Désarchiver",
-  conversationActions: "Actions de la conversation",
-  conversationRunning: "Réponse en cours",
-  conversationWaiting: "Attend votre réponse",
-  renameConversation: "Renommer",
-  conversationTitle: "Titre de la conversation",
-  pinConversation: "Épingler",
-  unpinConversation: "Désépingler",
-  deleteConversationConfirm: "Supprimer « {title} » ?",
-  cancel: "Annuler",
-  conversationGroupPinned: "Épinglées",
-  conversationGroupToday: "Aujourd'hui",
-  conversationGroupYesterday: "Hier",
-  conversationGroupWeek: "7 derniers jours",
-  conversationGroupMonth: "30 derniers jours",
-  scrollRailLabel: "Plan de la conversation",
-  sidebarLabel: "Conversations",
-  splitHandleLabel: "Redimensionner les panneaux",
-  launcherOpen: "Ouvrir la discussion",
-  launcherClose: "Fermer la discussion",
-  launcherHeading: "Discussion",
-  launcherMaximize: "Agrandir la discussion",
-  launcherRestore: "Réduire la discussion",
-  transcript: "Transcription",
-  tag: "fr-FR",
-  direction: "ltr"
-}, T_ = {
-  inputPlaceholder: "Escribe un mensaje…",
-  sendButton: "Enviar",
-  copy: "Copiar",
-  copied: "¡Copiado!",
-  retry: "Reintentar",
-  thinking: "Razonamiento",
-  elicitationOther: "Otra respuesta…",
-  elicitationOtherPlaceholder: "Escribe tu respuesta…",
-  elicitationOtherLabel: "Respuesta libre",
-  submitButton: "Confirmar",
-  stopButton: "Detener",
-  queueLabel: "Se enviará cuando termine la respuesta",
-  queueEdit: "Editar",
-  queueRemove: "Quitar",
-  elicitationRecommended: "Recomendado",
-  elicitationSkip: "Omitir",
-  elicitationHide: "Ocultar por ahora",
-  elicitationWaiting: "Esperando tu respuesta",
-  elicitationYes: "Sí",
-  elicitationNo: "No",
-  elicitationAnswerLabel: "Tu respuesta",
-  approvalInstructionPlaceholder: "O dile qué hacer en su lugar…",
-  approvalOptionsLabel: "Tu decisión",
-  approvalArgsLabel: "Argumentos",
-  approvalAsk: "¿Permitir {tool}?",
-  approvalAskBy: "¿Permitir {tool} para {agent}?",
-  approvalWaiting: "En espera",
-  scrollToBottom: "Ir al final",
-  suggestionsLabel: "Sugerencias de mensajes",
-  contextLabel: "Ventana de contexto",
-  contextSystem: "Prompt del sistema",
-  contextTools: "Herramientas",
-  contextSummary: "Resumen",
-  contextMessages: "Mensajes",
-  contextOther: "Otros",
-  contextFree: "Libre",
-  contextTotal: "Total",
-  contextReclaim: "Compactar ahora liberaría ~{n} tokens",
-  contextCompactNow: "Compactar ahora",
-  checkpointCount: "{n} mensajes resumidos para el modelo",
-  checkpointCountOne: "1 mensaje resumido para el modelo",
-  checkpointLegacy: "Los mensajes anteriores se resumieron",
-  checkpointGroup: "Resumen del contexto",
-  checkpointShow: "Mostrar resumen",
-  checkpointHide: "Ocultar resumen",
-  checkpointRestore: "Restaurar",
-  checkpointRestoreConfirm: "¿Enviar de nuevo los mensajes originales al modelo?",
-  checkpointPending: "Resumiendo el contexto…",
-  checkpointFailed: "No se pudo resumir el contexto",
-  toolRunning: "En curso",
-  toolQueued: "En cola",
-  toolFailed: "Falló",
-  toolCompleted: "Hecho",
-  toolRejected: "Rechazado",
-  toolStopped: "Detenido",
-  toolInput: "Entrada",
-  toolOutput: "Salida",
-  toolRejectedSaid: "Dijiste: «{instruction}»",
-  toolRefusedByPolicy: "Rechazado por una regla",
-  toolNotRunAfterRefusal: "No ejecutado: se rechazó una llamada anterior",
-  toolTimedOut: "Tiempo agotado",
-  toolUnavailable: "No disponible aquí",
-  toolNoApprover: "Nadie podía aprobarlo",
-  toolTurnLimit: "Límite de turnos alcanzado",
-  maxTurnsReached: "Detenido tras {n} turnos para evitar un bucle infinito.",
-  sourcesCount: "{n} fuentes",
-  sourcesOne: "1 fuente",
-  sourcesCard: "Fuentes",
-  sourcePrevious: "Fuente anterior",
-  sourceNext: "Fuente siguiente",
-  sourcePosition: "Fuente {i} de {n}",
-  opensInNewTab: "(se abre en una pestaña nueva)",
-  imageLoad: "Cargar la imagen de {host}",
-  imageLoadNamed: "Cargar la imagen «{alt}» de {host}",
-  questionDeclined: "Decidiste no responder.",
-  artifactNotCreated: "No creado",
-  thoughtFor: "Razonamiento: {duration}",
-  thought: "Razonamiento completado",
-  turnWorking: "Trabajando…",
-  turnWorked: "Trabajó {duration}",
-  turnUsed: "Usó {tools}",
-  turnTools: "one:{n} herramienta|other:{n} herramientas",
-  feedbackReasonTitle: "¿Qué ha fallado?",
-  feedbackReasonDismiss: "Ahora no",
-  triggersLoading: "Cargando…",
-  triggersEmpty: "Sin resultados",
-  triggersError: "No se pudo cargar esta lista",
-  triggersRetry: "Reintentar",
-  triggersBack: "Atrás",
-  triggersCommandNew: "Iniciar una conversación nueva",
-  triggersCommandStop: "Detener la respuesta",
-  triggersCommandRetry: "Responder de nuevo",
-  triggersCommandCopy: "Copiar la última respuesta",
-  triggersCommandCompact: "Resumir los mensajes anteriores",
-  triggersCompactNothing: "Aún no hay nada que compactar",
-  triggersCompactBusy: "Espera a que termine la respuesta",
-  triggersCompactNoWindow: "Este modelo no indica cuánto puede leer",
-  triggersCompactFailed: "No se pudo escribir el resumen",
-  triggersCommandModel: "Cambiar de modelo",
-  triggersCommandApproval: "Cambiar el modo de aprobación",
-  actionUpload: "Adjuntar archivo",
-  removeAttachment: "Quitar {name}",
-  messageFrom: "Mensaje de {name}",
-  selectSearchPlaceholder: "Buscar…",
-  selectSearchLabel: "Buscar en las opciones",
-  loading: "Cargando…",
-  download: "Descargar",
-  openArtifact: "Abrir",
-  closeArtifact: "Cerrar",
-  artifactVersion: "Versión {n} de {total}",
-  previousVersion: "Versión anterior",
-  nextVersion: "Versión siguiente",
-  modelContextWindow: "{n} de contexto",
-  previewPending: "Pulsa Vista previa para ejecutar este artefacto.",
-  sandboxError: "El entorno aislado falló durante la generación.",
-  sandboxErrorHint: "Causa frecuente: el modelo generó código no válido (variable no definida, tipo de argumento incorrecto). Vuelve a intentarlo: el modelo puede generar otro código.",
-  preview: "Vista previa",
-  code: "Código",
-  generating: "Generando…",
-  rebuildingPreview: "Reconstruyendo la vista previa…",
-  typing: "Escribiendo",
-  responseCutOff: "Cortada en el límite de longitud del modelo.",
-  error: "Error",
-  errorUnreachable: "Ahora mismo no se puede contactar con el asistente. Inténtalo de nuevo en un momento.",
-  errorTimeout: "La respuesta tardó demasiado. Inténtalo de nuevo en un momento.",
-  errorRefused: "El asistente no tiene permiso para responder ahora mismo.",
-  errorRateLimited: "Demasiadas solicitudes en este momento. Inténtalo de nuevo en un momento.",
-  errorTooLong: "Esta conversación es demasiado larga para el modelo. Empieza una nueva.",
-  errorFailed: "El asistente no pudo responder. Inténtalo de nuevo en un momento.",
-  errorNoAnswer: "El asistente no pudo responder a esta solicitud.",
-  running: "Ejecutando…",
-  run: "Ejecutar",
-  file: "Archivo",
-  modelSelectorPlaceholder: "Selecciona un modelo…",
-  approvalModeLabel: "Modo de aprobación",
-  roleNameUser: "Tú",
-  roleNameAssistant: "Asistente",
-  yourMessage: "Tu mensaje",
-  assistantResponse: "Respuesta del asistente",
-  messageActions: "Acciones del mensaje",
-  edit: "Editar mensaje",
-  editConfirm: "Enviar",
-  editCancel: "Cancelar",
-  feedbackPositive: "Buena respuesta",
-  feedbackNegative: "Mala respuesta",
-  previousResponse: "Respuesta anterior",
-  nextResponse: "Respuesta siguiente",
-  approveTool: "Aprobar",
-  rejectTool: "Rechazar",
-  messageInfo: "Detalles",
-  newChat: "Nueva conversación",
-  loadingConversations: "Cargando conversaciones",
-  conversationSearchEmpty: "Ninguna conversación coincide",
-  conversationList: "Conversaciones",
-  loadingConversation: "Cargando la conversación",
-  deleteConversation: "Eliminar",
-  archiveConversation: "Archivar",
-  unarchiveConversation: "Desarchivar",
-  conversationActions: "Acciones de la conversación",
-  conversationRunning: "Respondiendo",
-  conversationWaiting: "Espera tu respuesta",
-  renameConversation: "Cambiar nombre",
-  conversationTitle: "Título de la conversación",
-  pinConversation: "Fijar",
-  unpinConversation: "Dejar de fijar",
-  deleteConversationConfirm: "¿Eliminar «{title}»?",
-  cancel: "Cancelar",
-  conversationGroupPinned: "Fijadas",
-  conversationGroupToday: "Hoy",
-  conversationGroupYesterday: "Ayer",
-  conversationGroupWeek: "Últimos 7 días",
-  conversationGroupMonth: "Últimos 30 días",
-  scrollRailLabel: "Esquema de la conversación",
-  sidebarLabel: "Conversaciones",
-  splitHandleLabel: "Cambiar el tamaño de los paneles",
-  launcherOpen: "Abrir el chat",
-  launcherClose: "Cerrar el chat",
-  launcherHeading: "Chat",
-  launcherMaximize: "Ampliar el chat",
-  launcherRestore: "Reducir el chat",
-  transcript: "Transcripción",
-  tag: "es",
-  direction: "ltr"
-}, Ka = {
-  inputPlaceholder: "Digite uma mensagem…",
-  sendButton: "Enviar",
-  copy: "Copiar",
-  copied: "Copiado!",
-  retry: "Tentar novamente",
-  thinking: "Raciocínio",
-  elicitationOther: "Outra resposta…",
-  elicitationOtherPlaceholder: "Digite sua resposta…",
-  elicitationOtherLabel: "Resposta livre",
-  submitButton: "Confirmar",
-  stopButton: "Parar",
-  queueLabel: "Enviado quando a resposta terminar",
-  queueEdit: "Editar",
-  queueRemove: "Remover",
-  elicitationRecommended: "Recomendado",
-  elicitationSkip: "Pular",
-  elicitationHide: "Ocultar por enquanto",
-  elicitationWaiting: "Aguardando sua resposta",
-  elicitationYes: "Sim",
-  elicitationNo: "Não",
-  elicitationAnswerLabel: "Sua resposta",
-  approvalInstructionPlaceholder: "Ou diga o que fazer em vez disso…",
-  approvalOptionsLabel: "Sua decisão",
-  approvalArgsLabel: "Argumentos",
-  approvalAsk: "Permitir {tool}?",
-  approvalAskBy: "Permitir {tool} para {agent}?",
-  approvalWaiting: "Aguardando",
-  scrollToBottom: "Ir para o fim",
-  suggestionsLabel: "Sugestões de mensagens",
-  contextLabel: "Janela de contexto",
-  contextSystem: "Prompt do sistema",
-  contextTools: "Ferramentas",
-  contextSummary: "Resumo",
-  contextMessages: "Mensagens",
-  contextOther: "Outros",
-  contextFree: "Livre",
-  contextTotal: "Total",
-  contextReclaim: "Compactar agora liberaria ~{n} tokens",
-  contextCompactNow: "Compactar agora",
-  checkpointCount: "{n} mensagens resumidas para o modelo",
-  checkpointCountOne: "1 mensagem resumida para o modelo",
-  checkpointLegacy: "As mensagens anteriores foram resumidas",
-  checkpointGroup: "Resumo do contexto",
-  checkpointShow: "Mostrar resumo",
-  checkpointHide: "Ocultar resumo",
-  checkpointRestore: "Restaurar",
-  checkpointRestoreConfirm: "Enviar as mensagens originais ao modelo novamente?",
-  checkpointPending: "Resumindo o contexto…",
-  checkpointFailed: "Não foi possível resumir o contexto",
-  toolRunning: "Em execução",
-  toolQueued: "Na fila",
-  toolFailed: "Falhou",
-  toolCompleted: "Concluído",
-  toolRejected: "Recusado",
-  toolStopped: "Interrompido",
-  toolInput: "Entrada",
-  toolOutput: "Saída",
-  toolRejectedSaid: "Você disse: “{instruction}”",
-  toolRefusedByPolicy: "Recusado por uma regra",
-  toolNotRunAfterRefusal: "Não executado: uma chamada anterior foi recusada",
-  toolTimedOut: "Tempo esgotado",
-  toolUnavailable: "Indisponível aqui",
-  toolNoApprover: "Ninguém podia aprová-lo",
-  toolTurnLimit: "Limite de turnos atingido",
-  maxTurnsReached: "Interrompido após {n} turnos para evitar um loop infinito.",
-  sourcesCount: "{n} fontes",
-  sourcesOne: "1 fonte",
-  sourcesCard: "Fontes",
-  sourcePrevious: "Fonte anterior",
-  sourceNext: "Próxima fonte",
-  sourcePosition: "Fonte {i} de {n}",
-  opensInNewTab: "(abre em uma nova aba)",
-  imageLoad: "Carregar a imagem de {host}",
-  imageLoadNamed: "Carregar a imagem “{alt}” de {host}",
-  questionDeclined: "Você optou por não responder.",
-  artifactNotCreated: "Não criado",
-  thoughtFor: "Raciocínio: {duration}",
-  thought: "Raciocínio concluído",
-  turnWorking: "Trabalhando…",
-  turnWorked: "Trabalhou {duration}",
-  turnUsed: "Usou {tools}",
-  turnTools: "one:{n} ferramenta|other:{n} ferramentas",
-  feedbackReasonTitle: "O que deu errado?",
-  feedbackReasonDismiss: "Agora não",
-  triggersLoading: "Carregando…",
-  triggersEmpty: "Nenhum resultado",
-  triggersError: "Não foi possível carregar esta lista",
-  triggersRetry: "Tentar novamente",
-  triggersBack: "Voltar",
-  triggersCommandNew: "Iniciar uma nova conversa",
-  triggersCommandStop: "Parar a resposta",
-  triggersCommandRetry: "Responder novamente",
-  triggersCommandCopy: "Copiar a última resposta",
-  triggersCommandCompact: "Resumir as mensagens anteriores",
-  triggersCompactNothing: "Ainda não há nada para compactar",
-  triggersCompactBusy: "Aguarde o fim da resposta",
-  triggersCompactNoWindow: "Este modelo não informa quanto consegue ler",
-  triggersCompactFailed: "Não foi possível escrever o resumo",
-  triggersCommandModel: "Trocar de modelo",
-  triggersCommandApproval: "Alterar o modo de aprovação",
-  actionUpload: "Anexar arquivo",
-  removeAttachment: "Remover {name}",
-  messageFrom: "Mensagem de {name}",
-  selectSearchPlaceholder: "Pesquisar…",
-  selectSearchLabel: "Pesquisar nas opções",
-  loading: "Carregando…",
-  download: "Baixar",
-  openArtifact: "Abrir",
-  closeArtifact: "Fechar",
-  artifactVersion: "Versão {n} de {total}",
-  previousVersion: "Versão anterior",
-  nextVersion: "Próxima versão",
-  modelContextWindow: "{n} de contexto",
-  previewPending: "Pressione Visualizar para executar este artefato.",
-  sandboxError: "O sandbox falhou durante a geração.",
-  sandboxErrorHint: "Causa comum: o modelo gerou código inválido (variável não definida, tipo de argumento errado). Tente novamente — o modelo pode gerar outro código.",
-  preview: "Visualizar",
-  code: "Código",
-  generating: "Gerando…",
-  rebuildingPreview: "Reconstruindo a visualização…",
-  typing: "Digitando",
-  responseCutOff: "Interrompida no limite de tamanho do modelo.",
-  error: "Erro",
-  errorUnreachable: "Não foi possível falar com o assistente agora. Tente novamente em instantes.",
-  errorTimeout: "A resposta demorou demais. Tente novamente em instantes.",
-  errorRefused: "O assistente não tem permissão para responder agora.",
-  errorRateLimited: "Muitas solicitações agora. Tente novamente em instantes.",
-  errorTooLong: "Esta conversa é longa demais para o modelo. Comece uma nova.",
-  errorFailed: "O assistente não conseguiu responder. Tente novamente em instantes.",
-  errorNoAnswer: "O assistente não conseguiu responder a esta solicitação.",
-  running: "Executando…",
-  run: "Executar",
-  file: "Arquivo",
-  modelSelectorPlaceholder: "Selecione um modelo…",
-  approvalModeLabel: "Modo de aprovação",
-  roleNameUser: "Você",
-  roleNameAssistant: "Assistente",
-  yourMessage: "Sua mensagem",
-  assistantResponse: "Resposta do assistente",
-  messageActions: "Ações da mensagem",
-  edit: "Editar mensagem",
-  editConfirm: "Enviar",
-  editCancel: "Cancelar",
-  feedbackPositive: "Boa resposta",
-  feedbackNegative: "Resposta ruim",
-  previousResponse: "Resposta anterior",
-  nextResponse: "Próxima resposta",
-  approveTool: "Aprovar",
-  rejectTool: "Recusar",
-  messageInfo: "Detalhes",
-  newChat: "Nova conversa",
-  loadingConversations: "Carregando conversas",
-  conversationSearchEmpty: "Nenhuma conversa corresponde",
-  conversationList: "Conversas",
-  loadingConversation: "Carregando a conversa",
-  deleteConversation: "Excluir",
-  archiveConversation: "Arquivar",
-  unarchiveConversation: "Desarquivar",
-  conversationActions: "Ações da conversa",
-  conversationRunning: "Respondendo",
-  conversationWaiting: "Aguardando você",
-  renameConversation: "Renomear",
-  conversationTitle: "Título da conversa",
-  pinConversation: "Fixar",
-  unpinConversation: "Desafixar",
-  deleteConversationConfirm: "Excluir “{title}”?",
-  cancel: "Cancelar",
-  conversationGroupPinned: "Fixadas",
-  conversationGroupToday: "Hoje",
-  conversationGroupYesterday: "Ontem",
-  conversationGroupWeek: "Últimos 7 dias",
-  conversationGroupMonth: "Últimos 30 dias",
-  scrollRailLabel: "Estrutura da conversa",
-  sidebarLabel: "Conversas",
-  splitHandleLabel: "Redimensionar os painéis",
-  launcherOpen: "Abrir o chat",
-  launcherClose: "Fechar o chat",
-  launcherHeading: "Chat",
-  launcherMaximize: "Ampliar o chat",
-  launcherRestore: "Reduzir o chat",
-  transcript: "Transcrição",
-  tag: "pt-BR",
-  direction: "ltr"
-}, x_ = {
-  inputPlaceholder: "Nachricht eingeben…",
-  sendButton: "Senden",
-  copy: "Kopieren",
-  copied: "Kopiert!",
-  retry: "Erneut versuchen",
-  thinking: "Überlegung",
-  elicitationOther: "Andere Antwort…",
-  elicitationOtherPlaceholder: "Antwort eingeben…",
-  elicitationOtherLabel: "Freie Antwort",
-  submitButton: "Bestätigen",
-  stopButton: "Stoppen",
-  queueLabel: "Wird gesendet, wenn die Antwort fertig ist",
-  queueEdit: "Bearbeiten",
-  queueRemove: "Entfernen",
-  elicitationRecommended: "Empfohlen",
-  elicitationSkip: "Überspringen",
-  elicitationHide: "Vorerst ausblenden",
-  elicitationWaiting: "Wartet auf deine Antwort",
-  elicitationYes: "Ja",
-  elicitationNo: "Nein",
-  elicitationAnswerLabel: "Deine Antwort",
-  approvalInstructionPlaceholder: "Oder sag ihm, was es stattdessen tun soll…",
-  approvalOptionsLabel: "Deine Entscheidung",
-  approvalArgsLabel: "Argumente",
-  approvalAsk: "{tool} erlauben?",
-  approvalAskBy: "{tool} für {agent} erlauben?",
-  approvalWaiting: "Ausstehend",
-  scrollToBottom: "Nach unten scrollen",
-  suggestionsLabel: "Vorgeschlagene Prompts",
-  contextLabel: "Kontextfenster",
-  contextSystem: "Systemprompt",
-  contextTools: "Tools",
-  contextSummary: "Zusammenfassung",
-  contextMessages: "Nachrichten",
-  contextOther: "Sonstiges",
-  contextFree: "Frei",
-  contextTotal: "Gesamt",
-  contextReclaim: "Jetzt komprimieren würde ~{n} Tokens freigeben",
-  contextCompactNow: "Jetzt komprimieren",
-  checkpointCount: "{n} Nachrichten für das Modell zusammengefasst",
-  checkpointCountOne: "1 Nachricht für das Modell zusammengefasst",
-  checkpointLegacy: "Frühere Nachrichten wurden zusammengefasst",
-  checkpointGroup: "Kontextzusammenfassung",
-  checkpointShow: "Zusammenfassung anzeigen",
-  checkpointHide: "Zusammenfassung ausblenden",
-  checkpointRestore: "Wiederherstellen",
-  checkpointRestoreConfirm: "Die ursprünglichen Nachrichten erneut an das Modell senden?",
-  checkpointPending: "Kontext wird zusammengefasst…",
-  checkpointFailed: "Kontext konnte nicht zusammengefasst werden",
-  toolRunning: "Läuft",
-  toolQueued: "Wartet",
-  toolFailed: "Fehlgeschlagen",
-  toolCompleted: "Fertig",
-  toolRejected: "Abgelehnt",
-  toolStopped: "Gestoppt",
-  toolInput: "Eingabe",
-  toolOutput: "Ausgabe",
-  toolRejectedSaid: "Du hast gesagt: „{instruction}“",
-  toolRefusedByPolicy: "Durch eine Regel abgelehnt",
-  toolNotRunAfterRefusal: "Nicht ausgeführt: Ein früherer Aufruf wurde abgelehnt",
-  toolTimedOut: "Zeitüberschreitung",
-  toolUnavailable: "Hier nicht verfügbar",
-  toolNoApprover: "Niemand konnte es genehmigen",
-  toolTurnLimit: "Rundenlimit erreicht",
-  maxTurnsReached: "Nach {n} Runden gestoppt, um eine Endlosschleife zu vermeiden.",
-  sourcesCount: "{n} Quellen",
-  sourcesOne: "1 Quelle",
-  sourcesCard: "Quellen",
-  sourcePrevious: "Vorherige Quelle",
-  sourceNext: "Nächste Quelle",
-  sourcePosition: "Quelle {i} von {n}",
-  opensInNewTab: "(öffnet in einem neuen Tab)",
-  imageLoad: "Bild von {host} laden",
-  imageLoadNamed: "Bild „{alt}“ von {host} laden",
-  questionDeclined: "Du wolltest nicht antworten.",
-  artifactNotCreated: "Nicht erstellt",
-  thoughtFor: "Überlegung: {duration}",
-  thought: "Überlegung abgeschlossen",
-  turnWorking: "Arbeitet…",
-  turnWorked: "Gearbeitet: {duration}",
-  turnUsed: "Verwendet: {tools}",
-  turnTools: "one:{n} Tool|other:{n} Tools",
-  feedbackReasonTitle: "Was ist schiefgelaufen?",
-  feedbackReasonDismiss: "Nicht jetzt",
-  triggersLoading: "Wird geladen…",
-  triggersEmpty: "Keine Ergebnisse",
-  triggersError: "Diese Liste konnte nicht geladen werden",
-  triggersRetry: "Erneut versuchen",
-  triggersBack: "Zurück",
-  triggersCommandNew: "Neue Unterhaltung beginnen",
-  triggersCommandStop: "Antwort stoppen",
-  triggersCommandRetry: "Neu antworten",
-  triggersCommandCopy: "Letzte Antwort kopieren",
-  triggersCommandCompact: "Frühere Nachrichten zusammenfassen",
-  triggersCompactNothing: "Noch nichts zum Komprimieren",
-  triggersCompactBusy: "Warte, bis die Antwort fertig ist",
-  triggersCompactNoWindow: "Dieses Modell gibt nicht an, wie viel es lesen kann",
-  triggersCompactFailed: "Die Zusammenfassung konnte nicht erstellt werden",
-  triggersCommandModel: "Modell wechseln",
-  triggersCommandApproval: "Freigabemodus ändern",
-  actionUpload: "Datei anhängen",
-  removeAttachment: "{name} entfernen",
-  messageFrom: "Nachricht von {name}",
-  selectSearchPlaceholder: "Suchen…",
-  selectSearchLabel: "Optionen durchsuchen",
-  loading: "Wird geladen…",
-  download: "Herunterladen",
-  openArtifact: "Öffnen",
-  closeArtifact: "Schließen",
-  artifactVersion: "Version {n} von {total}",
-  previousVersion: "Vorherige Version",
-  nextVersion: "Nächste Version",
-  modelContextWindow: "{n} Kontext",
-  previewPending: "Drücke Vorschau, um dieses Artefakt auszuführen.",
-  sandboxError: "Die Sandbox ist bei der Generierung fehlgeschlagen.",
-  sandboxErrorHint: "Häufige Ursache: Das Modell hat ungültigen Code erzeugt (undefinierte Variable, falscher Argumenttyp). Versuche es erneut – das Modell kann anderen Code erzeugen.",
-  preview: "Vorschau",
-  code: "Code",
-  generating: "Wird generiert…",
-  rebuildingPreview: "Vorschau wird neu erstellt…",
-  typing: "Schreibt",
-  responseCutOff: "Am Längenlimit des Modells abgeschnitten.",
-  error: "Fehler",
-  errorUnreachable: "Der Assistent ist gerade nicht erreichbar. Versuch es gleich noch einmal.",
-  errorTimeout: "Die Antwort hat zu lange gedauert. Versuch es gleich noch einmal.",
-  errorRefused: "Der Assistent darf gerade nicht antworten.",
-  errorRateLimited: "Gerade gibt es zu viele Anfragen. Versuch es gleich noch einmal.",
-  errorTooLong: "Diese Unterhaltung ist zu lang für das Modell. Fang eine neue an.",
-  errorFailed: "Der Assistent konnte nicht antworten. Versuch es gleich noch einmal.",
-  errorNoAnswer: "Der Assistent konnte auf diese Anfrage nicht antworten.",
-  running: "Wird ausgeführt…",
-  run: "Ausführen",
-  file: "Datei",
-  modelSelectorPlaceholder: "Modell auswählen…",
-  approvalModeLabel: "Genehmigungsmodus",
-  roleNameUser: "Du",
-  roleNameAssistant: "Assistent",
-  yourMessage: "Deine Nachricht",
-  assistantResponse: "Antwort des Assistenten",
-  messageActions: "Nachrichtenaktionen",
-  edit: "Nachricht bearbeiten",
-  editConfirm: "Senden",
-  editCancel: "Abbrechen",
-  feedbackPositive: "Gute Antwort",
-  feedbackNegative: "Schlechte Antwort",
-  previousResponse: "Vorherige Antwort",
-  nextResponse: "Nächste Antwort",
-  approveTool: "Genehmigen",
-  rejectTool: "Ablehnen",
-  messageInfo: "Details",
-  newChat: "Neuer Chat",
-  loadingConversations: "Unterhaltungen werden geladen",
-  conversationSearchEmpty: "Keine Unterhaltung gefunden",
-  conversationList: "Unterhaltungen",
-  loadingConversation: "Unterhaltung wird geladen",
-  deleteConversation: "Löschen",
-  archiveConversation: "Archivieren",
-  unarchiveConversation: "Archivierung aufheben",
-  conversationActions: "Aktionen der Unterhaltung",
-  conversationRunning: "Antwortet",
-  conversationWaiting: "Wartet auf dich",
-  renameConversation: "Umbenennen",
-  conversationTitle: "Titel der Unterhaltung",
-  pinConversation: "Anheften",
-  unpinConversation: "Lösen",
-  deleteConversationConfirm: "„{title}“ löschen?",
-  cancel: "Abbrechen",
-  conversationGroupPinned: "Angeheftet",
-  conversationGroupToday: "Heute",
-  conversationGroupYesterday: "Gestern",
-  conversationGroupWeek: "Letzte 7 Tage",
-  conversationGroupMonth: "Letzte 30 Tage",
-  scrollRailLabel: "Gliederung der Unterhaltung",
-  sidebarLabel: "Unterhaltungen",
-  splitHandleLabel: "Größe der Bereiche ändern",
-  launcherOpen: "Chat öffnen",
-  launcherClose: "Chat schließen",
-  launcherHeading: "Chat",
-  launcherMaximize: "Chat vergrößern",
-  launcherRestore: "Chat verkleinern",
-  transcript: "Verlauf",
-  tag: "de",
-  direction: "ltr"
-}, R_ = {
-  inputPlaceholder: "Scrivi un messaggio…",
-  sendButton: "Invia",
-  copy: "Copia",
-  copied: "Copiato!",
-  retry: "Riprova",
-  thinking: "Ragionamento",
-  elicitationOther: "Altra risposta…",
-  elicitationOtherPlaceholder: "Scrivi la tua risposta…",
-  elicitationOtherLabel: "Risposta libera",
-  submitButton: "Conferma",
-  stopButton: "Interrompi",
-  queueLabel: "Inviato al termine della risposta",
-  queueEdit: "Modifica",
-  queueRemove: "Rimuovi",
-  elicitationRecommended: "Consigliato",
-  elicitationSkip: "Salta",
-  elicitationHide: "Nascondi per ora",
-  elicitationWaiting: "In attesa della tua risposta",
-  elicitationYes: "Sì",
-  elicitationNo: "No",
-  elicitationAnswerLabel: "La tua risposta",
-  approvalInstructionPlaceholder: "Oppure digli cosa fare invece…",
-  approvalOptionsLabel: "La tua decisione",
-  approvalArgsLabel: "Argomenti",
-  approvalAsk: "Consentire {tool}?",
-  approvalAskBy: "Consentire {tool} a {agent}?",
-  approvalWaiting: "In attesa",
-  scrollToBottom: "Vai in fondo",
-  suggestionsLabel: "Messaggi suggeriti",
-  contextLabel: "Finestra di contesto",
-  contextSystem: "Prompt di sistema",
-  contextTools: "Strumenti",
-  contextSummary: "Riepilogo",
-  contextMessages: "Messaggi",
-  contextOther: "Altro",
-  contextFree: "Libero",
-  contextTotal: "Totale",
-  contextReclaim: "Compattare ora libererebbe ~{n} token",
-  contextCompactNow: "Compatta ora",
-  checkpointCount: "{n} messaggi riassunti per il modello",
-  checkpointCountOne: "1 messaggio riassunto per il modello",
-  checkpointLegacy: "I messaggi precedenti sono stati riassunti",
-  checkpointGroup: "Riepilogo del contesto",
-  checkpointShow: "Mostra riepilogo",
-  checkpointHide: "Nascondi riepilogo",
-  checkpointRestore: "Ripristina",
-  checkpointRestoreConfirm: "Inviare di nuovo i messaggi originali al modello?",
-  checkpointPending: "Riepilogo del contesto in corso…",
-  checkpointFailed: "Impossibile riassumere il contesto",
-  toolRunning: "In esecuzione",
-  toolQueued: "In coda",
-  toolFailed: "Non riuscito",
-  toolCompleted: "Completato",
-  toolRejected: "Rifiutato",
-  toolStopped: "Interrotto",
-  toolInput: "Input",
-  toolOutput: "Output",
-  toolRejectedSaid: "Hai detto: “{instruction}”",
-  toolRefusedByPolicy: "Rifiutato da una regola",
-  toolNotRunAfterRefusal: "Non eseguito: una chiamata precedente è stata rifiutata",
-  toolTimedOut: "Tempo scaduto",
-  toolUnavailable: "Non disponibile qui",
-  toolNoApprover: "Nessuno poteva approvarlo",
-  toolTurnLimit: "Limite di turni raggiunto",
-  maxTurnsReached: "Interrotto dopo {n} turni per evitare un ciclo infinito.",
-  sourcesCount: "{n} fonti",
-  sourcesOne: "1 fonte",
-  sourcesCard: "Fonti",
-  sourcePrevious: "Fonte precedente",
-  sourceNext: "Fonte successiva",
-  sourcePosition: "Fonte {i} di {n}",
-  opensInNewTab: "(si apre in una nuova scheda)",
-  imageLoad: "Carica l’immagine da {host}",
-  imageLoadNamed: "Carica l’immagine “{alt}” da {host}",
-  questionDeclined: "Hai scelto di non rispondere.",
-  artifactNotCreated: "Non creato",
-  thoughtFor: "Ragionamento: {duration}",
-  thought: "Ragionamento completato",
-  turnWorking: "Al lavoro…",
-  turnWorked: "Ha lavorato {duration}",
-  turnUsed: "Ha usato {tools}",
-  turnTools: "one:{n} strumento|other:{n} strumenti",
-  feedbackReasonTitle: "Che cosa non ha funzionato?",
-  feedbackReasonDismiss: "Non ora",
-  triggersLoading: "Caricamento…",
-  triggersEmpty: "Nessun risultato",
-  triggersError: "Impossibile caricare questo elenco",
-  triggersRetry: "Riprova",
-  triggersBack: "Indietro",
-  triggersCommandNew: "Inizia una nuova conversazione",
-  triggersCommandStop: "Interrompi la risposta",
-  triggersCommandRetry: "Rispondi di nuovo",
-  triggersCommandCopy: "Copia l’ultima risposta",
-  triggersCommandCompact: "Riassumi i messaggi precedenti",
-  triggersCompactNothing: "Non c’è ancora nulla da compattare",
-  triggersCompactBusy: "Attendi la fine della risposta",
-  triggersCompactNoWindow: "Questo modello non indica quanto può leggere",
-  triggersCompactFailed: "Impossibile scrivere il riassunto",
-  triggersCommandModel: "Cambia modello",
-  triggersCommandApproval: "Cambia la modalità di approvazione",
-  actionUpload: "Allega file",
-  removeAttachment: "Rimuovi {name}",
-  messageFrom: "Messaggio da {name}",
-  selectSearchPlaceholder: "Cerca…",
-  selectSearchLabel: "Cerca tra le opzioni",
-  loading: "Caricamento…",
-  download: "Scarica",
-  openArtifact: "Apri",
-  closeArtifact: "Chiudi",
-  artifactVersion: "Versione {n} di {total}",
-  previousVersion: "Versione precedente",
-  nextVersion: "Versione successiva",
-  modelContextWindow: "{n} di contesto",
-  previewPending: "Premi Anteprima per eseguire questo artefatto.",
-  sandboxError: "La sandbox non è riuscita durante la generazione.",
-  sandboxErrorHint: "Causa frequente: il modello ha prodotto codice non valido (variabile non definita, tipo di argomento errato). Riprova: il modello può produrre codice diverso.",
-  preview: "Anteprima",
-  code: "Codice",
-  generating: "Generazione…",
-  rebuildingPreview: "Ricostruzione dell'anteprima…",
-  typing: "Sta scrivendo",
-  responseCutOff: "Interrotta al limite di lunghezza del modello.",
-  error: "Errore",
-  errorUnreachable: "Al momento l'assistente non è raggiungibile. Riprova tra poco.",
-  errorTimeout: "La risposta ha richiesto troppo tempo. Riprova tra poco.",
-  errorRefused: "Al momento l'assistente non è autorizzato a rispondere.",
-  errorRateLimited: "Troppe richieste in questo momento. Riprova tra poco.",
-  errorTooLong: "Questa conversazione è troppo lunga per il modello. Iniziane una nuova.",
-  errorFailed: "L'assistente non è riuscito a rispondere. Riprova tra poco.",
-  errorNoAnswer: "L'assistente non è riuscito a rispondere a questa richiesta.",
-  running: "In esecuzione…",
-  run: "Esegui",
-  file: "File",
-  modelSelectorPlaceholder: "Seleziona un modello…",
-  approvalModeLabel: "Modalità di approvazione",
-  roleNameUser: "Tu",
-  roleNameAssistant: "Assistente",
-  yourMessage: "Il tuo messaggio",
-  assistantResponse: "Risposta dell'assistente",
-  messageActions: "Azioni del messaggio",
-  edit: "Modifica messaggio",
-  editConfirm: "Invia",
-  editCancel: "Annulla",
-  feedbackPositive: "Buona risposta",
-  feedbackNegative: "Risposta scadente",
-  previousResponse: "Risposta precedente",
-  nextResponse: "Risposta successiva",
-  approveTool: "Approva",
-  rejectTool: "Rifiuta",
-  messageInfo: "Dettagli",
-  newChat: "Nuova chat",
-  loadingConversations: "Caricamento delle conversazioni",
-  conversationSearchEmpty: "Nessuna conversazione corrisponde",
-  conversationList: "Conversazioni",
-  loadingConversation: "Caricamento della conversazione",
-  deleteConversation: "Elimina",
-  archiveConversation: "Archivia",
-  unarchiveConversation: "Ripristina dall'archivio",
-  conversationActions: "Azioni della conversazione",
-  conversationRunning: "Sta rispondendo",
-  conversationWaiting: "Attende la tua risposta",
-  renameConversation: "Rinomina",
-  conversationTitle: "Titolo della conversazione",
-  pinConversation: "Fissa",
-  unpinConversation: "Non fissare più",
-  deleteConversationConfirm: "Eliminare “{title}”?",
-  cancel: "Annulla",
-  conversationGroupPinned: "Fissate",
-  conversationGroupToday: "Oggi",
-  conversationGroupYesterday: "Ieri",
-  conversationGroupWeek: "Ultimi 7 giorni",
-  conversationGroupMonth: "Ultimi 30 giorni",
-  scrollRailLabel: "Struttura della conversazione",
-  sidebarLabel: "Conversazioni",
-  splitHandleLabel: "Ridimensiona i pannelli",
-  launcherOpen: "Apri la chat",
-  launcherClose: "Chiudi la chat",
-  launcherHeading: "Chat",
-  launcherMaximize: "Ingrandisci la chat",
-  launcherRestore: "Riduci la chat",
-  transcript: "Trascrizione",
-  tag: "it",
-  direction: "ltr"
-}, I_ = {
-  inputPlaceholder: "Введите сообщение…",
-  sendButton: "Отправить",
-  copy: "Копировать",
-  copied: "Скопировано!",
-  retry: "Повторить",
-  thinking: "Размышление",
-  elicitationOther: "Другой ответ…",
-  elicitationOtherPlaceholder: "Введите свой ответ…",
-  elicitationOtherLabel: "Свой ответ",
-  submitButton: "Подтвердить",
-  stopButton: "Остановить",
-  queueLabel: "Будет отправлено после ответа",
-  queueEdit: "Изменить",
-  queueRemove: "Удалить",
-  elicitationRecommended: "Рекомендуется",
-  elicitationSkip: "Пропустить",
-  elicitationHide: "Скрыть пока",
-  elicitationWaiting: "Ожидание вашего ответа",
-  elicitationYes: "Да",
-  elicitationNo: "Нет",
-  elicitationAnswerLabel: "Ваш ответ",
-  approvalInstructionPlaceholder: "Или скажите, что сделать вместо этого…",
-  approvalOptionsLabel: "Ваше решение",
-  approvalArgsLabel: "Аргументы",
-  approvalAsk: "Разрешить {tool}?",
-  approvalAskBy: "Разрешить {tool} для {agent}?",
-  approvalWaiting: "Ожидание",
-  scrollToBottom: "Прокрутить вниз",
-  suggestionsLabel: "Предлагаемые запросы",
-  contextLabel: "Контекстное окно",
-  contextSystem: "Системный промпт",
-  contextTools: "Инструменты",
-  contextSummary: "Сводка",
-  contextMessages: "Сообщения",
-  contextOther: "Прочее",
-  contextFree: "Свободно",
-  contextTotal: "Всего",
-  contextReclaim: "Сжатие сейчас освободит ~{n} токенов",
-  contextCompactNow: "Сжать сейчас",
-  checkpointCount: "Сообщений сжато для модели: {n}",
-  checkpointCountOne: "1 сообщение сжато для модели",
-  checkpointLegacy: "Предыдущие сообщения сжаты",
-  checkpointGroup: "Сводка контекста",
-  checkpointShow: "Показать сводку",
-  checkpointHide: "Скрыть сводку",
-  checkpointRestore: "Восстановить",
-  checkpointRestoreConfirm: "Снова отправить исходные сообщения модели?",
-  checkpointPending: "Сжатие контекста…",
-  checkpointFailed: "Не удалось сжать контекст",
-  toolRunning: "Выполняется",
-  toolQueued: "В очереди",
-  toolFailed: "Не удалось",
-  toolCompleted: "Готово",
-  toolRejected: "Отклонено",
-  toolStopped: "Остановлено",
-  toolInput: "Входные данные",
-  toolOutput: "Результат",
-  toolRejectedSaid: "Вы сказали: «{instruction}»",
-  toolRefusedByPolicy: "Отклонено правилом",
-  toolNotRunAfterRefusal: "Не выполнено: предыдущий вызов был отклонён",
-  toolTimedOut: "Время истекло",
-  toolUnavailable: "Здесь недоступно",
-  toolNoApprover: "Никто не мог это одобрить",
-  toolTurnLimit: "Достигнут лимит ходов",
-  maxTurnsReached: "Остановлено: достигнут предел ходов ({n}), чтобы избежать бесконечного цикла.",
-  sourcesCount: "Источников: {n}",
-  sourcesOne: "1 источник",
-  sourcesCard: "Источники",
-  sourcePrevious: "Предыдущий источник",
-  sourceNext: "Следующий источник",
-  sourcePosition: "Источник {i} из {n}",
-  opensInNewTab: "(откроется в новой вкладке)",
-  imageLoad: "Загрузить изображение с {host}",
-  imageLoadNamed: "Загрузить изображение «{alt}» с {host}",
-  questionDeclined: "Вы решили не отвечать.",
-  artifactNotCreated: "Не создано",
-  thoughtFor: "Размышление: {duration}",
-  thought: "Размышление завершено",
-  turnWorking: "Работаю…",
-  turnWorked: "Работа заняла {duration}",
-  turnUsed: "Использовано: {tools}",
-  turnTools: "one:{n} инструмент|few:{n} инструмента|many:{n} инструментов|other:{n} инструмента",
-  feedbackReasonTitle: "Что пошло не так?",
-  feedbackReasonDismiss: "Не сейчас",
-  triggersLoading: "Загрузка…",
-  triggersEmpty: "Ничего не найдено",
-  triggersError: "Не удалось загрузить список",
-  triggersRetry: "Повторить",
-  triggersBack: "Назад",
-  triggersCommandNew: "Начать новый разговор",
-  triggersCommandStop: "Остановить ответ",
-  triggersCommandRetry: "Ответить ещё раз",
-  triggersCommandCopy: "Скопировать последний ответ",
-  triggersCommandCompact: "Обобщить предыдущие сообщения",
-  triggersCompactNothing: "Пока нечего сжимать",
-  triggersCompactBusy: "Дождитесь окончания ответа",
-  triggersCompactNoWindow: "Эта модель не сообщает, сколько может прочитать",
-  triggersCompactFailed: "Не удалось написать сводку",
-  triggersCommandModel: "Сменить модель",
-  triggersCommandApproval: "Изменить режим подтверждения",
-  actionUpload: "Прикрепить файл",
-  removeAttachment: "Удалить {name}",
-  messageFrom: "Сообщение от {name}",
-  selectSearchPlaceholder: "Поиск…",
-  selectSearchLabel: "Поиск по вариантам",
-  loading: "Загрузка…",
-  download: "Скачать",
-  openArtifact: "Открыть",
-  closeArtifact: "Закрыть",
-  artifactVersion: "Версия {n} из {total}",
-  previousVersion: "Предыдущая версия",
-  nextVersion: "Следующая версия",
-  modelContextWindow: "Контекст: {n}",
-  previewPending: "Нажмите «Предпросмотр», чтобы запустить этот артефакт.",
-  sandboxError: "Песочница дала сбой во время генерации.",
-  sandboxErrorHint: "Частая причина: модель создала некорректный код (неопределённая переменная, неверный тип аргумента). Повторите запрос — модель может создать другой код.",
-  preview: "Предпросмотр",
-  code: "Код",
-  generating: "Генерация…",
-  rebuildingPreview: "Пересборка предпросмотра…",
-  typing: "Печатает",
-  responseCutOff: "Обрезано на пределе длины модели.",
-  error: "Ошибка",
-  errorUnreachable: "Сейчас не удаётся связаться с ассистентом. Попробуйте ещё раз чуть позже.",
-  errorTimeout: "Ответ занял слишком много времени. Попробуйте ещё раз чуть позже.",
-  errorRefused: "Сейчас ассистенту не разрешено отвечать.",
-  errorRateLimited: "Сейчас слишком много запросов. Попробуйте ещё раз чуть позже.",
-  errorTooLong: "Эта беседа слишком длинная для модели. Начните новую.",
-  errorFailed: "Ассистент не смог ответить. Попробуйте ещё раз чуть позже.",
-  errorNoAnswer: "Ассистент не смог ответить на этот запрос.",
-  running: "Выполнение…",
-  run: "Запустить",
-  file: "Файл",
-  modelSelectorPlaceholder: "Выберите модель…",
-  approvalModeLabel: "Режим одобрения",
-  roleNameUser: "Вы",
-  roleNameAssistant: "Ассистент",
-  yourMessage: "Ваше сообщение",
-  assistantResponse: "Ответ ассистента",
-  messageActions: "Действия с сообщением",
-  edit: "Изменить сообщение",
-  editConfirm: "Отправить",
-  editCancel: "Отмена",
-  feedbackPositive: "Хороший ответ",
-  feedbackNegative: "Плохой ответ",
-  previousResponse: "Предыдущий ответ",
-  nextResponse: "Следующий ответ",
-  approveTool: "Одобрить",
-  rejectTool: "Отклонить",
-  messageInfo: "Подробности",
-  newChat: "Новый чат",
-  loadingConversations: "Загрузка бесед",
-  conversationSearchEmpty: "Нет подходящих бесед",
-  conversationList: "Беседы",
-  loadingConversation: "Загрузка беседы",
-  deleteConversation: "Удалить",
-  archiveConversation: "Архивировать",
-  unarchiveConversation: "Разархивировать",
-  conversationActions: "Действия с беседой",
-  conversationRunning: "Отвечает",
-  conversationWaiting: "Ждёт вас",
-  renameConversation: "Переименовать",
-  conversationTitle: "Название беседы",
-  pinConversation: "Закрепить",
-  unpinConversation: "Открепить",
-  deleteConversationConfirm: "Удалить «{title}»?",
-  cancel: "Отмена",
-  conversationGroupPinned: "Закреплённые",
-  conversationGroupToday: "Сегодня",
-  conversationGroupYesterday: "Вчера",
-  conversationGroupWeek: "Последние 7 дней",
-  conversationGroupMonth: "Последние 30 дней",
-  scrollRailLabel: "Структура беседы",
-  sidebarLabel: "Беседы",
-  splitHandleLabel: "Изменить размер панелей",
-  launcherOpen: "Открыть чат",
-  launcherClose: "Закрыть чат",
-  launcherHeading: "Чат",
-  launcherMaximize: "Развернуть чат",
-  launcherRestore: "Уменьшить чат",
-  transcript: "История сообщений",
-  tag: "ru",
-  direction: "ltr"
-}, L_ = {
-  inputPlaceholder: "メッセージを入力…",
-  sendButton: "送信",
-  copy: "コピー",
-  copied: "コピーしました",
-  retry: "再試行",
-  thinking: "思考",
-  elicitationOther: "その他…",
-  elicitationOtherPlaceholder: "回答を入力…",
-  elicitationOtherLabel: "自由回答",
-  submitButton: "確定",
-  stopButton: "停止",
-  queueLabel: "応答の完了後に送信",
-  queueEdit: "編集",
-  queueRemove: "削除",
-  elicitationRecommended: "おすすめ",
-  elicitationSkip: "スキップ",
-  elicitationHide: "いったん隠す",
-  elicitationWaiting: "回答を待っています",
-  elicitationYes: "はい",
-  elicitationNo: "いいえ",
-  elicitationAnswerLabel: "あなたの回答",
-  approvalInstructionPlaceholder: "または、代わりにしてほしいことを伝える…",
-  approvalOptionsLabel: "あなたの判断",
-  approvalArgsLabel: "引数",
-  approvalAsk: "{tool} を許可しますか？",
-  approvalAskBy: "{agent} に {tool} を許可しますか？",
-  approvalWaiting: "待機中",
-  scrollToBottom: "一番下へスクロール",
-  suggestionsLabel: "おすすめのプロンプト",
-  contextLabel: "コンテキストウィンドウ",
-  contextSystem: "システムプロンプト",
-  contextTools: "ツール",
-  contextSummary: "要約",
-  contextMessages: "メッセージ",
-  contextOther: "その他",
-  contextFree: "空き",
-  contextTotal: "合計",
-  contextReclaim: "今すぐ圧縮すると約 {n} トークン空きます",
-  contextCompactNow: "今すぐ圧縮",
-  checkpointCount: "{n} 件のメッセージをモデル用に要約しました",
-  checkpointCountOne: "1 件のメッセージをモデル用に要約しました",
-  checkpointLegacy: "以前のメッセージは要約されました",
-  checkpointGroup: "コンテキストの要約",
-  checkpointShow: "要約を表示",
-  checkpointHide: "要約を隠す",
-  checkpointRestore: "元に戻す",
-  checkpointRestoreConfirm: "元のメッセージをもう一度モデルに送信しますか？",
-  checkpointPending: "コンテキストを要約しています…",
-  checkpointFailed: "コンテキストを要約できませんでした",
-  toolRunning: "実行中",
-  toolQueued: "順番待ち",
-  toolFailed: "失敗",
-  toolCompleted: "完了",
-  toolRejected: "拒否",
-  toolStopped: "停止",
-  toolInput: "入力",
-  toolOutput: "出力",
-  toolRejectedSaid: "あなたの指示：「{instruction}」",
-  toolRefusedByPolicy: "ポリシーにより拒否",
-  toolNotRunAfterRefusal: "未実行：以前の呼び出しが拒否されました",
-  toolTimedOut: "タイムアウト",
-  toolUnavailable: "ここでは利用できません",
-  toolNoApprover: "承認できる人がいませんでした",
-  toolTurnLimit: "ターン数の上限に達しました",
-  maxTurnsReached: "無限ループを避けるため、{n} ターンで停止しました。",
-  sourcesCount: "{n} 件の出典",
-  sourcesOne: "1 件の出典",
-  sourcesCard: "出典",
-  sourcePrevious: "前の出典",
-  sourceNext: "次の出典",
-  sourcePosition: "出典 {i}/{n}",
-  opensInNewTab: "（新しいタブで開きます）",
-  imageLoad: "{host} から画像を読み込む",
-  imageLoadNamed: "{host} から画像「{alt}」を読み込む",
-  questionDeclined: "回答しませんでした。",
-  artifactNotCreated: "作成されませんでした",
-  thoughtFor: "思考時間：{duration}",
-  thought: "思考完了",
-  turnWorking: "作業中…",
-  turnWorked: "作業時間 {duration}",
-  turnUsed: "{tools}を使用",
-  turnTools: "other:{n} 個のツール",
-  feedbackReasonTitle: "何が問題でしたか？",
-  feedbackReasonDismiss: "今はしない",
-  triggersLoading: "読み込み中…",
-  triggersEmpty: "結果がありません",
-  triggersError: "このリストを読み込めませんでした",
-  triggersRetry: "再試行",
-  triggersBack: "戻る",
-  triggersCommandNew: "新しい会話を始める",
-  triggersCommandStop: "応答を停止",
-  triggersCommandRetry: "もう一度回答",
-  triggersCommandCopy: "最後の応答をコピー",
-  triggersCommandCompact: "以前のメッセージを要約",
-  triggersCompactNothing: "まだ圧縮するものがありません",
-  triggersCompactBusy: "応答が終わるまでお待ちください",
-  triggersCompactNoWindow: "このモデルは読み取れる量を示していません",
-  triggersCompactFailed: "要約を作成できませんでした",
-  triggersCommandModel: "モデルを変更",
-  triggersCommandApproval: "承認モードを変更",
-  actionUpload: "ファイルを添付",
-  removeAttachment: "{name} を削除",
-  messageFrom: "{name} からのメッセージ",
-  selectSearchPlaceholder: "検索…",
-  selectSearchLabel: "選択肢を検索",
-  loading: "読み込み中…",
-  download: "ダウンロード",
-  openArtifact: "開く",
-  closeArtifact: "閉じる",
-  artifactVersion: "バージョン {n} / {total}",
-  previousVersion: "前のバージョン",
-  nextVersion: "次のバージョン",
-  modelContextWindow: "コンテキスト {n}",
-  previewPending: "このアーティファクトを実行するには「プレビュー」を押してください。",
-  sandboxError: "生成中にサンドボックスが失敗しました。",
-  sandboxErrorHint: "よくある原因：モデルが無効なコードを生成しました（未定義の変数、誤った引数の型など）。もう一度試してください。モデルが別のコードを生成する場合があります。",
-  preview: "プレビュー",
-  code: "コード",
-  generating: "生成中…",
-  rebuildingPreview: "プレビューを再構築しています…",
-  typing: "入力中",
-  responseCutOff: "モデルの長さの上限で途切れました。",
-  error: "エラー",
-  errorUnreachable: "ただいまアシスタントに接続できません。しばらくしてからもう一度お試しください。",
-  errorTimeout: "応答に時間がかかりすぎました。しばらくしてからもう一度お試しください。",
-  errorRefused: "現在、アシスタントは応答を許可されていません。",
-  errorRateLimited: "現在リクエストが多すぎます。しばらくしてからもう一度お試しください。",
-  errorTooLong: "この会話はモデルには長すぎます。新しい会話を始めてください。",
-  errorFailed: "アシスタントが応答できませんでした。しばらくしてからもう一度お試しください。",
-  errorNoAnswer: "アシスタントはこのリクエストに応答できませんでした。",
-  running: "実行中…",
-  run: "実行",
-  file: "ファイル",
-  modelSelectorPlaceholder: "モデルを選択…",
-  approvalModeLabel: "承認モード",
-  roleNameUser: "あなた",
-  roleNameAssistant: "アシスタント",
-  yourMessage: "あなたのメッセージ",
-  assistantResponse: "アシスタントの回答",
-  messageActions: "メッセージの操作",
-  edit: "メッセージを編集",
-  editConfirm: "送信",
-  editCancel: "キャンセル",
-  feedbackPositive: "良い回答",
-  feedbackNegative: "悪い回答",
-  previousResponse: "前の回答",
-  nextResponse: "次の回答",
-  approveTool: "承認",
-  rejectTool: "拒否",
-  messageInfo: "詳細",
-  newChat: "新しいチャット",
-  loadingConversations: "会話を読み込み中",
-  conversationSearchEmpty: "一致する会話はありません",
-  conversationList: "会話",
-  loadingConversation: "この会話を読み込み中",
-  deleteConversation: "削除",
-  archiveConversation: "アーカイブ",
-  unarchiveConversation: "アーカイブを解除",
-  conversationActions: "会話の操作",
-  conversationRunning: "回答中",
-  conversationWaiting: "あなたの返答待ち",
-  renameConversation: "名前を変更",
-  conversationTitle: "会話のタイトル",
-  pinConversation: "ピン留め",
-  unpinConversation: "ピン留めを外す",
-  deleteConversationConfirm: "「{title}」を削除しますか？",
-  cancel: "キャンセル",
-  conversationGroupPinned: "ピン留め済み",
-  conversationGroupToday: "今日",
-  conversationGroupYesterday: "昨日",
-  conversationGroupWeek: "過去 7 日間",
-  conversationGroupMonth: "過去 30 日間",
-  scrollRailLabel: "会話のアウトライン",
-  sidebarLabel: "会話",
-  splitHandleLabel: "パネルのサイズを変更",
-  launcherOpen: "チャットを開く",
-  launcherClose: "チャットを閉じる",
-  launcherHeading: "チャット",
-  launcherMaximize: "チャットを拡大",
-  launcherRestore: "チャットを縮小",
-  transcript: "会話の記録",
-  tag: "ja",
-  direction: "ltr"
-}, M_ = {
-  inputPlaceholder: "메시지를 입력하세요…",
-  sendButton: "보내기",
-  copy: "복사",
-  copied: "복사했습니다!",
-  retry: "다시 시도",
-  thinking: "생각",
-  elicitationOther: "기타…",
-  elicitationOtherPlaceholder: "답변을 입력하세요…",
-  elicitationOtherLabel: "직접 입력",
-  submitButton: "제출",
-  stopButton: "중지",
-  queueLabel: "응답이 끝나면 전송됩니다",
-  queueEdit: "편집",
-  queueRemove: "삭제",
-  elicitationRecommended: "추천",
-  elicitationSkip: "건너뛰기",
-  elicitationHide: "잠시 숨기기",
-  elicitationWaiting: "답변을 기다리는 중",
-  elicitationYes: "예",
-  elicitationNo: "아니요",
-  elicitationAnswerLabel: "내 답변",
-  approvalInstructionPlaceholder: "또는 대신 할 일을 알려 주세요…",
-  approvalOptionsLabel: "내 결정",
-  approvalArgsLabel: "인수",
-  approvalAsk: "{tool}을(를) 허용할까요?",
-  approvalAskBy: "{agent}에 대해 {tool}을(를) 허용할까요?",
-  approvalWaiting: "대기 중",
-  scrollToBottom: "맨 아래로 스크롤",
-  suggestionsLabel: "추천 프롬프트",
-  contextLabel: "컨텍스트 창",
-  contextSystem: "시스템 프롬프트",
-  contextTools: "도구",
-  contextSummary: "요약",
-  contextMessages: "메시지",
-  contextOther: "기타",
-  contextFree: "여유",
-  contextTotal: "합계",
-  contextReclaim: "지금 압축하면 약 {n}개 토큰을 확보할 수 있습니다",
-  contextCompactNow: "지금 압축",
-  checkpointCount: "모델을 위해 메시지 {n}개를 요약했습니다",
-  checkpointCountOne: "모델을 위해 메시지 1개를 요약했습니다",
-  checkpointLegacy: "이전 메시지가 요약되었습니다",
-  checkpointGroup: "컨텍스트 요약",
-  checkpointShow: "요약 보기",
-  checkpointHide: "요약 숨기기",
-  checkpointRestore: "복원",
-  checkpointRestoreConfirm: "원래 메시지를 모델에 다시 보낼까요?",
-  checkpointPending: "컨텍스트를 요약하는 중…",
-  checkpointFailed: "컨텍스트를 요약하지 못했습니다",
-  toolRunning: "실행 중",
-  toolQueued: "순서 대기",
-  toolFailed: "실패",
-  toolCompleted: "완료",
-  toolRejected: "거부됨",
-  toolStopped: "중지됨",
-  toolInput: "입력",
-  toolOutput: "출력",
-  toolRejectedSaid: "내가 한 말: “{instruction}”",
-  toolRefusedByPolicy: "정책에 의해 거부됨",
-  toolNotRunAfterRefusal: "실행 안 됨: 이전 호출이 거부되었습니다",
-  toolTimedOut: "시간 초과",
-  toolUnavailable: "여기서는 사용할 수 없음",
-  toolNoApprover: "승인할 수 있는 사람이 없었습니다",
-  toolTurnLimit: "턴 한도에 도달함",
-  maxTurnsReached: "무한 반복을 막기 위해 {n}턴 후 중지했습니다.",
-  sourcesCount: "출처 {n}개",
-  sourcesOne: "출처 1개",
-  sourcesCard: "출처",
-  sourcePrevious: "이전 출처",
-  sourceNext: "다음 출처",
-  sourcePosition: "출처 {i}/{n}",
-  opensInNewTab: "(새 탭에서 열림)",
-  imageLoad: "{host}에서 이미지 불러오기",
-  imageLoadNamed: "{host}에서 이미지 “{alt}” 불러오기",
-  questionDeclined: "답변하지 않기로 했습니다.",
-  artifactNotCreated: "생성되지 않음",
-  thoughtFor: "생각 시간: {duration}",
-  thought: "생각 완료",
-  turnWorking: "작업 중…",
-  turnWorked: "작업 시간 {duration}",
-  turnUsed: "{tools} 사용",
-  turnTools: "other:도구 {n}개",
-  feedbackReasonTitle: "무엇이 문제였나요?",
-  feedbackReasonDismiss: "나중에",
-  triggersLoading: "불러오는 중…",
-  triggersEmpty: "결과 없음",
-  triggersError: "이 목록을 불러올 수 없습니다",
-  triggersRetry: "다시 시도",
-  triggersBack: "뒤로",
-  triggersCommandNew: "새 대화 시작",
-  triggersCommandStop: "응답 중지",
-  triggersCommandRetry: "다시 답변",
-  triggersCommandCopy: "마지막 응답 복사",
-  triggersCommandCompact: "이전 메시지 요약",
-  triggersCompactNothing: "아직 압축할 내용이 없습니다",
-  triggersCompactBusy: "응답이 끝날 때까지 기다려 주세요",
-  triggersCompactNoWindow: "이 모델은 읽을 수 있는 양을 알려 주지 않습니다",
-  triggersCompactFailed: "요약을 작성할 수 없습니다",
-  triggersCommandModel: "모델 변경",
-  triggersCommandApproval: "승인 모드 변경",
-  actionUpload: "파일 첨부",
-  removeAttachment: "{name} 제거",
-  messageFrom: "{name}님의 메시지",
-  selectSearchPlaceholder: "검색…",
-  selectSearchLabel: "옵션 검색",
-  loading: "불러오는 중…",
-  download: "다운로드",
-  openArtifact: "열기",
-  closeArtifact: "닫기",
-  artifactVersion: "버전 {n} / {total}",
-  previousVersion: "이전 버전",
-  nextVersion: "다음 버전",
-  modelContextWindow: "컨텍스트 {n}",
-  previewPending: "이 아티팩트를 실행하려면 미리 보기를 누르세요.",
-  sandboxError: "생성 중에 샌드박스가 실패했습니다.",
-  sandboxErrorHint: "흔한 원인: 모델이 잘못된 코드를 생성했습니다(정의되지 않은 변수, 잘못된 인수 유형). 다시 시도하세요. 모델이 다른 코드를 생성할 수 있습니다.",
-  preview: "미리 보기",
-  code: "코드",
-  generating: "생성 중…",
-  rebuildingPreview: "미리 보기를 다시 만드는 중…",
-  typing: "입력 중",
-  responseCutOff: "모델의 길이 한도에서 잘렸습니다.",
-  error: "오류",
-  errorUnreachable: "지금은 어시스턴트에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.",
-  errorTimeout: "응답 시간이 너무 오래 걸렸습니다. 잠시 후 다시 시도해 주세요.",
-  errorRefused: "지금은 어시스턴트가 답변할 권한이 없습니다.",
-  errorRateLimited: "지금은 요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.",
-  errorTooLong: "이 대화는 모델이 처리하기에 너무 깁니다. 새 대화를 시작해 주세요.",
-  errorFailed: "어시스턴트가 답변하지 못했습니다. 잠시 후 다시 시도해 주세요.",
-  errorNoAnswer: "어시스턴트가 이 요청에 답변하지 못했습니다.",
-  running: "실행 중…",
-  run: "실행",
-  file: "파일",
-  modelSelectorPlaceholder: "모델 선택…",
-  approvalModeLabel: "승인 모드",
-  roleNameUser: "나",
-  roleNameAssistant: "어시스턴트",
-  yourMessage: "내 메시지",
-  assistantResponse: "어시스턴트 응답",
-  messageActions: "메시지 작업",
-  edit: "메시지 편집",
-  editConfirm: "보내기",
-  editCancel: "취소",
-  feedbackPositive: "좋은 응답",
-  feedbackNegative: "나쁜 응답",
-  previousResponse: "이전 응답",
-  nextResponse: "다음 응답",
-  approveTool: "승인",
-  rejectTool: "거부",
-  messageInfo: "세부 정보",
-  newChat: "새 채팅",
-  loadingConversations: "대화를 불러오는 중",
-  conversationSearchEmpty: "일치하는 대화가 없습니다",
-  conversationList: "대화",
-  loadingConversation: "이 대화를 불러오는 중",
-  deleteConversation: "삭제",
-  archiveConversation: "보관",
-  unarchiveConversation: "보관 해제",
-  conversationActions: "대화 작업",
-  conversationRunning: "답변 중",
-  conversationWaiting: "내 답변 대기 중",
-  renameConversation: "이름 바꾸기",
-  conversationTitle: "대화 제목",
-  pinConversation: "고정",
-  unpinConversation: "고정 해제",
-  deleteConversationConfirm: "“{title}”을(를) 삭제할까요?",
-  cancel: "취소",
-  conversationGroupPinned: "고정됨",
-  conversationGroupToday: "오늘",
-  conversationGroupYesterday: "어제",
-  conversationGroupWeek: "지난 7일",
-  conversationGroupMonth: "지난 30일",
-  scrollRailLabel: "대화 개요",
-  sidebarLabel: "대화",
-  splitHandleLabel: "패널 크기 조정",
-  launcherOpen: "채팅 열기",
-  launcherClose: "채팅 닫기",
-  launcherHeading: "채팅",
-  launcherMaximize: "채팅 확대",
-  launcherRestore: "채팅 축소",
-  transcript: "대화 기록",
-  tag: "ko",
-  direction: "ltr"
-}, Va = {
-  inputPlaceholder: "输入消息…",
-  sendButton: "发送",
-  copy: "复制",
-  copied: "已复制！",
-  retry: "重试",
-  thinking: "思考",
-  elicitationOther: "其他…",
-  elicitationOtherPlaceholder: "输入你的回答…",
-  elicitationOtherLabel: "自定义回答",
-  submitButton: "提交",
-  stopButton: "停止",
-  queueLabel: "回复结束后发送",
-  queueEdit: "编辑",
-  queueRemove: "移除",
-  elicitationRecommended: "推荐",
-  elicitationSkip: "跳过",
-  elicitationHide: "暂时隐藏",
-  elicitationWaiting: "等待你的回答",
-  elicitationYes: "是",
-  elicitationNo: "否",
-  elicitationAnswerLabel: "你的回答",
-  approvalInstructionPlaceholder: "或者告诉它改做什么…",
-  approvalOptionsLabel: "你的决定",
-  approvalArgsLabel: "参数",
-  approvalAsk: "允许 {tool}？",
-  approvalAskBy: "为 {agent} 允许 {tool}？",
-  approvalWaiting: "等待中",
-  scrollToBottom: "滚动到底部",
-  suggestionsLabel: "建议的提示",
-  contextLabel: "上下文窗口",
-  contextSystem: "系统提示词",
-  contextTools: "工具",
-  contextSummary: "摘要",
-  contextMessages: "消息",
-  contextOther: "其他",
-  contextFree: "可用",
-  contextTotal: "总计",
-  contextReclaim: "现在压缩可释放约 {n} 个 token",
-  contextCompactNow: "立即压缩",
-  checkpointCount: "已为模型总结 {n} 条消息",
-  checkpointCountOne: "已为模型总结 1 条消息",
-  checkpointLegacy: "较早的消息已被总结",
-  checkpointGroup: "上下文摘要",
-  checkpointShow: "显示摘要",
-  checkpointHide: "隐藏摘要",
-  checkpointRestore: "恢复",
-  checkpointRestoreConfirm: "要将原始消息重新发送给模型吗？",
-  checkpointPending: "正在总结上下文…",
-  checkpointFailed: "无法总结上下文",
-  toolRunning: "运行中",
-  toolQueued: "排队中",
-  toolFailed: "失败",
-  toolCompleted: "完成",
-  toolRejected: "已拒绝",
-  toolStopped: "已停止",
-  toolInput: "输入",
-  toolOutput: "输出",
-  toolRejectedSaid: "你说：“{instruction}”",
-  toolRefusedByPolicy: "被规则拒绝",
-  toolNotRunAfterRefusal: "未运行：之前的调用已被拒绝",
-  toolTimedOut: "已超时",
-  toolUnavailable: "此处不可用",
-  toolNoApprover: "无人可以批准",
-  toolTurnLimit: "已达轮次上限",
-  maxTurnsReached: "为避免无限循环，已在 {n} 轮后停止。",
-  sourcesCount: "{n} 个来源",
-  sourcesOne: "1 个来源",
-  sourcesCard: "来源",
-  sourcePrevious: "上一个来源",
-  sourceNext: "下一个来源",
-  sourcePosition: "来源 {i}/{n}",
-  opensInNewTab: "（在新标签页中打开）",
-  imageLoad: "从 {host} 加载图片",
-  imageLoadNamed: "从 {host} 加载图片“{alt}”",
-  questionDeclined: "你选择不回答。",
-  artifactNotCreated: "未创建",
-  thoughtFor: "思考用时：{duration}",
-  thought: "思考完成",
-  turnWorking: "处理中…",
-  turnWorked: "用时 {duration}",
-  turnUsed: "使用了 {tools}",
-  turnTools: "other:{n} 个工具",
-  feedbackReasonTitle: "哪里出了问题？",
-  feedbackReasonDismiss: "暂不",
-  triggersLoading: "加载中…",
-  triggersEmpty: "没有结果",
-  triggersError: "无法加载此列表",
-  triggersRetry: "重试",
-  triggersBack: "返回",
-  triggersCommandNew: "开始新对话",
-  triggersCommandStop: "停止回复",
-  triggersCommandRetry: "重新回答",
-  triggersCommandCopy: "复制最后一条回复",
-  triggersCommandCompact: "总结之前的消息",
-  triggersCompactNothing: "暂无可压缩的内容",
-  triggersCompactBusy: "请等待回复结束",
-  triggersCompactNoWindow: "此模型未说明可读取的内容量",
-  triggersCompactFailed: "无法生成摘要",
-  triggersCommandModel: "切换模型",
-  triggersCommandApproval: "更改审批模式",
-  actionUpload: "附加文件",
-  removeAttachment: "移除 {name}",
-  messageFrom: "来自 {name} 的消息",
-  selectSearchPlaceholder: "搜索…",
-  selectSearchLabel: "搜索选项",
-  loading: "加载中…",
-  download: "下载",
-  openArtifact: "打开",
-  closeArtifact: "关闭",
-  artifactVersion: "第 {n} 版，共 {total} 版",
-  previousVersion: "上一个版本",
-  nextVersion: "下一个版本",
-  modelContextWindow: "{n} 上下文",
-  previewPending: "按“预览”运行此工件。",
-  sandboxError: "生成过程中沙箱出错。",
-  sandboxErrorHint: "常见原因：模型生成了无效代码（未定义的变量、错误的参数类型）。请重试，模型可能会生成不同的代码。",
-  preview: "预览",
-  code: "代码",
-  generating: "生成中…",
-  rebuildingPreview: "正在重建预览…",
-  typing: "正在输入",
-  responseCutOff: "已在模型的长度上限处截断。",
-  error: "错误",
-  errorUnreachable: "暂时无法连接助手，请稍后再试。",
-  errorTimeout: "响应时间过长，请稍后再试。",
-  errorRefused: "助手暂时无权回答。",
-  errorRateLimited: "当前请求过多，请稍后再试。",
-  errorTooLong: "这段对话对模型来说太长了，请开始新的对话。",
-  errorFailed: "助手未能回答，请稍后再试。",
-  errorNoAnswer: "助手无法回答这个请求。",
-  running: "运行中…",
-  run: "运行",
-  file: "文件",
-  modelSelectorPlaceholder: "选择模型…",
-  approvalModeLabel: "审批模式",
-  roleNameUser: "你",
-  roleNameAssistant: "助手",
-  yourMessage: "你的消息",
-  assistantResponse: "助手回复",
-  messageActions: "消息操作",
-  edit: "编辑消息",
-  editConfirm: "发送",
-  editCancel: "取消",
-  feedbackPositive: "好的回复",
-  feedbackNegative: "不好的回复",
-  previousResponse: "上一条回复",
-  nextResponse: "下一条回复",
-  approveTool: "批准",
-  rejectTool: "拒绝",
-  messageInfo: "详情",
-  newChat: "新对话",
-  loadingConversations: "正在加载对话",
-  conversationSearchEmpty: "没有匹配的对话",
-  conversationList: "对话",
-  loadingConversation: "正在加载此对话",
-  deleteConversation: "删除",
-  archiveConversation: "归档",
-  unarchiveConversation: "取消归档",
-  conversationActions: "对话操作",
-  conversationRunning: "正在回答",
-  conversationWaiting: "等待你回复",
-  renameConversation: "重命名",
-  conversationTitle: "对话标题",
-  pinConversation: "置顶",
-  unpinConversation: "取消置顶",
-  deleteConversationConfirm: "删除“{title}”？",
-  cancel: "取消",
-  conversationGroupPinned: "已置顶",
-  conversationGroupToday: "今天",
-  conversationGroupYesterday: "昨天",
-  conversationGroupWeek: "过去 7 天",
-  conversationGroupMonth: "过去 30 天",
-  scrollRailLabel: "对话大纲",
-  sidebarLabel: "对话",
-  splitHandleLabel: "调整窗格大小",
-  launcherOpen: "打开聊天",
-  launcherClose: "关闭聊天",
-  launcherHeading: "聊天",
-  launcherMaximize: "放大聊天窗口",
-  launcherRestore: "缩小聊天窗口",
-  transcript: "对话记录",
-  tag: "zh-CN",
-  direction: "ltr"
-};
-function ki() {
+function Si() {
   return { async: !1, breaks: !1, extensions: null, gfm: !0, hooks: null, pedantic: !1, renderer: null, silent: !1, tokenizer: null, walkTokens: null };
 }
-var At = ki();
-function vu(n) {
+var At = Si();
+function _u(n) {
   At = n;
 }
 var ft = { exec: () => null };
@@ -20989,28 +21000,28 @@ function X(n, e = "") {
   }, getRegex: () => new RegExp(t, e) };
   return s;
 }
-var yu = ((n = "") => {
+var bu = ((n = "") => {
   try {
     return !!new RegExp("(?<=1)(?<!1)" + n);
   } catch {
     return !1;
   }
-})(), ye = { codeRemoveIndent: /^(?: {0,3}\t| {1,4})/gm, outputLinkReplace: /\\([\[\]])/g, indentCodeCompensation: /^(\s+)(?:```)/, beginningSpace: /^\s+/, endingHash: /#$/, startingSpaceChar: /^ /, endingSpaceChar: / $/, endingSpaceTabChar: /[ \t]$/, nonSpaceChar: /[^ ]/, newLineCharGlobal: /\n/g, tabCharGlobal: /\t/g, leadingSpaceTab: /^[ \t]+/, multipleSpaceGlobal: /\s+/g, blankLine: /^[ \t]*$/, doubleBlankLine: /\n[ \t]*\n[ \t]*$/, blockquoteStart: /^ {0,3}>/, blockquoteSetextReplace: /\n {0,3}((?:=+|-+)[ \t]*)(?=\n|$)/g, blockquoteSetextReplace2: /^ {0,3}>[ \t]?/gm, blockquoteMarkerWhitespace: /^( {0,3}>)([ \t]+)/gm, listReplaceNesting: /^ {1,4}(?=( {4})*[^ ])/g, listIsTask: /^\[[ xX]\][ \t]+\S/, listReplaceTask: /^\[[ xX]\][ \t]+/, listTaskCheckbox: /\[[ xX]\]/, anyLine: /\n.*\n/, hrefBrackets: /^<(.*)>$/, tableDelimiter: /[:|]/, tableAlignChars: /^\||\| *$/g, tableRowBlankLine: /\n[ \t]*$/, tableAlignRight: /^ *-+: *$/, tableAlignCenter: /^ *:-+: *$/, tableAlignLeft: /^ *:-+ *$/, startATag: /^<a /i, endATag: /^<\/a>/i, startPreScriptTag: /^<(pre|code|kbd|script)(\s|>)/i, endPreScriptTag: /^<\/(pre|code|kbd|script)(\s|>)/i, startAngleBracket: /^</, endAngleBracket: />$/, pedanticHrefTitle: /^([^'"]*[^\s])\s+(['"])(.*)\2/, unicodeAlphaNumeric: /[\p{L}\p{N}]/u, numericCharacterReference: /&#(?:(\d{1,7})|[Xx]([A-Fa-f0-9]{1,6}));/, numericCharacterReferenceOrAmpersand: /&#(?:(\d{1,7})|[Xx]([A-Fa-f0-9]{1,6}));|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/g, escapeTest: /[&<>"']/, escapeReplace: /[&<>"']/g, escapeTestNoEncode: /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/, escapeReplaceNoEncode: /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/g, caret: /(^|[^\[])\^/g, percentDecode: /%25/g, findPipe: /\|/g, splitPipe: / \|/, slashPipe: /\\\|/g, carriageReturn: /\r\n|\r/g, spaceLine: /^ +$/gm, notSpaceStart: /^\S*/, endingNewline: /\n$/, listItemRegex: (n) => new RegExp(`^( {0,3}${n})((?:[	 ][^\\n]*)?(?:\\n|$))`), nextBulletRegex: dt((n) => new RegExp(`^ {0,${n}}(?:[*+-]|\\d{1,9}[.)])((?:[ 	][^\\n]*)?(?:\\n|$))`)), hrRegex: dt((n) => new RegExp(`^ {0,${n}}((?:-[ 	]*){3,}|(?:_[ 	]*){3,}|(?:\\*[ 	]*){3,})(?:\\n+|$)`)), fencesBeginRegex: dt((n) => new RegExp(`^ {0,${n}}(?:\`\`\`|~~~)`)), headingBeginRegex: dt((n) => new RegExp(`^ {0,${n}}#{1,6}(?:\\s|$)`)), pedanticHeadingBeginRegex: dt((n) => new RegExp(`^ {0,${n}}#`)), htmlBeginRegex: dt((n) => new RegExp(`^ {0,${n}}(?:</?(?:${kn})(?: +|$|/?>)|<(?:(?:script|pre|style|textarea)(?:[\\s>]|$)|!--)|<\\?|<![A-Za-z]|<!\\[CDATA\\[)`, "i")), blockquoteBeginRegex: dt((n) => new RegExp(`^ {0,${n}}>`)) }, O_ = /^(?:[ \t]*(?:\n|$))+/, N_ = /^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/, P_ = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}(?:(?=`)\1`*|(?=~)\1~*) *(?=\n|$)|$)/, An = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/, $_ = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/, Si = / {0,3}(?:[*+-]|\d{1,9}[.)])/, wu = /^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |fences|blockquote|heading|hr|html|table))+?)\n {0,3}(=+|-+)[ \t]*(?:\n+|$)/, Au = X(wu).replace(/bull/g, Si).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}(?:\s|$)/).replace(/hr/g, / {0,3}(?:(?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/\|table/g, "").getRegex(), D_ = X(wu).replace(/bull/g, Si).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}(?:\s|$)/).replace(/hr/g, / {0,3}(?:(?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/table/g, / {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(), Ci = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table|[ \t]+\n)[^\n]+)*)/, B_ = /^[^\n]+/, Ei = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\\n]|\n(?![ \t]*\n))+/, q_ = X(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label", Ei).replace("title", /(?:"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\\n]|\n(?!\n))*'|\((?:\\[\s\S]|[^()\\])*\))/).getRegex(), H_ = X(/^(bull)([ \t][^\n]*?)?(?:\n|$)/).replace(/bull/g, Si).getRegex(), kn = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul", Ti = /<!--(?:-?>|[\s\S]*?(?:-->|$))/, F_ = X("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n*|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>[^\\n]*\\n*|$)|<![A-Z][\\s\\S]*?(?:>[^\\n]*\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>[^\\n]*\\n*|$)|</?(tag)(?:[ \\t]+|\\n|/?>|$)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!(?:script|pre|style|textarea)(?![a-z0-9-]))([a-z][a-z0-9-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</[a-z][a-z0-9-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))", "i").replace("comment", Ti).replace("tag", kn).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(), ku = (n) => X(Ci).replace("hr", An).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", n).replace("html", " {0,3}(?:</?(?:tag)(?: +|\\n|/?>)|<(?:(?:script|pre|style|textarea)(?:[\\s>]|$)|!--)|<\\?|<![A-Za-z]|<!\\[CDATA\\[)").replace("tag", kn).getRegex(), W_ = ku(/ {0,3}(?:[*+-]|1[.)])[ \t]+[^ \t\n]/), U_ = ku(/ {0,3}(?:[*+-]|\d{1,9}[.)])(?:[ \t]|\n|$)/), z_ = X(/^( {0,3}> ?(?:(?![ \t]*(?:\n|$))(paragraph)|[^\n]*)(?:\n|$))+/).replace("paragraph", U_).getRegex(), xi = { blockquote: z_, code: N_, def: q_, fences: P_, heading: $_, hr: An, html: F_, lheading: Au, list: H_, newline: O_, paragraph: W_, table: ft, text: B_ }, Xa = X("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr", An).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("blockquote", " {0,3}>").replace("code", "(?: {4}| {0,3}	)[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", " {0,3}(?:</?(?:tag)(?: +|\\n|/?>)|<(?:(?:script|pre|style|textarea)(?:[\\s>]|$)|!--)|<\\?|<![A-Za-z]|<!\\[CDATA\\[)").replace("tag", kn).getRegex(), G_ = { ...xi, lheading: D_, table: Xa, paragraph: X(Ci).replace("hr", An).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("table", Xa).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]+[^ \\t\\n]").replace("html", " {0,3}(?:</?(?:tag)(?: +|\\n|/?>)|<(?:(?:script|pre|style|textarea)(?:[\\s>]|$)|!--)|<\\?|<![A-Za-z]|<!\\[CDATA\\[)").replace("tag", kn).getRegex() }, j_ = { ...xi, html: X(`^ *(?:comment(?: *\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1>(?: *\\n{2,}|\\s*$)|<tag(?:"[^"]*"|'[^']*'|\\s[^'"/>\\s]*)*?/?>(?: *\\n{2,}|\\s*$))`).replace("comment", Ti).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(), def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/, heading: /^(#{1,6})(.*)(?:\n+|$)/, fences: ft, lheading: /^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/, paragraph: X(Ci).replace("hr", An).replace("heading", ` *#{1,6} *[^
-]`).replace("lheading", Au).replace("|table", "").replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").replace("|tag", "").getRegex() }, K_ = /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/, V_ = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/, Su = /^( {2,}|\\)\n(?!\s*$)[ \t]*/, X_ = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/, Ve = /[\p{P}\p{S}]/u, Wt = /[\s\p{P}\p{S}]/u, Sn = /[^\s\p{P}\p{S}]/u, Q_ = X(/^((?![*_])punctSpace)/, "u").replace(/punctSpace/g, Wt).getRegex(), Y_ = /[\p{Pi}\p{Ps}"']/u, Cu = /(?!~)[\p{P}\p{S}]/u, Z_ = /(?!~)[\s\p{P}\p{S}]/u, J_ = /(?:[^\s\p{P}\p{S}]|~)/u, eb = X(/link|precode-code|html/, "g").replace("link", /\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-", yu ? "(?<!`)()" : "(^^|[^`])").replace("code", /(?<b>`+)[^`]+\k<b>(?!`)/).replace("html", /<(?! )[^<>]*?>/).getRegex(), Eu = /^(?:\*+(?:((?!\*)punct)|([^\s*]))?)|^_+(?:((?!_)punct)|([^\s_]))?/, tb = X(Eu, "u").replace(/punct/g, Ve).getRegex(), nb = X(Eu, "u").replace(/punct/g, Cu).getRegex(), sb = /^(?:\*+(?:((?!\*)(?!openQuote)punct)|([^\s*]))?)|^_+(?:((?!_)(?!openQuote)punct)|([^\s_]))?/, rb = X(sb, "u").replace(/openQuote/g, Y_).replace(/punct/g, Ve).getRegex(), Tu = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)", ib = X(Tu, "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), ob = X(Tu, "gu").replace(/notPunctSpace/g, J_).replace(/punctSpace/g, Z_).replace(/punct/g, Cu).getRegex(), ab = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)[\\s](\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|(?:(?!\\*)punct|notPunctSpace)(\\*+)(?!\\*)(?=notPunctSpace)", lb = X(ab, "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), cb = X("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)", "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), ub = "^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)[\\s](_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)|(?:(?!_)punct|notPunctSpace)(_+)(?!_)(?=notPunctSpace)", db = X(ub, "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), hb = X(/^~~?(?:((?!~)punct)|[^\s~])/, "u").replace(/punct/g, Ve).getRegex(), pb = "^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)", fb = X(pb, "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), gb = X(/\\(punct)/, "gu").replace(/punct/g, Ve).getRegex(), mb = X(/(`+)(?:[^`]|[^`][\s\S]*?[^`])\1(?!`)|`+|\\(punct)/, "gu").replace(/punct/g, Ve).getRegex(), _b = X(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme", /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email", /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(), bb = X(Ti).replace("(?:-->|$)", "-->").getRegex(), vb = X("^comment|^</[a-zA-Z][a-zA-Z0-9-]*\\s*>|^<[a-zA-Z][a-zA-Z0-9-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment", bb).replace("attribute", /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(), xu = /\[(?:\\[\s\S]|[^\[\]\\])*\]/, cs = X(/(?:\[(?:brackets|\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\])|[^\[\]\\`])*?/).replace("brackets", xu).getRegex(), yb = X(/^!?\[(label)\]\([ \t\n]*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?[ \t\n]*\)/).replace("label", cs).replace("href", /<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]+|(?=\))/).replace("title", /"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*'|\((?:\\[\s\S]|[^)\\])*\)/).getRegex(), wb = X(/^!?\[(label)\]\[(ref)\]/).replace("label", cs).replace("ref", Ei).getRegex(), Ab = X(/^!?\[(ref)\](?:\[\])?/).replace("ref", Ei).getRegex(), Qa = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\]){1,999}/, kb = X(/(?:[^\[\]\\`]*(?:\[(?:brackets|\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\]))){0,999}?[^\[\]\\`]*?/).replace("brackets", xu).getRegex(), Sb = X("reflink|nolink(?!\\()", "g").replace("reflink", X(/^!?\[(label)\]\[(ref)\]/).replace("label", kb).replace("ref", Qa).getRegex()).replace("nolink", X(/^!?\[(ref)\](?:\[\])?/).replace("ref", Qa).getRegex()).getRegex(), Ya = /[hH][tT][tT][pP][sS]?|[fF][tT][pP]/, Cb = /[A-Za-z0-9._+-]+@[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![\w-])/, Eb = X(/(?:mailto:email|xmpp:email(?:\/[A-Za-z0-9@.]+)?)/).replace(/email/g, Cb).getRegex(), Ri = { _backpedal: ft, anyPunctuation: gb, anyPunctuationOutsideCode: mb, autolink: _b, blockSkip: eb, br: Su, code: V_, del: ft, delLDelim: ft, delRDelim: ft, emStrongLDelim: tb, emStrongRDelimAst: ib, emStrongRDelimUnd: cb, escape: K_, link: yb, nolink: Ab, punctuation: Q_, reflink: wb, reflinkSearch: Sb, tag: vb, text: X_, url: ft }, Tb = { ...Ri, emStrongLDelim: rb, emStrongRDelimAst: lb, emStrongRDelimUnd: db, link: X(/^!?\[(label)\]\((.*?)\)/).replace("label", cs).getRegex(), reflink: X(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", cs).getRegex() }, jr = { ...Ri, emStrongRDelimAst: ob, emStrongLDelim: nb, delLDelim: hb, delRDelim: fb, url: X(/^emailProtocol|^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("emailProtocol", Eb).replace("protocol", Ya).replace("email", /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![\w-])/).getRegex(), _backpedal: /(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/, del: /^(~~?)(?=[^\s~])((?:\\[\s\S]|[^\\])*?(?:\\[\s\S]|[^\s~\\]))\1(?=[^~]|$)/, text: X(/^(?:[^a-zA-Z0-9](?=emailProtocol)|(`+|~+|[^`~])(?:(?=[`~])|(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|wwwStart|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9](?=emailProtocol)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))))/).replace("protocol", Ya).replace(/emailProtocol/g, /(?:mailto|xmpp):/).replace("wwwStart", yu ? "(?<![^\\s*_~(])www\\." : "www\\.").getRegex() }, xb = { ...jr, br: X(Su).replace("{2,}", "*").getRegex(), text: X(jr.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex() }, Dn = { normal: xi, gfm: G_, pedantic: j_ }, en = { normal: Ri, gfm: jr, breaks: xb, pedantic: Tb }, Rb = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }, Za = (n) => Rb[n];
+})(), ye = { codeRemoveIndent: /^(?: {0,3}\t| {1,4})/gm, outputLinkReplace: /\\([\[\]])/g, indentCodeCompensation: /^(\s+)(?:```)/, beginningSpace: /^\s+/, endingHash: /#$/, startingSpaceChar: /^ /, endingSpaceChar: / $/, endingSpaceTabChar: /[ \t]$/, nonSpaceChar: /[^ ]/, newLineCharGlobal: /\n/g, tabCharGlobal: /\t/g, leadingSpaceTab: /^[ \t]+/, multipleSpaceGlobal: /\s+/g, blankLine: /^[ \t]*$/, doubleBlankLine: /\n[ \t]*\n[ \t]*$/, blockquoteStart: /^ {0,3}>/, blockquoteSetextReplace: /\n {0,3}((?:=+|-+)[ \t]*)(?=\n|$)/g, blockquoteSetextReplace2: /^ {0,3}>[ \t]?/gm, blockquoteMarkerWhitespace: /^( {0,3}>)([ \t]+)/gm, listReplaceNesting: /^ {1,4}(?=( {4})*[^ ])/g, listIsTask: /^\[[ xX]\][ \t]+\S/, listReplaceTask: /^\[[ xX]\][ \t]+/, listTaskCheckbox: /\[[ xX]\]/, anyLine: /\n.*\n/, hrefBrackets: /^<(.*)>$/, tableDelimiter: /[:|]/, tableAlignChars: /^\||\| *$/g, tableRowBlankLine: /\n[ \t]*$/, tableAlignRight: /^ *-+: *$/, tableAlignCenter: /^ *:-+: *$/, tableAlignLeft: /^ *:-+ *$/, startATag: /^<a /i, endATag: /^<\/a>/i, startPreScriptTag: /^<(pre|code|kbd|script)(\s|>)/i, endPreScriptTag: /^<\/(pre|code|kbd|script)(\s|>)/i, startAngleBracket: /^</, endAngleBracket: />$/, pedanticHrefTitle: /^([^'"]*[^\s])\s+(['"])(.*)\2/, unicodeAlphaNumeric: /[\p{L}\p{N}]/u, numericCharacterReference: /&#(?:(\d{1,7})|[Xx]([A-Fa-f0-9]{1,6}));/, numericCharacterReferenceOrAmpersand: /&#(?:(\d{1,7})|[Xx]([A-Fa-f0-9]{1,6}));|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/g, escapeTest: /[&<>"']/, escapeReplace: /[&<>"']/g, escapeTestNoEncode: /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/, escapeReplaceNoEncode: /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/g, caret: /(^|[^\[])\^/g, percentDecode: /%25/g, findPipe: /\|/g, splitPipe: / \|/, slashPipe: /\\\|/g, carriageReturn: /\r\n|\r/g, spaceLine: /^ +$/gm, notSpaceStart: /^\S*/, endingNewline: /\n$/, listItemRegex: (n) => new RegExp(`^( {0,3}${n})((?:[	 ][^\\n]*)?(?:\\n|$))`), nextBulletRegex: dt((n) => new RegExp(`^ {0,${n}}(?:[*+-]|\\d{1,9}[.)])((?:[ 	][^\\n]*)?(?:\\n|$))`)), hrRegex: dt((n) => new RegExp(`^ {0,${n}}((?:-[ 	]*){3,}|(?:_[ 	]*){3,}|(?:\\*[ 	]*){3,})(?:\\n+|$)`)), fencesBeginRegex: dt((n) => new RegExp(`^ {0,${n}}(?:\`\`\`|~~~)`)), headingBeginRegex: dt((n) => new RegExp(`^ {0,${n}}#{1,6}(?:\\s|$)`)), pedanticHeadingBeginRegex: dt((n) => new RegExp(`^ {0,${n}}#`)), htmlBeginRegex: dt((n) => new RegExp(`^ {0,${n}}(?:</?(?:${kn})(?: +|$|/?>)|<(?:(?:script|pre|style|textarea)(?:[\\s>]|$)|!--)|<\\?|<![A-Za-z]|<!\\[CDATA\\[)`, "i")), blockquoteBeginRegex: dt((n) => new RegExp(`^ {0,${n}}>`)) }, N_ = /^(?:[ \t]*(?:\n|$))+/, P_ = /^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/, $_ = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}(?:(?=`)\1`*|(?=~)\1~*) *(?=\n|$)|$)/, An = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/, D_ = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/, Ci = / {0,3}(?:[*+-]|\d{1,9}[.)])/, vu = /^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |fences|blockquote|heading|hr|html|table))+?)\n {0,3}(=+|-+)[ \t]*(?:\n+|$)/, yu = X(vu).replace(/bull/g, Ci).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}(?:\s|$)/).replace(/hr/g, / {0,3}(?:(?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/\|table/g, "").getRegex(), B_ = X(vu).replace(/bull/g, Ci).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}(?:\s|$)/).replace(/hr/g, / {0,3}(?:(?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/table/g, / {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(), Ei = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table|[ \t]+\n)[^\n]+)*)/, q_ = /^[^\n]+/, Ti = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\\n]|\n(?![ \t]*\n))+/, H_ = X(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label", Ti).replace("title", /(?:"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\\n]|\n(?!\n))*'|\((?:\\[\s\S]|[^()\\])*\))/).getRegex(), F_ = X(/^(bull)([ \t][^\n]*?)?(?:\n|$)/).replace(/bull/g, Ci).getRegex(), kn = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul", xi = /<!--(?:-?>|[\s\S]*?(?:-->|$))/, W_ = X("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n*|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>[^\\n]*\\n*|$)|<![A-Z][\\s\\S]*?(?:>[^\\n]*\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>[^\\n]*\\n*|$)|</?(tag)(?:[ \\t]+|\\n|/?>|$)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!(?:script|pre|style|textarea)(?![a-z0-9-]))([a-z][a-z0-9-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</[a-z][a-z0-9-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))", "i").replace("comment", xi).replace("tag", kn).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(), wu = (n) => X(Ei).replace("hr", An).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", n).replace("html", " {0,3}(?:</?(?:tag)(?: +|\\n|/?>)|<(?:(?:script|pre|style|textarea)(?:[\\s>]|$)|!--)|<\\?|<![A-Za-z]|<!\\[CDATA\\[)").replace("tag", kn).getRegex(), U_ = wu(/ {0,3}(?:[*+-]|1[.)])[ \t]+[^ \t\n]/), z_ = wu(/ {0,3}(?:[*+-]|\d{1,9}[.)])(?:[ \t]|\n|$)/), G_ = X(/^( {0,3}> ?(?:(?![ \t]*(?:\n|$))(paragraph)|[^\n]*)(?:\n|$))+/).replace("paragraph", z_).getRegex(), Ri = { blockquote: G_, code: P_, def: H_, fences: $_, heading: D_, hr: An, html: W_, lheading: yu, list: F_, newline: N_, paragraph: U_, table: ft, text: q_ }, Va = X("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr", An).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("blockquote", " {0,3}>").replace("code", "(?: {4}| {0,3}	)[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", " {0,3}(?:</?(?:tag)(?: +|\\n|/?>)|<(?:(?:script|pre|style|textarea)(?:[\\s>]|$)|!--)|<\\?|<![A-Za-z]|<!\\[CDATA\\[)").replace("tag", kn).getRegex(), j_ = { ...Ri, lheading: B_, table: Va, paragraph: X(Ei).replace("hr", An).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("table", Va).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*(?:\\n|$))|~~~)[^\\n]*(?:\\n|$)").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]+[^ \\t\\n]").replace("html", " {0,3}(?:</?(?:tag)(?: +|\\n|/?>)|<(?:(?:script|pre|style|textarea)(?:[\\s>]|$)|!--)|<\\?|<![A-Za-z]|<!\\[CDATA\\[)").replace("tag", kn).getRegex() }, K_ = { ...Ri, html: X(`^ *(?:comment(?: *\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1>(?: *\\n{2,}|\\s*$)|<tag(?:"[^"]*"|'[^']*'|\\s[^'"/>\\s]*)*?/?>(?: *\\n{2,}|\\s*$))`).replace("comment", xi).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(), def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/, heading: /^(#{1,6})(.*)(?:\n+|$)/, fences: ft, lheading: /^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/, paragraph: X(Ei).replace("hr", An).replace("heading", ` *#{1,6} *[^
+]`).replace("lheading", yu).replace("|table", "").replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").replace("|tag", "").getRegex() }, V_ = /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/, X_ = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/, Au = /^( {2,}|\\)\n(?!\s*$)[ \t]*/, Q_ = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/, Ve = /[\p{P}\p{S}]/u, Wt = /[\s\p{P}\p{S}]/u, Sn = /[^\s\p{P}\p{S}]/u, Y_ = X(/^((?![*_])punctSpace)/, "u").replace(/punctSpace/g, Wt).getRegex(), Z_ = /[\p{Pi}\p{Ps}"']/u, ku = /(?!~)[\p{P}\p{S}]/u, J_ = /(?!~)[\s\p{P}\p{S}]/u, eb = /(?:[^\s\p{P}\p{S}]|~)/u, tb = X(/link|precode-code|html/, "g").replace("link", /\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-", bu ? "(?<!`)()" : "(^^|[^`])").replace("code", /(?<b>`+)[^`]+\k<b>(?!`)/).replace("html", /<(?! )[^<>]*?>/).getRegex(), Su = /^(?:\*+(?:((?!\*)punct)|([^\s*]))?)|^_+(?:((?!_)punct)|([^\s_]))?/, nb = X(Su, "u").replace(/punct/g, Ve).getRegex(), sb = X(Su, "u").replace(/punct/g, ku).getRegex(), rb = /^(?:\*+(?:((?!\*)(?!openQuote)punct)|([^\s*]))?)|^_+(?:((?!_)(?!openQuote)punct)|([^\s_]))?/, ib = X(rb, "u").replace(/openQuote/g, Z_).replace(/punct/g, Ve).getRegex(), Cu = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)", ob = X(Cu, "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), ab = X(Cu, "gu").replace(/notPunctSpace/g, eb).replace(/punctSpace/g, J_).replace(/punct/g, ku).getRegex(), lb = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)[\\s](\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|(?:(?!\\*)punct|notPunctSpace)(\\*+)(?!\\*)(?=notPunctSpace)", cb = X(lb, "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), ub = X("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)", "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), db = "^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)[\\s](_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)|(?:(?!_)punct|notPunctSpace)(_+)(?!_)(?=notPunctSpace)", hb = X(db, "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), pb = X(/^~~?(?:((?!~)punct)|[^\s~])/, "u").replace(/punct/g, Ve).getRegex(), fb = "^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)", gb = X(fb, "gu").replace(/notPunctSpace/g, Sn).replace(/punctSpace/g, Wt).replace(/punct/g, Ve).getRegex(), mb = X(/\\(punct)/, "gu").replace(/punct/g, Ve).getRegex(), _b = X(/(`+)(?:[^`]|[^`][\s\S]*?[^`])\1(?!`)|`+|\\(punct)/, "gu").replace(/punct/g, Ve).getRegex(), bb = X(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme", /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email", /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(), vb = X(xi).replace("(?:-->|$)", "-->").getRegex(), yb = X("^comment|^</[a-zA-Z][a-zA-Z0-9-]*\\s*>|^<[a-zA-Z][a-zA-Z0-9-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment", vb).replace("attribute", /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(), Eu = /\[(?:\\[\s\S]|[^\[\]\\])*\]/, cs = X(/(?:\[(?:brackets|\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\])|[^\[\]\\`])*?/).replace("brackets", Eu).getRegex(), wb = X(/^!?\[(label)\]\([ \t\n]*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?[ \t\n]*\)/).replace("label", cs).replace("href", /<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]+|(?=\))/).replace("title", /"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*'|\((?:\\[\s\S]|[^)\\])*\)/).getRegex(), Ab = X(/^!?\[(label)\]\[(ref)\]/).replace("label", cs).replace("ref", Ti).getRegex(), kb = X(/^!?\[(ref)\](?:\[\])?/).replace("ref", Ti).getRegex(), Xa = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\]){1,999}/, Sb = X(/(?:[^\[\]\\`]*(?:\[(?:brackets|\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\]))){0,999}?[^\[\]\\`]*?/).replace("brackets", Eu).getRegex(), Cb = X("reflink|nolink(?!\\()", "g").replace("reflink", X(/^!?\[(label)\]\[(ref)\]/).replace("label", Sb).replace("ref", Xa).getRegex()).replace("nolink", X(/^!?\[(ref)\](?:\[\])?/).replace("ref", Xa).getRegex()).getRegex(), Qa = /[hH][tT][tT][pP][sS]?|[fF][tT][pP]/, Eb = /[A-Za-z0-9._+-]+@[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![\w-])/, Tb = X(/(?:mailto:email|xmpp:email(?:\/[A-Za-z0-9@.]+)?)/).replace(/email/g, Eb).getRegex(), Ii = { _backpedal: ft, anyPunctuation: mb, anyPunctuationOutsideCode: _b, autolink: bb, blockSkip: tb, br: Au, code: X_, del: ft, delLDelim: ft, delRDelim: ft, emStrongLDelim: nb, emStrongRDelimAst: ob, emStrongRDelimUnd: ub, escape: V_, link: wb, nolink: kb, punctuation: Y_, reflink: Ab, reflinkSearch: Cb, tag: yb, text: Q_, url: ft }, xb = { ...Ii, emStrongLDelim: ib, emStrongRDelimAst: cb, emStrongRDelimUnd: hb, link: X(/^!?\[(label)\]\((.*?)\)/).replace("label", cs).getRegex(), reflink: X(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", cs).getRegex() }, jr = { ...Ii, emStrongRDelimAst: ab, emStrongLDelim: sb, delLDelim: pb, delRDelim: gb, url: X(/^emailProtocol|^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("emailProtocol", Tb).replace("protocol", Qa).replace("email", /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![\w-])/).getRegex(), _backpedal: /(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/, del: /^(~~?)(?=[^\s~])((?:\\[\s\S]|[^\\])*?(?:\\[\s\S]|[^\s~\\]))\1(?=[^~]|$)/, text: X(/^(?:[^a-zA-Z0-9](?=emailProtocol)|(`+|~+|[^`~])(?:(?=[`~])|(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|wwwStart|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9](?=emailProtocol)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))))/).replace("protocol", Qa).replace(/emailProtocol/g, /(?:mailto|xmpp):/).replace("wwwStart", bu ? "(?<![^\\s*_~(])www\\." : "www\\.").getRegex() }, Rb = { ...jr, br: X(Au).replace("{2,}", "*").getRegex(), text: X(jr.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex() }, Dn = { normal: Ri, gfm: j_, pedantic: K_ }, en = { normal: Ii, gfm: jr, breaks: Rb, pedantic: xb }, Ib = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }, Ya = (n) => Ib[n];
 function Oe(n, e) {
   if (e) {
-    if (ye.escapeTest.test(n)) return n.replace(ye.escapeReplace, Za);
-  } else if (ye.escapeTestNoEncode.test(n)) return n.replace(ye.escapeReplaceNoEncode, Za);
+    if (ye.escapeTest.test(n)) return n.replace(ye.escapeReplace, Ya);
+  } else if (ye.escapeTestNoEncode.test(n)) return n.replace(ye.escapeReplaceNoEncode, Ya);
   return n;
 }
-function Ib(n) {
+function Lb(n) {
   return ye.numericCharacterReference.test(n) ? n.replace(ye.numericCharacterReferenceOrAmpersand, (e, t, s) => {
     if (t === void 0 && s === void 0) return "&amp;";
     let r = t === void 0 ? Number.parseInt(s, 16) : Number.parseInt(t, 10);
     return r === 0 || r > 1114111 || r >= 55296 && r <= 57343 ? "�" : r === 38 ? "&amp;" : String.fromCodePoint(r);
   }) : n;
 }
-function Ja(n) {
+function Za(n) {
   try {
     n = encodeURI(n).replace(ye.percentDecode, "%");
   } catch {
@@ -21018,7 +21029,7 @@ function Ja(n) {
   }
   return n;
 }
-function el(n, e) {
+function Ja(n, e) {
   let t = n.replace(ye.findPipe, (i, o, a) => {
     let l = !1, c = o;
     for (; --c >= 0 && a[c] === "\\"; ) l = !l;
@@ -21037,7 +21048,7 @@ function Qe(n, e, t) {
     r++;
   return n.slice(0, s - r);
 }
-function tl(n) {
+function el(n) {
   let e = n.split(`
 `), t = e.length - 1;
   for (; t >= 0 && ye.blankLine.test(e[t]); ) t--;
@@ -21047,7 +21058,7 @@ function tl(n) {
 function us(n) {
   return n.trim().replace(ye.multipleSpaceGlobal, " ").toLowerCase().toUpperCase().toLowerCase();
 }
-function nl(n, e) {
+function tl(n, e) {
   if (n.indexOf(e[0]) === -1 && n.indexOf(e[1]) === -1) return -1;
   let t = 0;
   for (let s = 0; s < n.length; s++) if (n[s] === "\\") s++;
@@ -21056,7 +21067,7 @@ function nl(n, e) {
   return t > 0 ? -2 : -1;
 }
 var Ht = /* @__PURE__ */ new WeakMap();
-function Ii(n) {
+function Li(n) {
   let e = { "*": -1, _: -1 }, t = -1, s = n.length;
   for (let r = 0; r < s; r++) {
     let i = n[r];
@@ -21069,21 +21080,21 @@ function Ii(n) {
   }
   return { maskedSrc: n, lastPossibleEmStrongCloserIndex: e, lastPossibleDelCloserIndex: t };
 }
-function Lb(n, e) {
-  let t = Ii(e), s = Ht.get(n);
+function Mb(n, e) {
+  let t = Li(e), s = Ht.get(n);
   s ? s.push(t) : Ht.set(n, [t]);
 }
-function Mb(n) {
+function Ob(n) {
   let e = Ht.get(n);
   e && (e.pop(), e.length === 0 && Ht.delete(n));
 }
-function Ob(n, e, t) {
+function Nb(n, e, t) {
   let s = Ht.get(n)?.at(-1);
-  return s && s.maskedSrc === e ? s.lastPossibleEmStrongCloserIndex[t] : Ii(e).lastPossibleEmStrongCloserIndex[t];
+  return s && s.maskedSrc === e ? s.lastPossibleEmStrongCloserIndex[t] : Li(e).lastPossibleEmStrongCloserIndex[t];
 }
-function Nb(n, e) {
+function Pb(n, e) {
   let t = Ht.get(n)?.at(-1);
-  return t && t.maskedSrc === e ? t.lastPossibleDelCloserIndex : Ii(e).lastPossibleDelCloserIndex;
+  return t && t.maskedSrc === e ? t.lastPossibleDelCloserIndex : Li(e).lastPossibleDelCloserIndex;
 }
 function Bn(n, e = 0) {
   let t = e, s = "";
@@ -21093,7 +21104,7 @@ function Bn(n, e = 0) {
   } else s += r, t++;
   return s;
 }
-function sl(n, e, t, s, r) {
+function nl(n, e, t, s, r) {
   let i = e.href, o = e.title || null, a = n[1].replace(r.other.outputLinkReplace, "$1"), l = n[0].charAt(0) === "!", c = s.state.inLink, u = s.state.linkEmitted, h = s.state.inRawBlock;
   s.state.inLink = !0, s.state.linkEmitted = !1;
   let d = s.inlineTokens(a), p = s.state.linkEmitted;
@@ -21106,7 +21117,7 @@ function sl(n, e, t, s, r) {
   }
   return { type: l ? "image" : "link", raw: t, href: i, title: o, text: a, tokens: d };
 }
-function Pb(n, e, t) {
+function $b(n, e, t) {
   let s = n.match(t.other.indentCodeCompensation);
   if (s === null) return e;
   let r = s[1];
@@ -21119,7 +21130,7 @@ function Pb(n, e, t) {
   }).join(`
 `);
 }
-function rl(n, e, t, s) {
+function sl(n, e, t, s) {
   if (!e.includes("<")) return !1;
   for (let r = 0; r < e.length; r++) {
     if (e[r] === "\\") {
@@ -21156,14 +21167,14 @@ var Dt = class {
   code(e) {
     let t = this.rules.block.code.exec(e);
     if (t) {
-      let s = this.options.pedantic ? t[0] : tl(t[0]), r = s.replace(this.rules.other.codeRemoveIndent, "");
+      let s = this.options.pedantic ? t[0] : el(t[0]), r = s.replace(this.rules.other.codeRemoveIndent, "");
       return { type: "code", raw: s, codeBlockStyle: "indented", text: r };
     }
   }
   fences(e) {
     let t = this.rules.block.fences.exec(e);
     if (t) {
-      let s = t[0], r = Pb(s, t[3] || "", this.rules);
+      let s = t[0], r = $b(s, t[3] || "", this.rules);
       return { type: "code", raw: s, lang: t[2] ? t[2].trim().replace(this.rules.inline.anyPunctuation, "$1") : t[2], text: r };
     }
   }
@@ -21306,14 +21317,14 @@ ${b}`) ? `    ${I.replace(/^ {0,3}/, "")}` : b;
   html(e) {
     let t = this.rules.block.html.exec(e);
     if (t) {
-      let s = tl(t[0]);
+      let s = el(t[0]);
       return { type: "html", block: !0, raw: s, pre: t[1] === "pre" || t[1] === "script" || t[1] === "style", text: s };
     }
   }
   def(e) {
     let t = this.rules.block.def.exec(e);
     if (t) {
-      if (!this.rules.other.startAngleBracket.test(t[2]) && nl(t[2], "()") !== -1) return;
+      if (!this.rules.other.startAngleBracket.test(t[2]) && tl(t[2], "()") !== -1) return;
       let s = us(t[1]), r = t[2] ? t[2].replace(this.rules.other.hrefBrackets, "$1").replace(this.rules.inline.anyPunctuation, "$1") : "", i = t[3] ? t[3].substring(1, t[3].length - 1).replace(this.rules.inline.anyPunctuation, "$1") : t[3];
       return { type: "def", tag: s, raw: Qe(t[0], `
 `), href: r, title: i };
@@ -21322,13 +21333,13 @@ ${b}`) ? `    ${I.replace(/^ {0,3}/, "")}` : b;
   table(e) {
     let t = this.rules.block.table.exec(e);
     if (!t || !this.rules.other.tableDelimiter.test(t[2])) return;
-    let s = el(t[1]), r = t[2].replace(this.rules.other.tableAlignChars, "").split("|"), i = t[3]?.trim() ? t[3].replace(this.rules.other.tableRowBlankLine, "").split(`
+    let s = Ja(t[1]), r = t[2].replace(this.rules.other.tableAlignChars, "").split("|"), i = t[3]?.trim() ? t[3].replace(this.rules.other.tableRowBlankLine, "").split(`
 `) : [], o = { type: "table", raw: Qe(t[0], `
 `), header: [], align: [], rows: [] };
     if (s.length === r.length) {
       for (let a of r) this.rules.other.tableAlignRight.test(a) ? o.align.push("right") : this.rules.other.tableAlignCenter.test(a) ? o.align.push("center") : this.rules.other.tableAlignLeft.test(a) ? o.align.push("left") : o.align.push(null);
       for (let a = 0; a < s.length; a++) o.header.push({ text: s[a], tokens: this.lexer.inline(s[a]), header: !0, align: o.align[a] });
-      for (let a of i) o.rows.push(el(a, o.header.length).map((l, c) => ({ text: l, tokens: this.lexer.inline(l), header: !1, align: o.align[c] })));
+      for (let a of i) o.rows.push(Ja(a, o.header.length).map((l, c) => ({ text: l, tokens: this.lexer.inline(l), header: !1, align: o.align[c] })));
       return o;
     }
   }
@@ -21365,14 +21376,14 @@ ${b}`) ? `    ${I.replace(/^ {0,3}/, "")}` : b;
     let t = this.rules.inline.link.exec(e);
     if (t) {
       let s = t[0].charAt(0) === "!" ? 2 : 1;
-      if (!this.options.pedantic && rl(e, t[1], s, this.rules)) return;
+      if (!this.options.pedantic && sl(e, t[1], s, this.rules)) return;
       let r = t[2].trim();
       if (!this.options.pedantic && this.rules.other.startAngleBracket.test(r)) {
         if (!this.rules.other.endAngleBracket.test(r)) return;
         let l = Qe(r.slice(0, -1), "\\");
         if ((r.length - l.length) % 2 === 0) return;
       } else {
-        let l = nl(t[2], "()");
+        let l = tl(t[2], "()");
         if (l === -2) return;
         if (l > -1) {
           let c = (t[0].indexOf("!") === 0 ? 5 : 4) + t[1].length + l;
@@ -21386,20 +21397,20 @@ ${b}`) ? `    ${I.replace(/^ {0,3}/, "")}` : b;
         let l = this.rules.other.pedanticHrefTitle.exec(o);
         l && (o = l[1], a = l[3]);
       } else a = t[3] ? t[3].slice(1, -1) : "";
-      return o = o.trim(), this.rules.other.startAngleBracket.test(o) && (this.options.pedantic && !this.rules.other.endAngleBracket.test(r) ? o = o.slice(1) : o = o.slice(1, -1)), sl(t, { href: o && o.replace(this.rules.inline.anyPunctuation, "$1"), title: a && a.replace(this.rules.inline.anyPunctuation, "$1") }, t[0], this.lexer, this.rules);
+      return o = o.trim(), this.rules.other.startAngleBracket.test(o) && (this.options.pedantic && !this.rules.other.endAngleBracket.test(r) ? o = o.slice(1) : o = o.slice(1, -1)), nl(t, { href: o && o.replace(this.rules.inline.anyPunctuation, "$1"), title: a && a.replace(this.rules.inline.anyPunctuation, "$1") }, t[0], this.lexer, this.rules);
     }
   }
   reflink(e, t) {
     let s;
     if ((s = this.rules.inline.reflink.exec(e)) || (s = this.rules.inline.nolink.exec(e))) {
       let r = s[0].charAt(0) === "!" ? 2 : 1;
-      if (!this.options.pedantic && rl(e, s[1], r, this.rules)) return;
+      if (!this.options.pedantic && sl(e, s[1], r, this.rules)) return;
       let i = t[us(s[2] || s[1])];
       if (!i) {
         let o = s[0].charAt(0);
         return { type: "text", raw: o, text: o };
       }
-      return sl(s, i, s[0], this.lexer, this.rules);
+      return nl(s, i, s[0], this.lexer, this.rules);
     }
   }
   emStrong(e, t, s = "") {
@@ -21415,7 +21426,7 @@ ${b}`) ? `    ${I.replace(/^ {0,3}/, "")}` : b;
     if (!d || !s || h) {
       let p = [...r[0]].length - 1, f, m, g = p, b = 0, y = a - l + p, A = !this.options.pedantic && !!c.trim() && (!!d || i === "*" && !u);
       if (i !== "*" && i !== "_") return;
-      let E = i === "*" ? this.rules.inline.emStrongRDelimAst : this.rules.inline.emStrongRDelimUnd, _ = Ob(this, t, i), S = t.length - e.length + p;
+      let E = i === "*" ? this.rules.inline.emStrongRDelimAst : this.rules.inline.emStrongRDelimUnd, _ = Nb(this, t, i), S = t.length - e.length + p;
       if (_ < S) return;
       t = t.slice(-1 * e.length + p);
       let k = _ - S;
@@ -21457,7 +21468,7 @@ ${b}`) ? `    ${I.replace(/^ {0,3}/, "")}` : b;
   del(e, t, s = "") {
     let r = this.rules.inline.delLDelim.exec(e);
     if (r && (!r[1] || !s || this.rules.inline.punctuation.exec(s))) {
-      let i = [...r[0]].length - 1, o, a, l = i, c = this.rules.inline.delRDelim, u = Nb(this, t), h = t.length - e.length + i;
+      let i = [...r[0]].length - 1, o, a, l = i, c = this.rules.inline.delRDelim, u = Pb(this, t), h = t.length - e.length + i;
       if (u < h) return;
       t = t.slice(-1 * e.length + i);
       let d = u - h;
@@ -21500,7 +21511,7 @@ ${b}`) ? `    ${I.replace(/^ {0,3}/, "")}` : b;
     let t = this.rules.inline.text.exec(e);
     if (t) {
       let s = this.lexer.state.inRawBlock;
-      return { type: "text", raw: t[0], text: s ? t[0] : Ib(t[0]), escaped: s };
+      return { type: "text", raw: t[0], text: s ? t[0] : Lb(t[0]), escaped: s };
     }
   }
 }, De = class Kr {
@@ -21656,11 +21667,11 @@ ${b}`) ? `    ${I.replace(/^ {0,3}/, "")}` : b;
   }
   #e(e, t) {
     let s = e.includes("*") || e.includes("_") || e.includes("~") || this.options.hooks?.emStrongMask || this.tokenizer.emStrong !== Dt.prototype.emStrong || this.tokenizer.del !== Dt.prototype.del ? this.#n(e) : e;
-    Lb(this.tokenizer, s);
+    Mb(this.tokenizer, s);
     try {
       return this.#t(e, s, t);
     } finally {
-      Mb(this.tokenizer);
+      Ob(this.tokenizer);
     }
   }
   #t(e, t, s) {
@@ -21860,7 +21871,7 @@ ${e}</tr>
     return `<del>${this.parser.parseInline(e)}</del>`;
   }
   link({ href: e, title: t, text: s, tokens: r, autolink: i }) {
-    let o = i ? Oe(s, !0) : this.parser.parseInline(r), a = Ja(e);
+    let o = i ? Oe(s, !0) : this.parser.parseInline(r), a = Za(e);
     if (a === null) return o;
     e = Oe(a, i);
     let l = '<a href="' + e + '"';
@@ -21868,7 +21879,7 @@ ${e}</tr>
   }
   image({ href: e, title: t, text: s, tokens: r }) {
     r && (s = this.parser.parseInline(r, this.parser.textRenderer));
-    let i = Ja(e);
+    let i = Za(e);
     if (i === null) return Oe(s);
     e = i;
     let o = `<img src="${Oe(e)}" alt="${Oe(s)}"`;
@@ -21877,7 +21888,7 @@ ${e}</tr>
   text(e) {
     return "tokens" in e && e.tokens ? this.parser.parseInline(e.tokens) : "escaped" in e && e.escaped ? e.text : Oe(e.text);
   }
-}, Li = class {
+}, Mi = class {
   parser;
   strong({ text: e, tokens: t }) {
     return t ? this.parser.parseInline(t, this) : e;
@@ -21914,7 +21925,7 @@ ${e}</tr>
   renderer;
   textRenderer;
   constructor(e) {
-    this.options = e || At, this.options.renderer = this.options.renderer || new ds(), this.renderer = this.options.renderer, this.renderer.options = this.options, this.renderer.parser = this, this.textRenderer = new Li(), this.textRenderer.parser = this;
+    this.options = e || At, this.options.renderer = this.options.renderer || new ds(), this.renderer = this.options.renderer, this.renderer.options = this.options, this.renderer.parser = this, this.textRenderer = new Mi(), this.textRenderer.parser = this;
   }
   static parse(e, t) {
     return new Vr(t).parse(e);
@@ -22092,13 +22103,13 @@ function rt(n, e) {
   else n.push(e);
 }
 var Xr = class {
-  defaults = ki();
+  defaults = Si();
   options = this.setOptions;
   parse = this.parseMarkdown(!0);
   parseInline = this.parseMarkdown(!1);
   Parser = Be;
   Renderer = ds;
-  TextRenderer = Li;
+  TextRenderer = Mi;
   Lexer = De;
   Tokenizer = Dt;
   Hooks = sn;
@@ -22256,14 +22267,14 @@ function ne(n, e) {
   return yt.parse(n, e);
 }
 ne.options = ne.setOptions = function(n) {
-  return yt.setOptions(n), ne.defaults = yt.defaults, vu(ne.defaults), ne;
+  return yt.setOptions(n), ne.defaults = yt.defaults, _u(ne.defaults), ne;
 };
-ne.getDefaults = ki;
+ne.getDefaults = Si;
 ne.defaults = At;
-function $b(...n) {
-  return yt.use(...n), ne.defaults = yt.defaults, vu(ne.defaults), ne;
+function Db(...n) {
+  return yt.use(...n), ne.defaults = yt.defaults, _u(ne.defaults), ne;
 }
-ne.use = $b;
+ne.use = Db;
 ne.walkTokens = function(n, e) {
   return yt.walkTokens(n, e);
 };
@@ -22271,7 +22282,7 @@ ne.parseInline = yt.parseInline;
 ne.Parser = Be;
 ne.parser = Be.parse;
 ne.Renderer = ds;
-ne.TextRenderer = Li;
+ne.TextRenderer = Mi;
 ne.Lexer = De;
 ne.lexer = De.lex;
 ne.Tokenizer = Dt;
@@ -22283,20 +22294,20 @@ ne.walkTokens;
 ne.parseInline;
 Be.parse;
 De.lex;
-var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwnPropertyDescriptors, il = Object.getOwnPropertySymbols, Hb = Object.prototype.hasOwnProperty, Fb = Object.prototype.propertyIsEnumerable, ol = (n, e, t) => e in n ? Db(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t, Ru = (n, e) => {
-  for (var t in e || (e = {})) Hb.call(e, t) && ol(n, t, e[t]);
-  if (il) for (var t of il(e)) Fb.call(e, t) && ol(n, t, e[t]);
+var Bb = Object.defineProperty, qb = Object.defineProperties, Hb = Object.getOwnPropertyDescriptors, rl = Object.getOwnPropertySymbols, Fb = Object.prototype.hasOwnProperty, Wb = Object.prototype.propertyIsEnumerable, il = (n, e, t) => e in n ? Bb(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t, Tu = (n, e) => {
+  for (var t in e || (e = {})) Fb.call(e, t) && il(n, t, e[t]);
+  if (rl) for (var t of rl(e)) Wb.call(e, t) && il(n, t, e[t]);
   return n;
-}, Iu = (n, e) => Bb(n, qb(e)), re = { PROSE: 0, FENCE_MARKER: 1, FENCE_INFO: 2, FENCE_BODY: 3, CODE_SPAN: 4, CODE_SPAN_OPEN: 5 }, Wb = /^(`{3,}|~{3,})(.*)$/, Ub = (n) => n !== void 0 && n >= "0" && n <= "9", zb = (n, e) => {
+}, xu = (n, e) => qb(n, Hb(e)), re = { PROSE: 0, FENCE_MARKER: 1, FENCE_INFO: 2, FENCE_BODY: 3, CODE_SPAN: 4, CODE_SPAN_OPEN: 5 }, Ub = /^(`{3,}|~{3,})(.*)$/, zb = (n) => n !== void 0 && n >= "0" && n <= "9", Gb = (n, e) => {
   let t = e;
   if (n[t] === "-" || n[t] === "*" || n[t] === "+") t += 1;
   else {
-    for (; Ub(n[t]) && t - e < 9; ) t += 1;
+    for (; zb(n[t]) && t - e < 9; ) t += 1;
     if (t === e || n[t] !== "." && n[t] !== ")") return -1;
     t += 1;
   }
   return n[t] === " " ? t + 1 : -1;
-}, Gb = (n, e, t) => {
+}, jb = (n, e, t) => {
   let s = 0, r = e, i = !1, o = e;
   for (; ; ) {
     for (; o < t && n[o] === " "; ) o += 1;
@@ -22304,11 +22315,11 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
       s += 1, o += n[o + 1] === " " ? 2 : 1, r = o, i = !1;
       continue;
     }
-    let a = o < t ? zb(n, o) : -1;
+    let a = o < t ? Gb(n, o) : -1;
     if (a === -1) return { contentStart: o, listIndent: i ? o - r : 0, quoteDepth: s };
     o = a, i = !0;
   }
-}, jb = (n, e, t, s) => {
+}, Kb = (n, e, t, s) => {
   let r = e;
   for (let i = 0; i < s; i += 1) {
     for (; r < t && n[r] === " "; ) r += 1;
@@ -22316,10 +22327,10 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     r += 1, n[r] === " " && (r += 1);
   }
   return r;
-}, Kb = (n, e, t, s, r) => {
+}, Vb = (n, e, t, s, r) => {
   let i = e + s;
   n.fill(re.FENCE_MARKER, i, i + r), n.fill(re.FENCE_INFO, i + r, Math.min(t + 1, n.length));
-}, Vb = (n, e, t, s) => {
+}, Xb = (n, e, t, s) => {
   let r = e;
   for (; r < t && n[r] === " "; ) r += 1;
   let i = 0;
@@ -22330,37 +22341,37 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     r += 1;
   }
   return !0;
-}, Xb = (n, e, t, s) => {
-  let r = s > t && n[s - 1] === "\r" ? s - 1 : s, i = Gb(n, t, r), o = n.slice(i.contentStart, r).match(Wb);
+}, Qb = (n, e, t, s) => {
+  let r = s > t && n[s - 1] === "\r" ? s - 1 : s, i = jb(n, t, r), o = n.slice(i.contentStart, r).match(Ub);
   if (!o) return null;
   let [, a, l] = o, c = a[0];
-  return c === "`" && l.includes("`") ? null : (Kb(e, t, s, i.contentStart - t, a.length), { char: c, length: a.length, listIndent: i.listIndent, quoteDepth: i.quoteDepth });
-}, Qb = (n, e, t, s) => {
-  let r = jb(n, e, t, s.quoteDepth);
+  return c === "`" && l.includes("`") ? null : (Vb(e, t, s, i.contentStart - t, a.length), { char: c, length: a.length, listIndent: i.listIndent, quoteDepth: i.quoteDepth });
+}, Yb = (n, e, t, s) => {
+  let r = Kb(n, e, t, s.quoteDepth);
   if (r === -1 || s.listIndent === 0) return r;
   let i = r;
   for (; i < t && n[i] === " "; ) i += 1;
   return i === t || n[i] === "\r" && i + 1 === t || i - r >= s.listIndent ? r : -1;
-}, Yb = (n, e) => {
+}, Zb = (n, e) => {
   let t = n.length, s = null, r = 0;
   for (; r < t; ) {
     let i = n.indexOf(`
 `, r);
     i === -1 && (i = t);
-    let o = s ? Qb(n, r, i, s) : -1;
-    s && o === -1 && (s = null), s ? Vb(n, o, i, s) ? (e.fill(re.FENCE_MARKER, r, i), s = null) : e.fill(re.FENCE_BODY, r, Math.min(i + 1, t)) : s = Xb(n, e, r, i), r = i + 1;
+    let o = s ? Yb(n, r, i, s) : -1;
+    s && o === -1 && (s = null), s ? Xb(n, o, i, s) ? (e.fill(re.FENCE_MARKER, r, i), s = null) : e.fill(re.FENCE_BODY, r, Math.min(i + 1, t)) : s = Qb(n, e, r, i), r = i + 1;
   }
   return s;
-}, al = (n, e) => {
+}, ol = (n, e) => {
   let t = e + 1;
   for (; t < n.length && n[t] === "`"; ) t += 1;
   return t;
-}, Zb = (n, e) => {
+}, Jb = (n, e) => {
   let t = e + 1;
   for (; t < n.length && (n[t] === " " || n[t] === "	" || n[t] === "\r"); ) t += 1;
   return t < n.length && n[t] === `
 `;
-}, Jb = (n, e, t) => {
+}, ev = (n, e, t) => {
   let s = t;
   for (; ; ) {
     let r = n.indexOf("`", s);
@@ -22369,12 +22380,12 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     if (e[r] === re.PROSE && !i) return r;
     s = r + 1;
   }
-}, ev = (n, e) => {
+}, tv = (n, e) => {
   let t = n.length, s = -1, r = 0, i = 0;
   for (; i < t; ) {
     if (s < 0) {
-      if (i = Jb(n, e, i), i === -1) break;
-      let a = al(n, i);
+      if (i = ev(n, e, i), i === -1) break;
+      let a = ol(n, i);
       s = i, r = a - i, i = a;
       continue;
     }
@@ -22383,7 +22394,7 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
       continue;
     }
     if (n[i] === `
-` && Zb(n, i)) {
+` && Jb(n, i)) {
       s = -1, i += 1;
       continue;
     }
@@ -22391,40 +22402,40 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
       i += 1;
       continue;
     }
-    let o = al(n, i);
+    let o = ol(n, i);
     o - i === r && (e.fill(re.CODE_SPAN, s, o), s = -1), i = o;
   }
   return s >= 0 ? (e.fill(re.CODE_SPAN_OPEN, s, t), { start: s, runLength: r }) : null;
-}, tv = (n) => {
-  let e = new Uint8Array(n.length), t = Yb(n, e), s = ev(n, e);
+}, nv = (n) => {
+  let e = new Uint8Array(n.length), t = Zb(n, e), s = tv(n, e);
   return { text: n, regions: e, openFence: t, openSpan: s, mathMask: null, linkUrlMask: null, htmlTagMask: null };
 }, Qr = null, Qn = null, $e = (n) => {
   if (Qn !== null && n === Qr) return Qn;
-  let e = tv(n);
+  let e = nv(n);
   return Qr = n, Qn = e, e;
-}, nv = () => {
+}, sv = () => {
   Qr = null, Qn = null;
-}, sv = (n, e) => e >= n.regions.length ? n.openFence !== null || n.openSpan !== null : e < 0 ? !1 : n.regions[e] !== re.PROSE, rv = (n, e) => n.regions[e] === re.CODE_SPAN, Mi = (n, e) => {
+}, rv = (n, e) => e >= n.regions.length ? n.openFence !== null || n.openSpan !== null : e < 0 ? !1 : n.regions[e] !== re.PROSE, iv = (n, e) => n.regions[e] === re.CODE_SPAN, Oi = (n, e) => {
   let t = $e(n), s = e + e, r = 0;
   for (let i = n.indexOf(s); i !== -1; i = n.indexOf(s, i)) t.regions[i] === re.PROSE ? (r += 1, i += 2) : i += 1;
   return r;
-}, Oi = new Uint8Array(0), iv = (n) => n === "inlineLatex" || n === "blockLatex", ov = (n, e) => e === "[" && n === "none" ? "blockLatex" : e === "]" && n === "blockLatex" ? "none" : e === "(" && n === "none" ? "inlineLatex" : e === ")" && n === "inlineLatex" ? "none" : null, av = (n, e) => e ? n === "blockDollar" ? "none" : "blockDollar" : n === "blockDollar" ? n : n === "inlineDollar" ? "none" : "inlineDollar", lv = (n) => n.includes("$") || n.includes("\\(") || n.includes("\\["), cv = (n, e, t) => {
+}, Ni = new Uint8Array(0), ov = (n) => n === "inlineLatex" || n === "blockLatex", av = (n, e) => e === "[" && n === "none" ? "blockLatex" : e === "]" && n === "blockLatex" ? "none" : e === "(" && n === "none" ? "inlineLatex" : e === ")" && n === "inlineLatex" ? "none" : null, lv = (n, e) => e ? n === "blockDollar" ? "none" : "blockDollar" : n === "blockDollar" ? n : n === "inlineDollar" ? "none" : "inlineDollar", cv = (n) => n.includes("$") || n.includes("\\(") || n.includes("\\["), uv = (n, e, t) => {
   let s = n[e + 1];
   if (n[e] === "\\") {
     if (s === "$") return { context: t, length: 2 };
-    let r = ov(t, s);
+    let r = av(t, s);
     return r === null ? null : { context: r, length: 2 };
   }
-  if (n[e] === "$" && !iv(t)) {
+  if (n[e] === "$" && !ov(t)) {
     let r = s === "$";
-    return { context: av(t, r), length: r ? 2 : 1 };
+    return { context: lv(t, r), length: r ? 2 : 1 };
   }
   return null;
-}, uv = (n) => {
+}, dv = (n) => {
   let { text: e, regions: t } = n, s = e.length, r = new Uint8Array(s), i = "none", o = 0;
   for (; o < s; ) {
     r[o] = i === "none" ? 0 : 1;
-    let a = t[o] === re.PROSE ? cv(e, o, i) : null;
+    let a = t[o] === re.PROSE ? uv(e, o, i) : null;
     if (a === null) {
       o += 1;
       continue;
@@ -22432,20 +22443,20 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     i = a.context, a.length === 2 && (r[o + 1] = i === "none" ? 0 : 1), o += a.length;
   }
   return r;
-}, Ut = (n, e) => e < 0 || e >= n.text.length ? !1 : (n.mathMask === null && (n.mathMask = lv(n.text) ? uv(n) : Oi), n.mathMask[e] === 1), dv = (n, e, t, s) => {
+}, Ut = (n, e) => e < 0 || e >= n.text.length ? !1 : (n.mathMask === null && (n.mathMask = cv(n.text) ? dv(n) : Ni), n.mathMask[e] === 1), hv = (n, e, t, s) => {
   let { text: r, regions: i } = n, o = new Uint8Array(t - e), a = 0;
   for (let c = t - 1; c >= e; c -= 1) r[c] === ")" && i[c] === re.PROSE && (a = 1), o[c - e] = a;
   let l = !1;
   for (let c = e; c < t; c += 1) l && o[c - e] === 1 && (s[c] = 1), i[c] === re.PROSE && (r[c] === ")" ? l = !1 : r[c] === "(" && (l = c > 0 && r[c - 1] === "]"));
-}, hv = (n) => {
+}, pv = (n) => {
   let { text: e } = n, t = e.length, s = new Uint8Array(t), r = 0;
   for (; r < t; ) {
     let i = e.indexOf(`
 `, r);
-    i === -1 && (i = t), dv(n, r, i, s), r = i + 1;
+    i === -1 && (i = t), hv(n, r, i, s), r = i + 1;
   }
   return s;
-}, Ni = (n, e) => e < 0 || e >= n.text.length ? !1 : (n.linkUrlMask === null && (n.linkUrlMask = n.text.includes("](") ? hv(n) : Oi), n.linkUrlMask[e] === 1), pv = (n) => {
+}, Pi = (n, e) => e < 0 || e >= n.text.length ? !1 : (n.linkUrlMask === null && (n.linkUrlMask = n.text.includes("](") ? pv(n) : Ni), n.linkUrlMask[e] === 1), fv = (n) => {
   let { text: e, regions: t } = n, s = e.length, r = new Uint8Array(s), i = !1;
   for (let o = 0; o < s; o += 1) {
     if (e[o] === `
@@ -22462,24 +22473,24 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     }
   }
   return r;
-}, Lu = (n, e) => e < 0 || e >= n.text.length ? !1 : (n.htmlTagMask === null && (n.htmlTagMask = n.text.includes("<") ? pv(n) : Oi), n.htmlTagMask[e] === 1), Re = (n, e) => sv($e(n), e), ot = (n, e) => rv($e(n), e), fv = /^(\s*(?:[-*+]|\d+[.)]) +)>(=?\s*[$]?\d)/gm, gv = (n) => !n || typeof n != "string" || !n.includes(">") ? n : n.replace(fv, (e, t, s, r) => Re(n, r) ? e : `${t}\\>${s}`), at = (n, { delimiter: e, markerLength: t, regex: s }) => {
+}, Ru = (n, e) => e < 0 || e >= n.text.length ? !1 : (n.htmlTagMask === null && (n.htmlTagMask = n.text.includes("<") ? fv(n) : Ni), n.htmlTagMask[e] === 1), Re = (n, e) => rv($e(n), e), ot = (n, e) => iv($e(n), e), gv = /^(\s*(?:[-*+]|\d+[.)]) +)>(=?\s*[$]?\d)/gm, mv = (n) => !n || typeof n != "string" || !n.includes(">") ? n : n.replace(gv, (e, t, s, r) => Re(n, r) ? e : `${t}\\>${s}`), at = (n, { delimiter: e, markerLength: t, regex: s }) => {
   let r = n.lastIndexOf(e, n.length - 2), i = r === -1 ? n.length - 1 : r;
   return n.slice(Math.max(0, i - t + 1)).match(s);
-}, mv = { delimiter: "*", markerLength: 2, regex: /(\*\*)([^*]*\*?)$/ }, _v = { delimiter: "_", markerLength: 2, regex: /(__)([^_]*?)$/ }, bv = { delimiter: "*", markerLength: 3, regex: /(\*\*\*)([^*]*?)$/ }, vv = { delimiter: "*", markerLength: 1, regex: /(\*)([^*]*?)$/ }, yv = { delimiter: "_", markerLength: 1, regex: /(_)([^_]*?)$/ }, wv = { delimiter: "~", markerLength: 2, regex: /(~~)([^~]*?)$/ }, Av = { delimiter: "_", markerLength: 2, regex: /(__)([^_]+)_$/ }, kv = { delimiter: "~", markerLength: 2, regex: /(~~)([^~]+)~$/ }, kt = /^[\s_~*`]*$/, Mu = /^[\s]*[-*+][\s]+$/, Sv = /[\p{L}\p{N}_]/u, Cv = /^\*{4,}$/, He = (n) => {
+}, _v = { delimiter: "*", markerLength: 2, regex: /(\*\*)([^*]*\*?)$/ }, bv = { delimiter: "_", markerLength: 2, regex: /(__)([^_]*?)$/ }, vv = { delimiter: "*", markerLength: 3, regex: /(\*\*\*)([^*]*?)$/ }, yv = { delimiter: "*", markerLength: 1, regex: /(\*)([^*]*?)$/ }, wv = { delimiter: "_", markerLength: 1, regex: /(_)([^_]*?)$/ }, Av = { delimiter: "~", markerLength: 2, regex: /(~~)([^~]*?)$/ }, kv = { delimiter: "_", markerLength: 2, regex: /(__)([^_]+)_$/ }, Sv = { delimiter: "~", markerLength: 2, regex: /(~~)([^~]+)~$/ }, kt = /^[\s_~*`]*$/, Iu = /^[\s]*[-*+][\s]+$/, Cv = /[\p{L}\p{N}_]/u, Ev = /^\*{4,}$/, He = (n) => {
   if (!n) return !1;
   let e = n.charCodeAt(0);
-  return e >= 48 && e <= 57 || e >= 65 && e <= 90 || e >= 97 && e <= 122 || e === 95 ? !0 : Sv.test(n);
-}, Ev = (n, e) => {
+  return e >= 48 && e <= 57 || e >= 65 && e <= 90 || e >= 97 && e <= 122 || e === 95 ? !0 : Cv.test(n);
+}, Tv = (n, e) => {
   let t = 1;
   for (let s = e - 1; s >= 0; s -= 1) if (n[s] === "]") t += 1;
   else if (n[s] === "[" && (t -= 1, t === 0)) return s;
   return -1;
-}, Ou = (n, e) => {
+}, Lu = (n, e) => {
   let t = 1;
   for (let s = e + 1; s < n.length; s += 1) if (n[s] === "[") t += 1;
   else if (n[s] === "]" && (t -= 1, t === 0)) return s;
   return -1;
-}, Tv = (n, e) => Ut($e(n), e), Cs = (n, e, t) => {
+}, xv = (n, e) => Ut($e(n), e), Cs = (n, e, t) => {
   let s = 0;
   for (let l = e - 1; l >= 0; l -= 1) if (n[l] === `
 `) {
@@ -22499,13 +22510,13 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     break;
   }
   return o >= 3 && !a;
-}, xv = (n, e, t, s) => t === "\\" || Ut(n, e) ? !0 : t !== "*" && s === "*" ? (e < n.text.length - 2 ? n.text[e + 2] : "") !== "*" : t === "*" || (!t || t === " " || t === "	" || t === `
+}, Rv = (n, e, t, s) => t === "\\" || Ut(n, e) ? !0 : t !== "*" && s === "*" ? (e < n.text.length - 2 ? n.text[e + 2] : "") !== "*" : t === "*" || (!t || t === " " || t === "	" || t === `
 `) && (!s || s === " " || s === "	" || s === `
 `), hs = (n) => n === " " || n === "	" || n === `
-`, Rv = (n, e) => !!(n && e && He(n) && He(e)), Iv = (n, e, t, s) => {
-  let r = Rv(n, e), i = !!e && !hs(e), o = !!n && !hs(n);
+`, Iv = (n, e) => !!(n && e && He(n) && He(e)), Lv = (n, e, t, s) => {
+  let r = Iv(n, e), i = !!e && !hs(e), o = !!n && !hs(n);
   return r && t % 2 === 0 && !s ? { count: !1 } : o && t % 2 === 1 || i ? { count: !0, inWordAsteriskChain: r } : { count: !1 };
-}, Nu = (n) => {
+}, Mu = (n) => {
   let e = $e(n), t = 0, s = !1, r = n.length;
   for (let i = 0; i < r; i += 1) {
     if (n[i] !== "*" || e.regions[i] !== re.PROSE) {
@@ -22513,40 +22524,40 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
       continue;
     }
     let o = i > 0 ? n[i - 1] : "", a = i < r - 1 ? n[i + 1] : "";
-    if (xv(e, i, o, a)) continue;
-    let l = Iv(o, a, t, s);
+    if (Rv(e, i, o, a)) continue;
+    let l = Lv(o, a, t, s);
     l.count && (t += 1, s = l.inWordAsteriskChain);
   }
   return t;
-}, Lv = (n, e, t, s) => !!(t === "\\" || Ut(n, e) || Ni(n, e) || Lu(n, e) || t === "_" || s === "_" || t && s && He(t) && He(s)), Mv = (n) => {
+}, Mv = (n, e, t, s) => !!(t === "\\" || Ut(n, e) || Pi(n, e) || Ru(n, e) || t === "_" || s === "_" || t && s && He(t) && He(s)), Ov = (n) => {
   let e = $e(n), t = 0, s = n.length;
   for (let r = 0; r < s; r += 1) {
     if (n[r] !== "_" || e.regions[r] !== re.PROSE) continue;
     let i = r > 0 ? n[r - 1] : "", o = r < s - 1 ? n[r + 1] : "";
-    Lv(e, r, i, o) || (t += 1);
+    Mv(e, r, i, o) || (t += 1);
   }
   return t;
-}, Ov = (n) => {
+}, Nv = (n) => {
   let e = $e(n), t = 0, s = 0;
   for (let r = 0; r < n.length; r += 1) n[r] === "*" && e.regions[r] === re.PROSE ? s += 1 : (s >= 3 && (t += Math.floor(s / 3)), s = 0);
   return s >= 3 && (t += Math.floor(s / 3)), t;
-}, Pi = (n) => Mi(n, "*"), ll = (n) => n === "" || n === " " || n === "	" || n === `
-`, Nv = (n, e, t, s, r) => {
-  if (!(ll(t) && ll(s))) return !1;
+}, $i = (n) => Oi(n, "*"), al = (n) => n === "" || n === " " || n === "	" || n === `
+`, Pv = (n, e, t, s, r) => {
+  if (!(al(t) && al(s))) return !1;
   if (e > r.lineEnd) {
     let i = n.indexOf(`
 `, e);
     r.lineEnd = i === -1 ? n.length : i, r.result = Cs(n, e, "_");
   }
   return r.result;
-}, Pv = (n, e, t, s) => {
+}, $v = (n, e, t, s) => {
   let r = n.text, i = e, o = !1;
   i > 0 && r[i - 1] === "\\" && (i += 1, o = !0);
   let a = t - i;
   if (a < 2) return !1;
   let l = i > 0 ? r[i - 1] : "", c = o ? "\\" : l, u = t < r.length ? r[t] : "";
-  return He(c) && He(u) || Nv(r, i, c, u, s) || Ut(n, i) || Ni(n, i) || Lu(n, i) ? !1 : Math.floor(a / 2) % 2 === 1;
-}, cl = (n) => {
+  return He(c) && He(u) || Pv(r, i, c, u, s) || Ut(n, i) || Pi(n, i) || Ru(n, i) ? !1 : Math.floor(a / 2) % 2 === 1;
+}, ll = (n) => {
   let e = $e(n), t = n.length, s = { lineEnd: -1, result: !1 }, r = !1, i = 0;
   for (; i < t; ) {
     if (n[i] !== "_" || e.regions[i] !== re.PROSE) {
@@ -22555,64 +22566,64 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     }
     let o = i, a = i + 1;
     for (; a < t && n[a] === "_" && e.regions[a] === re.PROSE; ) a += 1;
-    i = a, Pv(e, o, a, s) && (r = !r);
+    i = a, $v(e, o, a, s) && (r = !r);
   }
   return r;
-}, $v = (n, e, t) => {
+}, Dv = (n, e, t) => {
   if (!e || kt.test(e)) return !0;
   let s = n.substring(0, t).lastIndexOf(`
 `), r = s === -1 ? 0 : s + 1, i = n.substring(r, t);
-  return Mu.test(i) && e.includes(`
+  return Iu.test(i) && e.includes(`
 `) ? !0 : Cs(n, t, "*");
-}, Dv = (n) => {
-  let e = at(n, mv);
+}, Bv = (n) => {
+  let e = at(n, _v);
   if (!e) return n;
   let t = e[2], s = n.lastIndexOf(e[1]);
-  return Re(n, s) || ot(n, s) || $v(n, t, s) ? n : Pi(n) % 2 === 1 ? t.endsWith("*") ? `${n}*` : `${n}**` : n;
-}, Bv = (n, e, t) => {
+  return Re(n, s) || ot(n, s) || Dv(n, t, s) ? n : $i(n) % 2 === 1 ? t.endsWith("*") ? `${n}*` : `${n}**` : n;
+}, qv = (n, e, t) => {
   if (!e || kt.test(e)) return !0;
   let s = n.substring(0, t).lastIndexOf(`
 `), r = s === -1 ? 0 : s + 1, i = n.substring(r, t);
-  return Mu.test(i) && e.includes(`
+  return Iu.test(i) && e.includes(`
 `) ? !0 : Cs(n, t, "_");
-}, qv = (n) => {
-  let e = at(n, _v);
+}, Hv = (n) => {
+  let e = at(n, bv);
   if (!e) {
-    let r = at(n, Av);
+    let r = at(n, kv);
     if (r) {
       let i = n.lastIndexOf(r[1]);
-      if (!(Re(n, i) || ot(n, i)) && cl(n)) return `${n}_`;
+      if (!(Re(n, i) || ot(n, i)) && ll(n)) return `${n}_`;
     }
     return n;
   }
   let t = e[2], s = n.lastIndexOf(e[1]);
-  return Re(n, s) || ot(n, s) || Bv(n, t, s) ? n : cl(n) ? `${n}__` : n;
-}, Hv = (n, e) => {
+  return Re(n, s) || ot(n, s) || qv(n, t, s) ? n : ll(n) ? `${n}__` : n;
+}, Fv = (n, e) => {
   let { text: t } = n;
   return t[e] === "*" && n.regions[e] === re.PROSE && t[e - 1] !== "*" && t[e + 1] !== "*" && t[e - 1] !== "\\" && !Ut(n, e);
-}, Fv = (n) => {
+}, Wv = (n) => {
   let e = $e(n);
   for (let t = n.indexOf("*"); t !== -1; t = n.indexOf("*", t + 1)) {
-    if (!Hv(e, t)) continue;
+    if (!Fv(e, t)) continue;
     let s = t > 0 ? n[t - 1] : "", r = t < n.length - 1 ? n[t + 1] : "", i = !s || hs(s), o = !r || hs(r);
     if (!(i && o) && !(s && r && He(s) && He(r)) && !o) return t;
   }
   return -1;
-}, Wv = (n) => {
-  if (!at(n, vv)) return n;
-  let e = Fv(n);
+}, Uv = (n) => {
+  if (!at(n, yv)) return n;
+  let e = Wv(n);
   if (e === -1 || Re(n, e) || ot(n, e)) return n;
   let t = n.substring(e + 1);
-  return !t || kt.test(t) ? n : Nu(n) % 2 === 1 ? `${n}*` : n;
-}, Pu = (n) => {
+  return !t || kt.test(t) ? n : Mu(n) % 2 === 1 ? `${n}*` : n;
+}, Ou = (n) => {
   let e = $e(n);
-  for (let t = n.indexOf("_"); t !== -1; t = n.indexOf("_", t + 1)) if (e.regions[t] === re.PROSE && n[t - 1] !== "_" && n[t + 1] !== "_" && n[t - 1] !== "\\" && !Ut(e, t) && !Ni(e, t)) {
+  for (let t = n.indexOf("_"); t !== -1; t = n.indexOf("_", t + 1)) if (e.regions[t] === re.PROSE && n[t - 1] !== "_" && n[t + 1] !== "_" && n[t - 1] !== "\\" && !Ut(e, t) && !Pi(e, t)) {
     let s = t > 0 ? n[t - 1] : "", r = t < n.length - 1 ? n[t + 1] : "";
     if (s && r && He(s) && He(r)) continue;
     return t;
   }
   return -1;
-}, Uv = (n) => {
+}, zv = (n) => {
   let e = n.length;
   for (; e > 0 && n[e - 1] === `
 `; ) e -= 1;
@@ -22621,42 +22632,42 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     return `${t}_${s}`;
   }
   return `${n}_`;
-}, zv = (n) => {
+}, Gv = (n) => {
   if (!n.endsWith("**")) return null;
   let e = n.slice(0, -2);
-  if (Pi(e) % 2 !== 1) return null;
-  let t = e.indexOf("**"), s = Pu(e);
+  if ($i(e) % 2 !== 1) return null;
+  let t = e.indexOf("**"), s = Ou(e);
   return t !== -1 && s !== -1 && t < s ? `${e}_**` : null;
-}, Gv = (n) => {
-  if (!at(n, yv)) return n;
-  let e = Pu(n);
+}, jv = (n) => {
+  if (!at(n, wv)) return n;
+  let e = Ou(n);
   if (e === -1) return n;
   let t = n.substring(e + 1);
   if (!t || kt.test(t) || Re(n, e) || ot(n, e)) return n;
-  if (Mv(n) % 2 === 1) {
-    let s = zv(n);
-    return s !== null ? s : Uv(n);
+  if (Ov(n) % 2 === 1) {
+    let s = Gv(n);
+    return s !== null ? s : zv(n);
   }
   return n;
-}, jv = (n) => {
-  let e = Pi(n), t = Nu(n);
+}, Kv = (n) => {
+  let e = $i(n), t = Mu(n);
   return e % 2 === 0 && t % 2 === 0;
-}, Kv = (n, e, t) => !e || kt.test(e) || Re(n, t) || ot(n, t) ? !0 : Cs(n, t, "*"), Vv = (n) => {
-  if (Cv.test(n)) return n;
-  let e = at(n, bv);
+}, Vv = (n, e, t) => !e || kt.test(e) || Re(n, t) || ot(n, t) ? !0 : Cs(n, t, "*"), Xv = (n) => {
+  if (Ev.test(n)) return n;
+  let e = at(n, vv);
   if (!e) return n;
   let t = e[2], s = n.lastIndexOf(e[1]);
-  return Kv(n, t, s) ? n : Ov(n) % 2 === 1 ? jv(n) ? n : `${n}***` : n;
-}, Xv = /<[a-zA-Z/][^>]*$/, Qv = /[a-zA-Z/]/, Yv = (n) => n.includes("$") || n.includes("\\(") || n.includes("\\["), Zv = (n, e) => {
+  return Vv(n, t, s) ? n : Nv(n) % 2 === 1 ? Kv(n) ? n : `${n}***` : n;
+}, Qv = /<[a-zA-Z/][^>]*$/, Yv = /[a-zA-Z/]/, Zv = (n) => n.includes("$") || n.includes("\\(") || n.includes("\\["), Jv = (n, e) => {
   let t = n[e + 1];
-  return t !== void 0 && Qv.test(t);
-}, Jv = (n) => {
-  let e = n.match(Xv);
-  if (!e || e.index === void 0) return n;
-  let t = Yv(n);
-  for (let s = e.index; s < n.length; s += 1) if (!(n[s] !== "<" || !Zv(n, s)) && !Re(n, s) && !(t && Tv(n, s))) return n.substring(0, s).trimEnd();
-  return n;
+  return t !== void 0 && Yv.test(t);
 }, ey = (n) => {
+  let e = n.match(Qv);
+  if (!e || e.index === void 0) return n;
+  let t = Zv(n);
+  for (let s = e.index; s < n.length; s += 1) if (!(n[s] !== "<" || !Jv(n, s)) && !Re(n, s) && !(t && xv(n, s))) return n.substring(0, s).trimEnd();
+  return n;
+}, ty = (n) => {
   let e = $e(n);
   if (e.openFence) return n;
   let t = e.openSpan;
@@ -22666,7 +22677,7 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
   let r = 0, i = n.length - 1;
   for (; i >= 0 && n[i] === "`"; ) r += 1, i -= 1;
   return r >= t.runLength ? n : n + "`".repeat(t.runLength - r);
-}, ty = (n) => Mi(n, "$"), ny = (n) => {
+}, ny = (n) => Oi(n, "$"), sy = (n) => {
   let e = $e(n), t = 0;
   for (let s = 0; s < n.length; s += 1) {
     if (n[s] === "\\") {
@@ -22676,23 +22687,23 @@ var Db = Object.defineProperty, Bb = Object.defineProperties, qb = Object.getOwn
     e.regions[s] === re.PROSE && n[s] === "$" && (s + 1 < n.length && n[s + 1] === "$" ? s += 1 : t += 1);
   }
   return t;
-}, sy = (n) => {
+}, ry = (n) => {
   if (n.endsWith("$") && !n.endsWith("$$")) return `${n}$`;
   let e = n.indexOf("$$");
   return e !== -1 && n.indexOf(`
 `, e) !== -1 && !n.endsWith(`
 `) ? `${n}
 $$` : `${n}$$`;
-}, ry = (n) => ty(n) % 2 === 0 ? n : sy(n), iy = (n) => ny(n) % 2 === 1 ? `${n}$` : n, ps = "streamdown:incomplete-image", oy = (n, e, t) => {
+}, iy = (n) => ny(n) % 2 === 0 ? n : ry(n), oy = (n) => sy(n) % 2 === 1 ? `${n}$` : n, ps = "streamdown:incomplete-image", ay = (n, e, t) => {
   if (n.substring(e + 2).includes(")")) return null;
-  let s = Ev(n, e);
+  let s = Tv(n, e);
   if (s === -1 || Re(n, s)) return null;
   let r = s > 0 && n[s - 1] === "!", i = r ? s - 1 : s, o = n.substring(0, i), a = n.substring(s + 1, e);
   return r ? `${o}![${a}](${ps})` : t === "text-only" ? `${o}${a}` : `${o}[${a}](streamdown:incomplete-link)`;
-}, ul = (n, e) => {
+}, cl = (n, e) => {
   for (let t = 0; t < e; t++) if (n[t] === "[" && !Re(n, t)) {
     if (t > 0 && n[t - 1] === "!") continue;
-    let s = Ou(n, t);
+    let s = Lu(n, t);
     if (s === -1) return t;
     if (s + 1 < n.length && n[s + 1] === "(") {
       let r = n.indexOf(")", s + 2);
@@ -22700,7 +22711,7 @@ $$` : `${n}$$`;
     }
   }
   return e;
-}, ay = (n, e, t) => {
+}, ly = (n, e, t) => {
   let s = e > 0 && n[e - 1] === "!", r = s ? e - 1 : e;
   if (!n.substring(e + 1).includes("]")) {
     let i = n.substring(0, r);
@@ -22709,90 +22720,90 @@ $$` : `${n}$$`;
       return `${i}![${o}](${ps})`;
     }
     if (t === "text-only") {
-      let o = ul(n, e);
+      let o = cl(n, e);
       return n.substring(0, o) + n.substring(o + 1);
     }
     return `${n}](streamdown:incomplete-link)`;
   }
-  if (Ou(n, e) === -1) {
+  if (Lu(n, e) === -1) {
     let i = n.substring(0, r);
     if (s) {
       let o = n.substring(e + 1);
       return `${i}![${o}](${ps})`;
     }
     if (t === "text-only") {
-      let o = ul(n, e);
+      let o = cl(n, e);
       return n.substring(0, o) + n.substring(o + 1);
     }
     return `${n}](streamdown:incomplete-link)`;
   }
   return null;
-}, ly = (n, e) => {
+}, cy = (n, e) => {
   let t = n.lastIndexOf("](");
   if (t !== -1 && !Re(n, t)) {
-    let s = oy(n, t, e);
+    let s = ay(n, t, e);
     if (s !== null) return s;
   }
   for (let s = n.lastIndexOf("["); s !== -1; s = s === 0 ? -1 : n.lastIndexOf("[", s - 1)) if (!Re(n, s)) {
-    let r = ay(n, s, e);
+    let r = ly(n, s, e);
     if (r !== null) return r;
   }
   return n;
-}, cy = 32, $u = (n, e = "protocol") => {
+}, uy = 32, Nu = (n, e = "protocol") => {
   let t = n;
-  for (let s = 0; s < cy; s += 1) {
-    let r = ly(t, e);
+  for (let s = 0; s < uy; s += 1) {
+    let r = cy(t, e);
     if (r.length >= t.length) return r;
     t = r;
   }
   return t;
-}, uy = /^-{1,2}$/, dy = /^[\s]*-{1,2}[\s]+$/, hy = /^={1,2}$/, py = /^[\s]*={1,2}[\s]+$/, fy = (n) => {
+}, dy = /^-{1,2}$/, hy = /^[\s]*-{1,2}[\s]+$/, py = /^={1,2}$/, fy = /^[\s]*={1,2}[\s]+$/, gy = (n) => {
   if (!n || typeof n != "string") return n;
   let e = n.lastIndexOf(`
 `);
   if (e === -1) return n;
   let t = n.substring(e + 1), s = n.substring(0, e), r = t.trim();
-  if (uy.test(r) && !t.match(dy)) {
+  if (dy.test(r) && !t.match(hy)) {
     let i = s.split(`
 `).at(-1);
     if (i && i.trim().length > 0) return `${n}​`;
   }
-  if (hy.test(r) && !t.match(py)) {
+  if (py.test(r) && !t.match(fy)) {
     let i = s.split(`
 `).at(-1);
     if (i && i.trim().length > 0) return `${n}​`;
   }
   return n;
-}, gy = /([\p{L}\p{N}_])~(?!~)(?=[\p{L}\p{N}_])/gu, my = (n) => !n || typeof n != "string" || !n.includes("~") ? n : n.replace(gy, (e, t, s) => {
+}, my = /([\p{L}\p{N}_])~(?!~)(?=[\p{L}\p{N}_])/gu, _y = (n) => !n || typeof n != "string" || !n.includes("~") ? n : n.replace(my, (e, t, s) => {
   let r = s + t.length;
   return Re(n, r) ? e : `${t}\\~`;
-}), dl = (n) => Mi(n, "~"), _y = (n) => {
-  let e = at(n, wv);
+}), ul = (n) => Oi(n, "~"), by = (n) => {
+  let e = at(n, Av);
   if (e) {
     let t = e[2];
     if (!t || kt.test(t)) return n;
     let s = n.lastIndexOf(e[1]);
     if (Re(n, s) || ot(n, s)) return n;
-    if (dl(n) % 2 === 1) return `${n}~~`;
+    if (ul(n) % 2 === 1) return `${n}~~`;
   } else {
-    let t = at(n, kv);
+    let t = at(n, Sv);
     if (t) {
       let s = n.lastIndexOf(t[0].slice(0, 2));
       if (Re(n, s) || ot(n, s)) return n;
-      if (dl(n) % 2 === 1) return `${n}~`;
+      if (ul(n) % 2 === 1) return `${n}~`;
     }
   }
   return n;
-}, cr = (n) => n !== !1, by = (n) => n === !0, Te = { SINGLE_TILDE: 0, COMPARISON_OPERATORS: 5, HTML_TAGS: 10, SETEXT_HEADINGS: 15, LINKS: 20, BOLD_ITALIC: 30, BOLD: 35, ITALIC_DOUBLE_UNDERSCORE: 40, ITALIC_SINGLE_ASTERISK: 41, ITALIC_SINGLE_UNDERSCORE: 42, INLINE_CODE: 50, STRIKETHROUGH: 60, KATEX: 70, INLINE_KATEX: 75, DEFAULT: 100 }, vy = [{ handler: { name: "singleTilde", handle: my, priority: Te.SINGLE_TILDE }, optionKey: "singleTilde" }, { handler: { name: "comparisonOperators", handle: gv, priority: Te.COMPARISON_OPERATORS }, optionKey: "comparisonOperators" }, { handler: { name: "htmlTags", handle: Jv, priority: Te.HTML_TAGS }, optionKey: "htmlTags" }, { handler: { name: "setextHeadings", handle: fy, priority: Te.SETEXT_HEADINGS }, optionKey: "setextHeadings" }, { handler: { name: "links", handle: $u, priority: Te.LINKS }, optionKey: "links", earlyReturn: (n) => n.endsWith("](streamdown:incomplete-link)") || n.endsWith(`](${ps})`) }, { handler: { name: "boldItalic", handle: Vv, priority: Te.BOLD_ITALIC }, optionKey: "boldItalic" }, { handler: { name: "bold", handle: Dv, priority: Te.BOLD }, optionKey: "bold" }, { handler: { name: "italicDoubleUnderscore", handle: qv, priority: Te.ITALIC_DOUBLE_UNDERSCORE }, optionKey: "italic" }, { handler: { name: "italicSingleAsterisk", handle: Wv, priority: Te.ITALIC_SINGLE_ASTERISK }, optionKey: "italic" }, { handler: { name: "italicSingleUnderscore", handle: Gv, priority: Te.ITALIC_SINGLE_UNDERSCORE }, optionKey: "italic" }, { handler: { name: "inlineCode", handle: ey, priority: Te.INLINE_CODE }, optionKey: "inlineCode" }, { handler: { name: "strikethrough", handle: _y, priority: Te.STRIKETHROUGH }, optionKey: "strikethrough" }, { handler: { name: "katex", handle: ry, priority: Te.KATEX }, optionKey: "katex" }, { handler: { name: "inlineKatex", handle: iy, priority: Te.INLINE_KATEX }, optionKey: "inlineKatex" }], yy = (n) => {
+}, cr = (n) => n !== !1, vy = (n) => n === !0, Te = { SINGLE_TILDE: 0, COMPARISON_OPERATORS: 5, HTML_TAGS: 10, SETEXT_HEADINGS: 15, LINKS: 20, BOLD_ITALIC: 30, BOLD: 35, ITALIC_DOUBLE_UNDERSCORE: 40, ITALIC_SINGLE_ASTERISK: 41, ITALIC_SINGLE_UNDERSCORE: 42, INLINE_CODE: 50, STRIKETHROUGH: 60, KATEX: 70, INLINE_KATEX: 75, DEFAULT: 100 }, yy = [{ handler: { name: "singleTilde", handle: _y, priority: Te.SINGLE_TILDE }, optionKey: "singleTilde" }, { handler: { name: "comparisonOperators", handle: mv, priority: Te.COMPARISON_OPERATORS }, optionKey: "comparisonOperators" }, { handler: { name: "htmlTags", handle: ey, priority: Te.HTML_TAGS }, optionKey: "htmlTags" }, { handler: { name: "setextHeadings", handle: gy, priority: Te.SETEXT_HEADINGS }, optionKey: "setextHeadings" }, { handler: { name: "links", handle: Nu, priority: Te.LINKS }, optionKey: "links", earlyReturn: (n) => n.endsWith("](streamdown:incomplete-link)") || n.endsWith(`](${ps})`) }, { handler: { name: "boldItalic", handle: Xv, priority: Te.BOLD_ITALIC }, optionKey: "boldItalic" }, { handler: { name: "bold", handle: Bv, priority: Te.BOLD }, optionKey: "bold" }, { handler: { name: "italicDoubleUnderscore", handle: Hv, priority: Te.ITALIC_DOUBLE_UNDERSCORE }, optionKey: "italic" }, { handler: { name: "italicSingleAsterisk", handle: Uv, priority: Te.ITALIC_SINGLE_ASTERISK }, optionKey: "italic" }, { handler: { name: "italicSingleUnderscore", handle: jv, priority: Te.ITALIC_SINGLE_UNDERSCORE }, optionKey: "italic" }, { handler: { name: "inlineCode", handle: ty, priority: Te.INLINE_CODE }, optionKey: "inlineCode" }, { handler: { name: "strikethrough", handle: by, priority: Te.STRIKETHROUGH }, optionKey: "strikethrough" }, { handler: { name: "katex", handle: iy, priority: Te.KATEX }, optionKey: "katex" }, { handler: { name: "inlineKatex", handle: oy, priority: Te.INLINE_KATEX }, optionKey: "inlineKatex" }], wy = (n) => {
   var e;
   let t = (e = n?.linkMode) != null ? e : "protocol";
-  return vy.filter(({ handler: s, optionKey: r }) => s.name === "links" ? cr(n?.links) || cr(n?.images) : s.name === "inlineKatex" ? by(n?.inlineKatex) : cr(n?.[r])).map(({ handler: s, earlyReturn: r }) => s.name === "links" ? { handler: Iu(Ru({}, s), { handle: (i) => $u(i, t) }), earlyReturn: t === "protocol" ? r : void 0 } : { handler: s, earlyReturn: r });
-}, wy = (n, e) => {
+  return yy.filter(({ handler: s, optionKey: r }) => s.name === "links" ? cr(n?.links) || cr(n?.images) : s.name === "inlineKatex" ? vy(n?.inlineKatex) : cr(n?.[r])).map(({ handler: s, earlyReturn: r }) => s.name === "links" ? { handler: xu(Tu({}, s), { handle: (i) => Nu(i, t) }), earlyReturn: t === "protocol" ? r : void 0 } : { handler: s, earlyReturn: r });
+}, Ay = (n, e) => {
   var t;
   if (!n || typeof n != "string") return n;
-  let s = n.endsWith(" ") && !n.endsWith("  ") ? n.slice(0, -1) : n, r = yy(e), i = ((t = e?.handlers) != null ? t : []).map((a) => {
+  let s = n.endsWith(" ") && !n.endsWith("  ") ? n.slice(0, -1) : n, r = wy(e), i = ((t = e?.handlers) != null ? t : []).map((a) => {
     var l;
-    return { handler: Iu(Ru({}, a), { priority: (l = a.priority) != null ? l : Te.DEFAULT }), earlyReturn: void 0 };
+    return { handler: xu(Tu({}, a), { priority: (l = a.priority) != null ? l : Te.DEFAULT }), earlyReturn: void 0 };
   }), o = [...r, ...i].sort((a, l) => {
     var c, u;
     return ((c = a.handler.priority) != null ? c : 0) - ((u = l.handler.priority) != null ? u : 0);
@@ -22801,11 +22812,11 @@ $$` : `${n}$$`;
     for (let { handler: a, earlyReturn: l } of o) if (s = a.handle(s), l != null && l(s)) return s;
     return s.endsWith(" ") && !s.endsWith("  ") ? s.slice(0, -1) : s;
   } finally {
-    nv();
+    sv();
   }
-}, hl = wy;
+}, dl = Ay;
 const Yr = (n) => n === void 0 || /\s/.test(n);
-function Du(n, e) {
+function Pu(n, e) {
   if (n[e] !== `
 `) return !1;
   for (let t = e + 1; t < n.length; t++) {
@@ -22815,24 +22826,24 @@ function Du(n, e) {
   }
   return !1;
 }
-const Ay = /^ {0,3}(?:~~~|#{1,6}(?:[ \t]|$)|>|<(?:[/!?]|(?:address|article|aside|blockquote|details|dialog|div|dl|fieldset|figure|footer|form|h[1-6]|header|hr|li|main|nav|ol|p|pre|script|section|style|table|textarea|ul)(?=[\s/>]|$))|([-*_])(?:[ \t]*\1){2,}[ \t]*$)/i, ky = /^ {0,3}(?:[-+*]|\d{1,9}[.)])[ \t]/;
-function Sy(n, e, t) {
+const ky = /^ {0,3}(?:~~~|#{1,6}(?:[ \t]|$)|>|<(?:[/!?]|(?:address|article|aside|blockquote|details|dialog|div|dl|fieldset|figure|footer|form|h[1-6]|header|hr|li|main|nav|ol|p|pre|script|section|style|table|textarea|ul)(?=[\s/>]|$))|([-*_])(?:[ \t]*\1){2,}[ \t]*$)/i, Sy = /^ {0,3}(?:[-+*]|\d{1,9}[.)])[ \t]/;
+function Cy(n, e, t) {
   const s = n.indexOf(`
 `, e + 1), r = n.slice(e + 1, s < 0 ? n.length : s);
-  return Ay.test(r) || t && ky.test(r);
+  return ky.test(r) || t && Sy.test(r);
 }
-function Bu(n, e, t) {
+function $u(n, e, t) {
   const s = n.indexOf(`
 `, e), r = /\S/.test(n.slice(e, s < 0 ? n.length : s));
   for (let i = e; i < n.length; i++) {
     if (t !== "" && n.startsWith(t, i)) return { at: i, closed: !0 };
     if (n[i] === "`" || n[i] === `
-` && (Du(n, i) || Sy(n, i, r))) return { at: i, closed: !1 };
+` && (Pu(n, i) || Cy(n, i, r))) return { at: i, closed: !1 };
     n[i] === "\\" && t !== "\\)" && t !== "\\]" && i++;
   }
   return { at: n.length, closed: !1 };
 }
-function qu(n) {
+function Du(n) {
   if (n[0] !== "$" || Yr(n[1]) || n[1] === "$") return -1;
   let e = 0;
   for (let t = 1; t < n.length; t++) {
@@ -22841,7 +22852,7 @@ function qu(n) {
       t++;
       continue;
     }
-    if (s === "`" || Du(n, t)) return -1;
+    if (s === "`" || Pu(n, t)) return -1;
     if (s === "{") {
       e++;
       continue;
@@ -22856,11 +22867,11 @@ function qu(n) {
   return -1;
 }
 function Zr(n, e, t) {
-  const { at: s, closed: r } = Bu(n, e, t);
+  const { at: s, closed: r } = $u(n, e, t);
   return r ? s : -1;
 }
 function fs(n, e, t) {
-  return Bu(n, e, t).at;
+  return $u(n, e, t).at;
 }
 function Jr(n, e, t) {
   return n.startsWith("\\") ? /[\p{L}\p{N}]$/u.test(t) || /^\s*[\d.,]*\s*$/.test(e) : !1;
@@ -22870,7 +22881,7 @@ const ei = [
   { open: "\\[", close: "\\]", display: !0 },
   { open: "\\(", close: "\\)", display: !1 }
 ];
-function Hu(n, e) {
+function Bu(n, e) {
   const t = [];
   let s = -1;
   for (let r = 0; r < n.length; ) {
@@ -22889,7 +22900,7 @@ function Hu(n, e) {
       r += 2;
       continue;
     } else if (i === "$") {
-      const l = qu(n.slice(r));
+      const l = Du(n.slice(r));
       l !== -1 ? o = r + l + 1 : s < 0 && !Yr(n[r + 1]) && n[r + 1] !== "$" && (s = r);
     }
     if (o <= r) {
@@ -22900,8 +22911,8 @@ function Hu(n, e) {
   }
   return { spans: t, openDollar: s };
 }
-function pl(n) {
-  const { spans: e, openDollar: t } = Hu(n, !0);
+function hl(n) {
+  const { spans: e, openDollar: t } = Bu(n, !0);
   if (t >= 0) {
     const o = fs(n, t + 1, "");
     if (!e.some(([a, l]) => a < o && l > t)) {
@@ -22918,24 +22929,24 @@ function pl(n) {
     unmask: (o) => o.replace(/\uE000(\d+)\uE001/g, (a, l) => s[Number(l)] ?? "")
   };
 }
-function fl(n, e) {
+function pl(n, e) {
   const t = e.length - n.length;
   let s = "";
   for (let a = 0; a < n.length; a++) s += e[t + a] === "+" ? n[a] : e[t + a];
   s = s.replace(/\[a+\]/g, (a) => `\`${"a".repeat(a.length - 2)}\``);
-  const r = Hu(s, !1).spans.filter(([a, l]) => !Jr(s.slice(a, a + 2), s.slice(a + 2, l - 2), s.slice(0, a)));
+  const r = Bu(s, !1).spans.filter(([a, l]) => !Jr(s.slice(a, a + 2), s.slice(a + 2, l - 2), s.slice(0, a)));
   let i = e.slice(0, t), o = 0;
   for (const [a, l] of r)
     i += e.slice(t + o, t + a) + "a".repeat(l - a), o = l;
   return i + e.slice(t + o);
 }
-const Cy = (n) => n.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-function gl(n, e) {
-  const t = n.open ? " data-aparte-open" : "", r = `<code class="language-math ${n.display ? "math-display" : "math-inline"}"${t}>${Cy(n.text)}</code>`;
+const Ey = (n) => n.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function fl(n, e) {
+  const t = n.open ? " data-aparte-open" : "", r = `<code class="language-math ${n.display ? "math-display" : "math-inline"}"${t}>${Ey(n.text)}</code>`;
   return e ? `<pre${t}>${r}</pre>
 ` : r;
 }
-function ml(n = {}) {
+function gl(n = {}) {
   const e = n.live === !0;
   return {
     // marked looks ahead for the `*`, `_` or `~` closing an emphasis or a strikethrough
@@ -22946,10 +22957,10 @@ function ml(n = {}) {
     // this module is the chunk both entries share, and it imports nothing from marked.
     tokenizer: {
       emStrong(t, s, r) {
-        return Object.getPrototypeOf(this).emStrong.call(this, t, fl(t, s), r);
+        return Object.getPrototypeOf(this).emStrong.call(this, t, pl(t, s), r);
       },
       del(t, s, r) {
-        return Object.getPrototypeOf(this).del.call(this, t, fl(t, s), r);
+        return Object.getPrototypeOf(this).del.call(this, t, pl(t, s), r);
       }
     },
     extensions: [
@@ -22973,7 +22984,7 @@ function ml(n = {}) {
           const l = /^[ \t]*(\n|$)/.exec(t.slice(o + r.close.length));
           return l ? { type: "aparteMathBlock", raw: t.slice(0, o + r.close.length + l[0].length), text: a, display: !0, open: !1 } : void 0;
         },
-        renderer: (t) => gl(t, !0)
+        renderer: (t) => fl(t, !0)
       },
       {
         name: "aparteMathInline",
@@ -22991,31 +23002,31 @@ function ml(n = {}) {
             const a = t.slice(i.open.length, o);
             return Jr(i.open, a, s.at(-1)?.raw ?? "") ? void 0 : { type: "aparteMathInline", raw: t.slice(0, o + i.close.length), text: a, display: i.display, open: !1 };
           }
-          const r = qu(t);
+          const r = Du(t);
           if (r !== -1)
             return { type: "aparteMathInline", raw: t.slice(0, r + 1), text: t.slice(1, r), display: !1, open: !1 };
         },
-        renderer: (t) => gl(t, !1)
+        renderer: (t) => fl(t, !1)
       }
     ]
   };
 }
-const _l = "streamdown:", Ey = /(^|[ \t])[*_~`]+$/;
-function Ty(n, e) {
-  const t = n.replace(Ey, "$1");
-  if (!e) return hl(t);
-  let { masked: s, unmask: r } = pl(t);
-  return /$/.test(s) && /[\s\\]$/.test(t) && ({ masked: s, unmask: r } = pl(t.replace(/[\s\\]+$/, ""))), r(hl(s, { katex: !1 }));
+const ml = "streamdown:", Ty = /(^|[ \t])[*_~`]+$/;
+function xy(n, e) {
+  const t = n.replace(Ty, "$1");
+  if (!e) return dl(t);
+  let { masked: s, unmask: r } = hl(t);
+  return /$/.test(s) && /[\s\\]$/.test(t) && ({ masked: s, unmask: r } = hl(t.replace(/[\s\\]+$/, ""))), r(dl(s, { katex: !1 }));
 }
-function xy(n, e, t) {
+function Ry(n, e, t) {
   const s = document.createElement("template");
   if (s.innerHTML = n, e) {
-    for (const r of s.content.querySelectorAll(`a[href^="${_l}"]`)) r.removeAttribute("href");
-    for (const r of s.content.querySelectorAll(`img[src^="${_l}"]`)) r.remove();
+    for (const r of s.content.querySelectorAll(`a[href^="${ml}"]`)) r.removeAttribute("href");
+    for (const r of s.content.querySelectorAll(`img[src^="${ml}"]`)) r.remove();
   }
   return s.innerHTML = t.sanitizeHtml(s.innerHTML), Array.from(s.content.childNodes);
 }
-function Ry(n, e, t) {
+function Iy(n, e, t) {
   let s = "", r = [];
   const i = (o) => {
     const a = (o ? e.arriving : e.finished).lexer(s);
@@ -23028,7 +23039,7 @@ function Ry(n, e, t) {
     for (const u of r.slice(l)) for (const h of u.nodes) h.remove();
     const c = r.slice(0, l);
     for (let u = l; u < a.length; u++) {
-      const h = a[u].raw, d = o && u === a.length - 1, p = d ? e.arriving.parse(Ty(h, e.math), { async: !1 }) : e.finished.parse(h, { async: !1 }), f = xy(p, d, t);
+      const h = a[u].raw, d = o && u === a.length - 1, p = d ? e.arriving.parse(xy(h, e.math), { async: !1 }) : e.finished.parse(h, { async: !1 }), f = Ry(p, d, t);
       n.append(...f), c.push({ raw: h, healed: d, nodes: f });
     }
     r = c;
@@ -23042,16 +23053,16 @@ function Ry(n, e, t) {
     }
   };
 }
-function Iy(n, e = ke) {
+function Ly(n, e = ke) {
   const { math: t, ...s } = {}, r = ne;
   let i, o;
-  const a = () => t ?? e.hasCodeLanguageRenderer("math"), l = () => i ??= new Xr(s, ml()), c = () => o ??= new Xr(s, ml({ live: !0 }));
+  const a = () => t ?? e.hasCodeLanguageRenderer("math"), l = () => i ??= new Xr(s, gl()), c = () => o ??= new Xr(s, gl({ live: !0 }));
   e.setMarkdownProvider((u) => (a() ? l() : r).parse(u, { async: !1 })), e.setStreamingMarkdownProvider((u) => {
     const h = a();
-    return Ry(u, h ? { finished: l(), arriving: c(), math: !0 } : { finished: r, arriving: r, math: !1 }, e);
+    return Iy(u, h ? { finished: l(), arriving: c(), math: !0 } : { finished: r, arriving: r, math: !1 }, e);
   });
 }
-class Ly {
+class My {
   constructor(e) {
     this.key = e;
   }
@@ -23084,11 +23095,11 @@ class gt extends Error {
     super(e), this.name = "StorageError", this.status = t;
   }
 }
-const bl = (n) => n instanceof gt && (n.status === 0 || n.status === 408 || n.status === 429 || n.status >= 500), My = (n) => n instanceof gt && (n.status === 401 || n.status === 419), Oy = (n) => new Promise((e) => setTimeout(e, n));
-function Ny({ messages: n, tree: e, ...t }) {
+const _l = (n) => n instanceof gt && (n.status === 0 || n.status === 408 || n.status === 429 || n.status >= 500), Oy = (n) => n instanceof gt && (n.status === 401 || n.status === 419), Ny = (n) => new Promise((e) => setTimeout(e, n));
+function Py({ messages: n, tree: e, ...t }) {
   return t;
 }
-class Py {
+class $y {
   constructor(e, { csrf: t = "", onProblem: s = () => {
   } } = {}) {
     this.url = e.replace(/\/+$/, ""), this.csrf = t, this.onProblem = s, this.unsent = /* @__PURE__ */ new Map(), this.sending = null, this.reload = null, this.timer = null, this.delay = 0, this.told = /* @__PURE__ */ new Set(), this.stopped = !1, this.catchUp = this.catchUp.bind(this), this.onVisible = () => {
@@ -23138,10 +23149,10 @@ class Py {
     for (let e = 0; ; e++)
       try {
         const t = (await (await this.request("GET")).json()).conversations ?? [], s = new Set(t.map((r) => r.id));
-        return [...[...this.unsent.values()].filter((r) => !s.has(r.id)).map(Ny), ...t];
+        return [...[...this.unsent.values()].filter((r) => !s.has(r.id)).map(Py), ...t];
       } catch (t) {
-        if (e === 2 || !bl(t)) throw t;
-        await Oy(400 * 3 ** e);
+        if (e === 2 || !_l(t)) throw t;
+        await Ny(400 * 3 ** e);
       }
   }
   async loadFull(e) {
@@ -23173,11 +23184,11 @@ class Py {
           try {
             await this.request("PUT", e, t);
           } catch (s) {
-            if (bl(s)) {
+            if (_l(s)) {
               this.problem("unreachable", s), this.later();
               return;
             }
-            if (My(s)) {
+            if (Oy(s)) {
               this.problem("signed-out", s);
               return;
             }
@@ -23248,7 +23259,7 @@ class Py {
     return this.change(e, { archivedAt: null });
   }
 }
-function $y(n, e) {
+function Dy(n, e) {
   if (typeof n?.body != "string") return n;
   const t = JSON.parse(n.body);
   if (!Array.isArray(t.resume)) return n;
@@ -23258,7 +23269,7 @@ function $y(n, e) {
   }
   return { ...n, body: JSON.stringify(t) };
 }
-function Dy(n, e) {
+function By(n, e) {
   const t = n.querySelector("[data-aparte-empty-state]");
   if (!t) return;
   const s = new MutationObserver(() => r());
@@ -23267,21 +23278,21 @@ function Dy(n, e) {
   }
   s.observe(e, { childList: !0, subtree: !0 }), r();
 }
-let vl = !1;
-function By() {
-  if (vl) return;
-  vl = !0;
+let bl = !1;
+function qy() {
+  if (bl) return;
+  bl = !0;
   const n = document.documentElement, e = () => {
     n.dataset.aparteTheme = n.classList.contains("dark") ? "dark" : "light";
   };
   new MutationObserver(e).observe(n, { attributes: !0, attributeFilter: ["class"] }), e();
 }
-const $i = [], Fu = [];
-function Jy(n) {
-  Fu.push(n);
-  for (const e of $i) e.stops.push(Wu(n, e.config, e.chat, e.options));
+const Di = [], qu = [];
+function tw(n) {
+  qu.push(n);
+  for (const e of Di) e.stops.push(Hu(n, e.config, e.chat, e.options));
 }
-function Wu(n, e, t, s) {
+function Hu(n, e, t, s) {
   try {
     return n(e, t, s);
   } catch (r) {
@@ -23289,12 +23300,12 @@ function Wu(n, e, t, s) {
     return;
   }
 }
-const yl = /* @__PURE__ */ new Set();
-function Uu(n) {
+const vl = /* @__PURE__ */ new Set();
+function Fu(n) {
   const e = n.getAttribute("for") || (n.localName === "aparte-conversation-list" ? n.getAttribute("target") : null);
   if (e) {
     const t = document.getElementById(e);
-    return t?.localName === "aparte-chat" ? t : (yl.has(e) || (yl.add(e), console.warn(`aparté: an element names the chat "${e}", and no <aparte-chat> of the page has that id.`)), null);
+    return t?.localName === "aparte-chat" ? t : (vl.has(e) || (vl.add(e), console.warn(`aparté: an element names the chat "${e}", and no <aparte-chat> of the page has that id.`)), null);
   }
   for (let t = n.parentElement; t; t = t.parentElement) {
     const s = t.querySelector("aparte-chat[data-aparte-endpoint]");
@@ -23302,19 +23313,19 @@ function Uu(n) {
   }
   return null;
 }
-function qy(n) {
-  const e = (t) => [...document.querySelectorAll(t)].filter((s) => Uu(s) === n);
+function Hy(n) {
+  const e = (t) => [...document.querySelectorAll(t)].filter((s) => Fu(s) === n);
   return {
     lists: () => e("aparte-conversation-list"),
     titles: () => e("[data-aparte-title]"),
     any: () => e("aparte-conversation-list, [data-aparte-new-chat]").length > 0
   };
 }
-function Hy(n, e, t, s, r) {
+function Fy(n, e, t, s, r) {
   const i = /* @__PURE__ */ new WeakSet(), o = /* @__PURE__ */ new WeakMap(), a = () => {
     const d = t.active, p = t.activeConversations.map(({ id: f, title: m, updatedAt: g, pinnedAt: b }) => ({ id: f, title: m, updatedAt: g, pinnedAt: b }));
     for (const f of r.lists())
-      i.has(f) || (Ml(f, e), f.hasAttribute("target") || f.setAttribute("target", n.id), i.add(f)), f.conversations = p, d ? f.setAttribute("active-id", d.id) : f.removeAttribute("active-id");
+      i.has(f) || (Il(f, e), f.hasAttribute("target") || f.setAttribute("target", n.id), i.add(f)), f.conversations = p, d ? f.setAttribute("active-id", d.id) : f.removeAttribute("active-id");
     for (const f of r.titles())
       o.has(f) || o.set(f, f.getAttribute("data-aparte-title") || f.textContent), f.textContent = d?.title || o.get(f);
   }, l = (d) => {
@@ -23326,7 +23337,7 @@ function Hy(n, e, t, s, r) {
     p && l(p);
   }, u = (d) => {
     const p = d.target?.closest?.("[data-aparte-new-chat]");
-    !p || Uu(p) !== n || (l(p), s.setConversationId(null), n.querySelector("aparte-composer-input")?.focus());
+    !p || Fu(p) !== n || (l(p), s.setConversationId(null), n.querySelector("aparte-composer-input")?.focus());
   };
   document.addEventListener("aparte-conversation-select", c), document.addEventListener("click", u);
   const h = t.subscribe(a);
@@ -23334,20 +23345,20 @@ function Hy(n, e, t, s, r) {
     document.removeEventListener("aparte-conversation-select", c), document.removeEventListener("click", u), h();
   };
 }
-function Fy(n) {
+function Wy(n) {
   if (typeof n.people?.subscribe == "function") return n.people.subscribe;
   const e = globalThis.Echo;
   return !e || typeof e.private != "function" ? null : (t, s, r) => ((r.private ? e.private(r.name) : e.channel(r.name)).listen(".aparte.changed", s), () => e.leave(r.name));
 }
-const Wy = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>', Uy = (n) => n.replace(/[&<>"']/g, (e) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[e]);
-function zy(n, e, t, s, r, { url: i, csrf: o, assistant: a }) {
+const Uy = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>', zy = (n) => n.replace(/[&<>"']/g, (e) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[e]);
+function Gy(n, e, t, s, r, { url: i, csrf: o, assistant: a }) {
   let l = null, c = null, u = null, h = !1;
   const d = (R) => `${i.replace(/\/+$/, "")}/${encodeURIComponent(R)}`, p = (R) => a && R;
   a || e.setAutoReply(!1);
   const f = a ? n.dataset.apartePeopleButton ?? "" : "";
   let m = null;
   const g = f ? n.querySelector("aparte-composer .aparte-composer-row") : null;
-  g && (m = document.createElement("aparte-composer-action"), m.className = "aparte-laravel-people", m.setAttribute("action-id", "aparte-people-want"), m.setAttribute("label", f), m.setAttribute("icon", `${Wy}<span>${Uy(f)}</span>`), m.style.display = "none", g.insertBefore(m, g.querySelector("aparte-composer-send")));
+  g && (m = document.createElement("aparte-composer-action"), m.className = "aparte-laravel-people", m.setAttribute("action-id", "aparte-people-want"), m.setAttribute("label", f), m.setAttribute("icon", `${Uy}<span>${zy(f)}</span>`), m.style.display = "none", g.insertBefore(m, g.querySelector("aparte-composer-send")));
   const b = n.dataset.apartePeopleEmail ?? "", y = /* @__PURE__ */ new Set();
   let A = null;
   if (b) {
@@ -23437,7 +23448,7 @@ function zy(n, e, t, s, r, { url: i, csrf: o, assistant: a }) {
     }
   }, G = (R, q) => {
     if (c === R || !q?.name) return;
-    const N = Fy(r);
+    const N = Wy(r);
     if (!N) {
       h || (h = !0, console.warn('aparté: this chat names the people routes (people="…"), and nothing brings what your team does to the page: set up Laravel Echo (window.Echo), or give options.people.subscribe in onAparteSetup.'));
       return;
@@ -23494,11 +23505,15 @@ function zy(n, e, t, s, r, { url: i, csrf: o, assistant: a }) {
     n.removeEventListener("aparte-conversation-loaded", we), n.removeEventListener("aparte-send", me), n.removeEventListener("aparte-action-click", pe), n.removeEventListener("input", Ce), document.removeEventListener("visibilitychange", D), clearTimeout(U), H.remove(), A?.remove(), S?.remove(), C !== void 0 && !w && n.removeAttribute("attachments"), m?.remove(), V(), Q(null);
   };
 }
-const wl = { de: x_, es: T_, fr: E_, it: R_, ja: L_, ko: M_, "pt-br": Ka, pt: Ka, ru: I_, "zh-cn": Va, zh: Va }, Gy = (n) => {
+let ti = {};
+const jy = (n) => {
   const e = String(n ?? "").toLowerCase().replace("_", "-");
-  return wl[e] ?? wl[e.split("-")[0]] ?? null;
+  return ti[e] ?? ti[e.split("-")[0]] ?? null;
 };
-async function jy(n) {
+function Ky({ de: n, es: e, fr: t, it: s, ja: r, ko: i, ptBR: o, ru: a, zhCN: l } = {}) {
+  ti = Object.fromEntries(Object.entries({ de: n, es: e, fr: t, it: s, ja: r, ko: i, "pt-br": o, pt: o, ru: a, "zh-cn": l, zh: l }).filter(([, c]) => c));
+}
+async function Vy(n) {
   n.dataset.aparteMounted = "";
   const {
     aparteEndpoint: e,
@@ -23508,31 +23523,31 @@ async function jy(n) {
     aparteConversations: i,
     apartePeople: o
   } = n.dataset, a = new Mr();
-  Ml(n, a);
-  const l = Gy(n.dataset.aparteLocale);
-  l && a.setLocale(l), a.setLinkTarget("external-only"), Iy(void 0, a), a.registerToolDisplay("AskForSomeone", { hidden: !0 });
+  Il(n, a);
+  const l = jy(n.dataset.aparteLocale);
+  l && a.setLocale(l), a.setLinkTarget("external-only"), Ly(void 0, a), a.registerToolDisplay("AskForSomeone", { hidden: !0 });
   let c;
   const u = be();
   let h = {};
-  const d = qy(n), p = i ? new Py(i, {
+  const d = Hy(n), p = i ? new $y(i, {
     csrf: t ?? "",
     onProblem: (_) => {
       _.reason === "gone" && c?.init().catch(() => {
       }), n.dispatchEvent(new CustomEvent("aparte-conversations-problem", { detail: _, bubbles: !0, composed: !0 }));
     }
-  }) : null, f = { storage: p ?? new Ly(`aparte-laravel:${e}:${r ?? ""}:${n.id}`), client: {}, people: {} }, m = !!s && !i && !d.any();
+  }) : null, f = { storage: p ?? new My(`aparte-laravel:${e}:${r ?? ""}:${n.id}`), client: {}, people: {} }, m = !!s && !i && !d.any();
   if (s && !m && console.warn(`aparté: this chat has a list of conversations, so each is its own thread and thread="${s}" is not used.`), e) {
-    const _ = C_({
+    const _ = O_({
       endpoint: e,
       threadId: () => m && s || c?.activeId || u,
       headers: { "X-CSRF-TOKEN": t ?? "" },
-      fetch: (S, k) => fetch(S, $y(k, h))
+      fetch: (S, k) => fetch(S, Dy(k, h))
     });
     f.client.streamRunner = (S) => (h = S.deferral?.outcomes ?? {}, _(S));
   }
   const g = { chat: n, config: a, options: f, stops: [], stopped: !1, storage: null };
-  g.stops = Fu.map((_) => Wu(_, a, n, f)), n.dispatchEvent(new CustomEvent("aparte:setup", { bubbles: !0, detail: { config: a, chat: n, options: f } })), !f.client.streamRunner && !o && console.warn("aparté: this chat has no endpoint, no people routes and no runner: nothing answers what is written in it."), g.storage = f.storage, $i.push(g), c = new lg(f.storage), a.setConversationManager(c);
-  const b = n.viewport, y = new hg({
+  g.stops = qu.map((_) => Hu(_, a, n, f)), n.dispatchEvent(new CustomEvent("aparte:setup", { bubbles: !0, detail: { config: a, chat: n, options: f } })), !f.client.streamRunner && !o && console.warn("aparté: this chat has no endpoint, no people routes and no runner: nothing answers what is written in it."), g.storage = f.storage, Di.push(g), c = new mg(f.storage), a.setConversationManager(c);
+  const b = n.viewport, y = new yg({
     hostId: n.id,
     host: n,
     getMessages: () => b.getMessages(),
@@ -23544,13 +23559,13 @@ async function jy(n) {
     importTree: (_) => b.importTree(_)
   });
   y.bind();
-  const A = new zg({ ...f.client, config: a, scopeToTargetId: n.id });
+  const A = new Zg({ ...f.client, config: a, scopeToTargetId: n.id });
   A.start(), Object.assign(g, {
     client: A,
     controller: y,
-    unbindUi: Hy(n, a, c, y, d),
-    unbindPeople: o ? zy(n, a, c, A, f, { url: o, csrf: t ?? "", assistant: !!e }) : null
-  }), Dy(n, b);
+    unbindUi: Fy(n, a, c, y, d),
+    unbindPeople: o ? Gy(n, a, c, A, f, { url: o, csrf: t ?? "", assistant: !!e }) : null
+  }), By(n, b);
   const E = d.lists();
   for (const _ of E) _.setAttribute("loading", "");
   try {
@@ -23564,12 +23579,12 @@ async function jy(n) {
 }
 function ur() {
   const n = document.querySelectorAll("aparte-chat[data-aparte-endpoint]:not([data-aparte-mounted])");
-  n.length !== 0 && ([...n].some((e) => "aparteFollowDark" in e.dataset) && By(), customElements.whenDefined("aparte-chat").then(() => n.forEach((e) => {
-    jy(e).catch((t) => console.error("aparté: a chat did not start.", t));
+  n.length !== 0 && ([...n].some((e) => "aparteFollowDark" in e.dataset) && qy(), customElements.whenDefined("aparte-chat").then(() => n.forEach((e) => {
+    Vy(e).catch((t) => console.error("aparté: a chat did not start.", t));
   })));
 }
-function Ky() {
-  for (const n of $i.splice(0)) {
+function Xy() {
+  for (const n of Di.splice(0)) {
     n.stopped = !0, delete n.chat.dataset.aparteMounted;
     try {
       for (const e of n.stops) typeof e == "function" && e();
@@ -23579,7 +23594,9 @@ function Ky() {
     }
   }
 }
-globalThis.__aparteLaravel ? console.warn("aparté for Laravel is loaded twice on this page; the second copy does nothing. If your app imports it, set APARTE_ASSETS=vite so that the package stops serving its own.") : (globalThis.__aparteLaravel = !0, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", ur, { once: !0 }) : setTimeout(ur), document.addEventListener("livewire:navigating", Ky), document.addEventListener("livewire:navigated", ur));
+globalThis.__aparteLaravel ? console.warn("aparté for Laravel is loaded twice on this page; the second copy does nothing. If your app imports it, set APARTE_ASSETS=vite so that the package stops serving its own.") : (globalThis.__aparteLaravel = !0, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", ur, { once: !0 }) : setTimeout(ur), document.addEventListener("livewire:navigating", Xy), document.addEventListener("livewire:navigated", ur));
+Ky(nd);
 export {
-  Jy as onAparteSetup
+  tw as onAparteSetup,
+  Ky as useLocales
 };
