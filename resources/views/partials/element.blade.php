@@ -15,6 +15,8 @@
     @if (($conversations ?? null) && auth()->check()) data-aparte-conversations="{{ url($conversations) }}" @endif
     {{-- Someone of the team can take the conversation over (People): who holds it, and what the person writes meanwhile. --}}
     @if ($people ?? null) data-aparte-people="{{ url($people) }}" @endif
+    {{-- The visitor's own way to ask for someone of the team, beside send. false: no button. --}}
+    @if (($people ?? null) && ($peopleButton ?? null) !== false) data-aparte-people-button="{{ is_string($peopleButton ?? null) ? $peopleButton : __('Talk to a person') }}" @endif
     @if ($followDarkClass ?? false) data-aparte-follow-dark @endif
     @if ($fill ?? false) style="height: 100%" @endif
 >

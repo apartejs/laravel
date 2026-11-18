@@ -109,3 +109,10 @@ it('names the people routes, for a chat someone of the team can take over', func
         ->toContain('data-aparte-people="'.url('/chat/people').'"');
     expect(Blade::render('<x-aparte::chat endpoint="/chat" />'))->not->toContain('data-aparte-people');
 });
+
+it("gives a chat with people a button to ask for someone, in the app's words, or none", function () {
+    expect(Blade::render('<x-aparte::chat endpoint="/chat" people="/chat/people" />'))->toContain('data-aparte-people-button="Talk to a person"')
+        ->and(Blade::render('<x-aparte::chat endpoint="/chat" people="/chat/people" people-button="Parler à quelqu\'un" />'))->toContain('data-aparte-people-button="Parler à quelqu&#039;un"')
+        ->and(Blade::render('<x-aparte::chat endpoint="/chat" people="/chat/people" :people-button="false" />'))->not->toContain('data-aparte-people-button')
+        ->and(Blade::render('<x-aparte::chat endpoint="/chat" />'))->not->toContain('data-aparte-people-button');
+});

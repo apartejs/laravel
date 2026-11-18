@@ -71,6 +71,7 @@ const calls = [];
 const PEOPLE = '/people';
 const held = new Map();
 const heard = [];
+const wants = [];
 /** What the tests make of that server: down (every route answers 500), slow to list, strict on weight. */
 const server_ = { down: false, listDelay: 0, maxBytes: Infinity };
 
@@ -113,7 +114,7 @@ const pages = {
 </script>
 ${chat('aparte-chat-1', '')}</body></html>`,
     // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
-    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people"`)}</body></html>`,
+    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
     '/failing': `${head}${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
     // The same, on a page that builds nothing: a plain script listens for `aparte:setup` and
@@ -177,13 +178,18 @@ const server = createServer((req, res) => {
         let body = '';
         req.on('data', (chunk) => (body += chunk));
         req.on('end', () => {
+            if (req.method === 'POST' && rest === 'want') {
+                wants.push(id);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ notice: { id: `wanted-${id}`, role: 'assistant', kind: 'notice', content: 'Someone of the team will answer you here', timestamp: Date.now() } }));
+            }
             if (req.method === 'POST' && rest === 'messages') {
                 heard.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
                 res.writeHead(204);
                 return res.end();
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ heldBy: held.get(id) ?? null, channel: { name: `aparte.conversations.${id}.secret`, private: false } }));
+            res.end(JSON.stringify({ heldBy: held.get(id) ?? null, wanted: wants.includes(id), channel: { name: `aparte.conversations.${id}.secret`, private: false } }));
         });
         return;
     }
@@ -691,6 +697,19 @@ try {
 
         await desk(id, { type: 'auto-reply', on: true });
         check(await a.say('Thanks!'), 'people: handed back, the assistant answers again');
+
+        // The visitor asks for someone themself, with the button beside send.
+        const button = page.locator('#shell-a .aparte-laravel-people button');
+        check(await until(() => button.isVisible()), 'people: the visitor sees a way to ask for someone');
+        await button.click();
+        check(await until(async () => wants.includes(id)), 'people: the button asks for someone of the team');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 2), 'people: the visitor reads that someone will answer');
+        check(await until(async () => !(await button.isVisible())), 'people: the button goes while the team is asked');
+        const turnsWanted = turns.length;
+        await send('Hello?');
+        check(await until(async () => heard.some((h) => h.content === 'Hello?')), 'people: asked for, the message goes to the people route');
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        check(turns.length === turnsWanted, 'people: and the assistant is not asked meanwhile');
 
         // A reload in the middle of a takeover: the chat asks who holds the conversation.
         held.set(id, { name: 'Marie', type: 'human' });

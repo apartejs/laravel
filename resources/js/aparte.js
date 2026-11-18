@@ -528,12 +528,34 @@ function peopleChannel(options) {
  * or on); and what the person writes while someone holds it goes to the people route, since no
  * request to the assistant carries it. Returns the function that lets go.
  */
+const PERSON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>';
+
+const escapeHtml = (text) => text.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+
 function bindPeople(chat, config, manager, client, options, { url, csrf }) {
     let open = null;
     let heard = null;
     let stopListening = null;
     let warned = false;
     const route = (id) => `${url.replace(/\/+$/, '')}/${encodeURIComponent(id)}`;
+
+    // The visitor's own way to ask for someone of the team: a button beside send, while the
+    // assistant answers an open conversation. It hands the conversation over without the model.
+    const label = chat.dataset.apartePeopleButton ?? '';
+    let button = null;
+    const row = label ? chat.querySelector('aparte-composer .aparte-composer-row') : null;
+    if (row) {
+        button = document.createElement('aparte-composer-action');
+        button.className = 'aparte-laravel-people';
+        button.setAttribute('action-id', 'aparte-people-want');
+        button.setAttribute('label', label);
+        button.setAttribute('icon', `${PERSON_ICON}<span>${escapeHtml(label)}</span>`);
+        button.style.display = 'none';
+        row.insertBefore(button, row.querySelector('aparte-composer-send'));
+    }
+    const showButton = () => {
+        if (button) button.style.display = open && config.getAutoReply(open) ? '' : 'none';
+    };
 
     const apply = (id, change) => {
         if (id !== open || !change || typeof change !== 'object') return;
@@ -545,6 +567,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
         } else if (change.type === 'auto-reply') {
             const on = change.on !== false;
             config.setAutoReply(on, id);
+            showButton();
             // Back to the assistant: a reply that paused on a question goes on.
             if (on) void client.resumeDeferred(chat);
         }
@@ -571,9 +594,10 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
         fetch(route(id), { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
             .then((response) => (response.ok ? response.json() : {}))
             .catch(() => ({}))
-            .then(({ heldBy = null, channel = null } = {}) => {
-                config.setAutoReply(!heldBy, id);
+            .then(({ heldBy = null, wanted = false, channel = null } = {}) => {
+                config.setAutoReply(!heldBy && !wanted, id);
                 if (open !== id) return;
+                showButton();
                 subscribe(id, channel);
                 if (resume && !heldBy) void client.resumeDeferred(chat);
             });
@@ -585,6 +609,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
         stopListening = null;
         heard = null;
         open = id;
+        showButton();
         if (id) ask(id, false);
     };
 
@@ -621,14 +646,34 @@ function bindPeople(chat, config, manager, client, options, { url, csrf }) {
         });
     };
 
+    const onAction = (event) => {
+        const id = open;
+        if (event.detail?.actionId !== 'aparte-people-want' || !id) return;
+        fetch(`${route(id)}/want`, {
+            method: 'POST',
+            headers: { Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
+            credentials: 'same-origin',
+        })
+            .then((response) => (response.ok ? response.json() : Promise.reject(new Error(`status ${response.status}`))))
+            .then(({ notice = null } = {}) => {
+                config.setAutoReply(false, id);
+                if (notice) apply(id, { type: 'message', message: notice });
+                showButton();
+            })
+            .catch((error) => console.warn('aparté: asking for someone of the team failed.', error));
+    };
+
     chat.addEventListener('aparte-conversation-loaded', onLoaded);
     chat.addEventListener('aparte-send', onSend);
+    chat.addEventListener('aparte-action-click', onAction);
     // A conversation the chat starts: nobody holds it yet; its channel is asked for and heard.
     const unsubscribe = manager.subscribe(() => follow(manager.activeId ?? null));
 
     return () => {
         chat.removeEventListener('aparte-conversation-loaded', onLoaded);
         chat.removeEventListener('aparte-send', onSend);
+        chat.removeEventListener('aparte-action-click', onAction);
+        button?.remove();
         unsubscribe();
         follow(null);
     };
