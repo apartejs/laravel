@@ -532,8 +532,11 @@ const PERSON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
 
 const escapeHtml = (text) => text.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-function bindPeople(chat, config, manager, client, options, { url, csrf, assistant }) {
+function bindPeople(chat, config, manager, client, options, { url, csrf, assistant, thread = null }) {
     let open = null;
+    // A chat with one named conversation (`thread="…"`) answers in it: the people routes and the
+    // channel follow that one, not the id the manager minted for the tab.
+    const idOf = (id) => thread ?? id;
     let heard = null;
     let stopListening = null;
     let warned = false;
@@ -760,11 +763,12 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
 
     // Who holds the conversation, and the channel to hear the team on. Unreachable, it is the
     // assistant's, and nothing is heard.
-    const ask = (id, resume) => {
+    const ask = (id, resume, answered = () => {}) => {
         fetch(route(id), { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
             .then((response) => (response.ok ? response.json() : {}))
             .catch(() => ({}))
             .then(({ heldBy = null, wanted = false, emailLeft: left = false, rating = null, channel = null } = {}) => {
+                answered();
                 if (left) emailLeft.add(id);
                 if (rating === 'asked') ratingAsked.add(id);
                 config.setAutoReply(answers(!heldBy && !wanted), id);
@@ -788,8 +792,9 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     // A conversation opens: quiet, before the client's own listener can resume a paused reply,
     // until the server says whether someone holds it.
     const onLoaded = (event) => {
-        const id = event.detail?.conversationId;
-        if (event.detail?.targetId !== chat.id || typeof id !== 'string') return;
+        const loaded = event.detail?.conversationId;
+        if (event.detail?.targetId !== chat.id || typeof loaded !== 'string') return;
+        const id = idOf(loaded);
         config.setAutoReply(false, id);
         if (id !== open) {
             stopListening?.();
@@ -797,18 +802,25 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
             heard = null;
             open = id;
         }
-        ask(id, true);
+        // Until the server says who answers it, the composer waits: a message typed in that moment
+        // would go to neither the assistant nor the team. Only what this adds is taken back.
+        const composer = assistant ? chat.querySelector('aparte-composer') : null;
+        const locked = Boolean(composer) && !composer.hasAttribute('disabled');
+        if (locked) composer.setAttribute('disabled', '');
+        ask(id, true, () => {
+            if (locked) composer.removeAttribute('disabled');
+        });
     };
 
     // What the person writes while someone holds the conversation, or in a chat without an
     // assistant. Read once the send has been handled: the message is shown, and its id written,
     // by a listener that may run after this one; a first message also opens the conversation.
     const onSend = (event) => {
-        const sentIn = open ?? manager.activeId;
+        const sentIn = open ?? idOf(manager.activeId);
         if (sentIn && config.getAutoReply(sentIn)) return;
         const detail = event.detail ?? {};
         queueMicrotask(() => {
-            const id = sentIn ?? open ?? manager.activeId;
+            const id = sentIn ?? open ?? idOf(manager.activeId);
             if (!id || config.getAutoReply(id)) return;
             showButton();
             // With files, a form: they are kept on the server, which says where to open them.
@@ -818,11 +830,13 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
             if (files.length > 0) {
                 body = new FormData();
                 body.append('id', detail.messageId ?? '');
+                // A chat with the team only: the server hands a new conversation over on its first message.
+                body.append('team', assistant ? '0' : '1');
                 if (detail.content) body.append('content', detail.content);
                 for (const file of files) body.append('files[]', file);
             } else {
                 headers['Content-Type'] = 'application/json';
-                body = JSON.stringify({ id: detail.messageId, content: detail.content });
+                body = JSON.stringify({ id: detail.messageId, content: detail.content, team: !assistant });
             }
             fetch(`${route(id)}/messages`, {
                 method: 'POST',
@@ -872,7 +886,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     chat.addEventListener('input', onInput);
     document.addEventListener('visibilitychange', markSeen);
     // A conversation the chat starts: nobody holds it yet; its channel is asked for and heard.
-    const unsubscribe = manager.subscribe(() => follow(manager.activeId ?? null));
+    const unsubscribe = manager.subscribe(() => follow(idOf(manager.activeId ?? null)));
     // A chat with the team only shows its paperclip before its first message.
     showButton();
 
@@ -898,7 +912,9 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
 // stays in English, core's own.
 let LOCALES = {};
 const localeOf = (tag) => {
-    const key = String(tag ?? '').toLowerCase().replace('_', '-');
+    const key = String(tag ?? '').toLowerCase().replace(/_/g, '-');
+    // Traditional Chinese (zh-TW, zh-HK, zh-Hant) is not Simplified: it stays English.
+    if (key.startsWith('zh-') && !['zh-cn', 'zh-hans', 'zh-sg'].some((simplified) => key.startsWith(simplified))) return null;
     return LOCALES[key] ?? LOCALES[key.split('-')[0]] ?? null;
 };
 
@@ -1019,7 +1035,7 @@ async function mount(chat) {
         client,
         controller,
         unbindUi: bindConversationUi(chat, config, manager, controller, ui),
-        unbindPeople: people ? bindPeople(chat, config, manager, client, options, { url: people, csrf: csrf ?? '', assistant: Boolean(endpoint) }) : null,
+        unbindPeople: people ? bindPeople(chat, config, manager, client, options, { url: people, csrf: csrf ?? '', assistant: Boolean(endpoint), thread: single ? givenThread : null }) : null,
     });
     watchEmptyState(chat, viewport);
 

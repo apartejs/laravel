@@ -84,6 +84,7 @@ const pages = {
     // The page's language, as the Blade component gives it from app()->getLocale().
     '/french': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`, 'data-aparte-locale="fr"')}</body></html>`,
     '/klingon': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`, 'data-aparte-locale="tlh"')}</body></html>`,
+    '/taiwan': `${head}${chat('aparte-chat-1', `${ORIGIN}/chat`, 'data-aparte-locale="zh_TW"')}</body></html>`,
     // Tall enough for a row's menu to open inside the sidebar.
     '/conversations': `${head}${shell('shell-a', 'aparte-chat-1', 580)}</body></html>`,
     // The same view, its conversations kept by the server.
@@ -382,6 +383,8 @@ try {
         check(french.problems.length === 0, `language: no console error or warning${french.problems.length ? `: ${french.problems.join(' | ')}` : ''}`);
         const unknown = await label('/klingon');
         check(unknown.text === 'Type a message...', `language: a language aparté does not speak stays English (got ${unknown.text})`);
+        const traditional = await label('/taiwan');
+        check(traditional.text === 'Type a message...', `language: Traditional Chinese is not given Simplified words (got ${traditional.text})`);
     });
 
     // ── A list of conversations written in the view ────────────────────────────────────────
@@ -745,6 +748,7 @@ try {
         const turnsBefore = turns.length;
         await send('Is it shipped?');
         check(await until(async () => heard.some((h) => h.content === 'Is it shipped?')), 'people: what the person writes goes to the people route');
+        check(heard.find((h) => h.content === 'Is it shipped?')?.team === false, 'people: from a chat with an assistant, never as a new hand-off');
         check(typings.includes(id), 'people: and the team hears that they were typing');
         const mine = heard.find((h) => h.content === 'Is it shipped?');
         const bubbleId = await page.locator('aparte-chat-bubble[data-role="user"]').last().getAttribute('message-id');
@@ -821,6 +825,7 @@ try {
 
         await send('Do you deliver to Belgium?');
         check(await until(async () => heard.some((h) => h.content === 'Do you deliver to Belgium?')), 'people only: the first message goes to the team');
+        check(heard.find((h) => h.content === 'Do you deliver to Belgium?')?.team === true, 'people only: saying it is a chat with the team only');
         const first = heard.find((h) => h.content === 'Do you deliver to Belgium?');
         const bubbleId = await page.locator('aparte-chat-bubble[data-role="user"]').last().getAttribute('message-id');
         check(first?.id === bubbleId, 'people only: with the id of the message on screen');
