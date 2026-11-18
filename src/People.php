@@ -15,6 +15,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Laravel\Ai\Enums\MessageStatus;
@@ -38,6 +40,8 @@ final class People
     private static ?Closure $wantedNotice = null;
 
     private static ?Closure $teamFirst = null;
+
+    private static ?string $filesUri = null;
 
     /** The conversation the chat route is answering right now, for a tool to know where it runs. */
     private static ?string $answering = null;
@@ -71,11 +75,54 @@ final class People
      * The person wrote while someone holds the conversation: the message goes into the agent's
      * memory, and PersonWrote tells your desk.
      */
-    public static function heard(string $conversationId, string $messageId, string $text): void
+    /** @param  list<array<string, mixed>>  $attachments  what People::attach() kept of the files sent with it */
+    public static function heard(string $conversationId, string $messageId, string $text, array $attachments = []): void
     {
-        self::remember($conversationId, 'user', $text);
+        self::remember($conversationId, 'user', $text, attachments: $attachments);
 
-        Event::dispatch(new PersonWrote($conversationId, $messageId, $text));
+        Event::dispatch(new PersonWrote($conversationId, $messageId, $text, $attachments));
+    }
+
+    /**
+     * Keeps a file sent in the conversation (config `aparte.people.files`), and says what the chat
+     * shows of it: its name, kind, weight and the address to open it at (the people route).
+     *
+     * @return array{id: string, name: string, type: string, size: int, url: ?string}
+     */
+    public static function attach(string $conversationId, UploadedFile $file): array
+    {
+        $id = (string) Str::uuid();
+        $name = Str::limit(str_replace(['/', '\\', "\0"], '-', $file->getClientOriginalName()), 120, '') ?: 'file';
+        Storage::disk(config('aparte.people.files.disk', 'local'))->putFileAs(self::fileDirectory($conversationId, $id), $file, $name);
+
+        return [
+            'id' => $id,
+            'name' => $name,
+            'type' => $file->getMimeType() ?: 'application/octet-stream',
+            'size' => (int) $file->getSize(),
+            'url' => self::$filesUri === null ? null : url(self::$filesUri.'/'.rawurlencode($conversationId).'/files/'.$id),
+        ];
+    }
+
+    /** Where a file of the conversation is on the disk, or null when there is none by that id. */
+    public static function filePath(string $conversationId, string $fileId): ?string
+    {
+        if (! Str::isUuid($fileId)) {
+            return null;
+        }
+
+        return Storage::disk(config('aparte.people.files.disk', 'local'))->files(self::fileDirectory($conversationId, $fileId))[0] ?? null;
+    }
+
+    /** @internal Route::apartePeople() says where its routes are: a file's address is under them. */
+    public static function filesUnder(string $uri): void
+    {
+        self::$filesUri ??= rtrim($uri, '/');
+    }
+
+    private static function fileDirectory(string $conversationId, string $fileId): string
+    {
+        return 'aparte/people/'.$conversationId.'/'.$fileId;
     }
 
     /**
@@ -149,12 +196,20 @@ final class People
      * @param  array<string, mixed>  $author
      * @return string the message's id
      */
-    public static function post(string $conversationId, array $author, string $text): string
+    /** @param  list<array<string, mixed>>  $attachments  files kept with People::attach(), shown as links to open */
+    public static function post(string $conversationId, array $author, string $text, array $attachments = []): string
     {
         $author = self::author($author);
-        $message = self::message(['author' => $author, 'content' => $text]);
+        // The chat draws a team member's files as links (a bubble shows attachments for the person only).
+        $links = array_map(fn (array $file): string => '📎 ['.$file['name'].']('.$file['url'].')', $attachments);
+        $message = self::message(array_filter([
+            'author' => $author,
+            'content' => trim($text."\n\n".implode("\n", $links)),
+            'attachments' => $attachments ?: null,
+        ]));
 
-        self::remember($conversationId, 'assistant', "{$author['name']}: {$text}", $author);
+        $named = array_map(fn (array $file): string => '(file: '.$file['name'].')', $attachments);
+        self::remember($conversationId, 'assistant', trim("{$author['name']}: {$text}\n".implode("\n", $named)), $author, $attachments);
         self::show($conversationId, $message);
 
         return $message['id'];
@@ -389,7 +444,8 @@ final class People
      *
      * @param  array<string, string>|null  $author
      */
-    private static function remember(string $conversationId, string $role, string $text, ?array $author = null): void
+    /** @param  list<array<string, mixed>>  $attachments */
+    private static function remember(string $conversationId, string $role, string $text, ?array $author = null, array $attachments = []): void
     {
         $conversation = Conversation::findOrFail($conversationId);
         $latest = ConversationMessage::query()->where('conversation_id', $conversationId)->orderByDesc('id')->first();
@@ -407,7 +463,7 @@ final class People
                 ? [['content' => $text, 'tool_calls' => [], 'reasoning' => '', 'replay_blocks' => [], 'provider_tool_calls' => []]]
                 : [],
             'usage' => [],
-            'meta' => $author ? ['aparte' => ['author' => $author]] : [],
+            'meta' => ($aparte = array_filter(['author' => $author, 'attachments' => $attachments ?: null])) ? ['aparte' => $aparte] : [],
             'status' => MessageStatus::Completed,
         ]);
     }

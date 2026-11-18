@@ -439,6 +439,21 @@ until you turn it on, because something has to write to that address (your desk)
 The address goes to `POST {people}/{id}/email`, `People::email($id)` returns it, and `VisitorLeftEmail` tells your desk;
 the visitor reads "We will also answer you at …". Someone signed in is not asked: their account has an address.
 
+### Files
+
+While someone of your team is in the conversation (and from the start in a chat with the team only), the person can
+attach files; your team can send some back. It is off until you turn it on:
+
+```blade
+<x-aparte::launcher endpoint="/chat" people="/chat/people" :people-files="true" />
+```
+
+They are kept on a private disk of your app (`config/aparte.php`, `people.files`: the disk, 10 MB and 5 files a
+message by default, and the kinds taken, never one a browser would run), and opened at `{people}/{id}/files/{file}` by
+whoever may read the conversation. `PersonWrote::$attachments` tells your desk what came with a message. Your team's
+files go out with `People::post($id, $author, $text, [People::attach($id, $uploadedFile)])`, and the person's chat shows
+them as links.
+
 ### Your team first, the assistant when it is away
 
 With the assistant and the people routes both on the page, your team can answer new conversations itself while it is
