@@ -21,6 +21,26 @@ aparte-launcher > .aparte-app-shell:has(> aparte-sidebar:not([data-drawer], [col
     flex: none;
 }
 
+/* "Get the answer by e-mail too", above the composer, while the conversation waits for the team. */
+.aparte-laravel-email {
+    display: grid;
+    gap: .375rem;
+    margin: 0 .75rem .5rem;
+    padding: .625rem .75rem;
+    border: 1px solid var(--aparte-border, #e5e7eb);
+    border-radius: .625rem;
+    font-size: .8125rem;
+    color: var(--aparte-text-muted, #6b7280);
+}
+.aparte-laravel-email__row {
+    display: flex;
+    gap: .375rem;
+}
+.aparte-laravel-email__row input {
+    flex: 1;
+    min-width: 0;
+}
+
 /* "Marie is typing…", above the composer, while someone of the team writes. */
 .aparte-laravel-typing {
     padding: 0 1rem .375rem;

@@ -7,6 +7,7 @@ use Aparte\Laravel\Conversations\DatabaseConversationRepository;
 use Aparte\Laravel\Conversations\StoredConversation;
 use Aparte\Laravel\Events\ConversationChanged;
 use Aparte\Laravel\Events\PersonSaw;
+use Aparte\Laravel\Events\VisitorLeftEmail;
 use Aparte\Laravel\Events\PersonWrote;
 use Aparte\Laravel\Events\SomeoneWanted;
 use Closure;
@@ -98,6 +99,36 @@ final class People
     public static function visitorTyping(string $conversationId): bool
     {
         return Cache::get(self::typingKey($conversationId)) === true;
+    }
+
+    /**
+     * The person left an e-mail address, to get your team's answer there too: kept with the
+     * conversation, VisitorLeftEmail tells your desk, and the chat draws a notice that says so.
+     *
+     * @return array<string, mixed> the notice, as the chat draws it
+     */
+    public static function leftEmail(string $conversationId, string $email): array
+    {
+        Cache::forever(self::emailKey($conversationId), $email);
+
+        $message = self::message(['kind' => 'notice', 'content' => __('We will also answer you at :email', ['email' => $email])]);
+        self::show($conversationId, $message);
+        Event::dispatch(new VisitorLeftEmail($conversationId, $email));
+
+        return $message;
+    }
+
+    /** The e-mail address the person left in the conversation, or null. */
+    public static function email(string $conversationId): ?string
+    {
+        $email = Cache::get(self::emailKey($conversationId));
+
+        return is_string($email) ? $email : null;
+    }
+
+    private static function emailKey(string $conversationId): string
+    {
+        return 'aparte.people.email.'.$conversationId;
     }
 
     /** The person has seen what your team wrote: PersonSaw tells your desk. */

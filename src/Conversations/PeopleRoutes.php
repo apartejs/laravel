@@ -27,6 +27,7 @@ class PeopleRoutes
             Route::post($one.'/want', [PeopleController::class, 'want'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
             Route::post($one.'/typing', [PeopleController::class, 'typing'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
             Route::post($one.'/seen', [PeopleController::class, 'seen'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
+            Route::post($one.'/email', [PeopleController::class, 'email'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
         ]);
     }
 

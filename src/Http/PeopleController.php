@@ -22,7 +22,7 @@ class PeopleController
         // A conversation that is not there yet has had no one take it over, and will be the
         // participant's who asks: the channel is theirs already.
         if ($found === null) {
-            return response()->json(['heldBy' => null, 'wanted' => false, 'channel' => People::channel($conversation, $request->user()?->getKey())]);
+            return response()->json(['heldBy' => null, 'wanted' => false, 'emailLeft' => false, 'channel' => People::channel($conversation, $request->user()?->getKey())]);
         }
 
         $this->authorize($request, $found);
@@ -30,6 +30,7 @@ class PeopleController
         return response()->json([
             'heldBy' => People::holder($conversation),
             'wanted' => People::wanted($conversation) !== null,
+            'emailLeft' => People::email($conversation) !== null,
             'channel' => People::channel($conversation, $found->participant_id),
         ]);
     }
@@ -91,6 +92,21 @@ class PeopleController
     }
 
     /** The person is writing, while someone of your team is in the conversation. */
+    /**
+     * The person leaves an e-mail address, to get your team's answer there too (the chat's field,
+     * `:people-email="true"`): kept with the conversation, and VisitorLeftEmail tells your desk.
+     */
+    public function email(Request $request, string $conversation): JsonResponse
+    {
+        $found = Conversation::find($conversation);
+        abort_if($found === null, 404);
+        $this->authorize($request, $found);
+
+        $data = $request->validate(['email' => ['required', 'string', 'email', 'max:254']]);
+
+        return response()->json(['notice' => People::leftEmail($conversation, $data['email'])]);
+    }
+
     public function typing(Request $request, string $conversation): Response
     {
         $found = Conversation::find($conversation);
