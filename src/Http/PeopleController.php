@@ -127,7 +127,8 @@ class PeopleController
         abort_if($path === null, 404);
 
         $disk = Storage::disk(config('aparte.people.files.disk', 'local'));
-        $inline = str_starts_with((string) $disk->mimeType($path), 'image/') || $disk->mimeType($path) === 'application/pdf';
+        // Opened in the browser: pictures and PDFs it cannot run. Anything else, an SVG included, downloads.
+        $inline = in_array($disk->mimeType($path), ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'], true);
 
         return $disk->response($path, basename($path), ['X-Content-Type-Options' => 'nosniff'], $inline ? 'inline' : 'attachment');
     }

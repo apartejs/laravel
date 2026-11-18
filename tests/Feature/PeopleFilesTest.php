@@ -100,3 +100,10 @@ it('offers the paperclip to the team only when the page asks for it', function (
     expect(Blade::render('<x-aparte::chat endpoint="/chat" people="/chat/people" :people-files="true" />'))->toContain('data-aparte-people-files=')
         ->and(Blade::render('<x-aparte::chat endpoint="/chat" people="/chat/people" />'))->not->toContain('data-aparte-people-files');
 });
+
+it('never opens in the browser a file it could run: a picture in SVG downloads', function () {
+    filesConversation();
+    $svg = People::attach('thread-1', UploadedFile::fake()->createWithContent('logo.svg', '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'));
+
+    expect($this->get("/chat/people/thread-1/files/{$svg['id']}")->headers->get('Content-Disposition'))->toStartWith('attachment');
+});
