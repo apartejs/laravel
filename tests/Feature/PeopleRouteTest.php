@@ -88,7 +88,7 @@ it('hands a chat without an assistant to the team at its first message, the mess
         ->and(People::wanted('new-1'))->toBe('Do you deliver to Belgium?')
         ->and(Conversation::find('new-1')?->title)->toBe('Do you deliver to Belgium?');
     Event::assertDispatched(PersonWrote::class, fn (PersonWrote $e) => $e->conversationId === 'new-1' && $e->messageId === 'm-1');
-    Event::assertDispatched(Aparte\Laravel\Events\SomeoneWanted::class, fn ($e) => $e->conversationId === 'new-1');
+    Event::assertDispatched(Aparte\Laravel\Events\SomeoneWanted::class, fn ($e) => $e->conversationId === 'new-1' && $e->source === 'message');
     $read = collect((new TestAgent)->continue('new-1', as: null)->messages())->map(fn (Message $m) => $m->content)->all();
     expect($read[0])->toBe('Do you deliver to Belgium?');
 

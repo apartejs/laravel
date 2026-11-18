@@ -59,7 +59,7 @@ class PeopleController
 
         // Nobody holds it and it waits for nobody: writing to the team is asking for it.
         if (People::holder($conversation) === null && People::wanted($conversation) === null) {
-            return response()->json(['notice' => People::want($conversation, Str::limit($data['content'], 200))]);
+            return response()->json(['notice' => People::want($conversation, Str::limit($data['content'], 200), source: 'message')]);
         }
 
         return response()->noContent();
@@ -87,7 +87,7 @@ class PeopleController
             return response()->json(['notice' => null]);
         }
 
-        return response()->json(['notice' => People::want($conversation, __('The visitor asked for a person'))]);
+        return response()->json(['notice' => People::want($conversation, __('The visitor asked for a person'), source: 'button')]);
     }
 
     /** The person is writing, while someone of your team is in the conversation. */

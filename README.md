@@ -423,6 +423,8 @@ button, since everyone the visitor talks to is one:
 <x-aparte::launcher people="/chat/people" label="Questions?" />
 ```
 
+`SomeoneWanted::$source` tells your desk how a conversation came: `tool` (the assistant), `button` (the visitor's
+button) or `message` (this chat), so it can word it, and offer no "hand back to the assistant" where there is none.
 `Route::apartePeople()` is the one route this chat needs, and the visitor's first message creates the conversation:
 throttle it as you would the chat route, `Route::apartePeople('/chat/people')->middleware('throttle:30,1')`.
 
