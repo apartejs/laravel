@@ -609,12 +609,57 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         });
     }
 
+    // How the conversation went, when your team closed it and asks (`:people-rating`): two buttons,
+    // answered once, then a thank-you in the conversation.
+    const ratingWords = chat.dataset.apartePeopleRating ?? '';
+    const ratingAsked = new Set();
+    let ratingBox = null;
+    const rate = (value) => {
+        const id = open;
+        if (!id) return;
+        fetch(`${route(id)}/rating`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
+            credentials: 'same-origin',
+            body: JSON.stringify({ value }),
+        })
+            .then((response) => (response.ok ? response.json() : Promise.reject(new Error(`status ${response.status}`))))
+            .then(({ notice = null } = {}) => {
+                ratingAsked.delete(id);
+                showButton();
+                if (notice) apply(id, { type: 'message', message: notice });
+            })
+            .catch((error) => console.warn('aparté: the rating was not kept.', error));
+    };
+    if (ratingWords) {
+        ratingBox = document.createElement('div');
+        ratingBox.className = 'aparte-laravel-rating';
+        ratingBox.setAttribute('role', 'group');
+        ratingBox.setAttribute('aria-label', ratingWords);
+        ratingBox.hidden = true;
+        const question = document.createElement('span');
+        question.textContent = ratingWords;
+        const answer = (value, label, glyph) => {
+            const choice = document.createElement('button');
+            choice.type = 'button';
+            choice.className = 'aparte-btn aparte-btn--sm aparte-btn--surface';
+            choice.dataset.rating = value;
+            choice.setAttribute('aria-label', label);
+            choice.title = label;
+            choice.textContent = glyph;
+            choice.addEventListener('click', () => rate(value));
+            return choice;
+        };
+        ratingBox.append(question, answer('up', chat.dataset.apartePeopleRatingUp || 'Good', '👍'), answer('down', chat.dataset.apartePeopleRatingDown || 'Not good', '👎'));
+    }
+
     const fileTypes = chat.dataset.apartePeopleFiles;
     const ownPaperclip = chat.hasAttribute('attachments');
 
     const showButton = () => {
         if (button) button.style.display = open && config.getAutoReply(open) ? '' : 'none';
         if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open));
+        if (ratingBox) ratingBox.hidden = !(open && ratingAsked.has(open));
         // The paperclip while someone of the team is in the conversation (`:people-files`), and from
         // the start in a chat with the team only; a page that set `attachments` itself keeps it.
         if (fileTypes !== undefined && !ownPaperclip) {
@@ -632,6 +677,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     typingLine.hidden = true;
     chat.querySelector('aparte-composer')?.before(typingLine);
     if (emailBox) typingLine.before(emailBox);
+    if (ratingBox) typingLine.before(ratingBox);
     let typingTimer = null;
     const showTyping = (name) => {
         typingLine.textContent = typingWords.replace(':name', name);
@@ -679,6 +725,9 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
             showTyping(change.author.name);
         } else if (change.type === 'note' && typeof change.messageId === 'string') {
             viewport.updateMessage(change.messageId, { note: typeof change.note === 'string' ? change.note : undefined });
+        } else if (change.type === 'rating') {
+            ratingAsked.add(id);
+            showButton();
         } else if (change.type === 'auto-reply') {
             const on = answers(change.on !== false);
             config.setAutoReply(on, id);
@@ -709,8 +758,9 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         fetch(route(id), { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
             .then((response) => (response.ok ? response.json() : {}))
             .catch(() => ({}))
-            .then(({ heldBy = null, wanted = false, emailLeft: left = false, channel = null } = {}) => {
+            .then(({ heldBy = null, wanted = false, emailLeft: left = false, rating = null, channel = null } = {}) => {
                 if (left) emailLeft.add(id);
+                if (rating === 'asked') ratingAsked.add(id);
                 config.setAutoReply(answers(!heldBy && !wanted), id);
                 if (open !== id) return;
                 showButton();
@@ -828,6 +878,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         clearTimeout(typingTimer);
         typingLine.remove();
         emailBox?.remove();
+        ratingBox?.remove();
         if (fileTypes !== undefined && !ownPaperclip) chat.removeAttribute('attachments');
         button?.remove();
         unsubscribe();

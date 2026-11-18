@@ -73,6 +73,7 @@ const held = new Map();
 const heard = [];
 const wants = [];
 const emails = [];
+const ratings = [];
 const typings = [];
 const seens = [];
 /** What the tests make of that server: down (every route answers 500), slow to list, strict on weight. */
@@ -119,7 +120,7 @@ ${chat('aparte-chat-1', '')}</body></html>`,
     // A chat with the team only: no endpoint, the people routes.
     '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send" data-aparte-people-files=".png,.txt,.pdf"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
     // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
-    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person"`)}</body></html>`,
+    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-rating="How was this conversation?" data-aparte-people-rating-up="Good" data-aparte-people-rating-down="Not good"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
     '/failing': `${head}${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
     // The same, on a page that builds nothing: a plain script listens for `aparte:setup` and
@@ -187,6 +188,11 @@ const server = createServer((req, res) => {
                 (rest === 'typing' ? typings : seens).push(id);
                 res.writeHead(204);
                 return res.end();
+            }
+            if (req.method === 'POST' && rest === 'rating') {
+                ratings.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ notice: { id: `rated-${id}`, role: 'assistant', kind: 'notice', content: 'Thank you for your answer', timestamp: Date.now() } }));
             }
             if (req.method === 'POST' && rest === 'email') {
                 emails.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
@@ -723,6 +729,17 @@ try {
         check(mine?.id === bubbleId && mine?.csrf === 'test-token', 'people: with the id of the message on screen and the CSRF header');
         await new Promise((resolve) => setTimeout(resolve, 500));
         check(turns.length === turnsBefore, 'people: and the assistant is not asked');
+
+        // The team closes it and asks how it went: two buttons, answered once.
+        const rating = page.locator('#shell-a .aparte-laravel-rating');
+        check(!(await rating.isVisible()), 'people: no rating question before the team asks');
+        await desk(id, { type: 'rating' });
+        check(await until(() => rating.isVisible()), 'people: the visitor is asked how it went');
+        const noticesBefore = await page.locator('aparte-chat-bubble[data-kind="notice"]').count();
+        await rating.locator('button[data-rating="up"]').click();
+        check(await until(async () => ratings.some((r) => r.id === id && r.value === 'up' && r.csrf === 'test-token')), 'people: the answer goes to the people route');
+        check(await until(async () => !(await rating.isVisible())), 'people: the question goes once answered');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === noticesBefore + 1), 'people: the visitor is thanked');
 
         await desk(id, { type: 'note', messageId: bubbleId, note: 'Read by Marie' });
         check(await until(async () => ((await page.locator('aparte-chat-bubble[data-role="user"] .aparte-message-note').last().textContent()) ?? '') === 'Read by Marie'), 'people: the note is drawn under it');

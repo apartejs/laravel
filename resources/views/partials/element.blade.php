@@ -23,6 +23,8 @@
     @if (($people ?? null) && ($peopleEmail ?? false) && ! auth()->check()) data-aparte-people-email="{{ __('Get the answer by e-mail too') }}" data-aparte-people-email-placeholder="{{ __('Your e-mail') }}" data-aparte-people-email-send="{{ __('Send') }}" @endif
     {{-- The paperclip while someone of the team is in the conversation: files kept on your disk (aparte.people.files). --}}
     @if (($people ?? null) && ($peopleFiles ?? false)) data-aparte-people-files="{{ collect(config('aparte.people.files.types', []))->map(fn ($type) => '.'.$type)->implode(',') }}" @endif
+    {{-- How the conversation went, asked when your team closes it: only when the app turns it on (a desk keeps it). --}}
+    @if (($people ?? null) && ($peopleRating ?? false)) data-aparte-people-rating="{{ __('How was this conversation?') }}" data-aparte-people-rating-up="{{ __('Good') }}" data-aparte-people-rating-down="{{ __('Not good') }}" @endif
     @if ($followDarkClass ?? false) data-aparte-follow-dark @endif
     @if ($fill ?? false) style="height: 100%" @endif
 >

@@ -23,7 +23,7 @@ class PeopleController
         // A conversation that is not there yet has had no one take it over, and will be the
         // participant's who asks: the channel is theirs already.
         if ($found === null) {
-            return response()->json(['heldBy' => null, 'wanted' => false, 'emailLeft' => false, 'channel' => People::channel($conversation, $request->user()?->getKey())]);
+            return response()->json(['heldBy' => null, 'wanted' => false, 'emailLeft' => false, 'rating' => null, 'channel' => People::channel($conversation, $request->user()?->getKey())]);
         }
 
         $this->authorize($request, $found);
@@ -32,6 +32,7 @@ class PeopleController
             'heldBy' => People::holder($conversation),
             'wanted' => People::wanted($conversation) !== null,
             'emailLeft' => People::email($conversation) !== null,
+            'rating' => People::rating($conversation),
             'channel' => People::channel($conversation, $found->participant_id),
         ]);
     }
@@ -114,6 +115,19 @@ class PeopleController
         $data = $request->validate(['email' => ['required', 'string', 'email', 'max:254']]);
 
         return response()->json(['notice' => People::leftEmail($conversation, $data['email'])]);
+    }
+
+    /** The person says how the conversation went, when your team asked (People::askRating): once. */
+    public function rating(Request $request, string $conversation): JsonResponse
+    {
+        $found = Conversation::find($conversation);
+        abort_if($found === null, 404);
+        $this->authorize($request, $found);
+        abort_unless(People::rating($conversation) === 'asked', 409, 'Nobody asked for a rating, or it was given.');
+
+        $data = $request->validate(['value' => ['required', 'string', 'in:up,down']]);
+
+        return response()->json(['notice' => People::rate($conversation, $data['value'])]);
     }
 
     /** A file sent in the conversation, for whoever may read it: never run by the browser. */

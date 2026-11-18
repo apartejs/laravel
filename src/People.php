@@ -8,6 +8,7 @@ use Aparte\Laravel\Conversations\StoredConversation;
 use Aparte\Laravel\Events\ConversationChanged;
 use Aparte\Laravel\Events\PersonSaw;
 use Aparte\Laravel\Events\VisitorLeftEmail;
+use Aparte\Laravel\Events\VisitorRated;
 use Aparte\Laravel\Events\PersonWrote;
 use Aparte\Laravel\Events\SomeoneWanted;
 use Closure;
@@ -163,6 +164,45 @@ final class People
         Event::dispatch(new VisitorLeftEmail($conversationId, $email));
 
         return $message;
+    }
+
+    /**
+     * Asks the person how the conversation went (the chat's question, `:people-rating="true"`): your
+     * desk does it when your team closes the conversation. Asked once; answered with rate().
+     */
+    public static function askRating(string $conversationId): void
+    {
+        Cache::forever(self::ratingKey($conversationId), 'asked');
+        self::announce($conversationId, ['type' => 'rating']);
+    }
+
+    /**
+     * The person's answer, `up` or `down`: kept, VisitorRated tells your desk, and the chat thanks them.
+     *
+     * @return array<string, mixed> the notice, as the chat draws it
+     */
+    public static function rate(string $conversationId, string $value): array
+    {
+        Cache::forever(self::ratingKey($conversationId), $value);
+
+        $message = self::message(['kind' => 'notice', 'content' => __('Thank you for your answer')]);
+        self::show($conversationId, $message);
+        Event::dispatch(new VisitorRated($conversationId, $value));
+
+        return $message;
+    }
+
+    /** `asked` while the question waits, then the answer, `up` or `down`; null when nobody asked. */
+    public static function rating(string $conversationId): ?string
+    {
+        $rating = Cache::get(self::ratingKey($conversationId));
+
+        return is_string($rating) ? $rating : null;
+    }
+
+    private static function ratingKey(string $conversationId): string
+    {
+        return 'aparte.people.rating.'.$conversationId;
     }
 
     /** The e-mail address the person left in the conversation, or null. */

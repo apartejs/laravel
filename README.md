@@ -454,6 +454,19 @@ whoever may read the conversation. `PersonWrote::$attachments` tells your desk w
 files go out with `People::post($id, $author, $text, [People::attach($id, $uploadedFile)])`, and the person's chat shows
 them as links.
 
+### How it went
+
+When your team is done with a conversation, it can ask the person how it went: "How was this conversation?" with 👍
+and 👎, above the composer, answered once. It is off until you turn it on, since something has to keep the answers (your
+desk):
+
+```blade
+<x-aparte::launcher endpoint="/chat" people="/chat/people" :people-rating="true" />
+```
+
+`People::askRating($id)` asks (your desk does it when it closes a conversation), `POST {people}/{id}/rating` takes `up`
+or `down`, `People::rating($id)` returns it, and `VisitorRated` tells your desk.
+
 ### Your team first, the assistant when it is away
 
 With the assistant and the people routes both on the page, your team can answer new conversations itself while it is
