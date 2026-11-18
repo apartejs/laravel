@@ -36,6 +36,8 @@ final class People
     /** @var (Closure(string): string)|null */
     private static ?Closure $wantedNotice = null;
 
+    private static ?Closure $teamFirst = null;
+
     /** The conversation the chat route is answering right now, for a tool to know where it runs. */
     private static ?string $answering = null;
 
@@ -200,6 +202,27 @@ final class People
     public static function wantedNotice(?Closure $resolver): void
     {
         self::$wantedNotice = $resolver;
+    }
+
+    /**
+     * Whether your team answers a new conversation before the assistant: while it says yes, a
+     * conversation goes to your team at its first message (SomeoneWanted, source `team_first`),
+     * and the assistant stays quiet there until someone hands it back. Asked once per
+     * conversation, at its first message. A desk can say "while the team is at work":
+     * `People::teamFirst(fn (string $conversationId) => $teamIsThere)`. Null: the assistant
+     * always answers first.
+     *
+     * @param  (Closure(string): bool)|null  $resolver
+     */
+    public static function teamFirst(?Closure $resolver): void
+    {
+        self::$teamFirst = $resolver;
+    }
+
+    /** Whether the team answers this new conversation first (People::teamFirst). */
+    public static function teamAnswersFirst(string $conversationId): bool
+    {
+        return self::$teamFirst !== null && (bool) (self::$teamFirst)($conversationId);
     }
 
     /** Why the conversation waits for someone of your team, or null when it does not. */

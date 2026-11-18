@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use Laravel\Ai\AgentUserInteraction\AgentUserInteraction;
 use Laravel\Ai\Approvals\Decision;
 use Laravel\Ai\Approvals\Decisions;
+use Illuminate\Support\Str;
 use Laravel\Ai\Models\Conversation;
+use Laravel\Ai\Models\ConversationMessage;
 use Laravel\Ai\Responses\StreamableAgentResponse;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,9 +39,22 @@ class ChatController
             403,
         );
 
+        $held = People::holder($threadId) !== null || People::wanted($threadId) !== null;
+
+        // A new conversation your team answers first while it is there (People::teamFirst): its
+        // first message is kept for them, then it goes to the team, before any answer.
+        if (! $held && ! ConversationMessage::query()->where('conversation_id', $threadId)->exists()
+            && People::teamAnswersFirst($threadId)) {
+            $text = (string) $chat->message()?->content;
+            $this->heard($request, $threadId, $text);
+            People::want($threadId, Str::limit($text, 200), source: 'team_first');
+
+            return (new AparteProtocol($threadId, $chat->runId() ?: null, $request))->nothingToSay();
+        }
+
         // Someone of the team holds the conversation: no assistant answers. The message is kept
         // for them (the browser was told a moment too late to send it to the people route).
-        if (People::holder($threadId) !== null || People::wanted($threadId) !== null) {
+        if ($held) {
             $this->heard($request, $threadId, $chat->message()?->content);
             People::announce($threadId, ['type' => 'auto-reply', 'on' => false]);
 

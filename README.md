@@ -424,7 +424,21 @@ button, since everyone the visitor talks to is one:
 ```
 
 `SomeoneWanted::$source` tells your desk how a conversation came: `tool` (the assistant), `button` (the visitor's
-button) or `message` (this chat), so it can word it, and offer no "hand back to the assistant" where there is none.
+button), `message` (this chat) or `team_first` (below), so it can word it, and offer no "hand back to the assistant"
+where there is none.
+
+### Your team first, the assistant when it is away
+
+With the assistant and the people routes both on the page, your team can answer new conversations itself while it is
+there, and leave them to the assistant the rest of the time. Say when, once, in a service provider's `boot()`:
+
+```php
+People::teamFirst(fn (string $conversationId) => now()->isWeekday() && now()->hour >= 9 && now()->hour < 18);
+```
+
+It is asked at a conversation's first message. While it says yes, that message goes to your team (`SomeoneWanted`,
+source `team_first`) and the assistant stays quiet there until someone hands it back; a conversation the assistant
+began goes on with it. A desk can answer it for you, from its office hours and who has it open.
 `Route::apartePeople()` is the one route this chat needs, and the visitor's first message creates the conversation:
 throttle it as you would the chat route, `Route::apartePeople('/chat/people')->middleware('throttle:30,1')`.
 
