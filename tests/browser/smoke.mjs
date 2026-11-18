@@ -124,7 +124,7 @@ ${chat('aparte-chat-1', '')}</body></html>`,
     // A chat with the team only: no endpoint, the people routes.
     '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send" data-aparte-people-files=".png,.txt,.pdf" data-aparte-people-rating="How was this conversation?" data-aparte-people-rating-up="Good" data-aparte-people-rating-down="Not good"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
     // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
-    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-rating="How was this conversation?" data-aparte-people-rating-up="Good" data-aparte-people-rating-down="Not good"`)}</body></html>`,
+    '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-rating="How was this conversation?" data-aparte-people-rating-up="Good" data-aparte-people-rating-down="Not good" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
     '/failing': `${head}${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
     // The same, on a page that builds nothing: a plain script listens for `aparte:setup` and
@@ -735,9 +735,14 @@ try {
         const id = turns.at(-1).threadId;
         check(await until(() => page.evaluate((i) => window.listening(i), id)), "people: the chat listens on the conversation's channel");
 
+        const email = page.locator('#shell-a .aparte-laravel-email');
+        check(!(await email.isVisible()), 'people: no e-mail field while the assistant answers');
         await desk(id, { type: 'auto-reply', on: false });
+        // The assistant's answer is the last message, yet the person now waits for the team.
+        check(await until(() => email.isVisible()), 'people: handed over, the person may leave an e-mail for the answer');
         await desk(id, { type: 'message', message: { id: 'n1', role: 'assistant', kind: 'notice', content: 'Marie joined the conversation', timestamp: Date.now() } });
         await desk(id, { type: 'message', message: { id: 'h1', role: 'assistant', author: { name: 'Marie', type: 'human' }, content: 'Hi, I am Marie.', timestamp: Date.now() } });
+        check(await until(async () => !(await email.isVisible())), 'people: the field goes once the team has answered');
         check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 1), 'people: the notice is drawn');
         check(await until(async () => (await page.locator('aparte-chat-bubble[data-author-type="human"]').getAttribute('name')) === 'Marie'), "people: Marie's message is drawn as hers");
         check(await until(async () => seens.includes(id)), "people: the tab in front tells that the team's message was seen");
