@@ -173,9 +173,10 @@ final class People
      * (takeOver) or hands it back (handBack). The AskForSomeone tool calls this.
      *
      * @param  string|null  $notice  the line the chat draws; wantedNotice()'s, else "Someone of the team will answer you here"
+     * @param  string  $source  how it came, for your desk (SomeoneWanted::$source): tool, button, message
      * @return array<string, mixed> the notice, as the chat draws it
      */
-    public static function want(string $conversationId, string $reason, ?string $notice = null): array
+    public static function want(string $conversationId, string $reason, ?string $notice = null, string $source = 'tool'): array
     {
         Cache::forever(self::wantedKey($conversationId), $reason);
 
@@ -184,7 +185,7 @@ final class People
 
         self::announce($conversationId, ['type' => 'auto-reply', 'on' => false]);
         self::show($conversationId, $message);
-        Event::dispatch(new SomeoneWanted($conversationId, $reason));
+        Event::dispatch(new SomeoneWanted($conversationId, $reason, $source));
 
         return $message;
     }

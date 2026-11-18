@@ -412,6 +412,22 @@ provider's `boot()` (a desk can say when the team is back):
 People::wantedNotice(fn (string $conversationId) => 'Someone of the team will answer you here.');
 ```
 
+### A chat with your team only
+
+No assistant at all: leave out `endpoint`. Every message goes to your team through the people routes, and the first
+one hands the conversation over, with that message as the reason: the same notice, the same `SomeoneWanted`, so your
+desk or your notification hears it as it hears a hand-off. There is no model to configure and no **Talk to a person**
+button, since everyone the visitor talks to is one:
+
+```blade
+<x-aparte::launcher people="/chat/people" label="Questions?" />
+```
+
+`SomeoneWanted::$source` tells your desk how a conversation came: `tool` (the assistant), `button` (the visitor's
+button) or `message` (this chat), so it can word it, and offer no "hand back to the assistant" where there is none.
+`Route::apartePeople()` is the one route this chat needs, and the visitor's first message creates the conversation:
+throttle it as you would the chat route, `Route::apartePeople('/chat/people')->middleware('throttle:30,1')`.
+
 
 ## Plugins
 

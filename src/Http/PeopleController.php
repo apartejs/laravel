@@ -6,6 +6,7 @@ use Aparte\Laravel\People;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Laravel\Ai\Models\Conversation;
 
 /**
@@ -33,18 +34,33 @@ class PeopleController
         ]);
     }
 
-    public function store(Request $request, string $conversation): Response
+    /**
+     * What the person writes to your team. In a chat without an assistant (no `endpoint`), the
+     * first message starts the conversation and puts it in your team's queue, the message as the
+     * reason; the visitor reads the notice the hand-off gives.
+     */
+    public function store(Request $request, string $conversation): Response|JsonResponse
     {
-        $found = Conversation::find($conversation);
-        abort_if($found === null, 404);
-        $this->authorize($request, $found);
-
         $data = $request->validate([
             'id' => ['required', 'string', 'max:64'],
             'content' => ['required', 'string', 'max:20000'],
         ]);
 
+        // The browser mints the thread id, as for the chat route.
+        $user = $request->user();
+        $found = Conversation::firstOrCreate(['id' => $conversation], [
+            'participant_type' => $user?->getMorphClass(),
+            'participant_id' => $user?->getKey(),
+            'title' => Str::limit($data['content'], 60),
+        ]);
+        $this->authorize($request, $found);
+
         People::heard($conversation, $data['id'], $data['content']);
+
+        // Nobody holds it and it waits for nobody: writing to the team is asking for it.
+        if (People::holder($conversation) === null && People::wanted($conversation) === null) {
+            return response()->json(['notice' => People::want($conversation, Str::limit($data['content'], 200), source: 'message')]);
+        }
 
         return response()->noContent();
     }
@@ -71,7 +87,7 @@ class PeopleController
             return response()->json(['notice' => null]);
         }
 
-        return response()->json(['notice' => People::want($conversation, __('The visitor asked for a person'))]);
+        return response()->json(['notice' => People::want($conversation, __('The visitor asked for a person'), source: 'button')]);
     }
 
     /** The person is writing, while someone of your team is in the conversation. */

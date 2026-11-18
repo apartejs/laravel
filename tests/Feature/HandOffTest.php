@@ -22,7 +22,7 @@ it('hands a conversation to the team from the tool: quiet, a notice, and why', f
 
     expect((string) $said)->toContain('team')
         ->and(People::wanted('thread-1'))->toBe('change a delivery address');
-    Event::assertDispatched(SomeoneWanted::class, fn (SomeoneWanted $e) => $e->conversationId === 'thread-1' && $e->reason === 'change a delivery address');
+    Event::assertDispatched(SomeoneWanted::class, fn (SomeoneWanted $e) => $e->conversationId === 'thread-1' && $e->reason === 'change a delivery address' && $e->source === 'tool');
     $types = Event::dispatched(ConversationChanged::class)->map(fn ($e) => $e[0]->change['type'] ?? null)->all();
     expect($types)->toContain('auto-reply')->toContain('message');
 });
@@ -74,7 +74,7 @@ it("asks for someone of the team from the visitor's button, without the model", 
     expect($notice['kind'])->toBe('notice')
         ->and($notice['content'])->toBe('Someone of the team will answer you here')
         ->and(People::wanted('new-1'))->toBe('The visitor asked for a person');
-    Event::assertDispatched(SomeoneWanted::class, fn (SomeoneWanted $e) => $e->conversationId === 'new-1');
+    Event::assertDispatched(SomeoneWanted::class, fn (SomeoneWanted $e) => $e->conversationId === 'new-1' && $e->source === 'button');
     expect($this->getJson('/chat/people/new-1')->json('wanted'))->toBeTrue();
 });
 
