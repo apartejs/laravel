@@ -62,7 +62,7 @@ it('tells the chat which channel to listen on, with who holds the conversation',
 
     $this->actingAs($user)->getJson('/chat/people/thread-1')
         ->assertOk()
-        ->assertExactJson(['heldBy' => null, 'wanted' => false, 'channel' => ['name' => 'aparte.conversations.thread-1', 'private' => true]]);
+        ->assertExactJson(['heldBy' => null, 'wanted' => false, 'emailLeft' => false, 'channel' => ['name' => 'aparte.conversations.thread-1', 'private' => true]]);
 
     auth()->logout();
     $guest = $this->getJson('/chat/people/guest-1')->assertOk()->json('channel');

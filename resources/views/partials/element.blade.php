@@ -18,6 +18,9 @@
     {{-- The visitor's own way to ask for someone of the team, beside send: only when the app turns it on,
          since something has to hear SomeoneWanted (a desk) or the visitor waits for nobody. --}}
     @if (($people ?? null) && filled($peopleButton ?? null) && ($peopleButton ?? null) !== false) data-aparte-people-button="{{ is_string($peopleButton) ? $peopleButton : __('Talk to a person') }}" @endif
+    {{-- A field to get the team's answer by e-mail while the conversation waits for it: only when the app turns
+         it on (a desk writes to that address), and only for a guest, whose address nobody knows. --}}
+    @if (($people ?? null) && ($peopleEmail ?? false) && ! auth()->check()) data-aparte-people-email="{{ __('Get the answer by e-mail too') }}" data-aparte-people-email-placeholder="{{ __('Your e-mail') }}" data-aparte-people-email-send="{{ __('Send') }}" @endif
     @if ($followDarkClass ?? false) data-aparte-follow-dark @endif
     @if ($fill ?? false) style="height: 100%" @endif
 >

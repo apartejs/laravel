@@ -72,6 +72,7 @@ const PEOPLE = '/people';
 const held = new Map();
 const heard = [];
 const wants = [];
+const emails = [];
 const typings = [];
 const seens = [];
 /** What the tests make of that server: down (every route answers 500), slow to list, strict on weight. */
@@ -116,7 +117,7 @@ const pages = {
 </script>
 ${chat('aparte-chat-1', '')}</body></html>`,
     // A chat with the team only: no endpoint, the people routes.
-    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
+    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
     // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
     '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
@@ -187,6 +188,11 @@ const server = createServer((req, res) => {
                 res.writeHead(204);
                 return res.end();
             }
+            if (req.method === 'POST' && rest === 'email') {
+                emails.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ notice: { id: `email-${id}`, role: 'assistant', kind: 'notice', content: `We will also answer you at ${JSON.parse(body).email}`, timestamp: Date.now() } }));
+            }
             if (req.method === 'POST' && rest === 'want') {
                 wants.push(id);
                 res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -204,7 +210,7 @@ const server = createServer((req, res) => {
                 return res.end();
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ heldBy: held.get(id) ?? null, wanted: wants.includes(id), channel: { name: `aparte.conversations.${id}.secret`, private: false } }));
+            res.end(JSON.stringify({ heldBy: held.get(id) ?? null, wanted: wants.includes(id), emailLeft: emails.some((e) => e.id === id), channel: { name: `aparte.conversations.${id}.secret`, private: false } }));
         });
         return;
     }
@@ -774,6 +780,16 @@ try {
         await new Promise((resolve) => setTimeout(resolve, 500));
         check(turns.length === turnsBefore, 'people only: and no assistant is ever asked');
         check((await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 1, 'people only: the notice is said once');
+
+        // The answer by e-mail too: a field while the team is awaited, sent once.
+        const emailBox = page.locator('#shell-a .aparte-laravel-email');
+        check(await until(() => emailBox.isVisible()), 'people only: the visitor is offered to get the answer by e-mail');
+        await emailBox.locator('input[type="email"]').fill('lea@example.test');
+        await emailBox.locator('button[type="submit"]').click();
+        check(await until(async () => emails.some((e) => e.email === 'lea@example.test')), 'people only: the e-mail goes to the people route');
+        check(emails.at(-1)?.csrf === 'test-token', 'people only: with the CSRF header');
+        check(await until(async () => !(await emailBox.isVisible())), 'people only: the field goes once the e-mail is left');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 2), 'people only: a notice says where the answer goes');
         check(problems.length === 0, `people only: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         server_.peopleOnly = false;
         await page.close();

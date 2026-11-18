@@ -427,6 +427,18 @@ button, since everyone the visitor talks to is one:
 button), `message` (this chat) or `team_first` (below), so it can word it, and offer no "hand back to the assistant"
 where there is none.
 
+### The answer by e-mail too
+
+While a guest's conversation waits for your team, the chat can offer a field to get the answer by e-mail too. It is off
+until you turn it on, because something has to write to that address (your desk):
+
+```blade
+<x-aparte::launcher endpoint="/chat" people="/chat/people" :people-email="true" />
+```
+
+The address goes to `POST {people}/{id}/email`, `People::email($id)` returns it, and `VisitorLeftEmail` tells your desk;
+the visitor reads "We will also answer you at …". Someone signed in is not asked: their account has an address.
+
 ### Your team first, the assistant when it is away
 
 With the assistant and the people routes both on the page, your team can answer new conversations itself while it is

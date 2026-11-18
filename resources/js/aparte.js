@@ -557,8 +557,61 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         button.style.display = 'none';
         row.insertBefore(button, row.querySelector('aparte-composer-send'));
     }
+    // A field to get the team's answer by e-mail too, while the conversation waits for the team
+    // (`:people-email`, for a guest): sent once, then a notice says where the answer goes.
+    const emailWords = chat.dataset.apartePeopleEmail ?? '';
+    const emailLeft = new Set();
+    let emailBox = null;
+    if (emailWords) {
+        emailBox = document.createElement('form');
+        emailBox.className = 'aparte-laravel-email';
+        emailBox.hidden = true;
+        const label = document.createElement('label');
+        label.className = 'aparte-laravel-email__label';
+        label.textContent = emailWords;
+        const input = document.createElement('input');
+        input.type = 'email';
+        input.required = true;
+        input.autocomplete = 'email';
+        input.maxLength = 254;
+        input.id = `${chat.id}-people-email`;
+        input.className = 'aparte-field aparte-field--sm';
+        input.placeholder = chat.dataset.apartePeopleEmailPlaceholder ?? '';
+        label.htmlFor = input.id;
+        const send = document.createElement('button');
+        send.type = 'submit';
+        send.className = 'aparte-btn aparte-btn--sm aparte-btn--surface';
+        send.textContent = chat.dataset.apartePeopleEmailSend || 'Send';
+        const row = document.createElement('span');
+        row.className = 'aparte-laravel-email__row';
+        row.append(input, send);
+        emailBox.append(label, row);
+        emailBox.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const id = open;
+            if (!id || !input.value) return;
+            send.disabled = true;
+            fetch(`${route(id)}/email`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
+                credentials: 'same-origin',
+                body: JSON.stringify({ email: input.value }),
+            })
+                .then((response) => (response.ok ? response.json() : Promise.reject(new Error(`status ${response.status}`))))
+                .then(({ notice = null } = {}) => {
+                    emailLeft.add(id);
+                    input.value = '';
+                    if (notice) apply(id, { type: 'message', message: notice });
+                    showButton();
+                })
+                .catch((error) => console.warn('aparté: the e-mail for the answer was not kept.', error))
+                .finally(() => { send.disabled = false; });
+        });
+    }
+
     const showButton = () => {
         if (button) button.style.display = open && config.getAutoReply(open) ? '' : 'none';
+        if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open));
     };
 
     // Someone of the team is writing: a line above the composer, gone after a few seconds or when
@@ -569,6 +622,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     typingLine.setAttribute('aria-live', 'polite');
     typingLine.hidden = true;
     chat.querySelector('aparte-composer')?.before(typingLine);
+    if (emailBox) typingLine.before(emailBox);
     let typingTimer = null;
     const showTyping = (name) => {
         typingLine.textContent = typingWords.replace(':name', name);
@@ -646,7 +700,8 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         fetch(route(id), { headers: { Accept: 'application/json' }, credentials: 'same-origin' })
             .then((response) => (response.ok ? response.json() : {}))
             .catch(() => ({}))
-            .then(({ heldBy = null, wanted = false, channel = null } = {}) => {
+            .then(({ heldBy = null, wanted = false, emailLeft: left = false, channel = null } = {}) => {
+                if (left) emailLeft.add(id);
                 config.setAutoReply(answers(!heldBy && !wanted), id);
                 if (open !== id) return;
                 showButton();
@@ -744,6 +799,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         document.removeEventListener('visibilitychange', markSeen);
         clearTimeout(typingTimer);
         typingLine.remove();
+        emailBox?.remove();
         button?.remove();
         unsubscribe();
         follow(null);
