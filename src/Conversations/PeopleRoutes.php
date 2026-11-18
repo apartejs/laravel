@@ -3,6 +3,7 @@
 namespace Aparte\Laravel\Conversations;
 
 use Aparte\Laravel\Http\PeopleController;
+use Aparte\Laravel\People;
 use Illuminate\Routing\Route as RegisteredRoute;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,7 @@ class PeopleRoutes
     public static function register(string $uri): self
     {
         $one = rtrim($uri, '/').'/{conversation}';
+        People::filesUnder($uri);
 
         return new self([
             Route::get($one, [PeopleController::class, 'show'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
@@ -28,6 +30,7 @@ class PeopleRoutes
             Route::post($one.'/typing', [PeopleController::class, 'typing'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
             Route::post($one.'/seen', [PeopleController::class, 'seen'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
             Route::post($one.'/email', [PeopleController::class, 'email'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
+            Route::get($one.'/files/{file}', [PeopleController::class, 'file'])->where('conversation', '[A-Za-z0-9._-]{1,64}'),
         ]);
     }
 

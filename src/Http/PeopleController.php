@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Ai\Models\Conversation;
 
 /**
@@ -42,28 +43,36 @@ class PeopleController
      */
     public function store(Request $request, string $conversation): Response|JsonResponse
     {
+        $files = config('aparte.people.files');
         $data = $request->validate([
             'id' => ['required', 'string', 'max:64'],
-            'content' => ['required', 'string', 'max:20000'],
+            'content' => ['nullable', 'string', 'max:20000', 'required_without:files'],
+            'files' => ['nullable', 'array', 'max:'.(int) ($files['max'] ?? 5)],
+            'files.*' => ['file', 'max:'.(int) ($files['max_kb'] ?? 10240), 'mimes:'.implode(',', $files['types'] ?? [])],
         ]);
+        $text = (string) ($data['content'] ?? '');
 
         // The browser mints the thread id, as for the chat route.
         $user = $request->user();
         $found = Conversation::firstOrCreate(['id' => $conversation], [
             'participant_type' => $user?->getMorphClass(),
             'participant_id' => $user?->getKey(),
-            'title' => Str::limit($data['content'], 60),
+            'title' => $text !== '' ? Str::limit($text, 60) : 'aparté chat',
         ]);
         $this->authorize($request, $found);
 
-        People::heard($conversation, $data['id'], $data['content']);
+        $attachments = array_map(fn ($file) => People::attach($conversation, $file), $request->file('files', []));
+        People::heard($conversation, $data['id'], $text, $attachments);
 
         // Nobody holds it and it waits for nobody: writing to the team is asking for it.
         if (People::holder($conversation) === null && People::wanted($conversation) === null) {
-            return response()->json(['notice' => People::want($conversation, Str::limit($data['content'], 200), source: 'message')]);
+            $reason = $text !== '' ? Str::limit($text, 200) : implode(', ', array_column($attachments, 'name'));
+
+            return response()->json(['notice' => People::want($conversation, $reason, source: 'message'), 'attachments' => $attachments]);
         }
 
-        return response()->noContent();
+        // The files' addresses, for the chat to show them from here on, rather than from the browser's memory.
+        return $attachments === [] ? response()->noContent() : response()->json(['attachments' => $attachments]);
     }
 
     /**
@@ -105,6 +114,22 @@ class PeopleController
         $data = $request->validate(['email' => ['required', 'string', 'email', 'max:254']]);
 
         return response()->json(['notice' => People::leftEmail($conversation, $data['email'])]);
+    }
+
+    /** A file sent in the conversation, for whoever may read it: never run by the browser. */
+    public function file(Request $request, string $conversation, string $file): mixed
+    {
+        $found = Conversation::find($conversation);
+        abort_if($found === null, 404);
+        $this->authorize($request, $found);
+
+        $path = People::filePath($conversation, $file);
+        abort_if($path === null, 404);
+
+        $disk = Storage::disk(config('aparte.people.files.disk', 'local'));
+        $inline = str_starts_with((string) $disk->mimeType($path), 'image/') || $disk->mimeType($path) === 'application/pdf';
+
+        return $disk->response($path, basename($path), ['X-Content-Type-Options' => 'nosniff'], $inline ? 'inline' : 'attachment');
     }
 
     public function typing(Request $request, string $conversation): Response

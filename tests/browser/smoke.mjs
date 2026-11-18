@@ -117,7 +117,7 @@ const pages = {
 </script>
 ${chat('aparte-chat-1', '')}</body></html>`,
     // A chat with the team only: no endpoint, the people routes.
-    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
+    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send" data-aparte-people-files=".png,.txt,.pdf"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
     // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
     '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
@@ -197,6 +197,12 @@ const server = createServer((req, res) => {
                 wants.push(id);
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 return res.end(JSON.stringify({ notice: { id: `wanted-${id}`, role: 'assistant', kind: 'notice', content: 'Someone of the team will answer you here', timestamp: Date.now() } }));
+            }
+            if (req.method === 'POST' && rest === 'messages' && String(req.headers['content-type'] ?? '').startsWith('multipart/form-data')) {
+                // Files to the team: the form the chat sends, and what the server keeps of them.
+                heard.push({ id, csrf: req.headers['x-csrf-token'], multipart: true, file: /filename="note\.txt"/.test(body), content: /name="content"\r\n\r\n([^\r]*)/.exec(body)?.[1] ?? '' });
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ attachments: [{ id: 'f1', name: 'note.txt', type: 'text/plain', size: 5, url: `${ORIGIN}${PEOPLE}/${id}/files/f1` }] }));
             }
             if (req.method === 'POST' && rest === 'messages') {
                 heard.push({ id, csrf: req.headers['x-csrf-token'], ...JSON.parse(body) });
@@ -790,6 +796,16 @@ try {
         check(emails.at(-1)?.csrf === 'test-token', 'people only: with the CSRF header');
         check(await until(async () => !(await emailBox.isVisible())), 'people only: the field goes once the e-mail is left');
         check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 2), 'people only: a notice says where the answer goes');
+
+        // A file for the team: the paperclip, a form to the people route, the server's address after.
+        const clip = page.locator('#shell-a aparte-composer-add-attachment');
+        check(await until(() => clip.isVisible()), 'people only: the visitor can attach a file for the team');
+        // The paperclip opens the file dialog, which the browser answers with the file.
+        const [chooser] = await Promise.all([page.waitForEvent('filechooser'), clip.locator('button').click()]);
+        await chooser.setFiles({ name: 'note.txt', mimeType: 'text/plain', buffer: Buffer.from('hello') });
+        await send('My order number');
+        check(await until(async () => heard.some((h) => h.multipart && h.file && h.content === 'My order number')), 'people only: the file goes to the people route, with the words');
+        check(await until(async () => page.evaluate(() => document.querySelector('#shell-a aparte-chat-viewport')?.getMessages?.().some((m) => m.attachments?.some((a) => a.url.endsWith('/files/f1'))))), "people only: the bubble opens the file from the server's address");
         check(problems.length === 0, `people only: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         server_.peopleOnly = false;
         await page.close();

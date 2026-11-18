@@ -18,4 +18,18 @@ return [
         'list' => 200,
     ],
 
+    // Files a person sends to your team, and your team to them, while someone of it is in the
+    // conversation (`:people-files="true"` on the chat; see the README, "Files").
+    'people' => [
+        'files' => [
+            // Where they are kept: a private disk of your app's.
+            'disk' => 'local',
+            // What one file may weigh, in kilobytes, and how many go in one message.
+            'max_kb' => 10240,
+            'max' => 5,
+            // The kinds taken. Never anything a browser would run (html, svg, js).
+            'types' => ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'txt', 'csv', 'docx', 'xlsx'],
+        ],
+    ],
+
 ];

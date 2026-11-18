@@ -609,9 +609,18 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         });
     }
 
+    const fileTypes = chat.dataset.apartePeopleFiles;
+    const ownPaperclip = chat.hasAttribute('attachments');
+
     const showButton = () => {
         if (button) button.style.display = open && config.getAutoReply(open) ? '' : 'none';
         if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open));
+        // The paperclip while someone of the team is in the conversation (`:people-files`), and from
+        // the start in a chat with the team only; a page that set `attachments` itself keeps it.
+        if (fileTypes !== undefined && !ownPaperclip) {
+            chat.toggleAttribute('attachments', !assistant || Boolean(open && !config.getAutoReply(open)));
+            queueMicrotask(() => chat.querySelector('aparte-composer-add-attachment')?.setAttribute('accept', fileTypes));
+        }
     };
 
     // Someone of the team is writing: a line above the composer, gone after a few seconds or when
@@ -745,11 +754,24 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         queueMicrotask(() => {
             const id = sentIn ?? open ?? manager.activeId;
             if (!id || config.getAutoReply(id)) return;
+            // With files, a form: they are kept on the server, which says where to open them.
+            const files = Array.isArray(detail.files) ? detail.files : [];
+            const headers = { Accept: 'application/json', 'X-CSRF-TOKEN': csrf };
+            let body;
+            if (files.length > 0) {
+                body = new FormData();
+                body.append('id', detail.messageId ?? '');
+                if (detail.content) body.append('content', detail.content);
+                for (const file of files) body.append('files[]', file);
+            } else {
+                headers['Content-Type'] = 'application/json';
+                body = JSON.stringify({ id: detail.messageId, content: detail.content });
+            }
             fetch(`${route(id)}/messages`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
+                headers,
                 credentials: 'same-origin',
-                body: JSON.stringify({ id: detail.messageId, content: detail.content }),
+                body,
             }).then((response) => {
                 if (!response.ok) {
                     console.warn(`aparté: a message for your team was refused (${response.status}).`);
@@ -760,6 +782,10 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
                 console.warn('aparté: a message for your team was not sent.', error);
                 return null;
             }).then((answer) => {
+                // The files now open from the server, not from this tab's memory, which a reload empties.
+                if (Array.isArray(answer?.attachments) && answer.attachments.length > 0 && detail.messageId) {
+                    chat.viewport.updateMessage(detail.messageId, { attachments: answer.attachments });
+                }
                 // The conversation went to the team with this message: what the visitor reads.
                 if (answer?.notice) apply(id, { type: 'message', message: answer.notice });
             });
@@ -790,6 +816,8 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     document.addEventListener('visibilitychange', markSeen);
     // A conversation the chat starts: nobody holds it yet; its channel is asked for and heard.
     const unsubscribe = manager.subscribe(() => follow(manager.activeId ?? null));
+    // A chat with the team only shows its paperclip before its first message.
+    showButton();
 
     return () => {
         chat.removeEventListener('aparte-conversation-loaded', onLoaded);
@@ -800,6 +828,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         clearTimeout(typingTimer);
         typingLine.remove();
         emailBox?.remove();
+        if (fileTypes !== undefined && !ownPaperclip) chat.removeAttribute('attachments');
         button?.remove();
         unsubscribe();
         follow(null);

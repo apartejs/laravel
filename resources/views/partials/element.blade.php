@@ -21,6 +21,8 @@
     {{-- A field to get the team's answer by e-mail while the conversation waits for it: only when the app turns
          it on (a desk writes to that address), and only for a guest, whose address nobody knows. --}}
     @if (($people ?? null) && ($peopleEmail ?? false) && ! auth()->check()) data-aparte-people-email="{{ __('Get the answer by e-mail too') }}" data-aparte-people-email-placeholder="{{ __('Your e-mail') }}" data-aparte-people-email-send="{{ __('Send') }}" @endif
+    {{-- The paperclip while someone of the team is in the conversation: files kept on your disk (aparte.people.files). --}}
+    @if (($people ?? null) && ($peopleFiles ?? false)) data-aparte-people-files="{{ collect(config('aparte.people.files.types', []))->map(fn ($type) => '.'.$type)->implode(',') }}" @endif
     @if ($followDarkClass ?? false) data-aparte-follow-dark @endif
     @if ($fill ?? false) style="height: 100%" @endif
 >

@@ -12,5 +12,7 @@ class PersonWrote
         public readonly string $conversationId,
         public readonly string $messageId,
         public readonly string $text,
+        /** @var list<array{id: string, name: string, type: string, size: int, url: ?string}> the files they sent with it */
+        public readonly array $attachments = [],
     ) {}
 }
