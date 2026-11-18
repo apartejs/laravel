@@ -656,9 +656,14 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
     const fileTypes = chat.dataset.apartePeopleFiles;
     const ownPaperclip = chat.hasAttribute('attachments');
 
+    // An answer is owed: the last message, notices aside, is the person's.
+    const awaiting = () => chat.viewport?.getMessages().filter((message) => message.kind !== 'notice').at(-1)?.role === 'user';
+
     const showButton = () => {
         if (button) button.style.display = open && config.getAutoReply(open) ? '' : 'none';
-        if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open));
+        // "Get the answer by e-mail" while an answer from the team is owed, and never beside the
+        // rating question: once the team has answered, or closed it, there is nothing to wait for.
+        if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open) && !ratingAsked.has(open) && awaiting());
         if (ratingBox) ratingBox.hidden = !(open && ratingAsked.has(open));
         // The paperclip while someone of the team is in the conversation (`:people-files`), and from
         // the start in a chat with the team only; a page that set `attachments` itself keeps it.
@@ -716,6 +721,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         const viewport = chat.viewport;
         if (change.type === 'message' && typeof change.message?.id === 'string') {
             if (!viewport.getMessages().some((message) => message.id === change.message.id)) viewport.appendMessage(change.message);
+            showButton();
             if (change.message.author?.type === 'human') {
                 hideTyping();
                 unseen = true;
@@ -804,6 +810,7 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         queueMicrotask(() => {
             const id = sentIn ?? open ?? manager.activeId;
             if (!id || config.getAutoReply(id)) return;
+            showButton();
             // With files, a form: they are kept on the server, which says where to open them.
             const files = Array.isArray(detail.files) ? detail.files : [];
             const headers = { Accept: 'application/json', 'X-CSRF-TOKEN': csrf };

@@ -118,7 +118,7 @@ const pages = {
 </script>
 ${chat('aparte-chat-1', '')}</body></html>`,
     // A chat with the team only: no endpoint, the people routes.
-    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send" data-aparte-people-files=".png,.txt,.pdf"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
+    '/people-only': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-email="Get the answer by e-mail too" data-aparte-people-email-placeholder="Your e-mail" data-aparte-people-email-send="Send" data-aparte-people-files=".png,.txt,.pdf" data-aparte-people-rating="How was this conversation?" data-aparte-people-rating-up="Good" data-aparte-people-rating-down="Not good"`).replace(`data-aparte-endpoint="${ORIGIN}/turns"`, 'data-aparte-endpoint=""')}</body></html>`,
     // A chat someone of the team can take over: the people routes, and Echo as the app sets it up.
     '/people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" data-aparte-people-button="Talk to a person" data-aparte-people-rating="How was this conversation?" data-aparte-people-rating-up="Good" data-aparte-people-rating-down="Not good"`)}</body></html>`,
     // A run the server ends with one of aparté's codes: the card says its sentence.
@@ -777,9 +777,15 @@ try {
     await scenario('people only', async () => {
         server_.peopleOnly = true;
         const echo = async (page) => page.addInitScript(() => {
-            const subscription = { listen() { return this; }, stopListening() { return this; } };
-            window.Echo = { private: () => subscription, channel: () => subscription, leave: () => {} };
+            const listeners = new Map();
+            const subscription = (name) => ({
+                listen(event, fn) { listeners.set(`${name}${event}`, fn); return this; },
+                stopListening(event) { listeners.delete(`${name}${event}`); return this; },
+            });
+            window.Echo = { private: (name) => subscription(`private:${name}`), channel: (name) => subscription(name), leave: () => {} };
+            window.desk = (id, change) => listeners.get(`aparte.conversations.${id}.secret.aparte.changed`)?.(change);
         });
+        const desk = (id, change) => page.evaluate(([i, c]) => window.desk(i, c), [id, change]);
         const { page, problems } = await open('/people-only', echo);
         const send = async (text) => {
             const editor = page.locator('#shell-a aparte-chat .aparte-ci-editor');
@@ -804,15 +810,26 @@ try {
         check(turns.length === turnsBefore, 'people only: and no assistant is ever asked');
         check((await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 1, 'people only: the notice is said once');
 
-        // The answer by e-mail too: a field while the team is awaited, sent once.
+        // The answer by e-mail too: a field while an answer from the team is owed, sent once.
         const emailBox = page.locator('#shell-a .aparte-laravel-email');
         check(await until(() => emailBox.isVisible()), 'people only: the visitor is offered to get the answer by e-mail');
+        const conversation = wants.at(-1);
+        await desk(conversation, { type: 'message', message: { id: 'h-only', role: 'assistant', author: { name: 'Marie', type: 'human' }, content: 'We do, yes.', timestamp: Date.now() } });
+        check(await until(async () => !(await emailBox.isVisible())), 'people only: the field goes once the team has answered');
+        await send('And to Spain?');
+        check(await until(() => emailBox.isVisible()), 'people only: and comes back with the next question');
+        await desk(conversation, { type: 'rating' });
+        check(await until(async () => !(await emailBox.isVisible())), 'people only: never beside the rating question');
+        await page.locator('#shell-a .aparte-laravel-rating button[data-rating="up"]').click();
+        check(await until(() => emailBox.isVisible()), 'people only: back once it is answered, the question still owed');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').last().textContent())?.includes('Thank you for your answer')), 'people only: the visitor is thanked');
+        const noticesBefore = await page.locator('aparte-chat-bubble[data-kind="notice"]').count();
         await emailBox.locator('input[type="email"]').fill('lea@example.test');
         await emailBox.locator('button[type="submit"]').click();
         check(await until(async () => emails.some((e) => e.email === 'lea@example.test')), 'people only: the e-mail goes to the people route');
         check(emails.at(-1)?.csrf === 'test-token', 'people only: with the CSRF header');
         check(await until(async () => !(await emailBox.isVisible())), 'people only: the field goes once the e-mail is left');
-        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 2), 'people only: a notice says where the answer goes');
+        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === noticesBefore + 1), 'people only: a notice says where the answer goes');
 
         // A file for the team: the paperclip, a form to the people route, the server's address after.
         const clip = page.locator('#shell-a aparte-composer-add-attachment');

@@ -429,8 +429,9 @@ where there is none.
 
 ### The answer by e-mail too
 
-While a guest's conversation waits for your team, the chat can offer a field to get the answer by e-mail too. It is off
-until you turn it on, because something has to write to that address (your desk):
+While a guest waits for your team's answer, the chat can offer a field to get it by e-mail too: it goes once your team
+has answered, and comes back with the guest's next question. It is off until you turn it on, because something has to
+write to that address (your desk):
 
 ```blade
 <x-aparte::launcher endpoint="/chat" people="/chat/people" :people-email="true" />
