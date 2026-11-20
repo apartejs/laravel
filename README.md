@@ -330,6 +330,9 @@ app key, which only their browser is given.
 
 **4. Your desk.**
 
+Using Filament? [aparté Desk for Filament](https://desk.apartejs.dev/filament/) is this desk, ready-made and paid: a
+queue of the conversations to take, internal notes, saved replies, notifications. To build your own:
+
 ```php
 use Aparte\Laravel\People;
 
