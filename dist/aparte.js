@@ -5540,7 +5540,7 @@ function Us(n) {
         S(!1), l = new _r({ blocks: t.getStreamBlocks() }), c = /* @__PURE__ */ new Set(), b = "", w = /* @__PURE__ */ new Map(), k = m.size === 0 ? k.map(($) => ({ ...$, id: `${$.id}~` })) : [], E = [], m = /* @__PURE__ */ new Set(), d = null, _ = "", g = !1;
         break;
       case "thinking-delta": {
-        if (_ += I.delta, d)
+        if (d && g && (d = null, _ = "", g = !1), _ += I.delta, d)
           e.updateSegment?.(d, { content: _ });
         else {
           const $ = {
@@ -15002,9 +15002,22 @@ class Zc extends HTMLElement {
   _getSpacerHeight() {
     return this._frameworkManagedDOM ? this._fwSpacerHeight : this._bottomSpacer?.offsetHeight ?? 0;
   }
-  /** Set the spacer — host padding (framework, additive to base padding) or element height (core). */
+  /**
+   * Set the spacer — host padding (framework, additive to base padding) or element height (core).
+   *
+   * In whole pixels. `_recalculateSpacer` reads the content as `scrollHeight − spacer`, and a
+   * browser gives `scrollHeight` in whole pixels: a fractional spacer made that difference
+   * wrong by up to half a pixel, the other way on the next measure. Under a wrapper the
+   * spacer read back was the exact fraction written, so it never settled: 65.6, 66.1, 65.6…
+   * on every streamed delta, and the thread, held at the end of its scroll, moved a pixel up
+   * and down for as long as the reply streamed (apartejs/aparte#270). In core mode
+   * `offsetHeight` rounded it back, which only half helped: a pixel's jump on the second
+   * measure. A whole spacer is read back exactly in both modes, so measuring again with
+   * nothing changed gives the same spacer (`the-spacer-holds-still.test.ts`).
+   */
   _setSpacerHeight(e) {
-    this._frameworkManagedDOM ? (this._fwSpacerHeight = e, this.style.setProperty("--aparte-fw-spacer", `${e}px`)) : this._bottomSpacer && (this._bottomSpacer.style.height = `${e}px`);
+    const t = Math.round(e);
+    this._frameworkManagedDOM ? (this._fwSpacerHeight = t, this.style.setProperty("--aparte-fw-spacer", `${t}px`)) : this._bottomSpacer && (this._bottomSpacer.style.height = `${t}px`);
   }
   // Bound fields, not inline arrows: a custom element is re-connected every
   // time it is MOVED in the DOM (a portal, a dialog, a framework re-parenting),
