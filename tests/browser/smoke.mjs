@@ -573,8 +573,10 @@ try {
         const a = chatOf(first.page, '#shell-a');
         check(await a.say('First question'), 'kept: the chat answers');
         check(await until(async () => kept.size === 1), 'kept: the conversation is sent to the server');
-        const saved = [...kept.values()][0];
-        check(saved?.title === 'First question' && saved?.messages?.length === 2, 'kept: with its title and what is on screen');
+        // Saved as the turn goes, so the first save can come before the answer is whole: the last one is what counts.
+        const whole = () => [...kept.values()][0];
+        check(await until(async () => whole()?.title === 'First question' && whole()?.messages?.length === 2), 'kept: with its title and what is on screen');
+        const saved = whole();
         check(calls.some((call) => call.method === 'PUT') && calls.every((call) => call.csrf === 'test-token'), 'kept: every request carries the CSRF header');
         check((await first.page.evaluate(() => Object.keys(sessionStorage).filter((key) => key.startsWith('aparte-laravel:')).length)) === 0, 'kept: and nothing is written in the tab');
         check(first.problems.length === 0, `kept: no console error or warning${first.problems.length ? `: ${first.problems.join(' | ')}` : ''}`);
