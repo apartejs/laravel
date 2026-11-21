@@ -90,6 +90,22 @@ it('continues the conversation of its owner', function () {
     TestAgent::assertPrompted('Hello');
 });
 
+// What a chat with `files` sends: the image as an AG-UI content part (@aparte/runner-ag-ui), read by the SDK
+// into an attachment of the prompt. Nothing of the package's own sits between them, and this proves it stays so.
+it('hands the agent an image the person attached', function () {
+    TestAgent::fake(['A red dot']);
+    $dot = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==';
+
+    $this->postJson('/chat', runInput(['messages' => [['id' => 'm1', 'role' => 'user', 'content' => [
+        ['type' => 'text', 'text' => 'What is this?'],
+        ['type' => 'image', 'source' => ['type' => 'data', 'value' => $dot, 'mimeType' => 'image/png']],
+    ]]]]))->assertOk()->streamedContent();
+
+    TestAgent::assertPrompted(fn (AgentPrompt $prompt) => $prompt->prompt === 'What is this?'
+        && $prompt->attachments->count() === 1
+        && $prompt->attachments->first() instanceof \Laravel\Ai\Files\Base64Image);
+});
+
 it('hands an approval to the SDK', function () {
     TestAgent::fake(['Done']);
 
