@@ -291,6 +291,22 @@ try {
         await page.context().close();
     });
 
+    await scenario('models', async () => {
+        const { page, problems } = await visit(8, '/models');
+        const chat = chatOf(page);
+        const trigger = page.locator('aparte-select[data-aparte-model] .aparte-select-trigger');
+        await trigger.waitFor({ timeout: 30_000 });
+        check((await trigger.textContent()).includes('Claude Sonnet'), 'models: the first model of the config is chosen');
+        check(await chat.say('Hello'), 'models: the agent answers');
+        check(await until(async () => (await state(page)).models.at(-1) === 'claude-sonnet-5-5'), `models: with the model chosen (got ${(await state(page)).models.at(-1)})`);
+        await trigger.click();
+        await page.locator('aparte-option[value="anthropic:claude-haiku-5-5"]').click();
+        check(await chat.say('And now?'), 'models: the agent answers the next message');
+        check(await until(async () => (await state(page)).models.at(-1) === 'claude-haiku-5-5'), `models: with the model now chosen (got ${(await state(page)).models.at(-1)})`);
+        noProblem('models', problems);
+        await page.context().close();
+    });
+
     await scenario('panel, signed out', async () => {
         const { page } = await visit(null, '/admin');
         check(page.url().includes('/admin/login'), 'panel: someone not signed in is sent to its sign-in page');

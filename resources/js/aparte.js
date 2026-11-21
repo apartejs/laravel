@@ -403,6 +403,38 @@ function withInstructions(init, outcomes) {
     return { ...init, body: JSON.stringify(body) };
 }
 
+/**
+ * The model the person chose in the chat's own select (`:models="true"` on the component), for the server to check
+ * against its list (config `aparte.models`): one it does not list is not used.
+ */
+function withModel(init, chat) {
+    const model = chat.querySelector('aparte-select[data-aparte-model]')?.value;
+    if (!model || typeof init?.body !== 'string') return init;
+    const body = JSON.parse(init.body);
+    body.forwardedProps = { ...(body.forwardedProps ?? {}), model };
+    return { ...init, body: JSON.stringify(body) };
+}
+
+/** The last model chosen in a chat, chosen again on the next visit while the list still has it. */
+function rememberModel(chat) {
+    const select = chat.querySelector('aparte-select[data-aparte-model]');
+    if (!select) return;
+    const key = `aparte-laravel:model:${chat.id}`;
+    try {
+        const kept = localStorage.getItem(key);
+        if (kept && [...select.querySelectorAll('aparte-option')].some((option) => option.getAttribute('value') === kept)) select.value = kept;
+    } catch {
+        // No storage in this browser (a private window, blocked site data): the list's first model.
+    }
+    select.addEventListener('aparte-select-change', (event) => {
+        try {
+            localStorage.setItem(key, event.detail.value);
+        } catch {
+            // Kept for this page only.
+        }
+    });
+}
+
 /** The longest side an image goes to the model at: the size Anthropic scales a larger one down to itself. */
 const MODEL_IMAGE_SIDE = 1568;
 /** An image no larger than MODEL_IMAGE_SIDE and lighter than this goes as it is: a screenshot, a small GIF. */
@@ -1189,13 +1221,14 @@ async function mount(chat) {
             endpoint,
             threadId: () => (single && givenThread) || manager?.activeId || fallbackThread,
             headers: { 'X-CSRF-TOKEN': csrf ?? '' },
-            fetch: async (url, init) => sizeRefusal(await fetch(url, await smallerImages(withInstructions(init, outcomes)))),
+            fetch: async (url, init) => sizeRefusal(await fetch(url, await smallerImages(withModel(withInstructions(init, outcomes), chat)))),
         });
         options.client.streamRunner = (run) => {
             outcomes = run.deferral?.outcomes ?? {};
             return runner(run);
         };
     }
+    rememberModel(chat);
 
     // Known before the first wait: a setup registered while the conversations load reaches this
     // chat, and a page left meanwhile stops it.

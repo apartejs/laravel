@@ -1,5 +1,8 @@
 @php
-    $composed = isset($emptyState) || isset($aboveComposer) || isset($toolbar);
+    // The models a person may choose: what the chat route at the endpoint offers (`Route::aparte(…, models: …)`,
+    // `->models()` in Filament), the only ones it answers with (Aparte\Laravel\ChatModels). The first is chosen at first.
+    $modelChoice = \Aparte\Laravel\ChatModels::at($endpoint ?? null);
+    $composed = isset($emptyState) || isset($aboveComposer) || isset($toolbar) || $modelChoice !== [];
 
     // The id the view gave, else its position on the page (a view that drew the list first already has it).
     $chatId ??= \Aparte\Laravel\AparteServiceProvider::chatId($id ?? null);
@@ -65,9 +68,19 @@
                     <aparte-composer-input></aparte-composer-input>
                     <aparte-composer-send></aparte-composer-send>
                 </div>
-                @isset($toolbar)
-                    <aparte-composer-toolbar>{{ $toolbar }}</aparte-composer-toolbar>
-                @endisset
+                @if (isset($toolbar) || $modelChoice !== [])
+                    <aparte-composer-toolbar>
+                        {{-- Its value goes with each message (aparte.js, forwardedProps.model); the last one chosen is kept in the browser. --}}
+                        @if ($modelChoice !== [])
+                            <aparte-select data-aparte-model aria-label="{{ __('Model') }}" value="{{ array_key_first($modelChoice) }}">
+                                @foreach ($modelChoice as $value => $label)
+                                    <aparte-option value="{{ $value }}">{{ $label }}</aparte-option>
+                                @endforeach
+                            </aparte-select>
+                        @endif
+                        {{ $toolbar ?? '' }}
+                    </aparte-composer-toolbar>
+                @endif
             </div>
         </aparte-composer>
     @endif

@@ -187,6 +187,25 @@ ${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
     '/files-people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" attachments data-aparte-files="image/*" data-aparte-people-files=".png,.txt,.pdf"`)}</body></html>`,
     // An endpoint behind a server that refuses a request over 100 KB, as nginx does over 1 MB by default.
     '/files-small': `${head}${chat('aparte-chat-1', `${ORIGIN}/small`, 'attachments data-aparte-files="image/*"')}</body></html>`,
+    // `:models="true"`: the list of config('aparte.models') in the composer, as the Blade partial writes it.
+    '/models': `${head}<aparte-chat id="aparte-chat-1" data-aparte-endpoint="${ORIGIN}/turns" data-aparte-csrf="test-token" data-aparte-scope="" style="height: 100%">
+    <aparte-chat-viewport></aparte-chat-viewport>
+    <aparte-elicitation></aparte-elicitation>
+    <aparte-composer>
+        <div class="aparte-composer-shell" data-aparte-laravel-shell>
+            <div class="aparte-composer-row">
+                <aparte-composer-input></aparte-composer-input>
+                <aparte-composer-send></aparte-composer-send>
+            </div>
+            <aparte-composer-toolbar>
+                <aparte-select data-aparte-model aria-label="Model" value="anthropic:claude-sonnet-5-5">
+                    <aparte-option value="anthropic:claude-sonnet-5-5">Claude Sonnet</aparte-option>
+                    <aparte-option value="anthropic:claude-haiku-5-5">Claude Haiku</aparte-option>
+                </aparte-select>
+            </aparte-composer-toolbar>
+        </div>
+    </aparte-composer>
+</aparte-chat></body></html>`,
 };
 
 /** The images a run's messages carry, as AG-UI content parts (what @aparte/runner-ag-ui sends). */
@@ -235,7 +254,7 @@ const server = createServer((req, res) => {
             const input = JSON.parse(body);
             const event = (data) => `data: ${JSON.stringify(data)}\n\n`;
             const deltas = req.url === '/chat' ? ['**Hello** from ', 'the built chat'] : [`Reply ${turns.length + 1}`];
-            (req.url === '/chat' ? posts : turns).push({ csrf: req.headers['x-csrf-token'], threadId: input.threadId, images: imagesIn(input), imageFacts: imageFacts(input), bytes: body.length });
+            (req.url === '/chat' ? posts : turns).push({ csrf: req.headers['x-csrf-token'], threadId: input.threadId, images: imagesIn(input), imageFacts: imageFacts(input), bytes: body.length, model: input.forwardedProps?.model });
             res.writeHead(200, { 'Content-Type': 'text/event-stream' });
             if (req.url === '/fails') {
                 // What AparteProtocol sends for a rate limit, the app's description having named the exception.
@@ -1159,6 +1178,30 @@ try {
         await page.evaluate(([i]) => window.desk(i, { type: 'auto-reply', on: true }), [id]);
         check(await until(async () => (await clip.getAttribute('accept')) === 'image/*'), "files and the team: handed back, the model's again");
         check(problems.length === 0, `files and the team: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    // ── The model the person chooses (`:models="true"`) ──────────────────────────────────────
+    await scenario('models', async () => {
+        const { page, problems } = await open('/models');
+        const one = chatOf(page, 'body');
+        const trigger = page.locator('aparte-select[data-aparte-model] .aparte-select-trigger');
+        check(await until(() => trigger.isVisible()), 'models: the list of models is under the message field');
+        check((await trigger.textContent()).includes('Claude Sonnet'), 'models: the first is chosen');
+        check(await trigger.getAttribute('aria-label') === 'Model', 'models: and the list is named');
+        check(await one.say('Hello'), 'models: the message goes out');
+        check(turns.at(-1)?.model === 'anthropic:claude-sonnet-5-5', `models: with the model chosen (got ${turns.at(-1)?.model})`);
+        await trigger.click();
+        await page.locator('aparte-option[value="anthropic:claude-haiku-5-5"]').click();
+        check(await until(async () => (await trigger.textContent()).includes('Claude Haiku')), 'models: the person chooses another');
+        check(await one.say('And now?'), 'models: the next message goes out');
+        check(turns.at(-1)?.model === 'anthropic:claude-haiku-5-5', `models: with the model now chosen (got ${turns.at(-1)?.model})`);
+        await page.reload();
+        await page.waitForFunction(() => document.querySelector('aparte-chat')?.hasAttribute('data-aparte-mounted'), null, { timeout: 20_000 });
+        check(await until(async () => (await trigger.textContent()).includes('Claude Haiku')), 'models: on the next visit, the last one chosen');
+        check(await one.say('Again'), 'models: a message after the visit goes out');
+        check(turns.at(-1)?.model === 'anthropic:claude-haiku-5-5', `models: with that model (got ${turns.at(-1)?.model})`);
+        check(problems.length === 0, `models: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
     });
 } finally {

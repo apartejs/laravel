@@ -2,6 +2,7 @@
 
 namespace Aparte\Laravel\Http;
 
+use Aparte\Laravel\ChatModels;
 use Aparte\Laravel\People;
 use Aparte\Laravel\Streaming\AparteProtocol;
 use Illuminate\Http\Request;
@@ -69,9 +70,13 @@ class ChatController
 
         People::answering($threadId);
 
+        // The model the person chose in the chat, when this route takes a choice and lists it (ChatModels): else
+        // the agent's own, as in a chat that offers none.
+        [$provider, $model] = ChatModels::chosen($request->route(), $request->input('forwardedProps.model')) ?? [null, null];
+
         return $instance
             ->continue($threadId, as: $user)
-            ->stream($this->decisions($request) ?? $chat)
+            ->stream($this->decisions($request) ?? $chat, provider: $provider, model: $model)
             ->usingProtocol(new AparteProtocol($threadId, $chat->runId() ?: null, $request));
     }
 

@@ -8,6 +8,16 @@ return [
     // with onAparteSetup (see the README, "Plugins").
     'assets' => env('APARTE_ASSETS', 'bundle'),
 
+    // The models a person may choose in the chat of a route that takes a choice
+    // (`Route::aparte($uri, $agent, models: true)`, `->models()` in Filament; see the README,
+    // "Choosing the model"): each 'provider:model' as the Laravel AI SDK names them, with the label
+    // the chat shows. The first is chosen at first. The route answers with a model of this list only:
+    // one the browser names outside it is not used, and the agent's own model answers.
+    'models' => [
+        // 'anthropic:claude-sonnet-5-5' => 'Claude Sonnet',
+        // 'anthropic:claude-haiku-5-5' => 'Claude Haiku',
+    ],
+
     // The conversations a chat keeps in your database, behind the routes of
     // Route::aparteConversations() (see the README, "Conversations in your database").
     'conversations' => [

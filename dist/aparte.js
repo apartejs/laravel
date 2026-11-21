@@ -23508,12 +23508,34 @@ function Ky(n, e) {
   }
   return { ...n, body: JSON.stringify(t) };
 }
-const Cl = 1568, Vy = 512 * 1024;
-async function Xy(n) {
+function Vy(n, e) {
+  const t = e.querySelector("aparte-select[data-aparte-model]")?.value;
+  if (!t || typeof n?.body != "string") return n;
+  const s = JSON.parse(n.body);
+  return s.forwardedProps = { ...s.forwardedProps ?? {}, model: t }, { ...n, body: JSON.stringify(s) };
+}
+function Xy(n) {
+  const e = n.querySelector("aparte-select[data-aparte-model]");
+  if (!e) return;
+  const t = `aparte-laravel:model:${n.id}`;
+  try {
+    const s = localStorage.getItem(t);
+    s && [...e.querySelectorAll("aparte-option")].some((r) => r.getAttribute("value") === s) && (e.value = s);
+  } catch {
+  }
+  e.addEventListener("aparte-select-change", (s) => {
+    try {
+      localStorage.setItem(t, s.detail.value);
+    } catch {
+    }
+  });
+}
+const Cl = 1568, Qy = 512 * 1024;
+async function Yy(n) {
   if (n?.type !== "image" || n.source?.type !== "data" || typeof n.source.value != "string") return n;
   try {
     const e = Uint8Array.from(atob(n.source.value), (l) => l.charCodeAt(0)), t = await createImageBitmap(new Blob([e], { type: n.source.mimeType ?? "" })), s = Math.max(t.width, t.height);
-    if (s <= Cl && e.length <= Vy)
+    if (s <= Cl && e.length <= Qy)
       return t.close?.(), n;
     const r = Math.min(1, Cl / s), i = document.createElement("canvas");
     i.width = Math.max(1, Math.round(t.width * r)), i.height = Math.max(1, Math.round(t.height * r));
@@ -23525,24 +23547,24 @@ async function Xy(n) {
     return n;
   }
 }
-async function Qy(n) {
+async function Zy(n) {
   if (typeof n?.body != "string" || !n.body.includes('"image"')) return n;
   const e = JSON.parse(n.body);
   let t = !1;
   for (const s of Array.isArray(e.messages) ? e.messages : [])
     s?.role !== "user" || !Array.isArray(s.content) || (s.content = await Promise.all(s.content.map(async (r) => {
-      const i = await Xy(r);
+      const i = await Yy(r);
       return i !== r && (t = !0), i;
     })));
   return t ? { ...n, body: JSON.stringify(e) } : n;
 }
-function Yy(n) {
+function Jy(n) {
   return n.status !== 413 ? n : new Response(
     "The server refused the message for its size (HTTP 413): raise client_max_body_size (nginx) and post_max_size (PHP), or attach fewer or smaller files.",
     { status: 400, headers: { "Content-Type": "text/plain" } }
   );
 }
-function Zy(n, e) {
+function ew(n, e) {
   const t = n.querySelector("[data-aparte-empty-state]");
   if (!t) return;
   const s = new MutationObserver(() => r());
@@ -23552,7 +23574,7 @@ function Zy(n, e) {
   s.observe(e, { childList: !0, subtree: !0 }), r();
 }
 let El = !1;
-function Jy() {
+function tw() {
   if (El) return;
   El = !0;
   const n = document.documentElement, e = () => {
@@ -23561,7 +23583,7 @@ function Jy() {
   new MutationObserver(e).observe(n, { attributes: !0, attributeFilter: ["class"] }), e();
 }
 const Wi = [], Vd = [];
-function mw(n) {
+function bw(n) {
   Vd.push(n);
   for (const e of Wi) e.stops.push(Xd(n, e.config, e.chat, e.options));
 }
@@ -23586,7 +23608,7 @@ function Qd(n) {
   }
   return null;
 }
-function ew(n) {
+function nw(n) {
   const e = (t) => [...document.querySelectorAll(t)].filter((s) => Qd(s) === n);
   return {
     lists: () => e("aparte-conversation-list"),
@@ -23594,7 +23616,7 @@ function ew(n) {
     any: () => e("aparte-conversation-list, [data-aparte-new-chat]").length > 0
   };
 }
-function tw(n, e, t, s, r) {
+function sw(n, e, t, s, r) {
   const i = /* @__PURE__ */ new WeakSet(), o = /* @__PURE__ */ new WeakMap(), a = () => {
     const u = t.active, p = t.activeConversations.map(({ id: f, title: m, updatedAt: g, pinnedAt: b }) => ({ id: f, title: m, updatedAt: g, pinnedAt: b }));
     for (const f of r.lists())
@@ -23618,13 +23640,13 @@ function tw(n, e, t, s, r) {
     document.removeEventListener("aparte-conversation-select", c), document.removeEventListener("click", d), h();
   };
 }
-function nw(n) {
+function rw(n) {
   if (typeof n.people?.subscribe == "function") return n.people.subscribe;
   const e = globalThis.Echo;
   return !e || typeof e.private != "function" ? null : (t, s, r) => ((r.private ? e.private(r.name) : e.channel(r.name)).listen(".aparte.changed", s), () => e.leave(r.name));
 }
-const sw = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>', rw = (n) => n.replace(/[&<>"']/g, (e) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[e]);
-function iw(n, e, t, s, r, { url: i, csrf: o, assistant: a, thread: l = null }) {
+const iw = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>', ow = (n) => n.replace(/[&<>"']/g, (e) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[e]);
+function aw(n, e, t, s, r, { url: i, csrf: o, assistant: a, thread: l = null }) {
   let c = null;
   const d = (D) => l ?? D;
   let h = null, u = null, p = !1;
@@ -23633,7 +23655,7 @@ function iw(n, e, t, s, r, { url: i, csrf: o, assistant: a, thread: l = null }) 
   const g = a ? n.dataset.apartePeopleButton ?? "" : "";
   let b = null;
   const w = g ? n.querySelector("aparte-composer .aparte-composer-row") : null;
-  w && (b = document.createElement("aparte-composer-action"), b.className = "aparte-laravel-people", b.setAttribute("action-id", "aparte-people-want"), b.setAttribute("label", g), b.setAttribute("icon", `${sw}<span>${rw(g)}</span>`), b.style.display = "none", w.insertBefore(b, w.querySelector("aparte-composer-send")));
+  w && (b = document.createElement("aparte-composer-action"), b.className = "aparte-laravel-people", b.setAttribute("action-id", "aparte-people-want"), b.setAttribute("label", g), b.setAttribute("icon", `${iw}<span>${ow(g)}</span>`), b.style.display = "none", w.insertBefore(b, w.querySelector("aparte-composer-send")));
   const S = n.dataset.apartePeopleEmail ?? "", E = /* @__PURE__ */ new Set();
   let _ = null;
   if (S) {
@@ -23726,7 +23748,7 @@ function iw(n, e, t, s, r, { url: i, csrf: o, assistant: a, thread: l = null }) 
     }
   }, Ae = (D, F) => {
     if (h === D || !F?.name) return;
-    const K = nw(r);
+    const K = rw(r);
     if (!K) {
       p || (p = !0, console.warn('aparté: this chat names the people routes (people="…"), and nothing brings what your team does to the page: set up Laravel Echo (window.Echo), or give options.people.subscribe in onAparteSetup.'));
       return;
@@ -23791,11 +23813,11 @@ function iw(n, e, t, s, r, { url: i, csrf: o, assistant: a, thread: l = null }) 
   };
 }
 let ii = {};
-const ow = (n) => {
+const lw = (n) => {
   const e = String(n ?? "").toLowerCase().replace(/_/g, "-");
   return e.startsWith("zh-") && !["zh-cn", "zh-hans", "zh-sg"].some((t) => e.startsWith(t)) ? null : ii[e] ?? ii[e.split("-")[0]] ?? null;
 };
-function aw({ de: n, es: e, fr: t, it: s, ja: r, ko: i, ptBR: o, ru: a, zhCN: l } = {}) {
+function cw({ de: n, es: e, fr: t, it: s, ja: r, ko: i, ptBR: o, ru: a, zhCN: l } = {}) {
   ii = Object.fromEntries(Object.entries({ de: n, es: e, fr: t, it: s, ja: r, ko: i, "pt-br": o, pt: o, ru: a, "zh-cn": l, zh: l }).filter(([, c]) => c));
 }
 const xl = /* @__PURE__ */ new WeakMap();
@@ -23803,7 +23825,7 @@ function oi(n, e) {
   const t = xl.get(n);
   xl.set(n, e), t != null && e !== null && t !== e && n.composer?.clearAttachments?.(), n.toggleAttribute("attachments", e !== null), e !== null && queueMicrotask(() => n.querySelector("aparte-composer-add-attachment")?.setAttribute("accept", e));
 }
-function lw(n) {
+function dw(n) {
   const e = n.querySelector("[data-aparte-laravel-shell]");
   if (!e) return null;
   const t = () => {
@@ -23820,7 +23842,7 @@ function lw(n) {
     s.takeRecords().length > 0 && t(), s.disconnect();
   };
 }
-async function cw(n) {
+async function uw(n) {
   n.dataset.aparteMounted = "";
   const {
     aparteEndpoint: e,
@@ -23831,12 +23853,12 @@ async function cw(n) {
     apartePeople: o
   } = n.dataset, a = new $r();
   ql(n, a);
-  const l = ow(n.dataset.aparteLocale);
+  const l = lw(n.dataset.aparteLocale);
   l && a.setLocale(l), a.setLinkTarget("external-only"), Hy(void 0, a), a.registerToolDisplay("AskForSomeone", { hidden: !0 });
   let c;
   const d = ye();
   let h = {};
-  const u = ew(n), p = i ? new jy(i, {
+  const u = nw(n), p = i ? new jy(i, {
     csrf: t ?? "",
     onProblem: (k) => {
       k.reason === "gone" && c?.init().catch(() => {
@@ -23848,10 +23870,11 @@ async function cw(n) {
       endpoint: e,
       threadId: () => m && s || c?.activeId || d,
       headers: { "X-CSRF-TOKEN": t ?? "" },
-      fetch: async (A, C) => Yy(await fetch(A, await Qy(Ky(C, h))))
+      fetch: async (A, C) => Jy(await fetch(A, await Zy(Vy(Ky(C, h), n))))
     });
     f.client.streamRunner = (A) => (h = A.deferral?.outcomes ?? {}, k(A));
   }
+  Xy(n);
   const g = { chat: n, config: a, options: f, stops: [], stopped: !1, storage: null };
   g.stops = Vd.map((k) => Xd(k, a, n, f)), n.dispatchEvent(new CustomEvent("aparte:setup", { bubbles: !0, detail: { config: a, chat: n, options: f } })), !f.client.streamRunner && !o && console.warn("aparté: this chat has no endpoint, no people routes and no runner: nothing answers what is written in it."), g.storage = f.storage, Wi.push(g), c = new Cg(f.storage), a.setConversationManager(c);
   const b = n.viewport, w = new Rg({
@@ -23868,14 +23891,14 @@ async function cw(n) {
   w.bind();
   const S = new am({ ...f.client, config: a, scopeToTargetId: n.id });
   S.start();
-  const E = lw(n);
+  const E = dw(n);
   n.dataset.aparteFiles !== void 0 && !o && oi(n, n.dataset.aparteFiles), Object.assign(g, {
     client: S,
     controller: w,
     unfollowPaperclip: E,
-    unbindUi: tw(n, a, c, w, u),
-    unbindPeople: o ? iw(n, a, c, S, f, { url: o, csrf: t ?? "", assistant: !!e, thread: m ? s : null }) : null
-  }), Zy(n, b);
+    unbindUi: sw(n, a, c, w, u),
+    unbindPeople: o ? aw(n, a, c, S, f, { url: o, csrf: t ?? "", assistant: !!e, thread: m ? s : null }) : null
+  }), ew(n, b);
   const _ = u.lists();
   for (const k of _) k.setAttribute("loading", "");
   try {
@@ -23889,11 +23912,11 @@ async function cw(n) {
 }
 function fr() {
   const n = document.querySelectorAll("aparte-chat[data-aparte-endpoint]:not([data-aparte-mounted])");
-  n.length !== 0 && ([...n].some((e) => "aparteFollowDark" in e.dataset) && Jy(), customElements.whenDefined("aparte-chat").then(() => n.forEach((e) => {
-    cw(e).catch((t) => console.error("aparté: a chat did not start.", t));
+  n.length !== 0 && ([...n].some((e) => "aparteFollowDark" in e.dataset) && tw(), customElements.whenDefined("aparte-chat").then(() => n.forEach((e) => {
+    uw(e).catch((t) => console.error("aparté: a chat did not start.", t));
   })));
 }
-function dw() {
+function hw() {
   for (const n of Wi.splice(0)) {
     n.stopped = !0, delete n.chat.dataset.aparteMounted;
     try {
@@ -23904,9 +23927,9 @@ function dw() {
     }
   }
 }
-globalThis.__aparteLaravel ? console.warn("aparté for Laravel is loaded twice on this page; the second copy does nothing. If your app imports it, set APARTE_ASSETS=vite so that the package stops serving its own.") : (globalThis.__aparteLaravel = !0, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", fr, { once: !0 }) : setTimeout(fr), document.addEventListener("livewire:navigating", dw), document.addEventListener("livewire:navigated", fr));
-aw(du);
+globalThis.__aparteLaravel ? console.warn("aparté for Laravel is loaded twice on this page; the second copy does nothing. If your app imports it, set APARTE_ASSETS=vite so that the package stops serving its own.") : (globalThis.__aparteLaravel = !0, document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", fr, { once: !0 }) : setTimeout(fr), document.addEventListener("livewire:navigating", hw), document.addEventListener("livewire:navigated", fr));
+cw(du);
 export {
-  mw as onAparteSetup,
-  aw as useLocales
+  bw as onAparteSetup,
+  cw as useLocales
 };

@@ -2,6 +2,7 @@
 
 namespace Aparte\Laravel\Filament;
 
+use Aparte\Laravel\ChatModels;
 use Aparte\Laravel\Conversations\ConversationRoutes;
 use Aparte\Laravel\Http\ChatController;
 use Filament\Contracts\Plugin;
@@ -35,6 +36,9 @@ class ApartePlugin implements Plugin
 
     /** What a person may attach for the model: off, `true` (images and text), or a list of kinds. */
     protected bool|string $files = false;
+
+    /** Whether the person chooses the model: among config `aparte.models` (`true`), or a list of the panel's own. */
+    protected bool|array $models = false;
 
     /** Any other attribute of the launcher or of its chat, as written on `<x-aparte::launcher>`. */
     protected array $attributes = [];
@@ -122,6 +126,20 @@ class ApartePlugin implements Plugin
     }
 
     /**
+     * A choice of model under the message field: the models of config `aparte.models`, or the list given here
+     * ('provider:model' => label), the only ones the panel's chat answers with. Off unless called; see the README,
+     * "Choosing the model".
+     *
+     * @param  bool|array<string, string>  $models
+     */
+    public function models(bool|array $models = true): static
+    {
+        $this->models = $models;
+
+        return $this;
+    }
+
+    /**
      * Any other attribute of the launcher or of its chat, as on `<x-aparte::launcher>`: the launcher keeps its own
      * (`open`, `breakpoint`, `header`, `maximized`), its chat takes the rest (`placeholder`, `type-to-focus`,
      * `stop-key`, `submit-on-enter`…). `true` writes the attribute alone, `false` or `null` none. A dedicated method
@@ -173,7 +191,7 @@ class ApartePlugin implements Plugin
 
         $panel
             ->authenticatedRoutes(function () use ($panel): void {
-                Route::post('aparte-chat', ChatController::class)
+                ChatModels::offer(Route::post('aparte-chat', ChatController::class), $this->models)
                     ->defaults('agent', $this->agent)
                     ->name('aparte-chat');
 

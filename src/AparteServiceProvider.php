@@ -2,6 +2,7 @@
 
 namespace Aparte\Laravel;
 
+use Aparte\Laravel\ChatModels;
 use Aparte\Laravel\Conversations\ConversationRepository;
 use Aparte\Laravel\Conversations\ConversationRoutes;
 use Aparte\Laravel\Conversations\DatabaseConversationRepository;
@@ -23,8 +24,10 @@ class AparteServiceProvider extends ServiceProvider
 
         // Here and not in boot(): routes are registered while providers boot, the app's and
         // those of other packages, in an order this package does not choose.
-        Router::macro('aparte', function (string $uri, string $agent) {
-            return Route::post($uri, ChatController::class)->defaults('agent', $agent);
+        // `$models`: the person chooses the model among config `aparte.models` (`true`) or this route's own list
+        // (ChatModels). A route that offers no choice takes none.
+        Router::macro('aparte', function (string $uri, string $agent, bool|array $models = false) {
+            return ChatModels::offer(Route::post($uri, ChatController::class)->defaults('agent', $agent), $models);
         });
 
         // The conversations a chat shows, kept for the person signed in: the list at `$uri`,
