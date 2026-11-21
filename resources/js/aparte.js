@@ -91,7 +91,9 @@ class TabStorage {
         }
     }
 
+    // After the saves already asked: read too early, a conversation would come back without its last change.
     async loadAll() {
+        await this.saving.catch(() => {});
         return keepable(this.read());
     }
 
@@ -399,6 +401,77 @@ function withInstructions(init, outcomes) {
         if (instruction) item.payload = { ...item.payload, instruction };
     }
     return { ...init, body: JSON.stringify(body) };
+}
+
+/** The longest side an image goes to the model at: the size Anthropic scales a larger one down to itself. */
+const MODEL_IMAGE_SIDE = 1568;
+/** An image no larger than MODEL_IMAGE_SIDE and lighter than this goes as it is: a screenshot, a small GIF. */
+const MODEL_IMAGE_BYTES = 512 * 1024;
+
+/**
+ * An image part as the model gets it: at most MODEL_IMAGE_SIDE pixels on its longest side, a JPEG of a few hundred
+ * kilobytes. A phone's photo (3 to 5 MB, a third more in base64) would otherwise exceed nginx's default limit on a
+ * request (1 MB) and PHP's (8 MB), and pay for pixels the model APIs scale away themselves. One the browser cannot
+ * draw goes as it is.
+ */
+async function forTheModel(part) {
+    if (part?.type !== 'image' || part.source?.type !== 'data' || typeof part.source.value !== 'string') return part;
+    try {
+        const bytes = Uint8Array.from(atob(part.source.value), (character) => character.charCodeAt(0));
+        const image = await createImageBitmap(new Blob([bytes], { type: part.source.mimeType ?? '' }));
+        const side = Math.max(image.width, image.height);
+        if (side <= MODEL_IMAGE_SIDE && bytes.length <= MODEL_IMAGE_BYTES) {
+            image.close?.();
+            return part;
+        }
+        const scale = Math.min(1, MODEL_IMAGE_SIDE / side);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext('2d');
+        // A JPEG has no transparency: what was transparent is white rather than black.
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        image.close?.();
+        const jpeg = canvas.toDataURL('image/jpeg', 0.85);
+        return { ...part, source: { ...part.source, type: 'data', value: jpeg.slice(jpeg.indexOf(',') + 1), mimeType: 'image/jpeg' } };
+    } catch {
+        return part;
+    }
+}
+
+/**
+ * The images a request carries, as the model gets them (forTheModel). Only the message being sent has any: aparté
+ * sends the earlier ones as their text, and the agent's memory on the server has their images.
+ */
+async function smallerImages(init) {
+    if (typeof init?.body !== 'string' || !init.body.includes('"image"')) return init;
+    const body = JSON.parse(init.body);
+    let changed = false;
+    for (const message of Array.isArray(body.messages) ? body.messages : []) {
+        if (message?.role !== 'user' || !Array.isArray(message.content)) continue;
+        message.content = await Promise.all(message.content.map(async (part) => {
+            const next = await forTheModel(part);
+            if (next !== part) changed = true;
+            return next;
+        }));
+    }
+    return changed ? { ...init, body: JSON.stringify(body) } : init;
+}
+
+/**
+ * A request refused for its size: nginx's 413 over `client_max_body_size`, or PHP's over `post_max_size`. aparté reads
+ * a 413 as a failing provider and tells the person to try again in a moment, which sends the same bytes again; as a
+ * 400, the card says the request could not be answered, and the console tells the developer which limit to raise.
+ */
+function sizeRefusal(response) {
+    if (response.status !== 413) return response;
+    return new Response(
+        'The server refused the message for its size (HTTP 413): raise client_max_body_size (nginx) and post_max_size '
+        + '(PHP), or attach fewer or smaller files.',
+        { status: 400, headers: { 'Content-Type': 'text/plain' } },
+    );
 }
 
 /** A welcome shows only while nothing has been said. */
@@ -1116,7 +1189,7 @@ async function mount(chat) {
             endpoint,
             threadId: () => (single && givenThread) || manager?.activeId || fallbackThread,
             headers: { 'X-CSRF-TOKEN': csrf ?? '' },
-            fetch: (url, init) => fetch(url, withInstructions(init, outcomes)),
+            fetch: async (url, init) => sizeRefusal(await fetch(url, await smallerImages(withInstructions(init, outcomes)))),
         });
         options.client.streamRunner = (run) => {
             outcomes = run.deferral?.outcomes ?? {};

@@ -178,8 +178,13 @@ is not sent to the model: aparté would show it attached and the model would nev
 In a Filament panel, `ApartePlugin::make()->files()`, or `->files('image/png,image/jpeg')`.
 
 The Laravel AI SDK hands the files to your agent with the prompt (`$prompt->attachments`), and to a model that reads
-images. They travel in the request, inside the conversation: keep `post_max_size` (PHP) and `client_max_body_size`
-(nginx) above the largest you expect.
+images. They travel in the request, with the message that carries them; the earlier messages go as their text, and
+the agent's memory keeps their files. An image goes at 1568 pixels at most on its longest side, the size the model
+APIs scale a larger one down to themselves: the browser does it before sending, so a phone's photo of several
+megabytes travels in about 300 KB, and nginx's default limit on a request (1 MB, `client_max_body_size`) takes three
+of them in one message. Raise it, and PHP's `post_max_size`, for more. A request refused for its size tells the person
+it could not be answered (not to try again: the same request would be refused), and the developer which limit to
+raise, in the browser's console.
 
 What the chat keeps of them, in the tab or in [your database](#conversations-in-your-database), is a small picture of
 each image (160 pixels at most, about ten kilobytes) and the name of each other file: a conversation opened again
