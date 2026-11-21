@@ -47,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([Authenticate::class])
-            ->plugin(ApartePlugin::make()->agent(Assistant::class)->maximizable()->conversations());
+            // `files()`: the README's assistant in a panel that takes a picture, as apartejs/laravel#31 asked.
+            ->plugin(ApartePlugin::make()->agent(Assistant::class)->maximizable()->conversations()->files());
     }
 }

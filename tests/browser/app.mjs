@@ -216,7 +216,12 @@ try {
     await scenario('panel', async () => {
         const { page, problems } = await visit(1, '/admin');
         const sends = [];
-        page.on('request', (request) => { if (request.method() === 'POST' && request.url().endsWith('/admin/aparte-chat')) sends.push(request.url()); });
+        const bodies = [];
+        page.on('request', (request) => {
+            if (request.method() !== 'POST' || !request.url().endsWith('/admin/aparte-chat')) return;
+            sends.push(request.url());
+            bodies.push(request.postData() ?? '');
+        });
         const button = page.locator('aparte-launcher .aparte-launcher__button');
         const opened = async () => { if ((await page.locator('aparte-launcher').getAttribute('open')) === null) await button.click(); };
         const titles = (url) => page.evaluate(async (address) => (await (await fetch(address, { headers: { Accept: 'application/json' } })).json()).conversations.map((c) => c.title), url);
@@ -227,6 +232,14 @@ try {
         const chat = chatOf(page);
         check(await chat.say('From the panel'), 'panel: the agent answers');
         check(sends.length === 1, `panel: one request for one message (${sends.length})`);
+
+        // `->files()`: the panel's assistant takes a picture, pasted or picked, and the agent answers it.
+        const clip = page.locator('aparte-launcher aparte-composer-add-attachment');
+        check(await until(() => clip.isVisible()), "panel: with files(), the assistant's chat has a paperclip");
+        const [chooser] = await Promise.all([page.waitForEvent('filechooser'), clip.locator('button').click()]);
+        await chooser.setFiles({ name: 'dot.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==', 'base64') });
+        check(await chat.say('What is this picture?'), 'panel: the agent answers a message with a picture');
+        check(bodies.at(-1)?.includes('"type":"image"'), 'panel: the picture went to the agent inside the message');
         check(await until(async () => (await titles('/admin/aparte-chat/conversations')).includes('From the panel')), "panel: the conversation is kept behind the panel's own routes");
         check(!(await titles('/chat/conversations')).includes('From the panel'), "panel: in a list of the panel's own, not the list of the app's other chat");
 
