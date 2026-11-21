@@ -164,6 +164,8 @@ ${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
         </div>
     </aparte-composer>
 </aparte-chat></body></html>`,
+    // The same, with its conversations kept on the server.
+    '/files-kept': `${head}${chat('aparte-chat-1', `${ORIGIN}/turns`, `attachments data-aparte-files="image/*,text/*" data-aparte-conversations="${ORIGIN}/kept/conversations"`)}</body></html>`,
     // Both kinds of files: the model's while the assistant answers, the team's while someone of it holds the conversation.
     '/files-people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" attachments data-aparte-files="image/*" data-aparte-people-files=".png,.txt,.pdf"`)}</body></html>`,
 };
@@ -925,7 +927,33 @@ try {
         check(await clip.getAttribute('accept') === 'image/*,text/*', 'files: it takes the kinds `files` names');
         check(await attachAndSay(page, 'aparte-chat', 'What is this?'), 'files: the message goes out');
         check(turns.at(-1)?.images === 1, `files: the image goes to the endpoint inside the message (got ${turns.at(-1)?.images})`);
+
+        // aparté shows the file from a blob: address, which dies with the page. What the tab keeps is a small picture.
+        const tab = () => page.evaluate(() => Object.fromEntries(Object.keys(sessionStorage).filter((k) => k.startsWith('aparte-laravel')).map((k) => [k, sessionStorage.getItem(k)])));
+        check(await until(async () => Object.values(await tab()).some((v) => v.includes('data:image/jpeg'))), 'files: the tab keeps a small picture of the image');
+        const stored = await tab();
+        check(!Object.values(stored).some((v) => v.includes('blob:')), 'files: and no blob: address, which a later page could not open');
+        // Opened again in another browser, with what was kept: the picture, not a broken image.
+        const again = await (await browser.newContext()).newPage();
+        await again.addInitScript((kept) => { for (const [k, v] of Object.entries(kept)) sessionStorage.setItem(k, v); }, stored);
+        await again.goto(`${ORIGIN}/files`);
+        const picture = again.locator('aparte-chat-bubble[data-role="user"] img');
+        check(await until(async () => (await picture.count()) === 1 && (await picture.evaluate((img) => img.complete && img.naturalWidth > 0 && img.src.startsWith('data:image/jpeg')))), 'files: opened again, the image shows from its picture');
+        await again.close();
         check(problems.length === 0, `files: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    await scenario('files kept on the server', async () => {
+        const { page, problems } = await open('/files-kept');
+        await page.locator('aparte-composer-add-attachment').waitFor({ timeout: 20_000 });
+        check(await attachAndSay(page, 'aparte-chat', 'Keep this one'), 'files kept: the message goes out');
+        const sent = () => [...kept.values()].find((c) => JSON.stringify(c).includes('Keep this one'));
+        check(await until(async () => JSON.stringify(sent() ?? {}).includes('data:image/jpeg')), 'files kept: the server keeps a small picture of the image');
+        const body = JSON.stringify(sent() ?? {});
+        check(!body.includes('blob:'), 'files kept: and no blob: address');
+        check(body.length < 60_000, `files kept: a few kilobytes, far under what the server keeps (${body.length} bytes)`);
+        check(problems.length === 0, `files kept: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
     });
 

@@ -179,6 +179,10 @@ The Laravel AI SDK hands the files to your agent with the prompt (`$prompt->atta
 images. They travel in the request, inside the conversation: keep `post_max_size` (PHP) and `client_max_body_size`
 (nginx) above the largest you expect.
 
+What the chat keeps of them, in the tab or in [your database](#conversations-in-your-database), is a small picture of
+each image (a few kilobytes) and the name of each other file: a conversation opened again shows them, and the agent's
+memory has the files themselves.
+
 With [a person who takes over](#a-person-takes-over), the paperclip follows who answers: `files` while the assistant
 does, [your team's](#files-1) while someone of it is in the conversation.
 

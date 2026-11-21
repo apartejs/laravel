@@ -259,6 +259,25 @@ try {
         await page.context().close();
     });
 
+    await scenario('files', async () => {
+        const { page, problems } = await visit(7, '/files');
+        const chat = chatOf(page);
+        const clip = page.locator('aparte-composer-add-attachment');
+        await clip.waitFor({ timeout: 30_000 });
+        const [chooser] = await Promise.all([page.waitForEvent('filechooser'), clip.locator('button').click()]);
+        // A 1×1 PNG: the controller hands it to the agent through the Laravel AI SDK.
+        await chooser.setFiles({ name: 'dot.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==', 'base64') });
+        check(await chat.say('What is this?'), 'files: the agent answers a message that carries an image');
+        check((await chat.transcript()).includes(REPLY), 'files: its reply is drawn');
+        check(await until(async () => (await state(page)).kept === 1), 'files: the conversation is kept in the database');
+        // Read back from the server on a new page: a small picture, where a blob: address would have died with the page.
+        await reload(page);
+        const picture = page.locator('aparte-chat-bubble[data-role="user"] img');
+        check(await until(async () => (await picture.count()) === 1 && (await picture.evaluate((img) => img.complete && img.naturalWidth > 0 && img.src.startsWith('data:image/jpeg')))), 'files: after a reload, the image shows from the picture the database kept');
+        noProblem('files', problems);
+        await page.context().close();
+    });
+
     await scenario('panel, signed out', async () => {
         const { page } = await visit(null, '/admin');
         check(page.url().includes('/admin/login'), 'panel: someone not signed in is sent to its sign-in page');

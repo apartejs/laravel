@@ -11,6 +11,57 @@ import {
 import { createAgUiRunner } from '@aparte/runner-ag-ui';
 import { setupMarkedStreamingProvider } from '@aparte/plugin-marked/streaming';
 
+/** The small pictures of attached images, made once per file. */
+const pictures = new WeakMap();
+
+/**
+ * A small JPEG of an image, as a data: address: a few kilobytes, the size the transcript shows it at. `null` for a
+ * file the browser cannot draw.
+ */
+function pictureOf(blob) {
+    if (!pictures.has(blob)) {
+        pictures.set(blob, (async () => {
+            try {
+                const image = await createImageBitmap(blob);
+                const scale = Math.min(1, 320 / Math.max(image.width, image.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.round(image.width * scale));
+                canvas.height = Math.max(1, Math.round(image.height * scale));
+                const context = canvas.getContext('2d');
+                // A JPEG has no transparency: what was transparent is white rather than black.
+                context.fillStyle = '#fff';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                image.close?.();
+                return canvas.toDataURL('image/jpeg', 0.8);
+            } catch {
+                return null;
+            }
+        })());
+    }
+    return pictures.get(blob);
+}
+
+/**
+ * What a conversation keeps of its attachments. aparté shows an attached file from a `blob:` address, which dies
+ * with the page: a conversation opened again later showed a broken image. An image keeps a small picture of itself
+ * instead, within what the server keeps of a conversation; another file keeps its name, with no address to open.
+ * The model's memory, on the server, has the files themselves. Read back, an address of a page that is gone is
+ * dropped the same way. Returns a copy: what is on screen keeps its own.
+ */
+async function keepable(value) {
+    if (Array.isArray(value)) return Promise.all(value.map(keepable));
+    if (value === null || typeof value !== 'object' || (typeof Blob !== 'undefined' && value instanceof Blob)) return value;
+    if (typeof value.url === 'string' && value.url.startsWith('blob:') && typeof value.name === 'string') {
+        const { blob, url, ...attachment } = value;
+        const picture = blob && String(value.type ?? '').startsWith('image/') ? await pictureOf(blob) : null;
+        return { ...attachment, url: picture ?? '' };
+    }
+    const copy = {};
+    for (const [key, entry] of Object.entries(value)) copy[key] = await keepable(entry);
+    return copy;
+}
+
 /**
  * What is on screen, for this tab only: a reload brings the conversation and a pending
  * approval back, and closing the tab starts over. The model's memory stays on the server.
@@ -18,6 +69,9 @@ import { setupMarkedStreamingProvider } from '@aparte/plugin-marked/streaming';
 class TabStorage {
     constructor(key) {
         this.key = key;
+        // One save after the other: a save waits for the pictures of its images, and an older state must not
+        // land after a newer one.
+        this.saving = Promise.resolve();
     }
 
     read() {
@@ -37,15 +91,19 @@ class TabStorage {
     }
 
     async loadAll() {
-        return this.read();
+        return keepable(this.read());
     }
 
-    async save(conversation) {
-        const all = this.read();
-        const index = all.findIndex((c) => c.id === conversation.id);
-        if (index >= 0) all[index] = conversation;
-        else all.push(conversation);
-        this.write(all);
+    save(conversation) {
+        this.saving = this.saving.then(async () => {
+            const kept = await keepable(conversation);
+            const all = this.read();
+            const index = all.findIndex((c) => c.id === kept.id);
+            if (index >= 0) all[index] = kept;
+            else all.push(kept);
+            this.write(all);
+        });
+        return this.saving;
     }
 
     async delete(id) {
@@ -177,7 +235,7 @@ class ServerStorage {
     async loadFull(id) {
         if (this.unsent.has(id)) return this.unsent.get(id);
         try {
-            return await (await this.request('GET', id)).json();
+            return await keepable(await (await this.request('GET', id)).json());
         } catch (error) {
             // Deleted from another tab, or another device: an answer, not a failure.
             if (error instanceof StorageError && error.status === 404) {
@@ -208,7 +266,7 @@ class ServerStorage {
                 while (this.unsent.size > 0 && !this.stopped) {
                     const [id, conversation] = this.unsent.entries().next().value;
                     try {
-                        await this.request('PUT', id, conversation);
+                        await this.request('PUT', id, await keepable(conversation));
                     } catch (error) {
                         if (unreachable(error)) {
                             this.problem('unreachable', error);
