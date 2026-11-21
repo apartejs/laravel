@@ -164,6 +164,21 @@ ${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
         </div>
     </aparte-composer>
 </aparte-chat></body></html>`,
+    // A composer the view wrote with a paperclip, on a chat without `attachments`: a page Livewire restored after the
+    // team's code had taken the paperclip back. The package puts it in step when the chat starts.
+    '/files-stale': `${head}<aparte-chat id="aparte-chat-1" data-aparte-endpoint="${ORIGIN}/turns" data-aparte-csrf="test-token" data-aparte-scope="" style="height: 100%">
+    <aparte-chat-viewport></aparte-chat-viewport>
+    <aparte-composer>
+        <div class="aparte-composer-shell" data-aparte-laravel-shell>
+            <aparte-composer-attachments></aparte-composer-attachments>
+            <div class="aparte-composer-row">
+                <aparte-composer-add-attachment></aparte-composer-add-attachment>
+                <aparte-composer-input></aparte-composer-input>
+                <aparte-composer-send></aparte-composer-send>
+            </div>
+        </div>
+    </aparte-composer>
+</aparte-chat></body></html>`,
     // The same, with its conversations kept on the server.
     '/files-kept': `${head}${chat('aparte-chat-1', `${ORIGIN}/turns`, `attachments data-aparte-files="image/*,text/*" data-aparte-conversations="${ORIGIN}/kept/conversations"`)}</body></html>`,
     // Both kinds of files: the model's while the assistant answers, the team's while someone of it holds the conversation.
@@ -908,11 +923,15 @@ try {
     });
 
     // ── Files for the model (`files`), whoever answers ─────────────────────────────────────
-    /** Attach a PNG with the chat's paperclip, send `text`, and wait for the run it starts. */
-    const attachAndSay = async (page, scope, text) => {
+    /** Attach a PNG with the chat's paperclip (the 1×1 one unless given), without sending. */
+    const attach = async (page, scope, buffer = PNG) => {
         const clip = page.locator(`${scope} aparte-composer-add-attachment`);
         const [chooser] = await Promise.all([page.waitForEvent('filechooser'), clip.locator('button').click()]);
-        await chooser.setFiles({ name: 'dot.png', mimeType: 'image/png', buffer: PNG });
+        await chooser.setFiles({ name: 'dot.png', mimeType: 'image/png', buffer });
+    };
+    /** Attach a PNG, send `text`, and wait for the run it starts. */
+    const attachAndSay = async (page, scope, text, buffer = PNG) => {
+        await attach(page, scope, buffer);
         const before = turns.length;
         await page.locator(`${scope} .aparte-ci-editor`).click();
         await page.keyboard.type(text);
@@ -952,7 +971,25 @@ try {
         check(await until(async () => JSON.stringify(sent() ?? {}).includes('data:image/jpeg')), 'files kept: the server keeps a small picture of the image');
         const body = JSON.stringify(sent() ?? {});
         check(!body.includes('blob:'), 'files kept: and no blob: address');
-        check(body.length < 60_000, `files kept: a few kilobytes, far under what the server keeps (${body.length} bytes)`);
+
+        // The worst case for a picture's weight: a large photo of pure noise, which a JPEG cannot compress.
+        const noise = Buffer.from(await page.evaluate(() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1600;
+            canvas.height = 1200;
+            const context = canvas.getContext('2d');
+            const pixels = context.createImageData(canvas.width, canvas.height);
+            for (let i = 0; i < pixels.data.length; i++) pixels.data[i] = i % 4 === 3 ? 255 : Math.floor(Math.random() * 256);
+            context.putImageData(pixels, 0, 0);
+            return canvas.toDataURL('image/png').split(',')[1];
+        }), 'base64');
+        check(await attachAndSay(page, 'aparte-chat', 'And a noisy photo', noise), 'files kept: a large photo goes out too');
+        const pictures = () => JSON.stringify(sent() ?? {}).match(/data:image\/jpeg;base64,[A-Za-z0-9+/=]+/g) ?? [];
+        check(await until(async () => new Set(pictures()).size === 2), 'files kept: and its picture is kept');
+        const largest = Math.max(...pictures().map((p) => p.length));
+        check(largest < 20_000, `files kept: a picture weighs about ten kilobytes at worst (${largest} characters)`);
+        const total = JSON.stringify(sent() ?? {}).length;
+        check(total < 2_000_000 / 40, `files kept: the conversation with both weighs under a fortieth of the 2 MB the server keeps of one (${total} bytes)`);
         check(problems.length === 0, `files kept: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
     });
@@ -970,6 +1007,14 @@ try {
         await page.evaluate(() => document.querySelector('aparte-chat').setAttribute('attachments', ''));
         check(await until(async () => (await clip.count()) === 1 && (await page.locator('aparte-composer-attachments').count()) === 1), 'files with slots: and comes back with it');
         check(problems.length === 0, `files with slots: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    await scenario('files out of step', async () => {
+        const { page, problems } = await open('/files-stale');
+        await page.waitForFunction(() => document.querySelector('aparte-chat')?.hasAttribute('data-aparte-mounted'), null, { timeout: 20_000 });
+        check(await until(async () => (await page.locator('aparte-composer-add-attachment').count()) === 0 && (await page.locator('aparte-composer-attachments').count()) === 0), 'files out of step: a paperclip the chat does not offer is taken out when it starts');
+        check(problems.length === 0, `files out of step: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
     });
 
@@ -991,8 +1036,13 @@ try {
         check(turns.at(-1)?.images === 1, `files and the team: the image goes to the assistant (got ${turns.at(-1)?.images})`);
         const id = turns.at(-1).threadId;
         check(await until(() => page.evaluate((i) => window.listening(i), id)), "files and the team: the chat listens on the conversation's channel");
+        // An image picked for the model, not sent yet, when the team takes over: dropped, or it would go to the team.
+        await attach(page, '#shell-a');
+        const pending = () => page.evaluate(() => document.querySelector('#shell-a aparte-composer')?.attachments?.length ?? -1);
+        check(await until(async () => (await pending()) === 1), 'files and the team: an image waits to be sent');
         await page.evaluate(([i]) => window.desk(i, { type: 'auto-reply', on: false }), [id]);
         check(await until(async () => (await clip.getAttribute('accept')) === '.png,.txt,.pdf'), "files and the team: handed over, it takes the team's kinds");
+        check(await until(async () => (await pending()) === 0), 'files and the team: and the image picked for the model is dropped');
         await page.evaluate(([i]) => window.desk(i, { type: 'auto-reply', on: true }), [id]);
         check(await until(async () => (await clip.getAttribute('accept')) === 'image/*'), "files and the team: handed back, the model's again");
         check(problems.length === 0, `files and the team: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);

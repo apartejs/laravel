@@ -15,15 +15,16 @@ import { setupMarkedStreamingProvider } from '@aparte/plugin-marked/streaming';
 const pictures = new WeakMap();
 
 /**
- * A small JPEG of an image, as a data: address: a few kilobytes, the size the transcript shows it at. `null` for a
- * file the browser cannot draw.
+ * A small JPEG of an image, as a data: address: a few kilobytes, the size the transcript shows it at (it is kept
+ * twice, in the messages and in their tree). `null` for a file the browser cannot draw.
  */
 function pictureOf(blob) {
+    if (typeof Blob === 'undefined' || !(blob instanceof Blob)) return Promise.resolve(null);
     if (!pictures.has(blob)) {
         pictures.set(blob, (async () => {
             try {
                 const image = await createImageBitmap(blob);
-                const scale = Math.min(1, 320 / Math.max(image.width, image.height));
+                const scale = Math.min(1, 160 / Math.max(image.width, image.height));
                 const canvas = document.createElement('canvas');
                 canvas.width = Math.max(1, Math.round(image.width * scale));
                 canvas.height = Math.max(1, Math.round(image.height * scale));
@@ -33,7 +34,7 @@ function pictureOf(blob) {
                 context.fillRect(0, 0, canvas.width, canvas.height);
                 context.drawImage(image, 0, 0, canvas.width, canvas.height);
                 image.close?.();
-                return canvas.toDataURL('image/jpeg', 0.8);
+                return canvas.toDataURL('image/jpeg', 0.75);
             } catch {
                 return null;
             }
@@ -54,7 +55,7 @@ async function keepable(value) {
     if (value === null || typeof value !== 'object' || (typeof Blob !== 'undefined' && value instanceof Blob)) return value;
     if (typeof value.url === 'string' && value.url.startsWith('blob:') && typeof value.name === 'string') {
         const { blob, url, ...attachment } = value;
-        const picture = blob && String(value.type ?? '').startsWith('image/') ? await pictureOf(blob) : null;
+        const picture = String(value.type ?? '').startsWith('image/') ? await pictureOf(blob) : null;
         return { ...attachment, url: picture ?? '' };
     }
     const copy = {};
@@ -94,8 +95,15 @@ class TabStorage {
         return keepable(this.read());
     }
 
+    /** After what was asked before, whatever became of it: one failure stops no later save. */
+    queue(work) {
+        const next = this.saving.catch(() => {}).then(work);
+        this.saving = next;
+        return next;
+    }
+
     save(conversation) {
-        this.saving = this.saving.then(async () => {
+        return this.queue(async () => {
             const kept = await keepable(conversation);
             const all = this.read();
             const index = all.findIndex((c) => c.id === kept.id);
@@ -103,11 +111,11 @@ class TabStorage {
             else all.push(kept);
             this.write(all);
         });
-        return this.saving;
     }
 
-    async delete(id) {
-        this.write(this.read().filter((c) => c.id !== id));
+    // In the same line as the saves: one still making its pictures would write a deleted conversation back.
+    delete(id) {
+        return this.queue(async () => this.write(this.read().filter((c) => c.id !== id)));
     }
 }
 
@@ -266,7 +274,10 @@ class ServerStorage {
                 while (this.unsent.size > 0 && !this.stopped) {
                     const [id, conversation] = this.unsent.entries().next().value;
                     try {
-                        await this.request('PUT', id, await keepable(conversation));
+                        const body = await keepable(conversation);
+                        // Deleted, or replaced by a newer state, while its pictures were made: that one goes, or none.
+                        if (this.unsent.get(id) !== conversation) continue;
+                        await this.request('PUT', id, body);
                     } catch (error) {
                         if (unreachable(error)) {
                             this.problem('unreachable', error);
@@ -1001,11 +1012,18 @@ export function useLocales({ de, es, fr, it, ja, ko, ptBR, ru, zhCN } = {}) {
     LOCALES = Object.fromEntries(Object.entries({ de, es, fr, it, ja, ko, 'pt-br': ptBR, pt: ptBR, ru, 'zh-cn': zhCN, zh: zhCN }).filter(([, words]) => words));
 }
 
+/** The types each chat offers now, to see when they change. */
+const offered = new WeakMap();
+
 /**
  * Offer files on a chat, of these types, or none (`null`). aparté draws the paperclip from the `attachments`
- * attribute; the types go on the picker once it is drawn.
+ * attribute; the types go on the picker once it is drawn. Files picked for one side are dropped when the other
+ * takes over (an image for the model, a PDF for the team): sent, they would reach the side that did not ask.
  */
 function offerFiles(chat, types) {
+    const before = offered.get(chat);
+    offered.set(chat, types);
+    if (before !== undefined && before !== null && types !== null && before !== types) chat.composer?.clearAttachments?.();
     chat.toggleAttribute('attachments', types !== null);
     if (types !== null) queueMicrotask(() => chat.querySelector('aparte-composer-add-attachment')?.setAttribute('accept', types));
 }
@@ -1034,7 +1052,13 @@ function followPaperclip(chat) {
     };
     const watcher = new MutationObserver(sync);
     watcher.observe(chat, { attributes: true, attributeFilter: ['attachments'] });
-    return () => watcher.disconnect();
+    // In step from the start: a page Livewire restored, or an `aparte:setup` that changed the attribute before this.
+    sync();
+    return () => {
+        // A change made just before the chat stops (the team's code takes its paperclip back) is followed too.
+        if (watcher.takeRecords().length > 0) sync();
+        watcher.disconnect();
+    };
 }
 
 async function mount(chat) {
