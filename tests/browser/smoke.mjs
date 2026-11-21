@@ -1090,8 +1090,8 @@ try {
         const error = page.locator('aparte-chat .aparte-segment-error');
         check(await until(async () => (await error.count()) > 0), 'files refused: the chat says the message did not go');
         const said = ((await error.first().textContent().catch(() => '')) ?? '').replace(/\s+/g, ' ');
-        // Not "Try again in a moment": the same bytes would be refused again.
-        check(said.includes('couldn’t answer this request') && !said.includes('Try again'), `files refused: and promises no retry that would fail the same way ("${said.trim().slice(0, 120)}")`);
+        // aparté's own sentence for a 413 (1.17): what helps, not "Try again in a moment", which would send the same bytes.
+        check(said.includes('This message is too large to send') && !said.includes('Try again'), `files refused: and says what helps, with no retry that would fail the same way ("${said.trim().slice(0, 120)}")`);
         check(problems.some((p) => p.includes('client_max_body_size')), 'files refused: the console tells the developer which limit to raise');
         await page.locator('aparte-chat .aparte-ci-editor').click();
         await page.keyboard.type('Still here');

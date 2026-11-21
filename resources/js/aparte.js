@@ -505,17 +505,18 @@ async function smallerImages(init) {
 }
 
 /**
- * A request refused for its size: nginx's 413 over `client_max_body_size`, or PHP's over `post_max_size`. aparté reads
- * a 413 as a failing provider and tells the person to try again in a moment, which sends the same bytes again; as a
- * 400, the card says the request could not be answered, and the console tells the developer which limit to raise.
+ * A request refused for its size: nginx's 413 over `client_max_body_size`, or PHP's over `post_max_size`. aparté tells
+ * the person (its own sentence for a 413, and the message is left out of the next requests); the console tells the
+ * developer which limit to raise. The response goes on as it came.
  */
-function sizeRefusal(response) {
-    if (response.status !== 413) return response;
-    return new Response(
-        'The server refused the message for its size (HTTP 413): raise client_max_body_size (nginx) and post_max_size '
-        + '(PHP), or attach fewer or smaller files.',
-        { status: 400, headers: { 'Content-Type': 'text/plain' } },
-    );
+function sizeHint(response) {
+    if (response.status === 413) {
+        console.warn(
+            'aparté: the server refused the message for its size (HTTP 413): raise client_max_body_size (nginx) and '
+            + 'post_max_size (PHP), or attach fewer or smaller files.',
+        );
+    }
+    return response;
 }
 
 /** A welcome shows only while nothing has been said. */
@@ -1235,7 +1236,7 @@ async function mount(chat) {
             endpoint,
             threadId: () => (single && givenThread) || manager?.activeId || fallbackThread,
             headers: { 'X-CSRF-TOKEN': csrf ?? '' },
-            fetch: async (url, init) => sizeRefusal(await fetch(url, await smallerImages(withShown(withModel(withInstructions(init, outcomes), chat), shown)))),
+            fetch: async (url, init) => sizeHint(await fetch(url, await smallerImages(withShown(withModel(withInstructions(init, outcomes), chat), shown)))),
         });
         options.client.streamRunner = (run) => {
             outcomes = run.deferral?.outcomes ?? {};
