@@ -2,12 +2,16 @@
 
 namespace Aparte\Laravel\Http;
 
+use Aparte\Laravel\ChatModels;
+use Aparte\Laravel\Conversations\ShownBranch;
+use Aparte\Laravel\Conversations\ShownBranchStore;
 use Aparte\Laravel\People;
 use Aparte\Laravel\Streaming\AparteProtocol;
 use Illuminate\Http\Request;
 use Laravel\Ai\AgentUserInteraction\AgentUserInteraction;
 use Laravel\Ai\Approvals\Decision;
 use Laravel\Ai\Approvals\Decisions;
+use Laravel\Ai\Contracts\ConversationStore;
 use Illuminate\Support\Str;
 use Laravel\Ai\Models\Conversation;
 use Laravel\Ai\Models\ConversationMessage;
@@ -69,9 +73,22 @@ class ChatController
 
         People::answering($threadId);
 
+        // What the person sees, for the model's memory to follow after a retry, an edit or a branch they went back
+        // to (ShownBranchStore): the ids of the messages on screen, and of the person's message this turn answers.
+        app(ShownBranch::class)->follow($threadId, $request->input('forwardedProps.aparte'));
+        $decisions = $this->decisions($request);
+        // A retry or an edit asks a message again, which the chat sends without its files (and without itself when
+        // it was only a picture): the one kept from its first sending stands in, with them (ShownBranchStore).
+        $store = app(ConversationStore::class);
+        $again = ! $request->has('resume') && $store instanceof ShownBranchStore ? $store->askedAgain($threadId) : null;
+
+        // The model the person chose in the chat, when this route takes a choice and lists it (ChatModels): else
+        // the agent's own, as in a chat that offers none.
+        [$provider, $model] = ChatModels::chosen($request->route(), $request->input('forwardedProps.model')) ?? [null, null];
+
         return $instance
             ->continue($threadId, as: $user)
-            ->stream($this->decisions($request) ?? $chat)
+            ->stream($decisions ?? $again ?? $chat, provider: $provider, model: $model)
             ->usingProtocol(new AparteProtocol($threadId, $chat->runId() ?: null, $request));
     }
 

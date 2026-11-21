@@ -141,3 +141,42 @@ it('offers files for the model only when asked', function () {
         ->and(ApartePlugin::make()->agent(TestAgent::class)->files('image/png,image/jpeg')->launcherFor('/admin/aparte-chat'))
         ->toContain('data-aparte-files="image/png,image/jpeg"');
 });
+
+it("hands any attribute to the launcher or its chat, the plugin's own methods first", function () {
+    $html = ApartePlugin::make()->agent(TestAgent::class)
+        ->heading('Support')
+        ->attributes(['breakpoint' => 'none', 'header' => 'false', 'open' => true, 'placeholder' => 'Ask about this page', 'stop-key' => 'Escape', 'heading' => 'Ignored', 'type-to-focus' => false])
+        ->launcherFor('/admin/aparte-chat');
+
+    preg_match('/<aparte-launcher\b[^>]*>/s', $html, $launcher);
+    preg_match('/<aparte-chat\b[^>]*>/s', $html, $chat);
+    expect($launcher[0])
+        ->toContain('breakpoint="none"')
+        ->toContain('header="false"')
+        // A boolean attribute, which the bag writes as `open="open"`.
+        ->toMatch('/\sopen(="open")?[\s>]/')
+        ->toContain('heading="Support"')
+        ->not->toContain('Ignored')
+        ->not->toContain('placeholder');
+    expect($chat[0])
+        ->toContain('placeholder="Ask about this page"')
+        ->toContain('stop-key="Escape"')
+        ->not->toContain('type-to-focus');
+});
+
+it('draws the slots it is given: a string as text, an Htmlable as markup', function () {
+    $html = ApartePlugin::make()->agent(TestAgent::class)->files()
+        ->emptyState('Ask <anything>')
+        ->aboveComposer(new \Illuminate\Support\HtmlString('<p class="note">Answers may be wrong.</p>'))
+        ->toolbar(new \Illuminate\Support\HtmlString('<button type="button">Help</button>'))
+        ->launcherFor('/admin/aparte-chat');
+
+    expect($html)
+        ->toContain('data-aparte-empty-state>Ask &lt;anything&gt;')
+        ->toMatch('/<p class="note">Answers may be wrong\.<\/p>\s*<aparte-composer/')
+        ->toMatch('/<aparte-composer-toolbar>\s*<button type="button">Help<\/button>/')
+        // The slotted composer keeps what aparté's own has: the paperclip for files().
+        ->toContain('<aparte-composer-add-attachment>');
+
+    expect(ApartePlugin::make()->agent(TestAgent::class)->launcherFor('/admin/aparte-chat'))->not->toContain('<aparte-composer');
+});

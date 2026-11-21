@@ -2,13 +2,16 @@
 
 namespace Aparte\Laravel\Filament;
 
+use Aparte\Laravel\ChatModels;
 use Aparte\Laravel\Conversations\ConversationRoutes;
 use Aparte\Laravel\Http\ChatController;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
 /**
@@ -33,6 +36,15 @@ class ApartePlugin implements Plugin
 
     /** What a person may attach for the model: off, `true` (images and text), or a list of kinds. */
     protected bool|string $files = false;
+
+    /** Whether the person chooses the model: among config `aparte.models` (`true`), or a list of the panel's own. */
+    protected bool|array $models = false;
+
+    /** Any other attribute of the launcher or of its chat, as written on `<x-aparte::launcher>`. */
+    protected array $attributes = [];
+
+    /** @var array<'empty-state'|'above-composer'|'toolbar', Htmlable|string> The chat's slots. */
+    protected array $slots = [];
 
     public static function make(): static
     {
@@ -113,6 +125,64 @@ class ApartePlugin implements Plugin
         return $this;
     }
 
+    /**
+     * A choice of model under the message field: the models of config `aparte.models`, or the list given here
+     * ('provider:model' => label), the only ones the panel's chat answers with. Off unless called; see the README,
+     * "Choosing the model".
+     *
+     * @param  bool|array<string, string>  $models
+     */
+    public function models(bool|array $models = true): static
+    {
+        $this->models = $models;
+
+        return $this;
+    }
+
+    /**
+     * Any other attribute of the launcher or of its chat, as on `<x-aparte::launcher>`: the launcher keeps its own
+     * (`open`, `breakpoint`, `header`, `maximized`), its chat takes the rest (`placeholder`, `type-to-focus`,
+     * `stop-key`, `submit-on-enter`…). `true` writes the attribute alone, `false` or `null` none. A dedicated method
+     * of this plugin, when called, wins over the same attribute here. See the README, "Filament".
+     *
+     * @param  array<string, string|bool|int|null>  $attributes
+     */
+    public function attributes(array $attributes): static
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /** What the chat shows before anything is said: a string is text, an Htmlable (a view, HtmlString) is markup. */
+    public function emptyState(Htmlable|string|null $content): static
+    {
+        return $this->slot('empty-state', $content);
+    }
+
+    /** A line above the composer, as a string (text) or an Htmlable (markup). */
+    public function aboveComposer(Htmlable|string|null $content): static
+    {
+        return $this->slot('above-composer', $content);
+    }
+
+    /** The composer's toolbar, beside send, as a string (text) or an Htmlable (markup). */
+    public function toolbar(Htmlable|string|null $content): static
+    {
+        return $this->slot('toolbar', $content);
+    }
+
+    protected function slot(string $name, Htmlable|string|null $content): static
+    {
+        if ($content === null) {
+            unset($this->slots[$name]);
+        } else {
+            $this->slots[$name] = $content;
+        }
+
+        return $this;
+    }
+
     public function register(Panel $panel): void
     {
         if ($this->agent === null) {
@@ -121,7 +191,7 @@ class ApartePlugin implements Plugin
 
         $panel
             ->authenticatedRoutes(function () use ($panel): void {
-                Route::post('aparte-chat', ChatController::class)
+                ChatModels::offer(Route::post('aparte-chat', ChatController::class), $this->models)
                     ->defaults('agent', $this->agent)
                     ->name('aparte-chat');
 
@@ -154,18 +224,32 @@ class ApartePlugin implements Plugin
      */
     public function launcherFor(string $endpoint): string
     {
-        return Blade::render(
-            '<x-aparte::launcher :endpoint="$endpoint" :conversations="$conversations" :label="$label" :heading="$heading" :subheading="$subheading" :maximizable="$maximizable" :files="$files" follow-dark-class />',
-            [
-                'endpoint' => $endpoint,
-                // Their routes sit under the chat's, where `register()` put them.
-                'conversations' => $this->conversations ? rtrim($endpoint, '/').'/conversations' : null,
-                'label' => $this->label,
-                'heading' => $this->heading,
-                'subheading' => $this->subheading,
-                'maximizable' => $this->maximizable,
-                'files' => $this->files === false ? null : $this->files,
-            ],
-        );
+        $options = [
+            'heading' => $this->heading,
+            'subheading' => $this->subheading,
+            'maximizable' => $this->maximizable === false ? null : $this->maximizable,
+            'files' => $this->files === false ? null : $this->files,
+        ];
+        // The dedicated methods win; what they leave unset, `attributes()` may set. `label` is always the plugin's.
+        $set = array_keys(array_filter($options, fn ($value) => $value !== null));
+        $extra = array_diff_key($this->attributes, array_flip([...$set, 'label', 'endpoint', 'conversations', 'follow-dark-class']));
+        $slots = ['empty-state' => 'emptyState', 'above-composer' => 'aboveComposer', 'toolbar' => 'toolbar'];
+
+        $template = '<x-aparte::launcher :endpoint="$endpoint" :conversations="$conversations" :label="$label" :heading="$heading" :subheading="$subheading" :maximizable="$maximizable" :files="$files" follow-dark-class :attributes="$extra">';
+        foreach ($slots as $name => $variable) {
+            // `{{ }}`: a string is text, an Htmlable is markup, as in any Blade view.
+            $template .= "\n@isset(\${$variable})\n<x-slot:{$name}>{{ \${$variable} }}</x-slot:{$name}>\n@endisset";
+        }
+        $template .= "\n</x-aparte::launcher>";
+
+        return Blade::render($template, [
+            'endpoint' => $endpoint,
+            // Their routes sit under the chat's, where `register()` put them.
+            'conversations' => $this->conversations ? rtrim($endpoint, '/').'/conversations' : null,
+            'label' => $this->label,
+            ...$options,
+            'extra' => new ComponentAttributeBag($extra),
+            ...array_combine(array_values($slots), array_map(fn ($name) => $this->slots[$name] ?? null, array_keys($slots))),
+        ]);
     }
 }

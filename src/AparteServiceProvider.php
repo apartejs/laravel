@@ -2,15 +2,20 @@
 
 namespace Aparte\Laravel;
 
+use Aparte\Laravel\ChatModels;
 use Aparte\Laravel\Conversations\ConversationRepository;
 use Aparte\Laravel\Conversations\ConversationRoutes;
 use Aparte\Laravel\Conversations\DatabaseConversationRepository;
 use Aparte\Laravel\Conversations\PeopleRoutes;
+use Aparte\Laravel\Conversations\ShownBranch;
+use Aparte\Laravel\Conversations\ShownBranchStore;
 use Aparte\Laravel\Http\AssetController;
 use Aparte\Laravel\Http\ChatController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Ai\Contracts\ConversationStore;
+use Laravel\Ai\Storage\DatabaseConversationStore;
 
 class AparteServiceProvider extends ServiceProvider
 {
@@ -21,10 +26,19 @@ class AparteServiceProvider extends ServiceProvider
         // The app's own binding, made before or after this one, is the one that is used.
         $this->app->bindIf(ConversationRepository::class, DatabaseConversationRepository::class);
 
+        // The model's memory follows the branch the person sees (ShownBranchStore): the SDK's own store, with that
+        // added. A store the app binds of its own is left as it is.
+        $this->app->scoped(ShownBranch::class);
+        $this->app->extend(ConversationStore::class, fn (ConversationStore $store): ConversationStore => $store::class === DatabaseConversationStore::class
+            ? ShownBranchStore::following($store)
+            : $store);
+
         // Here and not in boot(): routes are registered while providers boot, the app's and
         // those of other packages, in an order this package does not choose.
-        Router::macro('aparte', function (string $uri, string $agent) {
-            return Route::post($uri, ChatController::class)->defaults('agent', $agent);
+        // `$models`: the person chooses the model among config `aparte.models` (`true`) or this route's own list
+        // (ChatModels). A route that offers no choice takes none.
+        Router::macro('aparte', function (string $uri, string $agent, bool|array $models = false) {
+            return ChatModels::offer(Route::post($uri, ChatController::class)->defaults('agent', $agent), $models);
         });
 
         // The conversations a chat shows, kept for the person signed in: the list at `$uri`,

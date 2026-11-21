@@ -82,7 +82,7 @@ it('places the three slots', function () {
     expect($html)
         ->toMatch('/data-aparte-empty-state>WELCOME/')
         ->toMatch('/ABOVE\s*<aparte-composer/')
-        ->toMatch('/<aparte-composer-toolbar>TOOLS/')
+        ->toMatch('/<aparte-composer-toolbar>\s*TOOLS\s*<\/aparte-composer-toolbar>/')
         ->toContain('<aparte-elicitation');
 });
 

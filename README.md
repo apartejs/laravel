@@ -134,6 +134,25 @@ and how to change it.
 
 `->files()` lets a person attach images and text files the model reads with the message, or
 `->files('image/png,image/jpeg')` only pictures: see [Files](#files).
+`->models()` lets a person choose the model that answers, among the ones you list, and `->models([...])` among a
+list of the panel's own: see [Choosing the model](#choosing-the-model).
+
+Every other setting of the launcher and of its chat goes through `attributes()`, as on `<x-aparte::launcher>`
+([the chat's own settings](#the-chats-own-settings)); the slots have a method each, a string for text and an
+`Htmlable` (a view, an `HtmlString`) for markup:
+
+```php
+$panel->plugin(
+    ApartePlugin::make()
+        ->agent(App\Ai\Agents\Assistant::class)
+        ->attributes(['breakpoint' => 'none', 'placeholder' => 'Ask about this page', 'stop-key' => 'Escape'])
+        ->emptyState('Ask anything about your orders.')
+        ->toolbar(view('chat.toolbar')),
+);
+```
+
+`open`, `breakpoint`, `header` and `maximized` stay on the launcher, the rest goes to its chat; `label()`,
+`heading()`, `subheading()`, `maximizable()` and `files()` win over the same attribute there.
 
 ## Approving tool calls
 
@@ -193,6 +212,69 @@ your team takes over before they are sent, and the reverse: they would reach the
 
 With [a person who takes over](#a-person-takes-over), the paperclip follows who answers: `files` while the assistant
 does, [your team's](#files-1) while someone of it is in the conversation.
+
+## Choosing the model
+
+A person can choose the model that answers, in the chats of a route that takes a choice. List the models in
+`config/aparte.php` (`php artisan vendor:publish --tag=aparte-config`), and say so on the route:
+
+```php
+// config/aparte.php
+'models' => [
+    'anthropic:claude-sonnet-5-5' => 'Claude Sonnet',
+    'anthropic:claude-haiku-5-5' => 'Claude Haiku',
+],
+
+// routes/web.php
+Route::aparte('/chat', App\Ai\Agents\Assistant::class, models: true);
+```
+
+Every chat whose `endpoint` is that route now shows the list, under the message field and before what your
+[`toolbar` slot](#slots) holds; there is nothing to add to the view. Each model is `provider:model`, the provider as
+`config/ai.php` names it and the model as that provider does, with the label the chat shows. The first is chosen at
+first, and the browser remembers the person's last choice for their next visit.
+
+A route can have a list of its own instead, `models: ['anthropic:claude-haiku-5-5' => 'Claude Haiku']`: a chat for
+your team offers the larger models, a public one the smaller. In a Filament panel, `ApartePlugin::make()->models()`
+offers the config's list and `->models([...])` one of its own.
+
+The choice goes with each message, and the route answers with it only when its own list has it: the browser is
+anyone's to change, so a model it names outside that list is not used, and your agent answers with its own provider
+and model, as it does on a route that takes no choice. A route that takes no choice takes none, not even a model
+another route offers. A chosen model answers alone, without the failover your agent may declare for its own
+(`#[Provider([...])]`).
+
+## Retrying and editing
+
+aparté can put a retry button under each answer and an edit button on each of the person's messages. Both are off
+until you turn them on, in the chat's setup:
+
+```html
+<script>
+document.addEventListener('aparte:setup', ({ detail: { config } }) => {
+    config.setBubbleActions({ retry: true, edit: true });
+});
+</script>
+```
+
+The model answers from what the person sees. A retry draws a new answer beside the first (‹1/2›), and the model does
+not read the answer it replaces. An edit changes the message in place and drops what followed it, and the model does
+not read the exchange it replaced. A person who goes back to an earlier answer and goes on gets an answer from that
+branch. A message asked again keeps the files it was sent with: the chat does not send them twice, and the server has
+them, so a retried question about a picture is still asked with the picture.
+
+Nothing is deleted to do this. Each answer the Laravel AI SDK keeps also records the id of its message in the chat
+(`meta.aparte.reply`), and reading the conversation for the next turn leaves out the answers the chat no longer shows,
+along with the messages that asked them. Everything else stays as the SDK kept it: pictures, text files, tool calls
+and your team's messages. The chat speaks only for what it shows. A chat with one `thread`, opened in a new tab, shows
+none of what came before, so the model reads all of it, as before. A conversation kept before this version follows
+the branch from its next message on.
+
+An answer that failed after its tools ran stays known whatever the chat shows: the retry finishes what it started, and
+must not do it twice. A finished answer the person retries is left out, tools and all, because they asked for another
+answer. The browser sends ids, and the text the person wrote, so nothing it sends is written as the assistant's words.
+A store of your own that you bind in place of the SDK's (`ConversationStore`) is left as it is; the SDK's own store,
+bound on another connection, keeps that connection.
 
 ## Slots
 

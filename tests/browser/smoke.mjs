@@ -187,6 +187,28 @@ ${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
     '/files-people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" attachments data-aparte-files="image/*" data-aparte-people-files=".png,.txt,.pdf"`)}</body></html>`,
     // An endpoint behind a server that refuses a request over 100 KB, as nginx does over 1 MB by default.
     '/files-small': `${head}${chat('aparte-chat-1', `${ORIGIN}/small`, 'attachments data-aparte-files="image/*"')}</body></html>`,
+    // Retry and edit on, as an app turns them on in its setup: the model's memory follows the branch on screen.
+    '/memory': `${head}<script>document.addEventListener('aparte:setup', (event) => event.detail.config.setBubbleActions({ retry: true, edit: true }));</script>
+${chat('aparte-chat-1', `${ORIGIN}/turns`)}</body></html>`,
+    // `:models="true"`: the list of config('aparte.models') in the composer, as the Blade partial writes it.
+    '/models': `${head}<aparte-chat id="aparte-chat-1" data-aparte-endpoint="${ORIGIN}/turns" data-aparte-csrf="test-token" data-aparte-scope="" style="height: 100%">
+    <aparte-chat-viewport></aparte-chat-viewport>
+    <aparte-elicitation></aparte-elicitation>
+    <aparte-composer>
+        <div class="aparte-composer-shell" data-aparte-laravel-shell>
+            <div class="aparte-composer-row">
+                <aparte-composer-input></aparte-composer-input>
+                <aparte-composer-send></aparte-composer-send>
+            </div>
+            <aparte-composer-toolbar>
+                <aparte-select data-aparte-model aria-label="Model" value="anthropic:claude-sonnet-5-5">
+                    <aparte-option value="anthropic:claude-sonnet-5-5">Claude Sonnet</aparte-option>
+                    <aparte-option value="anthropic:claude-haiku-5-5">Claude Haiku</aparte-option>
+                </aparte-select>
+            </aparte-composer-toolbar>
+        </div>
+    </aparte-composer>
+</aparte-chat></body></html>`,
 };
 
 /** The images a run's messages carry, as AG-UI content parts (what @aparte/runner-ag-ui sends). */
@@ -235,7 +257,7 @@ const server = createServer((req, res) => {
             const input = JSON.parse(body);
             const event = (data) => `data: ${JSON.stringify(data)}\n\n`;
             const deltas = req.url === '/chat' ? ['**Hello** from ', 'the built chat'] : [`Reply ${turns.length + 1}`];
-            (req.url === '/chat' ? posts : turns).push({ csrf: req.headers['x-csrf-token'], threadId: input.threadId, images: imagesIn(input), imageFacts: imageFacts(input), bytes: body.length });
+            (req.url === '/chat' ? posts : turns).push({ csrf: req.headers['x-csrf-token'], threadId: input.threadId, images: imagesIn(input), imageFacts: imageFacts(input), bytes: body.length, model: input.forwardedProps?.model, shown: input.forwardedProps?.aparte });
             res.writeHead(200, { 'Content-Type': 'text/event-stream' });
             if (req.url === '/fails') {
                 // What AparteProtocol sends for a rate limit, the app's description having named the exception.
@@ -551,8 +573,10 @@ try {
         const a = chatOf(first.page, '#shell-a');
         check(await a.say('First question'), 'kept: the chat answers');
         check(await until(async () => kept.size === 1), 'kept: the conversation is sent to the server');
-        const saved = [...kept.values()][0];
-        check(saved?.title === 'First question' && saved?.messages?.length === 2, 'kept: with its title and what is on screen');
+        // Saved as the turn goes, so the first save can come before the answer is whole: the last one is what counts.
+        const whole = () => [...kept.values()][0];
+        check(await until(async () => whole()?.title === 'First question' && whole()?.messages?.length === 2), 'kept: with its title and what is on screen');
+        const saved = whole();
         check(calls.some((call) => call.method === 'PUT') && calls.every((call) => call.csrf === 'test-token'), 'kept: every request carries the CSRF header');
         check((await first.page.evaluate(() => Object.keys(sessionStorage).filter((key) => key.startsWith('aparte-laravel:')).length)) === 0, 'kept: and nothing is written in the tab');
         check(first.problems.length === 0, `kept: no console error or warning${first.problems.length ? `: ${first.problems.join(' | ')}` : ''}`);
@@ -1066,8 +1090,8 @@ try {
         const error = page.locator('aparte-chat .aparte-segment-error');
         check(await until(async () => (await error.count()) > 0), 'files refused: the chat says the message did not go');
         const said = ((await error.first().textContent().catch(() => '')) ?? '').replace(/\s+/g, ' ');
-        // Not "Try again in a moment": the same bytes would be refused again.
-        check(said.includes('couldn’t answer this request') && !said.includes('Try again'), `files refused: and promises no retry that would fail the same way ("${said.trim().slice(0, 120)}")`);
+        // aparté's own sentence for a 413 (1.17): what helps, not "Try again in a moment", which would send the same bytes.
+        check(said.includes('This message is too large to send') && !said.includes('Try again'), `files refused: and says what helps, with no retry that would fail the same way ("${said.trim().slice(0, 120)}")`);
         check(problems.some((p) => p.includes('client_max_body_size')), 'files refused: the console tells the developer which limit to raise');
         await page.locator('aparte-chat .aparte-ci-editor').click();
         await page.keyboard.type('Still here');
@@ -1159,6 +1183,80 @@ try {
         await page.evaluate(([i]) => window.desk(i, { type: 'auto-reply', on: true }), [id]);
         check(await until(async () => (await clip.getAttribute('accept')) === 'image/*'), "files and the team: handed back, the model's again");
         check(problems.length === 0, `files and the team: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    // ── The model's memory follows the branch on screen (ShownBranchStore) ───────────────────
+    await scenario('memory', async () => {
+        const { page, problems } = await open('/memory');
+        const one = chatOf(page, 'body');
+        const onScreen = () => page.evaluate(() => document.querySelector('aparte-chat-viewport').getMessages().map((m) => m.id));
+        const settled = (before) => until(async () => turns.length > before && (await page.locator('aparte-chat .aparte-message-streaming').count()) === 0, 20_000);
+        const named = () => turns.at(-1)?.shown ?? { shown: [] };
+        const action = async (bubble, name) => {
+            await bubble.hover();
+            await bubble.locator(`[data-action="${name}"]`).click();
+        };
+
+        check(await one.say('First'), 'memory: the first answer comes');
+        const [u1, a1] = await onScreen();
+        check(named().reply === a1 && named().shown.includes(u1), 'memory: the request names the messages on screen and the one its answer is drawn in');
+        check(named().asked === u1 && named().text === 'First', 'memory: and the message it answers, with its text');
+
+        check(await one.say('Second'), 'memory: the second answer comes');
+        const [, , u2, a2] = await onScreen();
+        check(named().reply === a2 && [u1, a1, u2].every((id) => named().shown.includes(id)), 'memory: going on, the request names the whole branch');
+
+        let before = turns.length;
+        await action(page.locator('aparte-chat-bubble[data-role="assistant"]').last(), 'retry');
+        check(await settled(before), 'memory: a retry is answered');
+        const a2b = (await onScreen()).at(-1);
+        check(a2b !== a2 && named().reply === a2b, 'memory: a retry draws its answer in a new message, and names it');
+        check(!named().shown.includes(a2) && [u1, a1, u2].every((id) => named().shown.includes(id)), 'memory: the answer it replaces is not named, the rest of the branch is');
+        check(named().asked === u2 && named().text === 'Second', 'memory: a retry asks the same message again, with the same text');
+
+        // Back to the first version of the answer (‹1/2›), and on from there.
+        await page.locator('aparte-chat-bubble[data-role="assistant"]').last().locator('.aparte-branch-prev').click();
+        check(await until(async () => (await onScreen())[3] === a2), 'memory: the person goes back to the first answer');
+        check(await one.say('Third'), 'memory: and goes on from there');
+        const [, , , , u3, a3] = await onScreen();
+        check(named().shown.includes(a2) && !named().shown.includes(a2b), 'memory: the request names that answer, not the one it went back from');
+
+        // An edit changes the message in place (aparté keeps its id) and drops every answer after it.
+        before = turns.length;
+        const second = page.locator('aparte-chat-bubble[data-role="user"]').nth(1);
+        await action(second, 'edit');
+        await second.locator('aparte-composer-input').evaluate((input) => input.setValue('Second, edited'));
+        await second.locator('[data-action="edit-save"]').click();
+        check(await settled(before), 'memory: an edit is answered');
+        const a2c = (await onScreen()).at(-1);
+        check(named().reply === a2c && named().shown.includes(u2) && ![a2, a2b, u3, a3].some((id) => named().shown.includes(id)), 'memory: an edit names its new answer, and nothing it replaced');
+        check(named().asked === u2 && named().text === 'Second, edited', 'memory: it asks the same message, with its new text');
+        check(problems.length === 0, `memory: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    // ── The model the person chooses (`:models="true"`) ──────────────────────────────────────
+    await scenario('models', async () => {
+        const { page, problems } = await open('/models');
+        const one = chatOf(page, 'body');
+        const trigger = page.locator('aparte-select[data-aparte-model] .aparte-select-trigger');
+        check(await until(() => trigger.isVisible()), 'models: the list of models is under the message field');
+        check((await trigger.textContent()).includes('Claude Sonnet'), 'models: the first is chosen');
+        check(await trigger.getAttribute('aria-label') === 'Model', 'models: and the list is named');
+        check(await one.say('Hello'), 'models: the message goes out');
+        check(turns.at(-1)?.model === 'anthropic:claude-sonnet-5-5', `models: with the model chosen (got ${turns.at(-1)?.model})`);
+        await trigger.click();
+        await page.locator('aparte-option[value="anthropic:claude-haiku-5-5"]').click();
+        check(await until(async () => (await trigger.textContent()).includes('Claude Haiku')), 'models: the person chooses another');
+        check(await one.say('And now?'), 'models: the next message goes out');
+        check(turns.at(-1)?.model === 'anthropic:claude-haiku-5-5', `models: with the model now chosen (got ${turns.at(-1)?.model})`);
+        await page.reload();
+        await page.waitForFunction(() => document.querySelector('aparte-chat')?.hasAttribute('data-aparte-mounted'), null, { timeout: 20_000 });
+        check(await until(async () => (await trigger.textContent()).includes('Claude Haiku')), 'models: on the next visit, the last one chosen');
+        check(await one.say('Again'), 'models: a message after the visit goes out');
+        check(turns.at(-1)?.model === 'anthropic:claude-haiku-5-5', `models: with that model (got ${turns.at(-1)?.model})`);
+        check(problems.length === 0, `models: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
     });
 } finally {

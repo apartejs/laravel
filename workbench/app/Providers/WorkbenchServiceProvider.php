@@ -12,6 +12,11 @@ class WorkbenchServiceProvider extends ServiceProvider
         // Served by several workers on one SQLite file: a write waits for the one before it
         // rather than failing on a locked database.
         config(['database.connections.sqlite.busy_timeout' => 5000]);
+        // The README's "Choosing the model": what the /models page offers.
+        config(['aparte.models' => [
+            'anthropic:claude-sonnet-5-5' => 'Claude Sonnet',
+            'anthropic:claude-haiku-5-5' => 'Claude Haiku',
+        ]]);
     }
 
     public function boot(): void
