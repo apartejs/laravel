@@ -244,6 +244,38 @@ and model, as it does on a route that takes no choice. A route that takes no cho
 another route offers. A chosen model answers alone, without the failover your agent may declare for its own
 (`#[Provider([...])]`).
 
+## Retrying and editing
+
+aparté can put a retry button under each answer and an edit button on each of the person's messages. Both are off
+until you turn them on, in the chat's setup:
+
+```html
+<script>
+document.addEventListener('aparte:setup', ({ detail: { config } }) => {
+    config.setBubbleActions({ retry: true, edit: true });
+});
+</script>
+```
+
+The model answers from what the person sees. A retry draws a new answer beside the first (‹1/2›), and the model does
+not read the answer it replaces. An edit changes the message in place and drops what followed it, and the model does
+not read the exchange it replaced. A person who goes back to an earlier answer and goes on gets an answer from that
+branch. A message asked again keeps the files it was sent with: the chat does not send them twice, and the server has
+them, so a retried question about a picture is still asked with the picture.
+
+Nothing is deleted to do this. Each answer the Laravel AI SDK keeps also records the id of its message in the chat
+(`meta.aparte.reply`), and reading the conversation for the next turn leaves out the answers the chat no longer shows,
+along with the messages that asked them. Everything else stays as the SDK kept it: pictures, text files, tool calls
+and your team's messages. The chat speaks only for what it shows. A chat with one `thread`, opened in a new tab, shows
+none of what came before, so the model reads all of it, as before. A conversation kept before this version follows
+the branch from its next message on.
+
+An answer that failed after its tools ran stays known whatever the chat shows: the retry finishes what it started, and
+must not do it twice. A finished answer the person retries is left out, tools and all, because they asked for another
+answer. The browser sends ids, and the text the person wrote, so nothing it sends is written as the assistant's words.
+A store of your own that you bind in place of the SDK's (`ConversationStore`) is left as it is; the SDK's own store,
+bound on another connection, keeps that connection.
+
 ## Slots
 
 ```blade

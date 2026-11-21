@@ -36,6 +36,7 @@ Route::view('/', 'page');
 Route::view('/floating', 'floating');
 Route::view('/files', 'files');
 Route::view('/models', 'models');
+Route::view('/memory', 'memory');
 
 Route::middleware('auth')->group(function () {
     Route::aparte('/chat', Assistant::class);
@@ -52,5 +53,12 @@ Route::middleware('auth')->group(function () {
         'models' => DB::table('agent_conversation_messages')->where('participant_id', $request->user()->getKey())
             ->where('role', 'assistant')->orderBy('id')->pluck('meta')
             ->map(fn (string $meta) => json_decode($meta, true)['model'] ?? null)->all(),
+        // The ids of the chat's messages each row is kept with: answers, then the questions (ShownBranchStore).
+        'replies' => DB::table('agent_conversation_messages')->where('participant_id', $request->user()->getKey())
+            ->where('role', 'assistant')->orderBy('id')->pluck('meta')
+            ->map(fn (string $meta) => json_decode($meta, true)['aparte']['reply'] ?? null)->all(),
+        'asked' => DB::table('agent_conversation_messages')->where('participant_id', $request->user()->getKey())
+            ->where('role', 'user')->orderBy('id')->pluck('meta')
+            ->map(fn (string $meta) => json_decode($meta, true)['aparte']['asked'] ?? null)->all(),
     ]);
 });

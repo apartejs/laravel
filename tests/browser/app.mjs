@@ -307,6 +307,22 @@ try {
         await page.context().close();
     });
 
+    await scenario('memory', async () => {
+        const { page, problems } = await visit(9, '/memory');
+        const chat = chatOf(page);
+        check(await chat.say('First question'), 'memory: the agent answers');
+        const answer = page.locator('aparte-chat aparte-chat-bubble[data-role="assistant"]').last();
+        await answer.hover();
+        await answer.locator('[data-action="retry"]').click();
+        check(await until(async () => (await state(page)).replies.length === 2, 40_000), 'memory: a retry is answered, and kept beside the first answer');
+        const onScreen = await page.evaluate(() => document.querySelector('aparte-chat-viewport').getMessages().map((m) => m.id));
+        const kept = await state(page);
+        check(kept.replies[1] === onScreen.at(-1) && kept.replies[0] !== kept.replies[1], `memory: each answer is kept with the id of its message in the chat (${JSON.stringify(kept.replies)} / ${JSON.stringify(onScreen)})`);
+        check(kept.asked.length === 2 && kept.asked.every((id) => id === onScreen[0]), 'memory: and each question with the id of the message it asks');
+        noProblem('memory', problems);
+        await page.context().close();
+    });
+
     await scenario('panel, signed out', async () => {
         const { page } = await visit(null, '/admin');
         check(page.url().includes('/admin/login'), 'panel: someone not signed in is sent to its sign-in page');

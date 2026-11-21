@@ -415,6 +415,18 @@ function withModel(init, chat) {
     return { ...init, body: JSON.stringify(body) };
 }
 
+/**
+ * What the person sees, for the model's memory on the server to follow (ShownBranchStore): the ids of the messages
+ * of the branch on screen, and of the one the answer is drawn in. After a retry, an edit or a branch the person went
+ * back to, the turns they no longer see are not read. Ids only: the server writes nothing the browser says.
+ */
+function withShown(init, shown) {
+    if (!shown || typeof init?.body !== 'string') return init;
+    const body = JSON.parse(init.body);
+    body.forwardedProps = { ...(body.forwardedProps ?? {}), aparte: shown };
+    return { ...init, body: JSON.stringify(body) };
+}
+
 /** The last model chosen in a chat, chosen again on the next visit while the list still has it. */
 function rememberModel(chat) {
     const select = chat.querySelector('aparte-select[data-aparte-model]');
@@ -1196,6 +1208,8 @@ async function mount(chat) {
     let manager;
     const fallbackThread = uuid();
     let outcomes = {};
+    // The branch on screen when the run started (withShown).
+    let shown = null;
     const ui = uiOf(chat);
     const kept = conversations
         ? new ServerStorage(conversations, {
@@ -1221,10 +1235,15 @@ async function mount(chat) {
             endpoint,
             threadId: () => (single && givenThread) || manager?.activeId || fallbackThread,
             headers: { 'X-CSRF-TOKEN': csrf ?? '' },
-            fetch: async (url, init) => sizeRefusal(await fetch(url, await smallerImages(withModel(withInstructions(init, outcomes), chat)))),
+            fetch: async (url, init) => sizeRefusal(await fetch(url, await smallerImages(withShown(withModel(withInstructions(init, outcomes), chat), shown)))),
         });
         options.client.streamRunner = (run) => {
             outcomes = run.deferral?.outcomes ?? {};
+            const onScreen = chat.viewport.getMessages();
+            const asked = run.userMessage?.messageId;
+            // The person's message this turn answers, and its text as they wrote it: a retry or an edit asks it again.
+            const text = onScreen.find((message) => message.id === asked)?.content;
+            shown = { shown: onScreen.map((message) => message.id), reply: run.messageId, ...(asked ? { asked, ...(typeof text === 'string' ? { text } : {}) } : {}) };
             return runner(run);
         };
     }
