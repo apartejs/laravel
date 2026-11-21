@@ -52,9 +52,11 @@ jobs:
         name: Rebuild the chat on the new aparté
         env:
           VERSION: ${{ steps.versions.outputs.latest }}
+        # @aparte/locales too: the built chat carries its words, and a sentence aparté adds (a new error, a new label)
+        # is translated in the locales of the same version. Left behind at 1.13.1, every newer sentence was English.
         run: |
           npm ci
-          npm install --save-dev --save-exact "@aparte/core@$VERSION" "@aparte/plugin-marked@$VERSION" "@aparte/runner-ag-ui@$VERSION"
+          npm install --save-dev --save-exact "@aparte/core@$VERSION" "@aparte/plugin-marked@$VERSION" "@aparte/runner-ag-ui@$VERSION" "@aparte/locales@$VERSION"
           npm run build
 
       - if: steps.versions.outputs.follow == 'true'
