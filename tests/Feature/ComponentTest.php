@@ -120,3 +120,74 @@ it('gives a chat with people a button to ask for someone only when the app turns
         ->and(Blade::render('<x-aparte::chat endpoint="/chat" people="/chat/people" :people-button="false" />'))->not->toContain('data-aparte-people-button')
         ->and(Blade::render('<x-aparte::chat endpoint="/chat" people-button="Talk to a person" />'))->not->toContain('data-aparte-people-button');
 });
+
+/** The opening tag of the first `$tag` in `$html`, attributes and all. */
+function startTag(string $html, string $tag): string
+{
+    return preg_match('/<'.preg_quote($tag, '/').'\b[^>]*>/s', $html, $match) ? $match[0] : '';
+}
+
+it("hands the chat its own attributes, and keeps the chat's place on the page around it", function () {
+    $html = Blade::render('<x-aparte::chat endpoint="/chat" class="h-96" style="height: 32rem" wire:key="help" x-data="{}" placeholder="Ask about your order" type-to-focus="page" stop-key="Escape" submit-on-enter="false" />');
+
+    expect(startTag($html, 'aparte-chat'))
+        ->toContain('placeholder="Ask about your order"')
+        ->toContain('type-to-focus="page"')
+        ->toContain('stop-key="Escape"')
+        ->toContain('submit-on-enter="false"')
+        ->not->toContain('class=')
+        ->not->toContain('wire:key');
+    expect(startTag($html, 'div'))
+        ->toContain('class="h-96"')
+        ->toContain('style="height: 32rem"')
+        ->toContain('wire:key="help"')
+        ->toContain('x-data="{}"')
+        ->not->toContain('placeholder');
+});
+
+it("keeps the launcher's own attributes on it, and hands it the chat's", function () {
+    $html = Blade::render('<x-aparte::launcher endpoint="/chat" label="Help" heading="Support" breakpoint="600" class="corner" placeholder="Ask us anything" stop-key="Escape" />');
+
+    expect(startTag($html, 'aparte-launcher'))
+        ->toContain('heading="Support"')
+        ->toContain('breakpoint="600"')
+        ->toContain('class="corner"')
+        ->not->toContain('placeholder')
+        ->not->toContain('stop-key');
+    expect(startTag($html, 'aparte-chat'))
+        ->toContain('placeholder="Ask us anything"')
+        ->toContain('stop-key="Escape"')
+        ->not->toContain('heading');
+});
+
+it('gives the chat a paperclip for the model with files, whoever answers', function () {
+    expect(startTag(Blade::render('<x-aparte::chat endpoint="/chat" files />'), 'aparte-chat'))
+        ->toMatch('/\sattachments\s/')
+        ->toContain('data-aparte-files="'.\Aparte\Laravel\ChatAttributes::FILES.'"');
+    expect(startTag(Blade::render('<x-aparte::chat endpoint="/chat" files="image/*" />'), 'aparte-chat'))
+        ->toContain('data-aparte-files="image/*"');
+    expect(startTag(Blade::render('<x-aparte::launcher endpoint="/chat" files />'), 'aparte-chat'))
+        ->toContain('data-aparte-files=');
+
+    foreach (['<x-aparte::chat endpoint="/chat" />', '<x-aparte::chat endpoint="/chat" :files="false" />', '<x-aparte::chat endpoint="/chat" files="false" />'] as $none) {
+        expect(startTag(Blade::render($none), 'aparte-chat'))->not->toContain('attachments')->not->toContain('data-aparte-files');
+    }
+});
+
+it('keeps the paperclip, the placeholder and disabled in a chat with slots', function () {
+    $html = Blade::render(<<<'BLADE'
+        <x-aparte::chat endpoint="/chat" files placeholder="Ask" disabled>
+            <x-slot:toolbar>TOOLS</x-slot:toolbar>
+        </x-aparte::chat>
+        BLADE);
+
+    expect($html)
+        ->toContain('<aparte-composer-add-attachment>')
+        ->toContain('<aparte-composer-attachments>')
+        ->toContain('data-aparte-laravel-shell');
+    expect(startTag($html, 'aparte-composer'))->toContain('placeholder="Ask"')->toContain('disabled');
+
+    // Without files, the paperclip of a chat with slots is left to the team's code, which adds it when it is offered.
+    expect(Blade::render('<x-aparte::chat endpoint="/chat"><x-slot:toolbar>TOOLS</x-slot:toolbar></x-aparte::chat>'))
+        ->not->toContain('<aparte-composer-add-attachment');
+});

@@ -3,10 +3,18 @@
 
     // The id the view gave, else its position on the page (a view that drew the list first already has it).
     $chatId ??= \Aparte\Laravel\AparteServiceProvider::chatId($id ?? null);
+
+    // The chat's own attributes, written on the component (Aparte\Laravel\ChatAttributes).
+    $chatAttributes ??= new \Illuminate\View\ComponentAttributeBag;
+    // What a person may attach, whoever answers (`files`): the paperclip, and its types.
+    $filesTypes = \Aparte\Laravel\ChatAttributes::files($files ?? null);
+    $paperclip = $filesTypes !== null || $chatAttributes->has('attachments');
 @endphp
 
 <aparte-chat
     id="{{ $chatId }}"
+    {{ $chatAttributes }}
+    @if ($filesTypes !== null) @unless ($chatAttributes->has('attachments')) attachments @endunless data-aparte-files="{{ $filesTypes }}" @endif
     data-aparte-endpoint="{{ ($endpoint ?? null) ? url($endpoint) : '' }}"
     data-aparte-csrf="{{ csrf_token() }}"
     data-aparte-scope="{{ auth()->id() }}"
@@ -39,9 +47,21 @@
         </aparte-chat-viewport>
         <aparte-elicitation></aparte-elicitation>
         {{ $aboveComposer ?? '' }}
-        <aparte-composer>
-            <div class="aparte-composer-shell">
+        {{-- The composer aparté writes when it writes its own, with the slots added: the paperclip and its strip
+             when files are on, the chat's placeholder and `disabled`. aparté keeps the paperclip in step only in a
+             composer it wrote, so aparte.js does it in this one (data-aparte-laravel-shell). --}}
+        <aparte-composer
+            @if ($chatAttributes->has('placeholder')) placeholder="{{ $chatAttributes->get('placeholder') }}" @endif
+            @if ($chatAttributes->has('disabled') && $chatAttributes->get('disabled') !== false) disabled @endif
+        >
+            <div class="aparte-composer-shell" data-aparte-laravel-shell>
+                @if ($paperclip)
+                    <aparte-composer-attachments></aparte-composer-attachments>
+                @endif
                 <div class="aparte-composer-row">
+                    @if ($paperclip)
+                        <aparte-composer-add-attachment></aparte-composer-add-attachment>
+                    @endif
                     <aparte-composer-input></aparte-composer-input>
                     <aparte-composer-send></aparte-composer-send>
                 </div>

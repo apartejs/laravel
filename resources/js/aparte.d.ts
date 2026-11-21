@@ -69,9 +69,22 @@ export interface AparteConversationsProblem {
     conversationId?: string;
 }
 
+/**
+ * What `aparte:setup` carries: the same three things `onAparteSetup` is called with. It is dispatched on each
+ * chat before the chat starts, and bubbles, so a page that builds nothing (the package's own bundle) reaches the
+ * config, the element and the options too: replace the storage or the runner, set an attribute of the chat.
+ */
+export interface AparteSetupDetail {
+    config: AparteConfig;
+    chat: HTMLElement;
+    options: AparteChatOptions;
+}
+
 declare global {
     interface DocumentEventMap {
         /** Dispatched on the chat, and bubbling: see the README, "Conversations in your database". */
         'aparte-conversations-problem': CustomEvent<AparteConversationsProblem>;
+        /** Dispatched on each chat before it starts, and bubbling: see the README, "Your own storage, your own runner". */
+        'aparte:setup': CustomEvent<AparteSetupDetail>;
     }
 }

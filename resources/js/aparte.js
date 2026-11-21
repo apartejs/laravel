@@ -659,8 +659,12 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         ratingBox.append(question, answer('up', chat.dataset.apartePeopleRatingUp || 'Good', '👍'), answer('down', chat.dataset.apartePeopleRatingDown || 'Not good', '👎'));
     }
 
+    // Two kinds of files: the team's, kept on your disk (`:people-files`), and the chat's own, which go to the
+    // model with the message (`files`). Who answers says which the paperclip offers; with neither, there is none.
     const fileTypes = chat.dataset.apartePeopleFiles;
-    const ownPaperclip = chat.hasAttribute('attachments');
+    const modelTypes = chat.dataset.aparteFiles;
+    // A page that set `attachments` itself (not through `files`) keeps its paperclip as it set it.
+    const ownPaperclip = chat.hasAttribute('attachments') && modelTypes === undefined;
 
     // An answer is owed: the last message, notices aside, is the person's.
     const awaiting = () => chat.viewport?.getMessages().filter((message) => message.kind !== 'notice').at(-1)?.role === 'user';
@@ -671,11 +675,11 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         // rating question: once the team has answered, or closed it, there is nothing to wait for.
         if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open) && !ratingAsked.has(open) && (owed.has(open) || awaiting()));
         if (ratingBox) ratingBox.hidden = !(open && ratingAsked.has(open));
-        // The paperclip while someone of the team is in the conversation (`:people-files`), and from
-        // the start in a chat with the team only; a page that set `attachments` itself keeps it.
-        if (fileTypes !== undefined && !ownPaperclip) {
-            chat.toggleAttribute('attachments', !assistant || Boolean(open && !config.getAutoReply(open)));
-            queueMicrotask(() => chat.querySelector('aparte-composer-add-attachment')?.setAttribute('accept', fileTypes));
+        // The paperclip offers the team's files while someone of the team is in the conversation (and from the
+        // start in a chat with the team only), the chat's own while the assistant answers.
+        if ((fileTypes !== undefined || modelTypes !== undefined) && !ownPaperclip) {
+            const team = !assistant || Boolean(open && !config.getAutoReply(open));
+            offerFiles(chat, (team ? fileTypes : modelTypes) ?? null);
         }
     };
 
@@ -909,7 +913,8 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         typingLine.remove();
         emailBox?.remove();
         ratingBox?.remove();
-        if (fileTypes !== undefined && !ownPaperclip) chat.removeAttribute('attachments');
+        // Back to what the chat offers without the team: its own files, or none.
+        if ((fileTypes !== undefined || modelTypes !== undefined) && !ownPaperclip) offerFiles(chat, modelTypes ?? null);
         button?.remove();
         unsubscribe();
         follow(null);
@@ -936,6 +941,42 @@ const localeOf = (tag) => {
  */
 export function useLocales({ de, es, fr, it, ja, ko, ptBR, ru, zhCN } = {}) {
     LOCALES = Object.fromEntries(Object.entries({ de, es, fr, it, ja, ko, 'pt-br': ptBR, pt: ptBR, ru, 'zh-cn': zhCN, zh: zhCN }).filter(([, words]) => words));
+}
+
+/**
+ * Offer files on a chat, of these types, or none (`null`). aparté draws the paperclip from the `attachments`
+ * attribute; the types go on the picker once it is drawn.
+ */
+function offerFiles(chat, types) {
+    chat.toggleAttribute('attachments', types !== null);
+    if (types !== null) queueMicrotask(() => chat.querySelector('aparte-composer-add-attachment')?.setAttribute('accept', types));
+}
+
+/**
+ * The paperclip of a composer this package wrote (a view with slots, `data-aparte-laravel-shell`). aparté adds
+ * and removes it with `attachments` only in a composer it wrote itself; this does the same, the same way, here.
+ */
+function followPaperclip(chat) {
+    const shell = chat.querySelector('[data-aparte-laravel-shell]');
+    if (!shell) return null;
+    const sync = () => {
+        const row = shell.querySelector('.aparte-composer-row');
+        if (!row) return;
+        const strip = shell.querySelector('aparte-composer-attachments');
+        const picker = row.querySelector('aparte-composer-add-attachment');
+        if (chat.hasAttribute('attachments')) {
+            if (!strip) shell.insertBefore(document.createElement('aparte-composer-attachments'), row);
+            if (!picker) row.insertBefore(document.createElement('aparte-composer-add-attachment'), row.firstChild);
+            return;
+        }
+        strip?.remove();
+        picker?.remove();
+        // Files picked before the paperclip went would otherwise ride on the next send, with nothing showing them.
+        chat.composer?.clearAttachments?.();
+    };
+    const watcher = new MutationObserver(sync);
+    watcher.observe(chat, { attributes: true, attributeFilter: ['attachments'] });
+    return () => watcher.disconnect();
 }
 
 async function mount(chat) {
@@ -1040,9 +1081,14 @@ async function mount(chat) {
     // another chat's sends, or read another config, would be the app's bug to find here.
     const client = new AparteClient({ ...options.client, config, scopeToTargetId: chat.id });
     client.start();
+    // Before the team's code turns the paperclip on or off, so a composer the view wrote follows it too.
+    const unfollowPaperclip = followPaperclip(chat);
+    // The chat's own files (`files`), with no team to hand the paperclip to: offered from the start.
+    if (chat.dataset.aparteFiles !== undefined && !people) offerFiles(chat, chat.dataset.aparteFiles);
     Object.assign(entry, {
         client,
         controller,
+        unfollowPaperclip,
         unbindUi: bindConversationUi(chat, config, manager, controller, ui),
         unbindPeople: people ? bindPeople(chat, config, manager, client, options, { url: people, csrf: csrf ?? '', assistant: Boolean(endpoint), thread: single ? givenThread : null }) : null,
     });
@@ -1095,6 +1141,7 @@ function stopAll() {
             entry.storage?.stop?.();
             entry.unbindUi?.();
             entry.unbindPeople?.();
+            entry.unfollowPaperclip?.();
             entry.controller?.unbind();
             entry.client?.stop();
         } catch (error) {
