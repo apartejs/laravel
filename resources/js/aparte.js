@@ -11,6 +11,58 @@ import {
 import { createAgUiRunner } from '@aparte/runner-ag-ui';
 import { setupMarkedStreamingProvider } from '@aparte/plugin-marked/streaming';
 
+/** The small pictures of attached images, made once per file. */
+const pictures = new WeakMap();
+
+/**
+ * A small JPEG of an image, as a data: address: a few kilobytes, the size the transcript shows it at (it is kept
+ * twice, in the messages and in their tree). `null` for a file the browser cannot draw.
+ */
+function pictureOf(blob) {
+    if (typeof Blob === 'undefined' || !(blob instanceof Blob)) return Promise.resolve(null);
+    if (!pictures.has(blob)) {
+        pictures.set(blob, (async () => {
+            try {
+                const image = await createImageBitmap(blob);
+                const scale = Math.min(1, 160 / Math.max(image.width, image.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.round(image.width * scale));
+                canvas.height = Math.max(1, Math.round(image.height * scale));
+                const context = canvas.getContext('2d');
+                // A JPEG has no transparency: what was transparent is white rather than black.
+                context.fillStyle = '#fff';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                image.close?.();
+                return canvas.toDataURL('image/jpeg', 0.75);
+            } catch {
+                return null;
+            }
+        })());
+    }
+    return pictures.get(blob);
+}
+
+/**
+ * What a conversation keeps of its attachments. aparté shows an attached file from a `blob:` address, which dies
+ * with the page: a conversation opened again later showed a broken image. An image keeps a small picture of itself
+ * instead, within what the server keeps of a conversation; another file keeps its name, with no address to open.
+ * The model's memory, on the server, has the files themselves. Read back, an address of a page that is gone is
+ * dropped the same way. Returns a copy: what is on screen keeps its own.
+ */
+async function keepable(value) {
+    if (Array.isArray(value)) return Promise.all(value.map(keepable));
+    if (value === null || typeof value !== 'object' || (typeof Blob !== 'undefined' && value instanceof Blob)) return value;
+    if (typeof value.url === 'string' && value.url.startsWith('blob:') && typeof value.name === 'string') {
+        const { blob, url, ...attachment } = value;
+        const picture = String(value.type ?? '').startsWith('image/') ? await pictureOf(blob) : null;
+        return { ...attachment, url: picture ?? '' };
+    }
+    const copy = {};
+    for (const [key, entry] of Object.entries(value)) copy[key] = await keepable(entry);
+    return copy;
+}
+
 /**
  * What is on screen, for this tab only: a reload brings the conversation and a pending
  * approval back, and closing the tab starts over. The model's memory stays on the server.
@@ -18,6 +70,9 @@ import { setupMarkedStreamingProvider } from '@aparte/plugin-marked/streaming';
 class TabStorage {
     constructor(key) {
         this.key = key;
+        // One save after the other: a save waits for the pictures of its images, and an older state must not
+        // land after a newer one.
+        this.saving = Promise.resolve();
     }
 
     read() {
@@ -36,20 +91,33 @@ class TabStorage {
         }
     }
 
+    // After the saves already asked: read too early, a conversation would come back without its last change.
     async loadAll() {
-        return this.read();
+        await this.saving.catch(() => {});
+        return keepable(this.read());
     }
 
-    async save(conversation) {
-        const all = this.read();
-        const index = all.findIndex((c) => c.id === conversation.id);
-        if (index >= 0) all[index] = conversation;
-        else all.push(conversation);
-        this.write(all);
+    /** After what was asked before, whatever became of it: one failure stops no later save. */
+    queue(work) {
+        const next = this.saving.catch(() => {}).then(work);
+        this.saving = next;
+        return next;
     }
 
-    async delete(id) {
-        this.write(this.read().filter((c) => c.id !== id));
+    save(conversation) {
+        return this.queue(async () => {
+            const kept = await keepable(conversation);
+            const all = this.read();
+            const index = all.findIndex((c) => c.id === kept.id);
+            if (index >= 0) all[index] = kept;
+            else all.push(kept);
+            this.write(all);
+        });
+    }
+
+    // In the same line as the saves: one still making its pictures would write a deleted conversation back.
+    delete(id) {
+        return this.queue(async () => this.write(this.read().filter((c) => c.id !== id)));
     }
 }
 
@@ -177,7 +245,7 @@ class ServerStorage {
     async loadFull(id) {
         if (this.unsent.has(id)) return this.unsent.get(id);
         try {
-            return await (await this.request('GET', id)).json();
+            return await keepable(await (await this.request('GET', id)).json());
         } catch (error) {
             // Deleted from another tab, or another device: an answer, not a failure.
             if (error instanceof StorageError && error.status === 404) {
@@ -208,7 +276,10 @@ class ServerStorage {
                 while (this.unsent.size > 0 && !this.stopped) {
                     const [id, conversation] = this.unsent.entries().next().value;
                     try {
-                        await this.request('PUT', id, conversation);
+                        const body = await keepable(conversation);
+                        // Deleted, or replaced by a newer state, while its pictures were made: that one goes, or none.
+                        if (this.unsent.get(id) !== conversation) continue;
+                        await this.request('PUT', id, body);
                     } catch (error) {
                         if (unreachable(error)) {
                             this.problem('unreachable', error);
@@ -330,6 +401,77 @@ function withInstructions(init, outcomes) {
         if (instruction) item.payload = { ...item.payload, instruction };
     }
     return { ...init, body: JSON.stringify(body) };
+}
+
+/** The longest side an image goes to the model at: the size Anthropic scales a larger one down to itself. */
+const MODEL_IMAGE_SIDE = 1568;
+/** An image no larger than MODEL_IMAGE_SIDE and lighter than this goes as it is: a screenshot, a small GIF. */
+const MODEL_IMAGE_BYTES = 512 * 1024;
+
+/**
+ * An image part as the model gets it: at most MODEL_IMAGE_SIDE pixels on its longest side, a JPEG of a few hundred
+ * kilobytes. A phone's photo (3 to 5 MB, a third more in base64) would otherwise exceed nginx's default limit on a
+ * request (1 MB) and PHP's (8 MB), and pay for pixels the model APIs scale away themselves. One the browser cannot
+ * draw goes as it is.
+ */
+async function forTheModel(part) {
+    if (part?.type !== 'image' || part.source?.type !== 'data' || typeof part.source.value !== 'string') return part;
+    try {
+        const bytes = Uint8Array.from(atob(part.source.value), (character) => character.charCodeAt(0));
+        const image = await createImageBitmap(new Blob([bytes], { type: part.source.mimeType ?? '' }));
+        const side = Math.max(image.width, image.height);
+        if (side <= MODEL_IMAGE_SIDE && bytes.length <= MODEL_IMAGE_BYTES) {
+            image.close?.();
+            return part;
+        }
+        const scale = Math.min(1, MODEL_IMAGE_SIDE / side);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext('2d');
+        // A JPEG has no transparency: what was transparent is white rather than black.
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        image.close?.();
+        const jpeg = canvas.toDataURL('image/jpeg', 0.85);
+        return { ...part, source: { ...part.source, type: 'data', value: jpeg.slice(jpeg.indexOf(',') + 1), mimeType: 'image/jpeg' } };
+    } catch {
+        return part;
+    }
+}
+
+/**
+ * The images a request carries, as the model gets them (forTheModel). Only the message being sent has any: aparté
+ * sends the earlier ones as their text, and the agent's memory on the server has their images.
+ */
+async function smallerImages(init) {
+    if (typeof init?.body !== 'string' || !init.body.includes('"image"')) return init;
+    const body = JSON.parse(init.body);
+    let changed = false;
+    for (const message of Array.isArray(body.messages) ? body.messages : []) {
+        if (message?.role !== 'user' || !Array.isArray(message.content)) continue;
+        message.content = await Promise.all(message.content.map(async (part) => {
+            const next = await forTheModel(part);
+            if (next !== part) changed = true;
+            return next;
+        }));
+    }
+    return changed ? { ...init, body: JSON.stringify(body) } : init;
+}
+
+/**
+ * A request refused for its size: nginx's 413 over `client_max_body_size`, or PHP's over `post_max_size`. aparté reads
+ * a 413 as a failing provider and tells the person to try again in a moment, which sends the same bytes again; as a
+ * 400, the card says the request could not be answered, and the console tells the developer which limit to raise.
+ */
+function sizeRefusal(response) {
+    if (response.status !== 413) return response;
+    return new Response(
+        'The server refused the message for its size (HTTP 413): raise client_max_body_size (nginx) and post_max_size '
+        + '(PHP), or attach fewer or smaller files.',
+        { status: 400, headers: { 'Content-Type': 'text/plain' } },
+    );
 }
 
 /** A welcome shows only while nothing has been said. */
@@ -659,8 +801,12 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         ratingBox.append(question, answer('up', chat.dataset.apartePeopleRatingUp || 'Good', '👍'), answer('down', chat.dataset.apartePeopleRatingDown || 'Not good', '👎'));
     }
 
+    // Two kinds of files: the team's, kept on your disk (`:people-files`), and the chat's own, which go to the
+    // model with the message (`files`). Who answers says which the paperclip offers; with neither, there is none.
     const fileTypes = chat.dataset.apartePeopleFiles;
-    const ownPaperclip = chat.hasAttribute('attachments');
+    const modelTypes = chat.dataset.aparteFiles;
+    // A page that set `attachments` itself (not through `files`) keeps its paperclip as it set it.
+    const ownPaperclip = chat.hasAttribute('attachments') && modelTypes === undefined;
 
     // An answer is owed: the last message, notices aside, is the person's.
     const awaiting = () => chat.viewport?.getMessages().filter((message) => message.kind !== 'notice').at(-1)?.role === 'user';
@@ -671,11 +817,11 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         // rating question: once the team has answered, or closed it, there is nothing to wait for.
         if (emailBox) emailBox.hidden = !(open && !config.getAutoReply(open) && !emailLeft.has(open) && !ratingAsked.has(open) && (owed.has(open) || awaiting()));
         if (ratingBox) ratingBox.hidden = !(open && ratingAsked.has(open));
-        // The paperclip while someone of the team is in the conversation (`:people-files`), and from
-        // the start in a chat with the team only; a page that set `attachments` itself keeps it.
-        if (fileTypes !== undefined && !ownPaperclip) {
-            chat.toggleAttribute('attachments', !assistant || Boolean(open && !config.getAutoReply(open)));
-            queueMicrotask(() => chat.querySelector('aparte-composer-add-attachment')?.setAttribute('accept', fileTypes));
+        // The paperclip offers the team's files while someone of the team is in the conversation (and from the
+        // start in a chat with the team only), the chat's own while the assistant answers.
+        if ((fileTypes !== undefined || modelTypes !== undefined) && !ownPaperclip) {
+            const team = !assistant || Boolean(open && !config.getAutoReply(open));
+            offerFiles(chat, (team ? fileTypes : modelTypes) ?? null);
         }
     };
 
@@ -909,7 +1055,8 @@ function bindPeople(chat, config, manager, client, options, { url, csrf, assista
         typingLine.remove();
         emailBox?.remove();
         ratingBox?.remove();
-        if (fileTypes !== undefined && !ownPaperclip) chat.removeAttribute('attachments');
+        // Back to what the chat offers without the team: its own files, or none.
+        if ((fileTypes !== undefined || modelTypes !== undefined) && !ownPaperclip) offerFiles(chat, modelTypes ?? null);
         button?.remove();
         unsubscribe();
         follow(null);
@@ -936,6 +1083,55 @@ const localeOf = (tag) => {
  */
 export function useLocales({ de, es, fr, it, ja, ko, ptBR, ru, zhCN } = {}) {
     LOCALES = Object.fromEntries(Object.entries({ de, es, fr, it, ja, ko, 'pt-br': ptBR, pt: ptBR, ru, 'zh-cn': zhCN, zh: zhCN }).filter(([, words]) => words));
+}
+
+/** The types each chat offers now, to see when they change. */
+const offered = new WeakMap();
+
+/**
+ * Offer files on a chat, of these types, or none (`null`). aparté draws the paperclip from the `attachments`
+ * attribute; the types go on the picker once it is drawn. Files picked for one side are dropped when the other
+ * takes over (an image for the model, a PDF for the team): sent, they would reach the side that did not ask.
+ */
+function offerFiles(chat, types) {
+    const before = offered.get(chat);
+    offered.set(chat, types);
+    if (before !== undefined && before !== null && types !== null && before !== types) chat.composer?.clearAttachments?.();
+    chat.toggleAttribute('attachments', types !== null);
+    if (types !== null) queueMicrotask(() => chat.querySelector('aparte-composer-add-attachment')?.setAttribute('accept', types));
+}
+
+/**
+ * The paperclip of a composer this package wrote (a view with slots, `data-aparte-laravel-shell`). aparté adds
+ * and removes it with `attachments` only in a composer it wrote itself; this does the same, the same way, here.
+ */
+function followPaperclip(chat) {
+    const shell = chat.querySelector('[data-aparte-laravel-shell]');
+    if (!shell) return null;
+    const sync = () => {
+        const row = shell.querySelector('.aparte-composer-row');
+        if (!row) return;
+        const strip = shell.querySelector('aparte-composer-attachments');
+        const picker = row.querySelector('aparte-composer-add-attachment');
+        if (chat.hasAttribute('attachments')) {
+            if (!strip) shell.insertBefore(document.createElement('aparte-composer-attachments'), row);
+            if (!picker) row.insertBefore(document.createElement('aparte-composer-add-attachment'), row.firstChild);
+            return;
+        }
+        strip?.remove();
+        picker?.remove();
+        // Files picked before the paperclip went would otherwise ride on the next send, with nothing showing them.
+        chat.composer?.clearAttachments?.();
+    };
+    const watcher = new MutationObserver(sync);
+    watcher.observe(chat, { attributes: true, attributeFilter: ['attachments'] });
+    // In step from the start: a page Livewire restored, or an `aparte:setup` that changed the attribute before this.
+    sync();
+    return () => {
+        // A change made just before the chat stops (the team's code takes its paperclip back) is followed too.
+        if (watcher.takeRecords().length > 0) sync();
+        watcher.disconnect();
+    };
 }
 
 async function mount(chat) {
@@ -993,7 +1189,7 @@ async function mount(chat) {
             endpoint,
             threadId: () => (single && givenThread) || manager?.activeId || fallbackThread,
             headers: { 'X-CSRF-TOKEN': csrf ?? '' },
-            fetch: (url, init) => fetch(url, withInstructions(init, outcomes)),
+            fetch: async (url, init) => sizeRefusal(await fetch(url, await smallerImages(withInstructions(init, outcomes)))),
         });
         options.client.streamRunner = (run) => {
             outcomes = run.deferral?.outcomes ?? {};
@@ -1040,9 +1236,14 @@ async function mount(chat) {
     // another chat's sends, or read another config, would be the app's bug to find here.
     const client = new AparteClient({ ...options.client, config, scopeToTargetId: chat.id });
     client.start();
+    // Before the team's code turns the paperclip on or off, so a composer the view wrote follows it too.
+    const unfollowPaperclip = followPaperclip(chat);
+    // The chat's own files (`files`), with no team to hand the paperclip to: offered from the start.
+    if (chat.dataset.aparteFiles !== undefined && !people) offerFiles(chat, chat.dataset.aparteFiles);
     Object.assign(entry, {
         client,
         controller,
+        unfollowPaperclip,
         unbindUi: bindConversationUi(chat, config, manager, controller, ui),
         unbindPeople: people ? bindPeople(chat, config, manager, client, options, { url: people, csrf: csrf ?? '', assistant: Boolean(endpoint), thread: single ? givenThread : null }) : null,
     });
@@ -1095,6 +1296,7 @@ function stopAll() {
             entry.storage?.stop?.();
             entry.unbindUi?.();
             entry.unbindPeople?.();
+            entry.unfollowPaperclip?.();
             entry.controller?.unbind();
             entry.client?.stop();
         } catch (error) {

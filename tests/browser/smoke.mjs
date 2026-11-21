@@ -4,10 +4,12 @@
 //
 // Then what an app puts around the chat, as an app using a framework wrapper can: a list of conversations written
 // in the view, two chats that each keep their own, and a storage and a runner of the app's in place of the package's.
+//
+// `BROWSER=firefox` or `BROWSER=webkit` runs it in that engine instead of Chromium.
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { chromium, firefox, webkit } from 'playwright';
 
 const dist = fileURLToPath(new URL('../../dist/', import.meta.url));
 const PORT = 5298;
@@ -146,9 +148,86 @@ ${chat('aparte-chat-1', '')}</body></html>`,
     });
 </script>
 ${chat('aparte-chat-1', `${ORIGIN}/fails`)}</body></html>`,
+    // `files`: the paperclip for the model, as <x-aparte::chat files="image/*,text/*"> writes it.
+    '/files': `${head}${chat('aparte-chat-1', `${ORIGIN}/turns`, 'attachments data-aparte-files="image/*,text/*"')}</body></html>`,
+    // The same with a slot: the composer is the view's (data-aparte-laravel-shell), as the Blade partial writes it.
+    '/files-slotted': `${head}<aparte-chat id="aparte-chat-1" data-aparte-endpoint="${ORIGIN}/turns" data-aparte-csrf="test-token" data-aparte-scope="" attachments data-aparte-files="image/*,text/*" style="height: 100%">
+    <aparte-chat-viewport></aparte-chat-viewport>
+    <aparte-elicitation></aparte-elicitation>
+    <aparte-composer placeholder="Ask">
+        <div class="aparte-composer-shell" data-aparte-laravel-shell>
+            <aparte-composer-attachments></aparte-composer-attachments>
+            <div class="aparte-composer-row">
+                <aparte-composer-add-attachment></aparte-composer-add-attachment>
+                <aparte-composer-input></aparte-composer-input>
+                <aparte-composer-send></aparte-composer-send>
+            </div>
+            <aparte-composer-toolbar><span class="tools">TOOLS</span></aparte-composer-toolbar>
+        </div>
+    </aparte-composer>
+</aparte-chat></body></html>`,
+    // A composer the view wrote with a paperclip, on a chat without `attachments`: a page Livewire restored after the
+    // team's code had taken the paperclip back. The package puts it in step when the chat starts.
+    '/files-stale': `${head}<aparte-chat id="aparte-chat-1" data-aparte-endpoint="${ORIGIN}/turns" data-aparte-csrf="test-token" data-aparte-scope="" style="height: 100%">
+    <aparte-chat-viewport></aparte-chat-viewport>
+    <aparte-composer>
+        <div class="aparte-composer-shell" data-aparte-laravel-shell>
+            <aparte-composer-attachments></aparte-composer-attachments>
+            <div class="aparte-composer-row">
+                <aparte-composer-add-attachment></aparte-composer-add-attachment>
+                <aparte-composer-input></aparte-composer-input>
+                <aparte-composer-send></aparte-composer-send>
+            </div>
+        </div>
+    </aparte-composer>
+</aparte-chat></body></html>`,
+    // The same, with its conversations kept on the server.
+    '/files-kept': `${head}${chat('aparte-chat-1', `${ORIGIN}/turns`, `attachments data-aparte-files="image/*,text/*" data-aparte-conversations="${ORIGIN}/kept/conversations"`)}</body></html>`,
+    // Both kinds of files: the model's while the assistant answers, the team's while someone of it holds the conversation.
+    '/files-people': `${head}${shell('shell-a', 'aparte-chat-1', 580, `data-aparte-people="${ORIGIN}/people" attachments data-aparte-files="image/*" data-aparte-people-files=".png,.txt,.pdf"`)}</body></html>`,
+    // An endpoint behind a server that refuses a request over 100 KB, as nginx does over 1 MB by default.
+    '/files-small': `${head}${chat('aparte-chat-1', `${ORIGIN}/small`, 'attachments data-aparte-files="image/*"')}</body></html>`,
 };
 
+/** The images a run's messages carry, as AG-UI content parts (what @aparte/runner-ag-ui sends). */
+const imagePartsIn = (input) => (input.messages ?? [])
+    .flatMap((message) => (Array.isArray(message.content) ? message.content : []))
+    .filter((part) => part.type === 'image' && part.source?.type === 'data' && part.source.value);
+const imagesIn = (input) => imagePartsIn(input).length;
+/** A JPEG's width and height, read from its frame header. */
+const jpegSize = (bytes) => {
+    for (let at = 2; at + 9 < bytes.length;) {
+        if (bytes[at] !== 0xff) return null;
+        const marker = bytes[at + 1];
+        const length = bytes.readUInt16BE(at + 2);
+        if (marker >= 0xc0 && marker <= 0xc3) return { width: bytes.readUInt16BE(at + 7), height: bytes.readUInt16BE(at + 5) };
+        at += 2 + length;
+    }
+    return null;
+};
+/** What the endpoint received of each image: its type, its weight, and a JPEG's size. */
+const imageFacts = (input) => imagePartsIn(input).map((part) => {
+    const bytes = Buffer.from(part.source.value, 'base64');
+    return { type: part.source.mimeType, bytes: bytes.length, size: part.source.mimeType === 'image/jpeg' ? jpegSize(bytes) : null };
+});
+/** A 1×1 PNG, to attach. */
+const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==', 'base64');
+
+/** Requests the server refused for their size (`/small`). */
+const refused = [];
+
 const server = createServer((req, res) => {
+    if (req.method === 'POST' && req.url === '/small') {
+        // What nginx answers over its limit: a 413 page, before the app sees anything.
+        let size = 0;
+        req.on('data', (chunk) => (size += chunk.length));
+        req.on('end', () => {
+            refused.push(size);
+            res.writeHead(413, { 'Content-Type': 'text/html' });
+            res.end('<html><body><h1>413 Request Entity Too Large</h1></body></html>');
+        });
+        return;
+    }
     if (req.method === 'POST' && (req.url === '/chat' || req.url === '/turns' || req.url === '/fails')) {
         let body = '';
         req.on('data', (chunk) => (body += chunk));
@@ -156,7 +235,7 @@ const server = createServer((req, res) => {
             const input = JSON.parse(body);
             const event = (data) => `data: ${JSON.stringify(data)}\n\n`;
             const deltas = req.url === '/chat' ? ['**Hello** from ', 'the built chat'] : [`Reply ${turns.length + 1}`];
-            (req.url === '/chat' ? posts : turns).push({ csrf: req.headers['x-csrf-token'], threadId: input.threadId });
+            (req.url === '/chat' ? posts : turns).push({ csrf: req.headers['x-csrf-token'], threadId: input.threadId, images: imagesIn(input), imageFacts: imageFacts(input), bytes: body.length });
             res.writeHead(200, { 'Content-Type': 'text/event-stream' });
             if (req.url === '/fails') {
                 // What AparteProtocol sends for a rate limit, the app's description having named the exception.
@@ -302,7 +381,9 @@ const scenario = async (name, run) => {
     }
 };
 
-const browser = await chromium.launch();
+const engine = { chromium, firefox, webkit }[process.env.BROWSER ?? 'chromium'];
+if (!engine) throw new Error(`BROWSER=${process.env.BROWSER}: chromium, firefox or webkit`);
+const browser = await engine.launch();
 /** A page of the server, with what its console complained about. */
 const open = async (path, prepare = async () => {}) => {
     const page = await browser.newPage();
@@ -781,9 +862,13 @@ try {
         // The visitor asks for someone themself, with the button beside send.
         const button = page.locator('#shell-a .aparte-laravel-people button');
         check(await until(() => button.isVisible()), 'people: the visitor sees a way to ask for someone');
+        // Counted from before the click: the count it was checked against (2) was already reached by the two notices
+        // before it, so the check passed before the new one came, and failed in Firefox once it came first.
+        const noticesBeforeAsking = await page.locator('aparte-chat-bubble[data-kind="notice"]').count();
         await button.click();
         check(await until(async () => wants.includes(id)), 'people: the button asks for someone of the team');
-        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 2), 'people: the visitor reads that someone will answer');
+        const notices = page.locator('aparte-chat-bubble[data-kind="notice"]');
+        check(await until(async () => (await notices.count()) === noticesBeforeAsking + 1 && ((await notices.last().textContent()) ?? '').includes('will answer')), `people: the visitor reads that someone will answer (${JSON.stringify(await notices.allTextContents())})`);
         check(await until(async () => !(await button.isVisible())), 'people: the button goes while the team is asked');
         const turnsWanted = turns.length;
         await send('Hello?');
@@ -874,6 +959,206 @@ try {
         check(await until(async () => page.evaluate(() => document.querySelector('#shell-a aparte-chat-viewport')?.getMessages?.().some((m) => m.attachments?.some((a) => a.url.endsWith('/files/f1'))))), "people only: the bubble opens the file from the server's address");
         check(problems.length === 0, `people only: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         server_.peopleOnly = false;
+        await page.close();
+    });
+
+    // ── Files for the model (`files`), whoever answers ─────────────────────────────────────
+    /** Attach a PNG with the chat's paperclip (the 1×1 one unless given), without sending. */
+    const attach = async (page, scope, buffer = PNG) => {
+        const clip = page.locator(`${scope} aparte-composer-add-attachment`);
+        const [chooser] = await Promise.all([page.waitForEvent('filechooser'), clip.locator('button').click()]);
+        await chooser.setFiles({ name: 'dot.png', mimeType: 'image/png', buffer });
+    };
+    /**
+     * A PNG like a phone's photo, drawn in the page: a gradient with the grain of a sensor, which PNG cannot compress
+     * (3000×2250 weighs several megabytes, as a photo does).
+     */
+    const photo = async (page, width, height) => Buffer.from(await page.evaluate(([w, h]) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const context = canvas.getContext('2d');
+        const light = context.createLinearGradient(0, 0, w, h);
+        light.addColorStop(0, '#5b8bd9');
+        light.addColorStop(0.6, '#f2d29b');
+        light.addColorStop(1, '#3d6b3a');
+        context.fillStyle = light;
+        context.fillRect(0, 0, w, h);
+        const pixels = context.getImageData(0, 0, w, h);
+        for (let i = 0; i < pixels.data.length; i += 4) {
+            const grain = (Math.random() - 0.5) * 24;
+            pixels.data[i] += grain;
+            pixels.data[i + 1] += grain;
+            pixels.data[i + 2] += grain;
+        }
+        context.putImageData(pixels, 0, 0);
+        return canvas.toDataURL('image/png').split(',')[1];
+    }, [width, height]), 'base64');
+    /** Attach a PNG, send `text`, and wait for the run it starts. */
+    const attachAndSay = async (page, scope, text, buffer = PNG) => {
+        await attach(page, scope, buffer);
+        const before = turns.length;
+        await page.locator(`${scope} .aparte-ci-editor`).click();
+        await page.keyboard.type(text);
+        await page.keyboard.press('Enter');
+        return until(async () => turns.length > before);
+    };
+
+    await scenario('files', async () => {
+        const { page, problems } = await open('/files');
+        const clip = page.locator('aparte-composer-add-attachment');
+        check(await until(() => clip.isVisible()), 'files: the chat has a paperclip, with no team');
+        check(await clip.getAttribute('accept') === 'image/*,text/*', 'files: it takes the kinds `files` names');
+        check(await attachAndSay(page, 'aparte-chat', 'What is this?'), 'files: the message goes out');
+        check(turns.at(-1)?.images === 1, `files: the image goes to the endpoint inside the message (got ${turns.at(-1)?.images})`);
+
+        // aparté shows the file from a blob: address, which dies with the page. What the tab keeps is a small picture.
+        const tab = () => page.evaluate(() => Object.fromEntries(Object.keys(sessionStorage).filter((k) => k.startsWith('aparte-laravel')).map((k) => [k, sessionStorage.getItem(k)])));
+        check(await until(async () => Object.values(await tab()).some((v) => v.includes('data:image/jpeg'))), 'files: the tab keeps a small picture of the image');
+        const stored = await tab();
+        check(!Object.values(stored).some((v) => v.includes('blob:')), 'files: and no blob: address, which a later page could not open');
+        // Opened again in another browser, with what was kept: the picture, not a broken image.
+        const again = await (await browser.newContext()).newPage();
+        await again.addInitScript((kept) => { for (const [k, v] of Object.entries(kept)) sessionStorage.setItem(k, v); }, stored);
+        await again.goto(`${ORIGIN}/files`);
+        const picture = again.locator('aparte-chat-bubble[data-role="user"] img');
+        check(await until(async () => (await picture.count()) === 1 && (await picture.evaluate((img) => img.complete && img.naturalWidth > 0 && img.src.startsWith('data:image/jpeg')))), 'files: opened again, the image shows from its picture');
+        await again.close();
+        check(turns.at(-1)?.imageFacts?.[0]?.type === 'image/png', 'files: a small image goes to the model as it is');
+
+        // Pasted into the field, as the issue tried: the same paperclip takes it.
+        const pending = () => page.evaluate(() => document.querySelector('aparte-composer')?.attachments?.length ?? -1);
+        await page.locator('aparte-chat .aparte-ci-editor').click();
+        await page.evaluate((png) => {
+            const bytes = Uint8Array.from(atob(png), (character) => character.charCodeAt(0));
+            const clipboard = new DataTransfer();
+            clipboard.items.add(new File([bytes], 'pasted.png', { type: 'image/png' }));
+            // A paste event carrying the clipboard, as the browser hands it to the field. Not a constructed
+            // ClipboardEvent: Firefox empties the clipboardData of one a script makes.
+            const paste = new Event('paste', { bubbles: true, cancelable: true });
+            Object.defineProperty(paste, 'clipboardData', { value: clipboard });
+            document.querySelector('aparte-chat .aparte-ci-editor').dispatchEvent(paste);
+        }, PNG.toString('base64'));
+        check(await until(async () => (await pending()) === 1), 'files: an image pasted into the field is attached');
+        const beforePaste = turns.length;
+        await page.keyboard.type('And the pasted one?');
+        await page.keyboard.press('Enter');
+        check(await until(async () => turns.length > beforePaste && turns.at(-1).images === 1), 'files: and goes to the model with the message');
+        check(turns.at(-1)?.imageFacts?.length === 1, 'files: the earlier image is not sent again: the earlier messages go as their text');
+
+        // A phone's photo: large, and heavy in base64. It goes to the model at 1568 pixels, in a few hundred kilobytes.
+        check(await attachAndSay(page, 'aparte-chat', 'A photo from my phone', await photo(page, 3000, 2250)), 'files: a large photo goes out');
+        const sent = turns.at(-1)?.imageFacts?.[0];
+        check(sent?.type === 'image/jpeg' && Math.max(sent.size?.width ?? 0, sent.size?.height ?? 0) === 1568, `files: scaled to 1568 pixels on its longest side (got ${sent?.type} ${sent?.size?.width}×${sent?.size?.height})`);
+        check((sent?.bytes ?? Infinity) < 700_000, `files: in a few hundred kilobytes (${sent?.bytes} bytes; the request ${turns.at(-1)?.bytes})`);
+        check(problems.length === 0, `files: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    await scenario('files refused for their size', async () => {
+        const { page, problems } = await open('/files-small');
+        await page.locator('aparte-composer-add-attachment').waitFor({ timeout: 20_000 });
+        await attach(page, 'aparte-chat', await photo(page, 3000, 2250));
+        await page.locator('aparte-chat .aparte-ci-editor').click();
+        await page.keyboard.type('Too big for this server');
+        await page.keyboard.press('Enter');
+        check(await until(async () => refused.length > 0), 'files refused: the server answers 413');
+        const error = page.locator('aparte-chat .aparte-segment-error');
+        check(await until(async () => (await error.count()) > 0), 'files refused: the chat says the message did not go');
+        const said = ((await error.first().textContent().catch(() => '')) ?? '').replace(/\s+/g, ' ');
+        // Not "Try again in a moment": the same bytes would be refused again.
+        check(said.includes('couldn’t answer this request') && !said.includes('Try again'), `files refused: and promises no retry that would fail the same way ("${said.trim().slice(0, 120)}")`);
+        check(problems.some((p) => p.includes('client_max_body_size')), 'files refused: the console tells the developer which limit to raise');
+        await page.locator('aparte-chat .aparte-ci-editor').click();
+        await page.keyboard.type('Still here');
+        check(((await page.locator('aparte-chat .aparte-ci-editor').textContent()) ?? '').includes('Still here'), 'files refused: and the person can write again');
+        check(!problems.some((p) => p.startsWith('pageerror')), `files refused: no uncaught error${problems.length ? ` (console: ${problems.join(' | ').slice(0, 300)})` : ''}`);
+        await page.close();
+    });
+
+    await scenario('files kept on the server', async () => {
+        const { page, problems } = await open('/files-kept');
+        await page.locator('aparte-composer-add-attachment').waitFor({ timeout: 20_000 });
+        check(await attachAndSay(page, 'aparte-chat', 'Keep this one'), 'files kept: the message goes out');
+        const sent = () => [...kept.values()].find((c) => JSON.stringify(c).includes('Keep this one'));
+        check(await until(async () => JSON.stringify(sent() ?? {}).includes('data:image/jpeg')), 'files kept: the server keeps a small picture of the image');
+        const body = JSON.stringify(sent() ?? {});
+        check(!body.includes('blob:'), 'files kept: and no blob: address');
+
+        // The worst case for a picture's weight: a large photo of pure noise, which a JPEG cannot compress.
+        const noise = Buffer.from(await page.evaluate(() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1600;
+            canvas.height = 1200;
+            const context = canvas.getContext('2d');
+            const pixels = context.createImageData(canvas.width, canvas.height);
+            for (let i = 0; i < pixels.data.length; i++) pixels.data[i] = i % 4 === 3 ? 255 : Math.floor(Math.random() * 256);
+            context.putImageData(pixels, 0, 0);
+            return canvas.toDataURL('image/png').split(',')[1];
+        }), 'base64');
+        check(await attachAndSay(page, 'aparte-chat', 'And a noisy photo', noise), 'files kept: a large photo goes out too');
+        const pictures = () => JSON.stringify(sent() ?? {}).match(/data:image\/jpeg;base64,[A-Za-z0-9+/=]+/g) ?? [];
+        check(await until(async () => new Set(pictures()).size === 2), 'files kept: and its picture is kept');
+        const largest = Math.max(...pictures().map((p) => p.length));
+        check(largest < 20_000, `files kept: a picture weighs about ten kilobytes at worst (${largest} characters)`);
+        const total = JSON.stringify(sent() ?? {}).length;
+        check(total < 2_000_000 / 40, `files kept: the conversation with both weighs under a fortieth of the 2 MB the server keeps of one (${total} bytes)`);
+        check(problems.length === 0, `files kept: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    await scenario('files with slots', async () => {
+        const { page, problems } = await open('/files-slotted');
+        const clip = page.locator('aparte-composer-add-attachment');
+        check(await until(() => clip.isVisible()), 'files with slots: the composer the view wrote has the paperclip');
+        check(await page.locator('aparte-composer .tools').isVisible(), 'files with slots: and the toolbar the view put in it');
+        check(await attachAndSay(page, 'aparte-chat', 'And this?'), 'files with slots: the message goes out');
+        check(turns.at(-1)?.images === 1, `files with slots: with the image (got ${turns.at(-1)?.images})`);
+        // aparté keeps the paperclip in step only in a composer it wrote; the package does it in this one.
+        await page.evaluate(() => document.querySelector('aparte-chat').removeAttribute('attachments'));
+        check(await until(async () => (await clip.count()) === 0 && (await page.locator('aparte-composer-attachments').count()) === 0), 'files with slots: the paperclip goes with `attachments`');
+        await page.evaluate(() => document.querySelector('aparte-chat').setAttribute('attachments', ''));
+        check(await until(async () => (await clip.count()) === 1 && (await page.locator('aparte-composer-attachments').count()) === 1), 'files with slots: and comes back with it');
+        check(problems.length === 0, `files with slots: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    await scenario('files out of step', async () => {
+        const { page, problems } = await open('/files-stale');
+        await page.waitForFunction(() => document.querySelector('aparte-chat')?.hasAttribute('data-aparte-mounted'), null, { timeout: 20_000 });
+        check(await until(async () => (await page.locator('aparte-composer-add-attachment').count()) === 0 && (await page.locator('aparte-composer-attachments').count()) === 0), 'files out of step: a paperclip the chat does not offer is taken out when it starts');
+        check(problems.length === 0, `files out of step: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
+        await page.close();
+    });
+
+    await scenario('files and the team', async () => {
+        const echo = async (page) => page.addInitScript(() => {
+            const listeners = new Map();
+            const subscription = (name) => ({
+                listen(event, fn) { listeners.set(`${name}${event}`, fn); return this; },
+                stopListening(event) { listeners.delete(`${name}${event}`); return this; },
+            });
+            window.Echo = { private: (name) => subscription(`private:${name}`), channel: (name) => subscription(name), leave: () => {} };
+            window.desk = (id, change) => listeners.get(`aparte.conversations.${id}.secret.aparte.changed`)?.(change);
+            window.listening = (id) => listeners.has(`aparte.conversations.${id}.secret.aparte.changed`);
+        });
+        const { page, problems } = await open('/files-people', echo);
+        const clip = page.locator('#shell-a aparte-composer-add-attachment');
+        check(await until(async () => (await clip.getAttribute('accept')) === 'image/*'), "files and the team: while the assistant answers, the paperclip takes the model's kinds");
+        check(await attachAndSay(page, '#shell-a', 'Here is a photo'), 'files and the team: the message goes out');
+        check(turns.at(-1)?.images === 1, `files and the team: the image goes to the assistant (got ${turns.at(-1)?.images})`);
+        const id = turns.at(-1).threadId;
+        check(await until(() => page.evaluate((i) => window.listening(i), id)), "files and the team: the chat listens on the conversation's channel");
+        // An image picked for the model, not sent yet, when the team takes over: dropped, or it would go to the team.
+        await attach(page, '#shell-a');
+        const pending = () => page.evaluate(() => document.querySelector('#shell-a aparte-composer')?.attachments?.length ?? -1);
+        check(await until(async () => (await pending()) === 1), 'files and the team: an image waits to be sent');
+        await page.evaluate(([i]) => window.desk(i, { type: 'auto-reply', on: false }), [id]);
+        check(await until(async () => (await clip.getAttribute('accept')) === '.png,.txt,.pdf'), "files and the team: handed over, it takes the team's kinds");
+        check(await until(async () => (await pending()) === 0), 'files and the team: and the image picked for the model is dropped');
+        await page.evaluate(([i]) => window.desk(i, { type: 'auto-reply', on: true }), [id]);
+        check(await until(async () => (await clip.getAttribute('accept')) === 'image/*'), "files and the team: handed back, the model's again");
+        check(problems.length === 0, `files and the team: no console error or warning${problems.length ? `: ${problems.join(' | ')}` : ''}`);
         await page.close();
     });
 } finally {

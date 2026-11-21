@@ -30,9 +30,10 @@ Route::get('/sign-out', function () {
     return redirect('/');
 });
 
-// The README's two pages: the chat with its list, and the floating chat.
+// The README's pages: the chat with its list, the floating chat, and a chat that takes files for the model.
 Route::view('/', 'page');
 Route::view('/floating', 'floating');
+Route::view('/files', 'files');
 
 Route::middleware('auth')->group(function () {
     Route::aparte('/chat', Assistant::class);

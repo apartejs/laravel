@@ -1,4 +1,4 @@
-@props(['endpoint' => null, 'thread' => null, 'label' => 'Chat', 'followDarkClass' => false, 'conversations' => null, 'people' => null, 'peopleButton' => null, 'peopleEmail' => null, 'peopleFiles' => null, 'peopleRating' => null, 'list' => false, 'id' => null])
+@props(['endpoint' => null, 'thread' => null, 'label' => 'Chat', 'followDarkClass' => false, 'conversations' => null, 'files' => null, 'people' => null, 'peopleButton' => null, 'peopleEmail' => null, 'peopleFiles' => null, 'peopleRating' => null, 'list' => false, 'id' => null])
 
 @include('aparte::partials.assets')
 
@@ -10,10 +10,13 @@
     $heading = $attributes->get('heading') ?: $label;
     // Known before the chat is drawn: the list names the chat it drives.
     $chatId = $history ? \Aparte\Laravel\AparteServiceProvider::chatId($id) : null;
+    // The launcher's own attributes stay on it; the chat's (placeholder, type-to-focus, attachments…) go to the
+    // chat inside, as on <x-aparte::chat> (Aparte\Laravel\ChatAttributes).
+    $chatAttributes = \Aparte\Laravel\ChatAttributes::chat($attributes, \Aparte\Laravel\ChatAttributes::LAUNCHER);
 @endphp
 
 {{-- The button that floats in a corner of the page and opens the chat above it. --}}
-<aparte-launcher label="{{ $label }}" wire:ignore {{ $attributes }}>
+<aparte-launcher label="{{ $label }}" wire:ignore {{ \Aparte\Laravel\ChatAttributes::holder($attributes, \Aparte\Laravel\ChatAttributes::LAUNCHER) }}>
     @if ($history)
         {{-- With its list, the chat is a card of its own: the list in a drawer (a column once the chat fills the
              window), and a header that names the conversation and starts a new one. A section, so that this header

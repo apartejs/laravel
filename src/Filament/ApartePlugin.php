@@ -31,6 +31,9 @@ class ApartePlugin implements Plugin
     /** Whether each person's conversations are kept, and listed in the chat. */
     protected bool $conversations = false;
 
+    /** What a person may attach for the model: off, `true` (images and text), or a list of kinds. */
+    protected bool|string $files = false;
+
     public static function make(): static
     {
         return app(static::class);
@@ -98,6 +101,18 @@ class ApartePlugin implements Plugin
         return $this;
     }
 
+    /**
+     * A paperclip for files the model reads with the message: `true` takes images and text files,
+     * a list takes the kinds it names, as for an `<input type="file">` (`'image/png,image/jpeg'`). Off unless
+     * called; see the README, "Files".
+     */
+    public function files(bool|string $files = true): static
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
     public function register(Panel $panel): void
     {
         if ($this->agent === null) {
@@ -140,7 +155,7 @@ class ApartePlugin implements Plugin
     public function launcherFor(string $endpoint): string
     {
         return Blade::render(
-            '<x-aparte::launcher :endpoint="$endpoint" :conversations="$conversations" :label="$label" :heading="$heading" :subheading="$subheading" :maximizable="$maximizable" follow-dark-class />',
+            '<x-aparte::launcher :endpoint="$endpoint" :conversations="$conversations" :label="$label" :heading="$heading" :subheading="$subheading" :maximizable="$maximizable" :files="$files" follow-dark-class />',
             [
                 'endpoint' => $endpoint,
                 // Their routes sit under the chat's, where `register()` put them.
@@ -149,6 +164,7 @@ class ApartePlugin implements Plugin
                 'heading' => $this->heading,
                 'subheading' => $this->subheading,
                 'maximizable' => $this->maximizable,
+                'files' => $this->files === false ? null : $this->files,
             ],
         );
     }

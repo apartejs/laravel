@@ -132,6 +132,9 @@ panel's authentication, and each panel keeps a list of its own: its conversation
 of a chat on a page of your app. [Conversations in your database](#conversations-in-your-database) says what is kept,
 and how to change it.
 
+`->files()` lets a person attach images and text files the model reads with the message, or
+`->files('image/png,image/jpeg')` only pictures: see [Files](#files).
+
 ## Approving tool calls
 
 A tool that needs a person uses the SDK's approvals:
@@ -146,6 +149,51 @@ public function tools(): iterable
 The chat asks before the tool runs. The model answers a refusal, and reads what the person typed in its place. A pending
 question comes back after a reload.
 
+## The chat's own settings
+
+Write the chat's settings on the component, as on aparté's [`<aparte-chat>`](https://apartejs.dev/components/chat/):
+
+```blade
+<x-aparte::chat endpoint="/chat" class="h-96" placeholder="Ask about your order" stop-key="Escape" submit-on-enter="false" />
+```
+
+What places or names the element on the page stays on the one around the chat, as before: `class`, `style`, `title`,
+`role`, `hidden`, `data-…` and `aria-…`, and Livewire's and Alpine's directives (`wire:…`, `x-…`, `@…`, `::class`).
+Every other attribute goes to the chat. The launcher keeps those and its own (`open`, `label`, `breakpoint`,
+`header`, `heading`, `subheading`, `maximizable`, `maximized`) and hands the rest to its chat, so
+`<x-aparte::launcher endpoint="/chat" placeholder="Ask us anything" />` sets the placeholder of the chat it opens.
+
+## Files
+
+A person can attach images and text files to a message, and the model reads them with it:
+
+```blade
+<x-aparte::chat endpoint="/chat" files />
+```
+
+`files` alone takes what aparté puts in the message and the model reads: PNG, JPEG, GIF and WebP pictures (the
+formats the model APIs take: an SVG or a HEIC would fail the turn), and text (`.txt`, `.md`, `.json`, `.csv`, code…).
+Name the kinds you want instead with a list, as for an `<input type="file">`: `files="image/png,image/jpeg"`. A PDF
+is not sent to the model: aparté would show it attached and the model would never see it, so it is not offered.
+In a Filament panel, `ApartePlugin::make()->files()`, or `->files('image/png,image/jpeg')`.
+
+The Laravel AI SDK hands the files to your agent with the prompt (`$prompt->attachments`), and to a model that reads
+images. They travel in the request, with the message that carries them; the earlier messages go as their text, and
+the agent's memory keeps their files. An image goes at 1568 pixels at most on its longest side, the size the model
+APIs scale a larger one down to themselves: the browser does it before sending, so a phone's photo of several
+megabytes travels in about 300 KB, and nginx's default limit on a request (1 MB, `client_max_body_size`) takes three
+of them in one message. Raise it, and PHP's `post_max_size`, for more. A request refused for its size tells the person
+it could not be answered (not to try again: the same request would be refused), and the developer which limit to
+raise, in the browser's console.
+
+What the chat keeps of them, in the tab or in [your database](#conversations-in-your-database), is a small picture of
+each image (160 pixels at most, about ten kilobytes) and the name of each other file: a conversation opened again
+shows them, and the agent's memory has the files themselves. Files picked for the assistant are dropped if someone of
+your team takes over before they are sent, and the reverse: they would reach the side that did not ask for them.
+
+With [a person who takes over](#a-person-takes-over), the paperclip follows who answers: `files` while the assistant
+does, [your team's](#files-1) while someone of it is in the conversation.
+
 ## Slots
 
 ```blade
@@ -155,6 +203,8 @@ question comes back after a reload.
     <x-slot:toolbar><button type="button" style="margin-inline-start: auto">Help</button></x-slot:toolbar>
 </x-aparte::chat>
 ```
+
+A chat with slots keeps everything else: its settings, its files and its paperclip.
 
 ## A list of conversations
 
@@ -464,7 +514,8 @@ APARTE_PEOPLE_FILES=true
 <x-aparte::launcher endpoint="/chat" people="/chat/people" :people-files="true" />
 ```
 
-The server takes no file without the first: the attribute is the page's, which anyone can write.
+The server takes no file without the first: the attribute is the page's, which anyone can write. These files go to
+your team and stay on your disk; for files the model reads while the assistant answers, add [`files`](#files).
 
 They are kept on a private disk of your app (`config/aparte.php`, `people.files`: the disk, 10 MB and 5 files a
 message by default, and the kinds taken, never one a browser would run: `invoice.html` whose content is text is kept
@@ -593,6 +644,18 @@ onAparteSetup((config, chat, options) => {
 - A chat the package does not answer needs no endpoint: `<x-aparte::chat style="height: 32rem" />`.
 - Both are read once, when the chat starts.
 
+Without a build, the package's own chat sends `aparte:setup` on each chat before it starts, with the same three:
+a plain script of the page changes the storage, the runner or the element itself. Only aparté's plugins need
+[Vite mode](#plugins), since they have to share the chat's copy of aparté.
+
+```html
+<script>
+document.addEventListener('aparte:setup', ({ detail: { config, chat, options } }) => {
+    options.storage = myStorage;
+});
+</script>
+```
+
 ## When the assistant can't answer
 
 The chat tells the person, in their language, why the assistant couldn't answer, when the exception says it:
@@ -651,8 +714,9 @@ AparteProtocol::describeErrorsUsing(function (Throwable $e, Request $request, ar
 
 ### Changing what the card says
 
-Each chat sends `aparte:setup` before it starts, with its config, so a plain script of the page can change it, with no
-build (`onAparteSetup` and [Vite mode](#plugins) are only needed to add aparté's plugins). The sentence of a code:
+Each chat sends `aparte:setup` before it starts, with its config (and its element and options), so a plain script of
+the page can change it, with no build (`onAparteSetup` and [Vite mode](#plugins) are only needed to add aparté's
+plugins). The sentence of a code:
 
 ```html
 <script>

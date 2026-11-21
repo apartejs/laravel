@@ -133,3 +133,11 @@ it('draws no list when conversations are not kept', function () {
         ->not->toContain('data-aparte-conversations')
         ->not->toContain('<aparte-conversation-list');
 });
+
+it('offers files for the model only when asked', function () {
+    expect(ApartePlugin::make()->agent(TestAgent::class)->launcherFor('/admin/aparte-chat'))->not->toContain('data-aparte-files')
+        ->and(ApartePlugin::make()->agent(TestAgent::class)->files()->launcherFor('/admin/aparte-chat'))
+        ->toContain('data-aparte-files="'.\Aparte\Laravel\ChatAttributes::FILES.'"')
+        ->and(ApartePlugin::make()->agent(TestAgent::class)->files('image/png,image/jpeg')->launcherFor('/admin/aparte-chat'))
+        ->toContain('data-aparte-files="image/png,image/jpeg"');
+});

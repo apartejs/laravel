@@ -28,6 +28,8 @@ jobs:
       - run: composer require --no-update --no-interaction "illuminate/support:^${{ matrix.laravel }}.0"
       - run: composer require --dev --no-update --no-interaction "filament/filament:^${{ matrix.filament }}.0"
       - run: composer update --with-all-dependencies --no-interaction --prefer-dist --no-progress
+      # @aparte/core's manifest, which tests/Feature/ParityTest.php reads (the runner's own Node is enough).
+      - run: npm ci --no-audit --no-fund
       - run: vendor/bin/pest
 
   # The package's own table and queries on the databases Laravel apps run on, not only the tests' SQLite.
@@ -74,6 +76,7 @@ jobs:
           extensions: intl, pdo_mysql, pdo_pgsql
           coverage: none
       - run: composer update --with-all-dependencies --no-interaction --prefer-dist --no-progress
+      - run: npm ci --no-audit --no-fund
       - run: vendor/bin/pest
 
   # The chat in Chromium against a real Laravel app (testbench.yaml and workbench/): the package's routes and views,
