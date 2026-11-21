@@ -826,9 +826,13 @@ try {
         // The visitor asks for someone themself, with the button beside send.
         const button = page.locator('#shell-a .aparte-laravel-people button');
         check(await until(() => button.isVisible()), 'people: the visitor sees a way to ask for someone');
+        // Counted from before the click: the count it was checked against (2) was already reached by the two notices
+        // before it, so the check passed before the new one came, and failed in Firefox once it came first.
+        const noticesBeforeAsking = await page.locator('aparte-chat-bubble[data-kind="notice"]').count();
         await button.click();
         check(await until(async () => wants.includes(id)), 'people: the button asks for someone of the team');
-        check(await until(async () => (await page.locator('aparte-chat-bubble[data-kind="notice"]').count()) === 2), 'people: the visitor reads that someone will answer');
+        const notices = page.locator('aparte-chat-bubble[data-kind="notice"]');
+        check(await until(async () => (await notices.count()) === noticesBeforeAsking + 1 && ((await notices.last().textContent()) ?? '').includes('will answer')), `people: the visitor reads that someone will answer (${JSON.stringify(await notices.allTextContents())})`);
         check(await until(async () => !(await button.isVisible())), 'people: the button goes while the team is asked');
         const turnsWanted = turns.length;
         await send('Hello?');
