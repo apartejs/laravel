@@ -60,3 +60,20 @@ it("keeps on the launcher exactly the launcher's own attributes", function () {
         expect(str_contains($tag[0], "{$attribute}=\"probe\""))->toBeTrue("<x-aparte::launcher {$attribute}> does not reach <aparte-launcher>");
     }
 });
+
+it('reaches every attribute of the launcher and of its chat from the Filament plugin', function () {
+    $plugin = fn (string $attribute) => \Aparte\Laravel\Filament\ApartePlugin::make()
+        ->agent(\Aparte\Laravel\Tests\Fixtures\TestAgent::class)
+        ->attributes([$attribute => 'probe'])
+        ->launcherFor('/admin/aparte-chat');
+
+    // `label` is the plugin's own `label()`; `data-*` are states the elements reflect, not settings.
+    foreach (array_filter(manifest('aparte-launcher'), fn (string $a) => $a !== 'label' && ! str_starts_with($a, 'data-')) as $attribute) {
+        expect(preg_match('/<aparte-launcher\b[^>]*>/s', $plugin($attribute), $tag))->toBe(1);
+        expect(str_contains($tag[0], "{$attribute}=\"probe\""))->toBeTrue("ApartePlugin::attributes(['{$attribute}' => …]) does not reach <aparte-launcher>");
+    }
+    foreach (array_filter(manifest('aparte-chat'), fn (string $a) => ! str_starts_with($a, 'data-')) as $attribute) {
+        expect(preg_match('/<aparte-chat\b[^>]*>/s', $plugin($attribute), $tag))->toBe(1);
+        expect(str_contains($tag[0], "{$attribute}=\"probe\""))->toBeTrue("ApartePlugin::attributes(['{$attribute}' => …]) does not reach <aparte-chat>");
+    }
+});

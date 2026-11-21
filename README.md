@@ -135,6 +135,23 @@ and how to change it.
 `->files()` lets a person attach images and text files the model reads with the message, or
 `->files('image/png,image/jpeg')` only pictures: see [Files](#files).
 
+Every other setting of the launcher and of its chat goes through `attributes()`, as on `<x-aparte::launcher>`
+([the chat's own settings](#the-chats-own-settings)); the slots have a method each, a string for text and an
+`Htmlable` (a view, an `HtmlString`) for markup:
+
+```php
+$panel->plugin(
+    ApartePlugin::make()
+        ->agent(App\Ai\Agents\Assistant::class)
+        ->attributes(['breakpoint' => 'none', 'placeholder' => 'Ask about this page', 'stop-key' => 'Escape'])
+        ->emptyState('Ask anything about your orders.')
+        ->toolbar(view('chat.toolbar')),
+);
+```
+
+`open`, `breakpoint`, `header` and `maximized` stay on the launcher, the rest goes to its chat; `label()`,
+`heading()`, `subheading()`, `maximizable()` and `files()` win over the same attribute there.
+
 ## Approving tool calls
 
 A tool that needs a person uses the SDK's approvals:
