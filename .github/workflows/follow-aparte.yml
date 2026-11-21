@@ -1,10 +1,14 @@
 name: follow aparté
 
 # The built chat (dist/) carries its own copy of aparté. Once a day, or by hand, this job looks for a newer aparté
-# 1.x on npm. When there is one, it rebuilds the chat on it, proves it (the build, the chat in a browser, Vite mode),
-# commits it to main and releases a patch version, which Packagist offers within a minute. A new major waits for a
-# person: it may need changes here. A push fails, and nothing is released, when main moved during the run; the next
-# run starts again from the new main.
+# 1.x on npm. When there is one, it rebuilds the chat on it, proves it (the build, the package's tests against the new
+# aparté, the chat in a browser, Vite mode), commits it to main and releases a patch version, which Packagist offers
+# within a minute. A new major waits for a person: it may need changes here. A push fails, and nothing is released,
+# when main moved during the run; the next run starts again from the new main.
+#
+# The commit is pushed with this workflow's token, which starts no other workflow: tests.yml never sees it. So the
+# tests run here, before anything is released. tests/Feature/ParityTest.php reads the new aparté's manifest: an
+# attribute it adds to <aparte-launcher> stops the release until ChatAttributes::LAUNCHER names it.
 on:
   schedule:
     - cron: '23 5 * * *'
@@ -52,6 +56,19 @@ jobs:
           npm ci
           npm install --save-dev --save-exact "@aparte/core@$VERSION" "@aparte/plugin-marked@$VERSION" "@aparte/runner-ag-ui@$VERSION"
           npm run build
+
+      - if: steps.versions.outputs.follow == 'true'
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          extensions: intl
+          coverage: none
+
+      - if: steps.versions.outputs.follow == 'true'
+        name: The package's tests, against the new aparté
+        run: |
+          composer update --with-all-dependencies --no-interaction --prefer-dist --no-progress
+          vendor/bin/pest
 
       - if: steps.versions.outputs.follow == 'true'
         name: The rebuilt chat in a browser
