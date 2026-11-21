@@ -103,7 +103,7 @@ class ApartePlugin implements Plugin
 
     /**
      * A paperclip for files the model reads with the message: `true` takes images and text files,
-     * a list takes the kinds it names, as for an `<input type="file">` (`'image/*'`). Off unless
+     * a list takes the kinds it names, as for an `<input type="file">` (`'image/png,image/jpeg'`). Off unless
      * called; see the README, "Files".
      */
     public function files(bool|string $files = true): static

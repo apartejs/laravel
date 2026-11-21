@@ -9,8 +9,9 @@ use Illuminate\View\ComponentAttributeBag;
  *
  * Everything aparté's `<aparte-chat>` takes is written on the component as on the element
  * (`placeholder`, `type-to-focus`, `attachments`, `submit-on-enter`…), so a capability of the
- * chat is never one this package forgot to name. What places the chat on the page stays on the
- * element that holds it: `class` and `style`, and Livewire's and Alpine's directives.
+ * chat is never one this package forgot to name. What places or names the element on the page
+ * stays on the one that holds the chat, as it always did: `class`, `style`, `id`, `title`,
+ * `role`, `hidden`, `data-*` and `aria-*`, and Livewire's and Alpine's directives.
  *
  * tests/Feature/ParityTest.php reads `@aparte/core`'s manifest and proves both halves: every
  * attribute of the chat reaches it, and {@see LAUNCHER} is the launcher's own list.
@@ -21,18 +22,27 @@ final class ChatAttributes
     public const LAUNCHER = ['open', 'label', 'breakpoint', 'header', 'heading', 'subheading', 'maximizable', 'maximized', 'data-sheet'];
 
     /**
-     * What `files` (`true`) lets a person attach: what aparté puts in the message to the model —
-     * images, and text it can read. A PDF would show as attached and reach no model.
+     * What `files` (`true`) lets a person attach: what aparté puts in the message to the model, and the model
+     * reads. Images in the four formats the model APIs take (an SVG or a HEIC would fail the whole turn), and
+     * text: the types aparté inlines, and the extensions it inlines by name (aparte-client's own list), less
+     * `.env` (secrets) and `.svg` (an image to a browser, refused as one by the model). A PDF would show as
+     * attached and reach no model.
      */
-    public const FILES = 'image/*,text/*,application/json,.md,.json,.csv,.tsv,.xml,.yaml,.yml,.toml,.log';
+    public const FILES = 'image/png,image/jpeg,image/gif,image/webp,text/*,application/json,application/xml,'
+        .'.txt,.md,.markdown,.json,.jsonl,.csv,.tsv,.xml,.html,.htm,.css,.js,.mjs,.cjs,.ts,.tsx,.jsx,.py,.rb,'
+        .'.java,.c,.cpp,.h,.go,.rs,.php,.sh,.bash,.zsh,.fish,.yaml,.yml,.toml,.ini,.log,.graphql,.gql';
 
-    /** Whether an attribute places the element on the page rather than configuring the chat. */
+    /** Whether an attribute places or names the element on the page rather than configuring the chat. */
     public static function places(string $name): bool
     {
-        return in_array($name, ['class', 'style'], true)
+        return in_array($name, ['class', 'style', 'id', 'title', 'role', 'tabindex', 'hidden', 'lang', 'dir'], true)
+            || str_starts_with($name, 'data-')
+            || str_starts_with($name, 'aria-')
             || str_starts_with($name, 'wire:')
             || str_starts_with($name, 'x-')
-            || str_starts_with($name, '@');
+            // Alpine's shorthands: `@click`, and `::class` written on a component, which arrives as `:class`.
+            || str_starts_with($name, '@')
+            || str_starts_with($name, ':');
     }
 
     /** What stays on the element that holds the chat. */
@@ -45,6 +55,12 @@ final class ChatAttributes
     public static function chat(ComponentAttributeBag $attributes, array $own = []): ComponentAttributeBag
     {
         return $attributes->filter(fn ($value, string $name) => ! self::places($name) && ! in_array($name, $own, true));
+    }
+
+    /** Whether a bag turns a boolean attribute on: written, and not bound to `false` or `null`. */
+    public static function on(ComponentAttributeBag $attributes, string $name): bool
+    {
+        return $attributes->has($name) && ! in_array($attributes->get($name), [false, null], true);
     }
 
     /** The types `files` stands for: `true` for {@see FILES}, a list as written, else none. */

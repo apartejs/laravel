@@ -128,7 +128,7 @@ function startTag(string $html, string $tag): string
 }
 
 it("hands the chat its own attributes, and keeps the chat's place on the page around it", function () {
-    $html = Blade::render('<x-aparte::chat endpoint="/chat" class="h-96" style="height: 32rem" wire:key="help" x-data="{}" placeholder="Ask about your order" type-to-focus="page" stop-key="Escape" submit-on-enter="false" />');
+    $html = Blade::render('<x-aparte::chat endpoint="/chat" class="h-96" style="height: 32rem" wire:key="help" x-data="{}" ::class="{ hidden: !open }" data-testid="help" aria-label="Help" title="Help" placeholder="Ask about your order" type-to-focus="page" stop-key="Escape" submit-on-enter="false" />');
 
     expect(startTag($html, 'aparte-chat'))
         ->toContain('placeholder="Ask about your order"')
@@ -136,22 +136,31 @@ it("hands the chat its own attributes, and keeps the chat's place on the page ar
         ->toContain('stop-key="Escape"')
         ->toContain('submit-on-enter="false"')
         ->not->toContain('class=')
-        ->not->toContain('wire:key');
+        ->not->toContain('wire:key')
+        ->not->toContain('data-testid')
+        ->not->toContain('aria-label')
+        ->not->toContain('title=');
+    // What places or names the element stays where it always was, Alpine's `::class` included (it arrives as `:class`).
     expect(startTag($html, 'div'))
         ->toContain('class="h-96"')
         ->toContain('style="height: 32rem"')
         ->toContain('wire:key="help"')
         ->toContain('x-data="{}"')
+        ->toContain(':class="{ hidden: !open }"')
+        ->toContain('data-testid="help"')
+        ->toContain('aria-label="Help"')
+        ->toContain('title="Help"')
         ->not->toContain('placeholder');
 });
 
 it("keeps the launcher's own attributes on it, and hands it the chat's", function () {
-    $html = Blade::render('<x-aparte::launcher endpoint="/chat" label="Help" heading="Support" breakpoint="600" class="corner" placeholder="Ask us anything" stop-key="Escape" />');
+    $html = Blade::render('<x-aparte::launcher endpoint="/chat" label="Help" heading="Support" breakpoint="600" class="corner" data-testid="corner" placeholder="Ask us anything" stop-key="Escape" />');
 
     expect(startTag($html, 'aparte-launcher'))
         ->toContain('heading="Support"')
         ->toContain('breakpoint="600"')
         ->toContain('class="corner"')
+        ->toContain('data-testid="corner"')
         ->not->toContain('placeholder')
         ->not->toContain('stop-key');
     expect(startTag($html, 'aparte-chat'))
@@ -164,8 +173,10 @@ it('gives the chat a paperclip for the model with files, whoever answers', funct
     expect(startTag(Blade::render('<x-aparte::chat endpoint="/chat" files />'), 'aparte-chat'))
         ->toMatch('/\sattachments\s/')
         ->toContain('data-aparte-files="'.\Aparte\Laravel\ChatAttributes::FILES.'"');
-    expect(startTag(Blade::render('<x-aparte::chat endpoint="/chat" files="image/*" />'), 'aparte-chat'))
-        ->toContain('data-aparte-files="image/*"');
+    expect(startTag(Blade::render('<x-aparte::chat endpoint="/chat" files="image/png,image/jpeg" />'), 'aparte-chat'))
+        ->toContain('data-aparte-files="image/png,image/jpeg"');
+    // The default takes only the picture formats the model APIs read: an SVG or a HEIC would fail the turn.
+    expect(\Aparte\Laravel\ChatAttributes::FILES)->not->toContain('image/*')->not->toContain('.svg')->not->toContain('.env');
     expect(startTag(Blade::render('<x-aparte::launcher endpoint="/chat" files />'), 'aparte-chat'))
         ->toContain('data-aparte-files=');
 
@@ -190,4 +201,8 @@ it('keeps the paperclip, the placeholder and disabled in a chat with slots', fun
     // Without files, the paperclip of a chat with slots is left to the team's code, which adds it when it is offered.
     expect(Blade::render('<x-aparte::chat endpoint="/chat"><x-slot:toolbar>TOOLS</x-slot:toolbar></x-aparte::chat>'))
         ->not->toContain('<aparte-composer-add-attachment');
+    // Nor when the view bound it off: aparté would not take it out of a composer it did not write.
+    $off = Blade::render('<x-aparte::chat endpoint="/chat" :attachments="false" :disabled="false"><x-slot:toolbar>TOOLS</x-slot:toolbar></x-aparte::chat>');
+    expect($off)->not->toContain('<aparte-composer-add-attachment');
+    expect(startTag($off, 'aparte-composer'))->not->toContain('disabled');
 });

@@ -8,13 +8,15 @@
     $chatAttributes ??= new \Illuminate\View\ComponentAttributeBag;
     // What a person may attach, whoever answers (`files`): the paperclip, and its types.
     $filesTypes = \Aparte\Laravel\ChatAttributes::files($files ?? null);
-    $paperclip = $filesTypes !== null || $chatAttributes->has('attachments');
+    // `:attachments="false"` is written in the bag but draws nothing: on, it is the page's own paperclip.
+    $ownPaperclip = \Aparte\Laravel\ChatAttributes::on($chatAttributes, 'attachments');
+    $paperclip = $filesTypes !== null || $ownPaperclip;
 @endphp
 
 <aparte-chat
     id="{{ $chatId }}"
     {{ $chatAttributes }}
-    @if ($filesTypes !== null) @unless ($chatAttributes->has('attachments')) attachments @endunless data-aparte-files="{{ $filesTypes }}" @endif
+    @if ($filesTypes !== null) @unless ($ownPaperclip) attachments @endunless data-aparte-files="{{ $filesTypes }}" @endif
     data-aparte-endpoint="{{ ($endpoint ?? null) ? url($endpoint) : '' }}"
     data-aparte-csrf="{{ csrf_token() }}"
     data-aparte-scope="{{ auth()->id() }}"
@@ -50,10 +52,8 @@
         {{-- The composer aparté writes when it writes its own, with the slots added: the paperclip and its strip
              when files are on, the chat's placeholder and `disabled`. aparté keeps the paperclip in step only in a
              composer it wrote, so aparte.js does it in this one (data-aparte-laravel-shell). --}}
-        <aparte-composer
-            @if ($chatAttributes->has('placeholder')) placeholder="{{ $chatAttributes->get('placeholder') }}" @endif
-            @if ($chatAttributes->has('disabled') && $chatAttributes->get('disabled') !== false) disabled @endif
-        >
+        {{-- Written by the bag, as on the chat: the same escaping, and nothing for a value bound to false. --}}
+        <aparte-composer {{ $chatAttributes->only(['placeholder', 'disabled']) }}>
             <div class="aparte-composer-shell" data-aparte-laravel-shell>
                 @if ($paperclip)
                     <aparte-composer-attachments></aparte-composer-attachments>

@@ -132,8 +132,8 @@ panel's authentication, and each panel keeps a list of its own: its conversation
 of a chat on a page of your app. [Conversations in your database](#conversations-in-your-database) says what is kept,
 and how to change it.
 
-`->files()` lets a person attach images and text files the model reads with the message, or `->files('image/*')`
-only images: see [Files](#files).
+`->files()` lets a person attach images and text files the model reads with the message, or
+`->files('image/png,image/jpeg')` only pictures: see [Files](#files).
 
 ## Approving tool calls
 
@@ -157,9 +157,10 @@ Write the chat's settings on the component, as on aparté's [`<aparte-chat>`](ht
 <x-aparte::chat endpoint="/chat" class="h-96" placeholder="Ask about your order" stop-key="Escape" submit-on-enter="false" />
 ```
 
-`class`, `style` and Livewire's and Alpine's directives (`wire:…`, `x-…`, `@…`) place the chat on the page and stay on
-the element around it; every other attribute goes to the chat. The launcher keeps its own (`open`, `label`,
-`breakpoint`, `header`, `heading`, `subheading`, `maximizable`, `maximized`) and hands the rest to its chat, so
+What places or names the element on the page stays on the one around the chat, as before: `class`, `style`, `title`,
+`role`, `hidden`, `data-…` and `aria-…`, and Livewire's and Alpine's directives (`wire:…`, `x-…`, `@…`, `::class`).
+Every other attribute goes to the chat. The launcher keeps those and its own (`open`, `label`, `breakpoint`,
+`header`, `heading`, `subheading`, `maximizable`, `maximized`) and hands the rest to its chat, so
 `<x-aparte::launcher endpoint="/chat" placeholder="Ask us anything" />` sets the placeholder of the chat it opens.
 
 ## Files
@@ -170,18 +171,20 @@ A person can attach images and text files to a message, and the model reads them
 <x-aparte::chat endpoint="/chat" files />
 ```
 
-`files` alone takes what aparté puts in the message: images, and text the model can read (`.txt`, `.md`, `.json`,
-`.csv`, code…). Name the kinds you want instead with a list, as for an `<input type="file">`: `files="image/*"`. A PDF
+`files` alone takes what aparté puts in the message and the model reads: PNG, JPEG, GIF and WebP pictures (the
+formats the model APIs take: an SVG or a HEIC would fail the turn), and text (`.txt`, `.md`, `.json`, `.csv`, code…).
+Name the kinds you want instead with a list, as for an `<input type="file">`: `files="image/png,image/jpeg"`. A PDF
 is not sent to the model: aparté would show it attached and the model would never see it, so it is not offered.
-In a Filament panel, `ApartePlugin::make()->files()`, or `->files('image/*')`.
+In a Filament panel, `ApartePlugin::make()->files()`, or `->files('image/png,image/jpeg')`.
 
 The Laravel AI SDK hands the files to your agent with the prompt (`$prompt->attachments`), and to a model that reads
 images. They travel in the request, inside the conversation: keep `post_max_size` (PHP) and `client_max_body_size`
 (nginx) above the largest you expect.
 
 What the chat keeps of them, in the tab or in [your database](#conversations-in-your-database), is a small picture of
-each image (a few kilobytes) and the name of each other file: a conversation opened again shows them, and the agent's
-memory has the files themselves.
+each image (160 pixels at most, about ten kilobytes) and the name of each other file: a conversation opened again
+shows them, and the agent's memory has the files themselves. Files picked for the assistant are dropped if someone of
+your team takes over before they are sent, and the reverse: they would reach the side that did not ask for them.
 
 With [a person who takes over](#a-person-takes-over), the paperclip follows who answers: `files` while the assistant
 does, [your team's](#files-1) while someone of it is in the conversation.

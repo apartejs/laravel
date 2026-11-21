@@ -34,7 +34,12 @@ it('reads a manifest that still lists the attributes it is meant to', function (
 });
 
 it("hands every attribute of aparté's chat to the chat, from both components", function () {
-    foreach (manifest('aparte-chat') as $attribute) {
+    // The chat's `data-*` attributes are states it reflects itself (`data-empty`, `data-glide`), not settings, and a
+    // `data-*` written on a component stays on the element around the chat, as it always did (ChatAttributes::places).
+    $settings = array_filter(manifest('aparte-chat'), fn (string $attribute) => ! str_starts_with($attribute, 'data-'));
+    expect($settings)->not->toBeEmpty();
+
+    foreach ($settings as $attribute) {
         foreach (['chat', 'launcher'] as $component) {
             $html = Blade::render("<x-aparte::{$component} endpoint=\"/chat\" {$attribute}=\"probe\" />");
 
