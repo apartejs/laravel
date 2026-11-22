@@ -201,9 +201,9 @@ images. They travel in the request, with the message that carries them; the earl
 the agent's memory keeps their files. An image goes at 1568 pixels at most on its longest side, the size the model
 APIs scale a larger one down to themselves: the browser does it before sending, so a phone's photo of several
 megabytes travels in about 300 KB, and nginx's default limit on a request (1 MB, `client_max_body_size`) takes three
-of them in one message. Raise it, and PHP's `post_max_size`, for more. A request refused for its size tells the person
-it could not be answered (not to try again: the same request would be refused), and the developer which limit to
-raise, in the browser's console.
+of them in one message. Raise it, and PHP's `post_max_size`, for more. A message refused for its size tells the person,
+in their language, that it is too large to send and to remove a file or send a shorter one; it is left out of the next
+requests, and the browser's console tells the developer which limit to raise.
 
 What the chat keeps of them, in the tab or in [your database](#conversations-in-your-database), is a small picture of
 each image (160 pixels at most, about ten kilobytes) and the name of each other file: a conversation opened again
